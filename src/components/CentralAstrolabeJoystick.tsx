@@ -42,8 +42,8 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
     const loop = () => {
       const { x } = knobOffsetRef.current;
       if (Math.abs(x) > 3) {
-        // Continuous rotation speed proportional to horizontal pull
-        const speed = (x / MAX_KNOB_RADIUS) * 2.2;
+        // Continuous rotation speed proportional to horizontal pull (softened for calm rotation)
+        const speed = (x / MAX_KNOB_RADIUS) * 0.7;
         onRotateDelta(speed);
       }
       animFrameRef.current = requestAnimationFrame(loop);
@@ -92,10 +92,12 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
 
-    // 1. Calculate orbital angle around center (jog-wheel rotation)
+    // 1. Calculate orbital angle around center (jog-wheel rotation) with gentle damping
     const currentAngle = Math.atan2(e.clientY - cy, e.clientX - cx) * (180 / Math.PI);
-    const deltaAngle = currentAngle - startPointerAngleRef.current;
-    onSetRotationAngle((startRotationAngleRef.current + deltaAngle) % 360);
+    let deltaAngle = currentAngle - startPointerAngleRef.current;
+    if (deltaAngle > 180) deltaAngle -= 360;
+    if (deltaAngle < -180) deltaAngle += 360;
+    onSetRotationAngle((startRotationAngleRef.current + deltaAngle * 0.5 + 360) % 360);
 
     // 2. Calculate knob deflection for visual response
     const dx = e.clientX - cx;

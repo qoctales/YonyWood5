@@ -22,8 +22,8 @@ import { NavigationScreen } from './components/NavigationScreen';
 import { BottomMenu } from './components/BottomMenu';
 
 export default function App() {
-  // Arrive directly on the DUOS feed (no bulky header)
-  const [currentScreen, setCurrentScreen] = useState<ViewScreen>({ type: 'duo_feed' });
+  // Arrive directly on the Explorer Astrolabe screen
+  const [currentScreen, setCurrentScreen] = useState<ViewScreen>({ type: 'home' });
 
   // User preferences & series filter state
   const [selectedSeriesFilter, setSelectedSeriesFilter] = useState<string[]>(
@@ -38,9 +38,12 @@ export default function App() {
   }, [currentScreen]);
 
   const isVideoPlayer = currentScreen.type === 'video_player';
+  const isDarkScreen = currentScreen.type === 'video_player';
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-[#1C1917] font-sans antialiased selection:bg-[#C89B3C]/20 selection:text-[#1C1917] relative">
+    <div className={`min-h-screen flex flex-col font-sans antialiased selection:bg-[#C89B3C]/20 selection:text-[#1C1917] relative ${
+      isDarkScreen ? 'bg-[#0E0D0B] text-white' : 'bg-white text-[#1C1917]'
+    }`}>
       
       {/* Main Content Area - Direct immersion */}
       <main className="flex-1">

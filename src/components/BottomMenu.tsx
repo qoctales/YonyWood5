@@ -2,7 +2,6 @@ import React from 'react';
 import { 
   Compass, 
   Video, 
-  Link2, 
   Coins, 
   User,
   Film
@@ -47,7 +46,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     {
       id: 'duos',
       label: 'Duos',
-      icon: Link2,
+      icon: null,
       isActive: isDuosActive,
       onClick: () => onNavigate({ type: 'duo_feed' }),
       screenId: 'menu-item-duos'
@@ -99,7 +98,15 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
                     : 'bg-transparent text-current group-hover:bg-stone-100/80'
                 }`}
               >
-                <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2]' : 'stroke-[1.8] group-hover:scale-105'}`} />
+                {item.id === 'duos' ? (
+                  <span className={`font-mono font-black text-[13px] tracking-wider select-none leading-none transition-transform duration-200 ${
+                    item.isActive ? 'text-[#C89B3C] scale-105' : 'text-stone-600 group-hover:scale-105'
+                  }`}>
+                    &lt; &gt;
+                  </span>
+                ) : Icon ? (
+                  <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2]' : 'stroke-[1.8] group-hover:scale-105'}`} />
+                ) : null}
               </div>
 
               {/* Label */}

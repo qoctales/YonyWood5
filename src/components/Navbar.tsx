@@ -5,7 +5,6 @@ import {
   PlusCircle, 
   Menu,
   X,
-  Shuffle,
   Tv
 } from 'lucide-react';
 import { ViewScreen } from '../types';
@@ -53,7 +52,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => 
             }`}
             id="nav-link-duos-feed"
           >
-            <Shuffle className="w-3.5 h-3.5" />
+            <span className={`font-mono font-black text-[11px] tracking-wider select-none ${
+              currentScreen.type === 'duo_feed' ? 'text-[#C89B3C]' : 'text-stone-700'
+            }`}>
+              &lt; &gt;
+            </span>
             <span>Duos</span>
           </button>
 
@@ -108,7 +111,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => 
             onClick={() => { onNavigate({ type: 'duo_feed' }); setMobileMenuOpen(false); }}
             className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-[#1C1917] bg-stone-100 flex items-center gap-2"
           >
-            <Shuffle className="w-3.5 h-3.5 text-[#C89B3C]" />
+            <span className="font-mono font-black text-[11px] tracking-wider select-none text-[#C89B3C]">&lt; &gt;</span>
             Duos
           </button>
           <button

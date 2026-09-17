@@ -133,6 +133,14 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({ onNavigate }
       target: { type: 'site_map' } as ViewScreen,
       icon: Compass,
       level: 'Vue Synoptique'
+    },
+    {
+      id: '13',
+      title: 'Back-Office Éditorial & Pipeline',
+      desc: 'Gestion des candidatures, conformité technique, avis des pairs et publication au corpus de la forêt.',
+      target: { type: 'editorial_backoffice' } as ViewScreen,
+      icon: ShieldCheck,
+      level: 'Direction Éditoriale'
     }
   ];
 

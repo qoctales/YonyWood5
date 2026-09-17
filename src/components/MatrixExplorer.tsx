@@ -1,956 +1,685 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { 
-  Play, 
-  Pause, 
+  Tv, 
   X, 
-  ArrowRight, 
-  Volume2, 
-  VolumeX, 
-  ChevronLeft,
-  Tv
+  Play, 
+  Compass, 
+  Sparkles,
+  ArrowRight,
+  UserCheck,
+  Award,
+  User
 } from 'lucide-react';
-import { AffiliationPerson, ViewScreen } from '../types';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
-import { RemoteControlModal } from './RemoteControlModal';
+import { AffiliationPerson, ViewScreen } from '../types';
 import { CentralAstrolabeJoystick } from './CentralAstrolabeJoystick';
 import { VerticalZoomSlider } from './VerticalZoomSlider';
 
 interface MatrixExplorerProps {
-  onNavigate: (screen: ViewScreen) => void;
+  onNavigate: (screen: ViewScreen | any) => void;
+  onSelectDocumentary?: (docId: string) => void;
 }
 
-interface MandalaNode {
-  person: AffiliationPerson;
-  x: number;
-  y: number;
-  r: number;
-  level: number; // 0 = Couronne 1 (16 Pionniers), 1 = Gen 2, 2 = Gen 3, 3 = Gen 4, 4 = Gen 5
-  angleDeg: number;
-  parentId?: string;
+// Fonction récursive de calcul des personnes cooptées dans la descendance
+function countDescendants(person: AffiliationPerson): number {
+  if (!person.invitedPeople || person.invitedPeople.length === 0) {
+    return 0;
+  }
+  return person.invitedPeople.reduce((total, child) => {
+    return total + 1 + countDescendants(child);
+  }, 0);
 }
 
-export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ onNavigate }) => {
-  // Sélecteur de série : null = "Toutes les séries • Flux aléatoire" (exactement comme sur Duo)
-  const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
-  const [isRemoteOpen, setIsRemoteOpen] = useState<boolean>(false);
+// Rayons des orbites concentriques (Ring 1 à 5)
+const ORBIT_RADII = [165, 275, 385, 495, 605];
 
-  // Chemin actif de sélection dans le mandala : [pioneer, gen2, gen3, gen4...]
-  const [lineageTrail, setLineageTrail] = useState<AffiliationPerson[]>([]);
+export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ 
+  onNavigate,
+  onSelectDocumentary 
+}) => {
+  // 1. Filtrage par série : 'ALL' ou ID de la série
+  const [selectedFilter, setSelectedFilter] = useState<string>('ALL');
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState<boolean>(false);
 
-  // Survol d'un nœud pour illuminer
-  const [hoveredPersonId, setHoveredPersonId] = useState<string | null>(null);
-
-  // Vidéo Teaser active (ouverte au 2e clic sur la personne sélectionnée)
-  const [activeTeaserPerson, setActiveTeaserPerson] = useState<AffiliationPerson | null>(null);
-
-  // Angle de rotation global du Mandala (en degrés)
+  // 2. Navigation spatiale : rotation, zoom et translation (pan)
   const [rotationAngle, setRotationAngle] = useState<number>(0);
+  const [zoomLevel, setZoomLevel] = useState<number>(1.0);
+  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // Zoom de la scène (contrôlé par le curseur vertical intuitif)
-  const [zoomLevel, setZoomLevel] = useState<number>(1);
-  const [isTeaserPlaying, setIsTeaserPlaying] = useState<boolean>(true);
-  const [isTeaserMuted, setIsTeaserMuted] = useState<boolean>(false);
-  const teaserVideoRef = useRef<HTMLVideoElement | null>(null);
+  // Références d'interaction pour la rotation fluide par glisser-déposer sur la roue ou sur chaque personne
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isRotatingRef = useRef<boolean>(false);
+  const pointerStartPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const lastPointerAngleRef = useRef<number>(0);
+  const hasDraggedRef = useRef<boolean>(false);
 
-  // Drag-to-rotate interactif au pointeur sur le fond du mandala
-  const isDraggingRef = useRef<boolean>(false);
-  const startDragAngleRef = useRef<number>(0);
-  const startRotationRef = useRef<number>(0);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  // 3. Chemin de sélection généalogique [idGen1, idGen2, idGen3, idGen4, idGen5]
+  // Démarre vide pour que le premier clic déploie les liens du pionnier et le second ouvre la modale
+  const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
-  // Génération des 16 pionniers représentatifs pour "Toutes les séries" (4 par série)
-  const globalAllPioneers = useMemo<AffiliationPerson[]>(() => {
-    const list: AffiliationPerson[] = [];
-    MATRIX_SERIES_DATA.forEach(series => {
-      list.push(...series.pioneers.slice(0, 4));
-    });
-    return list.slice(0, 16);
-  }, []);
+  // 4. Modale de présentation détaillée (ouverte au 2ème clic sur la même personne)
+  const [modalPerson, setModalPerson] = useState<AffiliationPerson | null>(null);
 
-  // Configuration de la série courante ou de la constellation globale
-  const currentSeries = useMemo<MatrixSeriesConfig>(() => {
-    if (!selectedSeriesId) {
-      return {
-        seriesId: 'all',
-        seriesTitle: 'Toutes les séries',
-        subtitle: 'L’arbre universel de la transmission',
-        description: 'Constellation globale réunissant les pionniers majeurs de toutes les séries.',
-        centralQuestion: 'La transmission vivante',
-        accentColor: '#C89B3C',
-        pioneers: globalAllPioneers
-      };
+  // Récupération de la série active ou de la collection complète
+  const activeSeries = useMemo<MatrixSeriesConfig>(() => {
+    if (selectedFilter === 'ALL') {
+      return MATRIX_SERIES_DATA[0];
     }
-    return MATRIX_SERIES_DATA.find(s => s.seriesId === selectedSeriesId) || MATRIX_SERIES_DATA[0];
-  }, [selectedSeriesId, globalAllPioneers]);
+    return MATRIX_SERIES_DATA.find(s => s.seriesId === selectedFilter) || MATRIX_SERIES_DATA[0];
+  }, [selectedFilter]);
 
-  // Réinitialiser la navigation du mandala lors d'un changement de série
-  useEffect(() => {
-    setLineageTrail([]);
-    setHoveredPersonId(null);
-    setRotationAngle(0);
-  }, [selectedSeriesId]);
-
-  // Dimensions géométriques du Mandala
-  const SVG_SIZE = 920;
-  const CENTER_X = 460;
-  const CENTER_Y = 460;
-
-  // RAYONS DES COURONNES : ORGANISATION HARMONIEUSE & ADAPTATIVE
-  // Au repos (Gen 0), le cercle initial de 16 pionniers s'épanouit généreusement (R = 250)
-  // pour occuper confortablement l'écran dès le départ sur ordinateur sans obliger à zoomer.
-  // Quand on clique sur une personne, le cercle des pionniers se resserre avec grâce
-  // au fur et à mesure que les générations successives fleurissent vers l'extérieur.
-  const depth = lineageTrail.length;
-  const R_ORBIT_PIONEERS = depth === 0 ? 250 : depth === 1 ? 180 : depth === 2 ? 145 : 125;
-  const R_ORBIT_GEN2     = depth <= 1 ? 315 : depth === 2 ? 250 : 210;
-  const R_ORBIT_GEN3     = depth <= 2 ? 355 : 295;
-  const R_ORBIT_GEN4     = 380;
-  const R_ORBIT_GEN5     = 430;
-
-  // Gestion du Drag-to-rotate angulaire directement sur le canevas d'arrière-plan
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if ((e.target as HTMLElement).closest('button') || 
-        (e.target as HTMLElement).closest('.mandala-node-target') || 
-        (e.target as HTMLElement).closest('#central-astrolabe-joystick') ||
-        (e.target as HTMLElement).closest('#vertical-zoom-slider')) {
-      return;
-    }
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const clickAngle = Math.atan2(e.clientY - cy, e.clientX - cx) * (180 / Math.PI);
-    
-    isDraggingRef.current = true;
-    startDragAngleRef.current = clickAngle;
-    startRotationRef.current = rotationAngle;
+  // Réinitialiser la sélection lors du changement de série
+  const handleSelectFilter = (filterId: string) => {
+    setSelectedFilter(filterId);
+    setIsFilterDropdownOpen(false);
+    setSelectedPath([]);
   };
 
-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!isDraggingRef.current || !containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const currentAngle = Math.atan2(e.clientY - cy, e.clientX - cx) * (180 / Math.PI);
-    const delta = currentAngle - startDragAngleRef.current;
-    setRotationAngle((startRotationRef.current + delta) % 360);
-  }, []);
+  // 16 Pionniers fondateurs (Génération 1)
+  const pioneers = useMemo<AffiliationPerson[]>(() => {
+    return activeSeries.pioneers.slice(0, 16);
+  }, [activeSeries]);
 
-  const handlePointerUp = useCallback(() => {
-    isDraggingRef.current = false;
-  }, []);
+  // Calcul dynamique des nœuds et des liens pour chaque orbite déployée
+  const { nodesByGeneration, connectingLinks } = useMemo(() => {
+    interface NodeItem {
+      person: AffiliationPerson;
+      gen: number; // 1-indexed
+      x: number;
+      y: number;
+      angle: number;
+      parentId?: string;
+      descendantCount: number;
+      isSelected: boolean;
+      isInLineage: boolean;
+    }
 
-  // Décompte de descendance totale
-  const countDescendants = (p: AffiliationPerson): number => {
-    let count = 0;
-    if (p.invitedPeople) {
-      count += p.invitedPeople.length;
-      for (const child of p.invitedPeople) {
-        count += countDescendants(child);
+    interface LinkItem {
+      id: string;
+      from: { x: number; y: number };
+      to: { x: number; y: number };
+      isActive: boolean;
+    }
+
+    const genNodes: NodeItem[][] = [];
+    const links: LinkItem[] = [];
+
+    // --- GÉNÉRATION 1 : 16 Pionniers sur l'orbite 1 (rayon R1) ---
+    const gen1Nodes: NodeItem[] = pioneers.map((p, idx) => {
+      const angle = -90 + idx * (360 / 16);
+      const rad = (angle * Math.PI) / 180;
+      const r = ORBIT_RADII[0];
+      const isSel = selectedPath[0] === p.id;
+      return {
+        person: p,
+        gen: 1,
+        x: Math.cos(rad) * r,
+        y: Math.sin(rad) * r,
+        angle,
+        descendantCount: countDescendants(p),
+        isSelected: isSel,
+        isInLineage: isSel
+      };
+    });
+    genNodes.push(gen1Nodes);
+
+    // --- GÉNÉRATIONS SUCCESSIVES 2 À 5 : DÉPLOIEMENT CONCENTRIQUE ---
+    let currentParentGen = 1;
+    while (currentParentGen < selectedPath.length + 1 && currentParentGen < 5) {
+      const parentId = selectedPath[currentParentGen - 1];
+      const parentNode = genNodes[currentParentGen - 1]?.find(n => n.person.id === parentId);
+      
+      if (!parentNode || !parentNode.person.invitedPeople || parentNode.person.invitedPeople.length === 0) {
+        break;
       }
+
+      const children = parentNode.person.invitedPeople;
+      const childCount = children.length;
+      const childGen = currentParentGen + 1;
+      const r = ORBIT_RADII[childGen - 1];
+
+      // Éventail angulaire centré sur l'angle du parent
+      const span = childCount === 1 
+        ? 0 
+        : Math.min(85, Math.max(38, (childCount - 1) * 32));
+
+      const childNodes: NodeItem[] = children.map((child, cIdx) => {
+        let childAngle = parentNode.angle;
+        if (childCount > 1) {
+          childAngle = parentNode.angle - span / 2 + cIdx * (span / (childCount - 1));
+        }
+        const childRad = (childAngle * Math.PI) / 180;
+        const x = Math.cos(childRad) * r;
+        const y = Math.sin(childRad) * r;
+        const isSel = selectedPath[childGen - 1] === child.id;
+
+        // Liaison parent -> enfant
+        const isLinkActive = selectedPath[currentParentGen - 1] === parentNode.person.id &&
+                             selectedPath[childGen - 1] === child.id;
+        links.push({
+          id: `${parentNode.person.id}->${child.id}`,
+          from: { x: parentNode.x, y: parentNode.y },
+          to: { x, y },
+          isActive: isLinkActive
+        });
+
+        return {
+          person: child,
+          gen: childGen,
+          x,
+          y,
+          angle: childAngle,
+          parentId: parentNode.person.id,
+          descendantCount: countDescendants(child),
+          isSelected: isSel,
+          isInLineage: isSel
+        };
+      });
+
+      genNodes.push(childNodes);
+      currentParentGen++;
     }
-    return count;
-  };
 
-  // 1. Calcul des 16 Pionniers sur la couronne intérieure (autour de la manette centrale)
-  const pioneerNodes: MandalaNode[] = useMemo(() => {
-    const count = currentSeries.pioneers.length;
-    return currentSeries.pioneers.map((pioneer, i) => {
-      const baseAngle = (i / count) * 360 - 90;
-      const effectiveAngle = baseAngle + rotationAngle;
-      const rad = (effectiveAngle * Math.PI) / 180;
-      return {
-        person: pioneer,
-        x: CENTER_X + R_ORBIT_PIONEERS * Math.cos(rad),
-        y: CENTER_Y + R_ORBIT_PIONEERS * Math.sin(rad),
-        r: 18,
-        level: 0,
-        angleDeg: effectiveAngle
-      };
-    });
-  }, [currentSeries, rotationAngle, R_ORBIT_PIONEERS]);
+    return { nodesByGeneration: genNodes, connectingLinks: links };
+  }, [pioneers, selectedPath]);
 
-  const selectedPioneer = lineageTrail[0] || null;
-  const selectedGen2 = lineageTrail[1] || null;
-  const selectedGen3 = lineageTrail[2] || null;
-  const selectedGen4 = lineageTrail[3] || null;
+  // Calcul de l'angle du curseur par rapport au centre de l'astrolabe
+  const getAngleFromCenter = useCallback((clientX: number, clientY: number) => {
+    if (!containerRef.current) return 0;
+    const rect = containerRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2 + pan.x;
+    const centerY = rect.top + rect.height / 2 + pan.y;
+    const dx = clientX - centerX;
+    const dy = clientY - centerY;
+    return (Math.atan2(dy, dx) * 180) / Math.PI;
+  }, [pan]);
 
-  // 2. Calcul des Nœuds Gen 2 (s'étendent vers l'EXTÉRIEUR sur l'anneau 2)
-  const gen2Nodes: MandalaNode[] = useMemo(() => {
-    if (!selectedPioneer || !selectedPioneer.invitedPeople || selectedPioneer.invitedPeople.length === 0) {
-      return [];
-    }
-    const pioneerNode = pioneerNodes.find(n => n.person.id === selectedPioneer.id);
-    const baseAngle = pioneerNode ? pioneerNode.angleDeg : -90;
-    const count = selectedPioneer.invitedPeople.length;
-
-    // Éventail harmonieux rayonnant vers l'extérieur
-    const arcSpread = count === 1 ? 0 : Math.min(80, count * 26);
-    const startAngle = baseAngle - arcSpread / 2;
-
-    return selectedPioneer.invitedPeople.map((person, i) => {
-      const angle = count === 1 ? baseAngle : startAngle + (i / (count - 1)) * arcSpread;
-      const rad = (angle * Math.PI) / 180;
-      return {
-        person,
-        x: CENTER_X + R_ORBIT_GEN2 * Math.cos(rad),
-        y: CENTER_Y + R_ORBIT_GEN2 * Math.sin(rad),
-        r: 16,
-        level: 1,
-        angleDeg: angle,
-        parentId: selectedPioneer.id
-      };
-    });
-  }, [selectedPioneer, pioneerNodes, R_ORBIT_GEN2]);
-
-  // 3. Calcul des Nœuds Gen 3 (s'étendent encore plus vers l'EXTÉRIEUR sur l'anneau 3)
-  const gen3Nodes: MandalaNode[] = useMemo(() => {
-    if (!selectedGen2 || !selectedGen2.invitedPeople || selectedGen2.invitedPeople.length === 0) {
-      return [];
-    }
-    const gen2Node = gen2Nodes.find(n => n.person.id === selectedGen2.id);
-    const baseAngle = gen2Node ? gen2Node.angleDeg : -90;
-    const count = selectedGen2.invitedPeople.length;
-
-    const arcSpread = count === 1 ? 0 : Math.min(60, count * 24);
-    const startAngle = baseAngle - arcSpread / 2;
-
-    return selectedGen2.invitedPeople.map((person, i) => {
-      const angle = count === 1 ? baseAngle : startAngle + (i / (count - 1)) * arcSpread;
-      const rad = (angle * Math.PI) / 180;
-      return {
-        person,
-        x: CENTER_X + R_ORBIT_GEN3 * Math.cos(rad),
-        y: CENTER_Y + R_ORBIT_GEN3 * Math.sin(rad),
-        r: 14,
-        level: 2,
-        angleDeg: angle,
-        parentId: selectedGen2.id
-      };
-    });
-  }, [selectedGen2, gen2Nodes, R_ORBIT_GEN3]);
-
-  // 4. Calcul des Nœuds Gen 4 (s'étendent vers la périphérie sur l'anneau 4)
-  const gen4Nodes: MandalaNode[] = useMemo(() => {
-    if (!selectedGen3 || !selectedGen3.invitedPeople || selectedGen3.invitedPeople.length === 0) {
-      return [];
-    }
-    const gen3Node = gen3Nodes.find(n => n.person.id === selectedGen3.id);
-    const baseAngle = gen3Node ? gen3Node.angleDeg : -90;
-    const count = selectedGen3.invitedPeople.length;
-
-    const arcSpread = count === 1 ? 0 : Math.min(50, count * 22);
-    const startAngle = baseAngle - arcSpread / 2;
-
-    return selectedGen3.invitedPeople.map((person, i) => {
-      const angle = count === 1 ? baseAngle : startAngle + (i / (count - 1)) * arcSpread;
-      const rad = (angle * Math.PI) / 180;
-      return {
-        person,
-        x: CENTER_X + R_ORBIT_GEN4 * Math.cos(rad),
-        y: CENTER_Y + R_ORBIT_GEN4 * Math.sin(rad),
-        r: 12,
-        level: 3,
-        angleDeg: angle,
-        parentId: selectedGen3.id
-      };
-    });
-  }, [selectedGen3, gen3Nodes, R_ORBIT_GEN4]);
-
-  // 5. Calcul des Nœuds Gen 5 (sur la couronne extérieure ultime)
-  const gen5Nodes: MandalaNode[] = useMemo(() => {
-    if (!selectedGen4 || !selectedGen4.invitedPeople || selectedGen4.invitedPeople.length === 0) {
-      return [];
-    }
-    const gen4Node = gen4Nodes.find(n => n.person.id === selectedGen4.id);
-    const baseAngle = gen4Node ? gen4Node.angleDeg : -90;
-    const count = selectedGen4.invitedPeople.length;
-
-    return selectedGen4.invitedPeople.map((person, i) => {
-      const angle = count === 1 ? baseAngle : baseAngle - 20 + i * 20;
-      const rad = (angle * Math.PI) / 180;
-      return {
-        person,
-        x: CENTER_X + R_ORBIT_GEN5 * Math.cos(rad),
-        y: CENTER_Y + R_ORBIT_GEN5 * Math.sin(rad),
-        r: 10,
-        level: 4,
-        angleDeg: angle,
-        parentId: selectedGen4.id
-      };
-    });
-  }, [selectedGen4, gen4Nodes, R_ORBIT_GEN5]);
-
-  // Règle d'interaction utilisateur :
-  // 1er clic sur une personne -> déploie ses invités vers l'extérieur
-  // 2e clic sur la personne déjà sélectionnée -> ouvre la modale de présentation pour entrer dans son univers
-  const handleNodeClick = (person: AffiliationPerson, level: number) => {
-    const isCurrentlySelectedAtThisLevel = lineageTrail[level]?.id === person.id;
-
-    if (isCurrentlySelectedAtThisLevel) {
-      setActiveTeaserPerson(person);
+  // Début de la rotation (déclenchable sur la toile, la roue ou sur chaque personne)
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Ne pas intercepter si le clic cible des contrôles d'interface fixes
+    if ((e.target as HTMLElement).closest('#series-filter-pill-button, #vertical-zoom-slider, #person-detail-modal, button')) {
       return;
     }
-
-    setLineageTrail(prev => {
-      const newTrail = prev.slice(0, level);
-      newTrail[level] = person;
-      return newTrail;
-    });
+    isRotatingRef.current = true;
+    hasDraggedRef.current = false;
+    pointerStartPosRef.current = { x: e.clientX, y: e.clientY };
+    lastPointerAngleRef.current = getAngleFromCenter(e.clientX, e.clientY);
   };
 
-  // Video Autoplay control
-  useEffect(() => {
-    if (activeTeaserPerson && teaserVideoRef.current) {
-      teaserVideoRef.current.currentTime = 0;
-      teaserVideoRef.current.play().catch(() => {});
-      setIsTeaserPlaying(true);
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isRotatingRef.current) return;
+    
+    // Détection de mouvement significatif pour distinguer le clic du glisser
+    const dist = Math.hypot(e.clientX - pointerStartPosRef.current.x, e.clientY - pointerStartPosRef.current.y);
+    if (dist > 6) {
+      hasDraggedRef.current = true;
     }
-  }, [activeTeaserPerson]);
 
-  const toggleTeaserPlay = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!teaserVideoRef.current) return;
-    if (isTeaserPlaying) {
-      teaserVideoRef.current.pause();
-      setIsTeaserPlaying(false);
+    const currentAngle = getAngleFromCenter(e.clientX, e.clientY);
+    let delta = currentAngle - lastPointerAngleRef.current;
+    
+    // Normalisation du passage de frontière -180° / +180°
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+
+    // VITESSE ADOUCIE : rotation plus calme, fluide et progressive
+    const ROTATION_SPEED_FACTOR = 0.35;
+    setRotationAngle(prev => (prev + delta * ROTATION_SPEED_FACTOR + 360) % 360);
+    lastPointerAngleRef.current = currentAngle;
+  };
+
+  const handlePointerUp = () => {
+    isRotatingRef.current = false;
+  };
+
+  // Clic sur une personne :
+  // - 1er clic : déploie ses liens et sa descendance sur le cercle suivant
+  // - 2ème clic sur la même personne : ouvre la modale avec sa vidéo, son prénom, son âge et le bouton univers
+  const handleNodeClick = (person: AffiliationPerson, gen: number) => {
+    const isAlreadySelected = selectedPath[gen - 1] === person.id;
+    if (isAlreadySelected) {
+      // 2ème clic sur la personne active : ouverture de la modale
+      setModalPerson(person);
     } else {
-      teaserVideoRef.current.play();
-      setIsTeaserPlaying(true);
+      // 1er clic : déploiement des cooptés sur l'anneau concentrique suivant
+      setSelectedPath(prev => {
+        const next = prev.slice(0, gen - 1);
+        next.push(person.id);
+        return next;
+      });
     }
   };
 
-  const toggleTeaserMute = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!teaserVideoRef.current) return;
-    teaserVideoRef.current.muted = !isTeaserMuted;
-    setIsTeaserMuted(!isTeaserMuted);
+  // Zoom à la molette de souris
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.05 : 0.05;
+    setZoomLevel(prev => Math.min(1.5, Math.max(0.5, prev + delta)));
   };
 
-  // Obtenir les coordonnées du parent sélectionné pour tracer les rayons vers l'extérieur
-  const activePioneerNode = selectedPioneer ? pioneerNodes.find(n => n.person.id === selectedPioneer.id) : null;
-  const activeGen2Node = selectedGen2 ? gen2Nodes.find(n => n.person.id === selectedGen2.id) : null;
-  const activeGen3Node = selectedGen3 ? gen3Nodes.find(n => n.person.id === selectedGen3.id) : null;
+  // Réinitialisation complète de la vue
+  const handleResetView = () => {
+    setRotationAngle(0);
+    setZoomLevel(1.0);
+    setPan({ x: 0, y: 0 });
+  };
+
+  // Écoute des touches et du relâchement global de la souris/toucher
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && modalPerson) {
+        setModalPerson(null);
+      }
+    };
+    const handleGlobalPointerUp = () => {
+      isRotatingRef.current = false;
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+    };
+  }, [modalPerson]);
 
   return (
     <div 
-      className="min-h-screen bg-white text-[#1C1917] pb-24 pt-2 px-2 sm:px-4 relative overflow-hidden select-none flex flex-col items-center justify-start cursor-grab active:cursor-grabbing"
+      id="astrolabe-explorer-screen"
+      ref={containerRef}
+      className="relative w-full h-[calc(100vh-3.5rem)] bg-[#FFFFFF] overflow-hidden select-none font-sans"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      onWheel={handleWheel}
+      style={{ cursor: isRotatingRef.current ? 'grabbing' : 'grab' }}
     >
-      
-      {/* ATMOSPHÈRE ÉPURÉE DU MANDALA : FOND BLANC LUMINEUX & AURAS DORÉES */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-85"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 50% 50%, rgba(200, 155, 60, 0.08) 0%, rgba(255, 255, 255, 0.5) 45%, rgba(245, 245, 244, 0.8) 100%),
-            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 0%, transparent 70%)
-          `
-        }}
-      />
 
-      {/* HEADER ÉPURÉ : SÉLECTEUR TÉLÉCOMMANDE DES SÉRIES */}
-      <div className="relative z-20 w-full max-w-4xl flex items-center justify-between border-b border-stone-200 pb-2 px-2 mb-1">
-        {/* SÉLECTEUR TÉLÉCOMMANDE AVEC LA PETITE TÉLÉ */}
-        <div className="flex items-center gap-1.5">
+      {/* 1. SÉLECTEUR DE SÉRIE SUPÉRIEUR GAUCHE (PILULE "TOUS" / SÉRIES) */}
+      <div className="absolute top-6 left-6 z-40">
+        <div className="relative">
           <button
-            onClick={() => setIsRemoteOpen(true)}
-            id="open-explorer-series-btn"
-            className="group flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 hover:border-stone-400 transition-all shadow-xs cursor-pointer"
+            id="series-filter-pill-button"
+            onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+            className="flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white/95 border border-[#E7E5E4] shadow-sm hover:border-[#C89B3C]/70 transition-all text-[#1C1917] font-medium text-xs sm:text-sm"
           >
-            <Tv className="w-3.5 h-3.5 text-[#C89B3C] group-hover:scale-110 transition-transform" />
-            <span className="font-sans text-xs sm:text-sm font-semibold text-[#1C1917]">
-              {selectedSeriesId 
-                ? currentSeries.seriesTitle 
-                : 'Tous'
-              }
+            <Tv className="w-4 h-4 text-[#C89B3C]" />
+            <span className="font-semibold">
+              {selectedFilter === 'ALL' 
+                ? 'Tous' 
+                : MATRIX_SERIES_DATA.find(s => s.seriesId === selectedFilter)?.seriesTitle || 'Tous'}
             </span>
-            {selectedSeriesId && (
-              <span className="w-2 h-2 rounded-full bg-[#C89B3C] animate-pulse" title="Filtre actif" />
-            )}
+            <X 
+              className="w-3.5 h-3.5 text-stone-400 hover:text-[#1C1917] transition-colors ml-0.5" 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelectFilter('ALL');
+              }}
+            />
           </button>
 
-          {(selectedSeriesId || lineageTrail.length > 0) && (
-            <button
-              onClick={() => {
-                setSelectedSeriesId(null);
-                setLineageTrail([]);
-                setRotationAngle(0);
-              }}
-              className="p-1.5 rounded-full hover:bg-[#E7E5E4]/50 text-[#8B6845] hover:text-[#1C1917] text-xs transition-colors cursor-pointer"
-              aria-label="Réinitialiser"
-            >
-              ✕
-            </button>
+          {/* Menu déroulant de sélection */}
+          {isFilterDropdownOpen && (
+            <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl border border-[#E7E5E4] shadow-xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+              <button
+                onClick={() => handleSelectFilter('ALL')}
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-colors ${
+                  selectedFilter === 'ALL'
+                    ? 'bg-[#C89B3C]/10 text-[#8B6845]'
+                    : 'text-[#1C1917] hover:bg-stone-50'
+                }`}
+              >
+                <span>Tous les pionniers</span>
+                {selectedFilter === 'ALL' && <div className="w-1.5 h-1.5 rounded-full bg-[#C89B3C]" />}
+              </button>
+
+              <div className="my-1 border-t border-stone-100" />
+
+              {MATRIX_SERIES_DATA.map((s) => (
+                <button
+                  key={s.seriesId}
+                  onClick={() => handleSelectFilter(s.seriesId)}
+                  className={`w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-between transition-colors ${
+                    selectedFilter === s.seriesId
+                      ? 'bg-[#C89B3C]/10 text-[#8B6845] font-semibold'
+                      : 'text-stone-700 hover:bg-stone-50'
+                  }`}
+                >
+                  <span className="truncate">{s.seriesTitle}</span>
+                  {selectedFilter === s.seriesId && <div className="w-1.5 h-1.5 rounded-full bg-[#C89B3C]" />}
+                </button>
+              ))}
+            </div>
           )}
         </div>
       </div>
 
-      {/* CURSEUR DE ZOOM VERTICAL INTUITIF FLOTTANT SUR LE CÔTÉ DROIT */}
-      <VerticalZoomSlider
-        zoomLevel={zoomLevel}
-        onZoomChange={setZoomLevel}
-        minZoom={0.65}
-        maxZoom={1.45}
-      />
-
-      {/* LE MANDALA VIVANT (CHAMP CIRCULAIRE TOURNANT AVEC LA MANETTE AU CENTRE) */}
-      <div 
-        ref={containerRef}
-        className="relative z-10 w-full max-w-[880px] aspect-square flex items-center justify-center transition-transform duration-100 ease-out origin-center my-auto"
-        style={{ transform: `scale(${zoomLevel})` }}
-      >
-        <svg 
-          viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`} 
-          className="w-full h-full overflow-visible select-none pointer-events-none"
-        >
-          <defs>
-            <filter id="mandalaGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-
-            <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="2" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
-          {/* 1. COURONNES CONCENTRIQUES DU MANDALA EN OR FIN & BISTRE DOUX */}
-          
-          {/* Cercle solaire doré entourant la manette centrale */}
-          <circle 
-            cx={CENTER_X} 
-            cy={CENTER_Y} 
-            r={46} 
-            fill="none" 
-            stroke="rgba(200, 155, 60, 0.35)" 
-            strokeWidth="1.2" 
-            strokeDasharray="2 3"
-          />
-
-          {/* 16 RAYONS SOLAIRES EN OR : LIENS ENTRE LA MANETTE CENTRALE ET LES 16 PHOTOS DU SOLEIL */}
-          {pioneerNodes.map((node) => {
-            const isHovered = hoveredPersonId === node.person.id;
-            const isSelected = selectedPioneer?.id === node.person.id;
-            const rad = (node.angleDeg * Math.PI) / 180;
-            const rStart = 46; // Naissance du rayon juste au bord de la manette centrale
-            const rEnd = R_ORBIT_PIONEERS - 20; // Arrivée juste devant le portrait du pionnier
-            const x1 = CENTER_X + rStart * Math.cos(rad);
-            const y1 = CENTER_Y + rStart * Math.sin(rad);
-            const x2 = CENTER_X + rEnd * Math.cos(rad);
-            const y2 = CENTER_Y + rEnd * Math.sin(rad);
-
-            return (
-              <g key={`sun-ray-${node.person.id}`} className="transition-all duration-500 ease-out">
-                {/* Rayon solaire rayonnant */}
-                <line
-                  x1={x1}
-                  y1={y1}
-                  x2={x2}
-                  y2={y2}
-                  stroke={
-                    isSelected
-                      ? '#C89B3C'
-                      : isHovered
-                      ? '#8B6845'
-                      : 'rgba(200, 155, 60, 0.40)'
-                  }
-                  strokeWidth={isSelected ? 2.5 : isHovered ? 2 : 1.2}
-                  strokeDasharray={isSelected ? undefined : '3 4'}
-                  strokeLinecap="round"
-                  filter={isSelected || isHovered ? 'url(#mandalaGlow)' : undefined}
-                />
-                {/* Petit éclat ou perle dorée à l'origine du rayon */}
-                <circle
-                  cx={x1}
-                  cy={y1}
-                  r={isSelected ? 2.5 : isHovered ? 2 : 1.2}
-                  fill={isSelected ? '#C89B3C' : isHovered ? '#8B6845' : 'rgba(200, 155, 60, 0.6)'}
-                />
-              </g>
-            );
-          })}
-
-          {/* Anneau 1 : Les 16 Pionniers (autour du centre) */}
-          <circle 
-            cx={CENTER_X} 
-            cy={CENTER_Y} 
-            r={R_ORBIT_PIONEERS} 
-            fill="none" 
-            stroke="rgba(139, 104, 69, 0.22)" 
-            strokeWidth="1.5" 
-            strokeDasharray="4 8"
-            className="opacity-90 transition-all duration-500 ease-out"
-          />
-
-          {/* Anneau 2 : Génération 2 (s'étend vers l'extérieur) */}
-          <circle 
-            cx={CENTER_X} 
-            cy={CENTER_Y} 
-            r={R_ORBIT_GEN2} 
-            fill="none" 
-            stroke={selectedPioneer ? 'rgba(200, 155, 60, 0.7)' : 'rgba(139, 104, 69, 0.14)'} 
-            strokeWidth={selectedPioneer ? "2.5" : "1"} 
-            strokeDasharray={selectedPioneer ? 'none' : '3 6'} 
-            filter={selectedPioneer ? 'url(#subtleGlow)' : undefined}
-            className="transition-all duration-500 ease-out"
-          />
-
-          {/* Anneau 3 : Génération 3 (s'étend encore plus loin) */}
-          <circle 
-            cx={CENTER_X} 
-            cy={CENTER_Y} 
-            r={R_ORBIT_GEN3} 
-            fill="none" 
-            stroke={selectedGen2 ? 'rgba(200, 155, 60, 0.8)' : 'rgba(139, 104, 69, 0.10)'} 
-            strokeWidth={selectedGen2 ? "2" : "1"} 
-            strokeDasharray={selectedGen2 ? 'none' : '2 5'} 
-            filter={selectedGen2 ? 'url(#subtleGlow)' : undefined}
-            className="transition-all duration-500 ease-out"
-          />
-
-          {/* Anneau 4 : Génération 4 (confins célestes) */}
-          <circle 
-            cx={CENTER_X} 
-            cy={CENTER_Y} 
-            r={R_ORBIT_GEN4} 
-            fill="none" 
-            stroke={selectedGen3 ? 'rgba(200, 155, 60, 0.85)' : 'rgba(139, 104, 69, 0.08)'} 
-            strokeWidth={selectedGen3 ? "1.5" : "1"} 
-            strokeDasharray={selectedGen3 ? 'none' : '2 4'} 
-            className="transition-all duration-500 ease-out"
-          />
-
-          {/* RAYONS DORÉS CONNECTANT LE PARENT À SES ENFANTS VERS L'EXTÉRIEUR */}
-          {/* Rayons Pionnier -> Gen 2 */}
-          {activePioneerNode && gen2Nodes.map((childNode) => (
-            <line
-              key={`ray-gen1-${childNode.person.id}`}
-              x1={activePioneerNode.x}
-              y1={activePioneerNode.y}
-              x2={childNode.x}
-              y2={childNode.y}
-              stroke="rgba(200, 155, 60, 0.65)"
-              strokeWidth="2"
-              strokeDasharray="4 4"
-            />
-          ))}
-
-          {/* Rayons Gen 2 -> Gen 3 */}
-          {activeGen2Node && gen3Nodes.map((childNode) => (
-            <line
-              key={`ray-gen2-${childNode.person.id}`}
-              x1={activeGen2Node.x}
-              y1={activeGen2Node.y}
-              x2={childNode.x}
-              y2={childNode.y}
-              stroke="rgba(200, 155, 60, 0.75)"
-              strokeWidth="1.5"
-              strokeDasharray="3 3"
-            />
-          ))}
-
-          {/* Rayons Gen 3 -> Gen 4 */}
-          {activeGen3Node && gen4Nodes.map((childNode) => (
-            <line
-              key={`ray-gen3-${childNode.person.id}`}
-              x1={activeGen3Node.x}
-              y1={activeGen3Node.y}
-              x2={childNode.x}
-              y2={childNode.y}
-              stroke="rgba(200, 155, 60, 0.85)"
-              strokeWidth="1.5"
-            />
-          ))}
-        </svg>
-
-        {/* --- LA MANETTE INTÉRIEURE AU CENTRE DU MANDALA --- */}
-        <CentralAstrolabeJoystick
-          rotationAngle={rotationAngle}
-          onRotateDelta={(delta) => setRotationAngle(prev => (prev + delta) % 360)}
-          onSetRotationAngle={(angle) => setRotationAngle(angle)}
-          onReset={() => {
-            setRotationAngle(0);
-            setLineageTrail([]);
-          }}
+      {/* 2. SLIDER VERTICAL DE ZOOM FLOTTANT À DROITE */}
+      <div className="absolute right-6 top-1/2 -translate-y-1/2 z-40">
+        <VerticalZoomSlider 
+          zoomLevel={zoomLevel} 
+          onZoomChange={setZoomLevel}
+          minZoom={0.5}
+          maxZoom={1.5}
         />
-
-        {/* --- NŒUDS POSITIONNÉS SUR LE MANDALA (UNIQUEMENT VISAGES & NUMÉROS DE LIAISON) --- */}
-
-        {/* 1. COURONNE 1 : LES PIONNIERS (Autour de la manette centrale) */}
-        {pioneerNodes.map((node) => {
-          const isSelected = selectedPioneer?.id === node.person.id;
-          const isHovered = hoveredPersonId === node.person.id;
-          const hasLineage = node.person.invitedPeople && node.person.invitedPeople.length > 0;
-          const totalDesc = hasLineage ? countDescendants(node.person) : 0;
-
-          return (
-            <div
-              key={node.person.id}
-              onClick={() => handleNodeClick(node.person, 0)}
-              onMouseEnter={() => setHoveredPersonId(node.person.id)}
-              onMouseLeave={() => setHoveredPersonId(null)}
-              className="mandala-node-target absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group pointer-events-auto transition-all duration-500 ease-out z-20"
-              style={{
-                left: `${(node.x / SVG_SIZE) * 100}%`,
-                top: `${(node.y / SVG_SIZE) * 100}%`,
-              }}
-              title={node.person.name}
-              id={`mandala-node-${node.person.id}`}
-            >
-              <div className="relative">
-                {/* Aura rayonnante autour du portrait */}
-                <div className={`absolute -inset-1.5 rounded-full transition-all duration-300 ${
-                  isSelected
-                    ? 'bg-[#C89B3C] opacity-90 blur-md scale-115 animate-pulse'
-                    : isHovered
-                    ? 'bg-[#C89B3C]/60 opacity-80 blur-xs scale-105'
-                    : 'opacity-0 group-hover:opacity-100 group-hover:bg-[#C89B3C]/40'
-                }`} />
-
-                {/* Avatar du pionnier */}
-                <img
-                  src={node.person.photoUrl}
-                  alt={node.person.name}
-                  className={`w-8.5 h-8.5 sm:w-9 sm:h-9 md:w-9.5 md:h-9.5 rounded-full object-cover border-2 transition-all duration-300 transform group-hover:scale-110 relative z-10 shadow-md ${
-                    isSelected
-                      ? 'border-[#C89B3C] shadow-[0_0_18px_rgba(200,155,60,0.8)] scale-105 ring-2 ring-[#C89B3C]/40'
-                      : 'border-[#E7E5E4] group-hover:border-[#C89B3C]'
-                  }`}
-                  referrerPolicy="no-referrer"
-                />
-
-                {/* Numéro de liaison */}
-                {hasLineage && (
-                  <span className={`absolute -bottom-0.5 -right-0.5 z-20 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7.5px] font-bold border transition-all ${
-                    isSelected 
-                      ? 'bg-[#C89B3C] text-white border-white shadow-md' 
-                      : 'bg-[#1C1917] text-[#FFFFFF] border-white group-hover:bg-[#C89B3C]'
-                  }`}>
-                    {totalDesc}
-                  </span>
-                )}
-              </div>
-
-              {/* Au survol : uniquement prénom et nom de la personne */}
-              {isHovered && (
-                <div className="absolute -top-7 px-2.5 py-0.5 rounded-full bg-[#1C1917] text-[#FFFFFF] text-[11px] font-sans font-medium whitespace-nowrap shadow-md z-30 pointer-events-none animate-in fade-in duration-150">
-                  {node.person.name}
-                </div>
-              )}
-            </div>
-          );
-        })}
-
-        {/* 2. COURONNE 2 : GÉNÉRATION 2 */}
-        {gen2Nodes.map((node) => {
-          const isSelected = selectedGen2?.id === node.person.id;
-          const isHovered = hoveredPersonId === node.person.id;
-          const hasLineage = node.person.invitedPeople && node.person.invitedPeople.length > 0;
-          const totalDesc = hasLineage ? countDescendants(node.person) : 0;
-
-          return (
-            <div
-              key={node.person.id}
-              onClick={() => handleNodeClick(node.person, 1)}
-              onMouseEnter={() => setHoveredPersonId(node.person.id)}
-              onMouseLeave={() => setHoveredPersonId(null)}
-              className="mandala-node-target absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group pointer-events-auto transition-all duration-500 ease-out z-20"
-              style={{
-                left: `${(node.x / SVG_SIZE) * 100}%`,
-                top: `${(node.y / SVG_SIZE) * 100}%`,
-              }}
-              title={node.person.name}
-              id={`mandala-node-gen2-${node.person.id}`}
-            >
-              <div className="relative">
-                <div className={`absolute -inset-1.5 rounded-full transition-all ${
-                  isSelected 
-                    ? 'bg-[#C89B3C] opacity-90 blur-sm scale-110 animate-pulse' 
-                    : isHovered
-                    ? 'bg-[#C89B3C]/70 blur-xs'
-                    : 'opacity-0 group-hover:opacity-100 group-hover:bg-[#C89B3C]/40'
-                }`} />
-                <img
-                  src={node.person.photoUrl}
-                  alt={node.person.name}
-                  className={`w-7.5 h-7.5 sm:w-8 sm:h-8 md:w-8.5 md:h-8.5 rounded-full object-cover border-2 transition-all transform group-hover:scale-110 relative z-10 shadow-sm ${
-                    isSelected ? 'border-[#C89B3C] shadow-[0_0_16px_rgba(200,155,60,0.7)] scale-105' : 'border-[#E7E5E4] group-hover:border-[#C89B3C]'
-                  }`}
-                  referrerPolicy="no-referrer"
-                />
-                {hasLineage && (
-                  <span className="absolute -bottom-0.5 -right-0.5 z-20 w-3 h-3 rounded-full bg-[#C89B3C] text-white text-[7px] font-bold flex items-center justify-center border border-white">
-                    {totalDesc}
-                  </span>
-                )}
-              </div>
-
-              {/* Au survol : uniquement prénom et nom de la personne */}
-              {isHovered && (
-                <div className="absolute -top-7 px-2.5 py-0.5 rounded-full bg-[#1C1917] text-[#FFFFFF] text-[11px] font-sans font-medium whitespace-nowrap shadow-md z-30 pointer-events-none animate-in fade-in duration-150">
-                  {node.person.name}
-                </div>
-              )}
-            </div>
-          );
-        })}
-
-        {/* 3. COURONNE 3 : GÉNÉRATION 3 */}
-        {gen3Nodes.map((node) => {
-          const isSelected = selectedGen3?.id === node.person.id;
-          const isHovered = hoveredPersonId === node.person.id;
-          const hasLineage = node.person.invitedPeople && node.person.invitedPeople.length > 0;
-          const totalDesc = hasLineage ? countDescendants(node.person) : 0;
-
-          return (
-            <div
-              key={node.person.id}
-              onClick={() => handleNodeClick(node.person, 2)}
-              onMouseEnter={() => setHoveredPersonId(node.person.id)}
-              onMouseLeave={() => setHoveredPersonId(null)}
-              className="mandala-node-target absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group pointer-events-auto transition-all duration-500 ease-out z-20"
-              style={{
-                left: `${(node.x / SVG_SIZE) * 100}%`,
-                top: `${(node.y / SVG_SIZE) * 100}%`,
-              }}
-              title={node.person.name}
-              id={`mandala-node-gen3-${node.person.id}`}
-            >
-              <div className="relative">
-                <div className={`absolute -inset-1.5 rounded-full transition-all ${
-                  isSelected 
-                    ? 'bg-[#C89B3C] opacity-90 blur-sm scale-110' 
-                    : isHovered
-                    ? 'bg-[#C89B3C]/70 blur-xs'
-                    : 'opacity-0'
-                }`} />
-                <img
-                  src={node.person.photoUrl}
-                  alt={node.person.name}
-                  className={`w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full object-cover border-2 transition-all transform group-hover:scale-110 relative z-10 shadow-xs ${
-                    isSelected ? 'border-[#C89B3C] shadow-[0_0_12px_rgba(200,155,60,0.6)]' : 'border-[#E7E5E4] group-hover:border-[#C89B3C]'
-                  }`}
-                  referrerPolicy="no-referrer"
-                />
-                {hasLineage && (
-                  <span className="absolute -bottom-0.5 -right-0.5 z-20 w-2.5 h-2.5 rounded-full bg-[#C89B3C] text-white text-[6.5px] font-bold flex items-center justify-center border border-white">
-                    {totalDesc}
-                  </span>
-                )}
-              </div>
-
-              {/* Au survol : uniquement prénom et nom de la personne */}
-              {isHovered && (
-                <div className="absolute -top-7 px-2.5 py-0.5 rounded-full bg-[#1C1917] text-[#FFFFFF] text-[11px] font-sans font-medium whitespace-nowrap shadow-md z-30 pointer-events-none animate-in fade-in duration-150">
-                  {node.person.name}
-                </div>
-              )}
-            </div>
-          );
-        })}
-
-        {/* 4. COURONNE 4 : GÉNÉRATION 4 */}
-        {gen4Nodes.map((node) => {
-          const isSelected = selectedGen4?.id === node.person.id;
-          const isHovered = hoveredPersonId === node.person.id;
-          const hasLineage = node.person.invitedPeople && node.person.invitedPeople.length > 0;
-
-          return (
-            <div
-              key={node.person.id}
-              onClick={() => handleNodeClick(node.person, 3)}
-              onMouseEnter={() => setHoveredPersonId(node.person.id)}
-              onMouseLeave={() => setHoveredPersonId(null)}
-              className="mandala-node-target absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group pointer-events-auto transition-all duration-500 ease-out z-20"
-              style={{
-                left: `${(node.x / SVG_SIZE) * 100}%`,
-                top: `${(node.y / SVG_SIZE) * 100}%`,
-              }}
-              title={node.person.name}
-              id={`mandala-node-gen4-${node.person.id}`}
-            >
-              <div className="relative">
-                <div className={`absolute -inset-1 rounded-full ${isSelected ? 'bg-[#C89B3C] blur-xs scale-110' : ''}`} />
-                <img
-                  src={node.person.photoUrl}
-                  alt={node.person.name}
-                  className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full object-cover border transition-transform relative z-10 ${
-                    isSelected ? 'border-[#C89B3C] ring-2 ring-[#C89B3C]/60 scale-110' : 'border-[#E7E5E4] group-hover:border-[#C89B3C]'
-                  }`}
-                  referrerPolicy="no-referrer"
-                />
-                {hasLineage && (
-                  <span className="absolute -bottom-0.5 -right-0.5 z-20 w-2 h-2 rounded-full bg-[#C89B3C] text-white text-[6px] font-bold flex items-center justify-center">
-                    +
-                  </span>
-                )}
-              </div>
-
-              {/* Au survol : uniquement prénom et nom de la personne */}
-              {isHovered && (
-                <div className="absolute -top-7 px-2.5 py-0.5 rounded-full bg-[#1C1917] text-[#FFFFFF] text-[11px] font-sans font-medium whitespace-nowrap shadow-md z-30 pointer-events-none animate-in fade-in duration-150">
-                  {node.person.name}
-                </div>
-              )}
-            </div>
-          );
-        })}
-
-        {/* 5. COURONNE 5 : GÉNÉRATION 5 */}
-        {gen5Nodes.map((node) => {
-          const isHovered = hoveredPersonId === node.person.id;
-          return (
-            <div
-              key={node.person.id}
-              onClick={() => handleNodeClick(node.person, 4)}
-              onMouseEnter={() => setHoveredPersonId(node.person.id)}
-              onMouseLeave={() => setHoveredPersonId(null)}
-              className="mandala-node-target absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-pointer group pointer-events-auto transition-all duration-500 ease-out z-20"
-              style={{
-                left: `${(node.x / SVG_SIZE) * 100}%`,
-                top: `${(node.y / SVG_SIZE) * 100}%`,
-              }}
-              title={node.person.name}
-              id={`mandala-node-gen5-${node.person.id}`}
-            >
-              <img
-                src={node.person.photoUrl}
-                alt={node.person.name}
-                className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full object-cover border border-[#C89B3C] group-hover:scale-125 transition-transform"
-                referrerPolicy="no-referrer"
-              />
-              {isHovered && (
-                <div className="absolute -top-7 px-2.5 py-0.5 rounded-full bg-[#1C1917] text-[#FFFFFF] text-[11px] font-sans font-medium whitespace-nowrap shadow-md z-30 pointer-events-none animate-in fade-in duration-150">
-                  {node.person.name}
-                </div>
-              )}
-            </div>
-          );
-        })}
-
       </div>
 
-      {/* SÉLECTEUR MODAL TÉLÉCOMMANDE DES SÉRIES (EXACTEMENT COMME SUR DUO) */}
-      <RemoteControlModal
-        isOpen={isRemoteOpen}
-        onClose={() => setIsRemoteOpen(false)}
-        selectedDocId={selectedSeriesId}
-        onSelectDoc={(docId) => {
-          setSelectedSeriesId(docId);
-          setLineageTrail([]);
-          setRotationAngle(0);
+      {/* 3. SCÈNE CENTRALE : PLANÉTAIRE & CONSTELLATIONS CONCENTRIQUES */}
+      <div 
+        className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none"
+        style={{
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoomLevel})`
         }}
-      />
-
-      {/* MODALE CINÉMATOGRAPHIQUE AU 2E CLIC : VIDÉO DE PRÉSENTATION & ENTRER DANS L'UNIVERS */}
-      {activeTeaserPerson && (
+      >
+        {/* Rotation générale appliquée à l'astrolabe */}
         <div 
-          onClick={() => setActiveTeaserPerson(null)}
-          className="fixed inset-0 z-50 bg-[#1C1917]/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          className="relative w-0 h-0 transition-transform duration-75 ease-out"
+          style={{
+            transform: `rotate(${rotationAngle}deg)`
+          }}
+        >
+          <svg 
+            className="overflow-visible absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            width="1400"
+            height="1400"
+            viewBox="-700 -700 1400 1400"
+          >
+            <defs>
+              {/* Halos dorés d'aura lumineuse pour les profils actifs */}
+              <radialGradient id="nodeActiveGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#C89B3C" stopOpacity="0.6" />
+                <stop offset="45%" stopColor="#C89B3C" stopOpacity="0.25" />
+                <stop offset="75%" stopColor="#C89B3C" stopOpacity="0.08" />
+                <stop offset="100%" stopColor="#C89B3C" stopOpacity="0" />
+              </radialGradient>
+
+              {/* ClipPaths circulaires pour chaque protagoniste affiché */}
+              {nodesByGeneration.flatMap(nodes => nodes).map(node => (
+                <clipPath key={`clip-${node.person.id}`} id={`clip-${node.person.id}`}>
+                  <circle cx={node.x} cy={node.y} r={node.gen === 1 ? 21 : 19} />
+                </clipPath>
+              ))}
+            </defs>
+
+            {/* A. CERCLES ORBITAUX CONCENTRIQUES (RINGS 1 À 5) */}
+            {ORBIT_RADII.map((radius, idx) => {
+              const ringGen = idx + 1;
+              const isDeployed = ringGen === 1 || ringGen <= nodesByGeneration.length;
+              return (
+                <g key={`orbit-${idx}`}>
+                  {/* Guide astronomique pointillé permanent */}
+                  <circle 
+                    cx="0" 
+                    cy="0" 
+                    r={radius} 
+                    fill="none" 
+                    stroke="#C89B3C" 
+                    strokeWidth="1" 
+                    strokeDasharray="3 4" 
+                    opacity="0.25" 
+                  />
+
+                  {/* Anneau doré mis en valeur lors du déploiement orbital */}
+                  {isDeployed && (
+                    <circle 
+                      cx="0" 
+                      cy="0" 
+                      r={radius} 
+                      fill="none" 
+                      stroke="#C89B3C" 
+                      strokeWidth={ringGen === 1 ? '1.5' : '1.8'} 
+                      opacity={ringGen === 1 ? '0.7' : '0.9'} 
+                    />
+                  )}
+                </g>
+              );
+            })}
+
+            {/* B. RAYONS POINTILLÉS CENTRAUX (CENTRE -> 16 PIONNIERS) */}
+            {nodesByGeneration[0]?.map((pioneerNode) => (
+              <line 
+                key={`central-ray-${pioneerNode.person.id}`}
+                x1="0" 
+                y1="0" 
+                x2={pioneerNode.x} 
+                y2={pioneerNode.y} 
+                stroke="#C89B3C" 
+                strokeWidth="1.2" 
+                strokeDasharray="3 4" 
+                opacity="0.35" 
+              />
+            ))}
+
+            {/* C. LIENS DE FILIATION ENTRE GÉNÉRATIONS (PARENT -> ENFANTS) */}
+            {connectingLinks.map((link) => (
+              <line 
+                key={link.id}
+                x1={link.from.x} 
+                y1={link.from.y} 
+                x2={link.to.x} 
+                y2={link.to.y} 
+                stroke="#C89B3C" 
+                strokeWidth={link.isActive ? '1.8' : '1.2'} 
+                strokeDasharray={link.isActive ? 'none' : '3 3'} 
+                opacity={link.isActive ? '0.95' : '0.6'} 
+              />
+            ))}
+
+            {/* D. RENDU DES NŒUDS AVATAR AVEC CONTRE-ROTATION (TÊTE TOUJOURS EN HAUT) */}
+            {nodesByGeneration.flatMap((nodes) => 
+              nodes.map((node) => {
+                const radius = node.gen === 1 ? 21 : 19;
+                const isSelected = selectedPath.includes(node.person.id);
+
+                return (
+                  <g 
+                    key={`node-${node.person.id}`}
+                    id={`node-${node.person.id}`}
+                    className="group cursor-pointer"
+                    style={{ pointerEvents: 'auto' }}
+                    // CONTRE-ROTATION CRUCIALE : annule la rotation de l'astrolabe autour du centre du nœud
+                    // afin que la tête de la personne et le chiffre restent toujours orientés vers le haut
+                    transform={`rotate(${-rotationAngle}, ${node.x}, ${node.y})`}
+                    onPointerDown={(e) => {
+                      // Permet de tourner la roue même en commençant le glisser sur une vignette
+                      pointerStartPosRef.current = { x: e.clientX, y: e.clientY };
+                      hasDraggedRef.current = false;
+                      isRotatingRef.current = true;
+                      lastPointerAngleRef.current = getAngleFromCenter(e.clientX, e.clientY);
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (hasDraggedRef.current) return;
+                      handleNodeClick(node.person, node.gen);
+                    }}
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
+                      setModalPerson(node.person);
+                    }}
+                  >
+                    {/* Zone de détection tactile & souris stable : évite tout décrochage ou vibration au bord */}
+                    <circle 
+                      cx={node.x} 
+                      cy={node.y} 
+                      r={radius + 7} 
+                      fill="transparent" 
+                      pointerEvents="all"
+                    />
+
+                    {/* HALO LUMINEUX DORÉ POUR LE NŒUD ACTIF */}
+                    {isSelected && (
+                      <circle 
+                        cx={node.x} 
+                        cy={node.y} 
+                        r={radius + 24} 
+                        fill="url(#nodeActiveGlow)" 
+                        pointerEvents="none"
+                      />
+                    )}
+
+                    {/* Anneau délicat doré au survol (transition d'opacité douce et parfaitement stable) */}
+                    <circle 
+                      cx={node.x} 
+                      cy={node.y} 
+                      r={radius + 3.5} 
+                      fill="none" 
+                      stroke="#C89B3C" 
+                      strokeWidth="2" 
+                      strokeDasharray="3 3"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      pointerEvents="none"
+                    />
+
+                    {/* Disque blanc de fond */}
+                    <circle 
+                      cx={node.x} 
+                      cy={node.y} 
+                      r={radius + 1.5} 
+                      fill="#FFFFFF" 
+                      stroke={isSelected ? '#C89B3C' : '#E7E5E4'} 
+                      strokeWidth={isSelected ? '2.5' : '1.5'} 
+                      filter="drop-shadow(0 2px 5px rgba(0,0,0,0.15))"
+                      pointerEvents="none"
+                    />
+
+                    {/* Photo de profil du protagoniste (toujours la tête en haut grâce à la contre-rotation) */}
+                    <image 
+                      href={node.person.photoUrl} 
+                      x={node.x - radius} 
+                      y={node.y - radius} 
+                      width={radius * 2} 
+                      height={radius * 2} 
+                      clipPath={`url(#clip-${node.person.id})`}
+                      preserveAspectRatio="xMidYMid slice"
+                      pointerEvents="none"
+                    />
+
+                    {/* Cerclage de finition */}
+                    <circle 
+                      cx={node.x} 
+                      cy={node.y} 
+                      r={radius} 
+                      fill="none" 
+                      stroke={isSelected ? '#C89B3C' : '#FFFFFF'} 
+                      strokeWidth={isSelected ? '2' : '1.5'} 
+                      pointerEvents="none"
+                    />
+
+                    {/* PASTILLE DE COMPTEUR : uniquement les personnes cooptées dans sa descendance */}
+                    {node.descendantCount > 0 && (
+                      <g transform={`translate(${node.x + radius * 0.65}, ${node.y + radius * 0.65})`} pointerEvents="none">
+                        <circle 
+                          cx="0" 
+                          cy="0" 
+                          r="8" 
+                          fill={isSelected ? '#C89B3C' : '#1C1917'} 
+                          stroke="#FFFFFF" 
+                          strokeWidth="1.2" 
+                        />
+                        <text 
+                          x="0" 
+                          y="3" 
+                          textAnchor="middle" 
+                          fill="#FFFFFF" 
+                          fontSize="9" 
+                          fontWeight="bold"
+                          fontFamily="sans-serif"
+                        >
+                          {node.descendantCount}
+                        </text>
+                      </g>
+                    )}
+                  </g>
+                );
+              })
+            )}
+          </svg>
+
+          {/* JOYSTICK CENTRAL FLUIDE DE L'ASTROLABE */}
+          <CentralAstrolabeJoystick 
+            rotationAngle={rotationAngle}
+            onRotateDelta={(delta) => setRotationAngle(prev => (prev + delta + 360) % 360)}
+            onSetRotationAngle={setRotationAngle}
+            onReset={handleResetView}
+          />
+        </div>
+      </div>
+
+      {/* 4. MODALE DE PRÉSENTATION DU PROTAGONISTE (OUVERTE AU 2ÈME CLIC SUR LA PERSONNE) */}
+      {/* Reproduit fidèlement le style des fiches du haut (DuoFeed) : vidéo, prénom, âge en dessous, petit bouton univers */}
+      {modalPerson && (
+        <div 
+          id="person-detail-modal-backdrop"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setModalPerson(null)}
         >
           <div 
+            id="person-detail-modal"
+            className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-700/60 flex flex-col justify-end w-full max-w-sm sm:max-w-md aspect-[9/14] sm:aspect-[9/13] max-h-[85vh] animate-in zoom-in-95 duration-200 select-none"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm sm:max-w-md bg-[#FFFFFF] rounded-3xl border border-[#C89B3C]/40 overflow-hidden shadow-2xl relative flex flex-col animate-in zoom-in-95 duration-200 text-[#1C1917]"
           >
-            {/* Lecteur vidéo vertical */}
-            <div className="relative aspect-[9/13] w-full bg-[#181816] overflow-hidden group">
-              <video
-                ref={teaserVideoRef}
-                src={activeTeaserPerson.teaserVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
-                poster={activeTeaserPerson.photoUrl}
-                className="w-full h-full object-cover"
-                loop
+            {/* 1. Média de présentation : vidéo en lecture OU photo */}
+            {modalPerson.teaserVideoUrl ? (
+              <video 
+                src={modalPerson.teaserVideoUrl} 
+                poster={modalPerson.photoUrl}
+                controls
                 playsInline
                 autoPlay
-                muted={isTeaserMuted}
-                onClick={toggleTeaserPlay}
+                className="absolute inset-0 w-full h-full object-cover"
               />
+            ) : (
+              <img 
+                src={modalPerson.photoUrl} 
+                alt={modalPerson.name} 
+                referrerPolicy="no-referrer"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            )}
 
-              <div className="absolute inset-0 bg-gradient-to-t from-[#181816] via-transparent to-[#181816]/30 pointer-events-none" />
+            {/* Dégradé supérieur et inférieur identique aux cartes du haut */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/60 pointer-events-none" />
 
-              {/* Bouton Fermer */}
-              <button
-                onClick={() => setActiveTeaserPerson(null)}
-                className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-[#1C1917]/70 hover:bg-[#1C1917] text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer backdrop-blur-xs"
+            {/* Barre supérieure : Bouton Fermer (sans nom de série) */}
+            <div className="absolute top-4 right-4 z-20 flex items-center justify-end pointer-events-auto">
+              <button 
+                id="btn-close-modal"
+                onClick={() => setModalPerson(null)}
+                className="w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 text-stone-300 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-colors cursor-pointer"
                 title="Fermer"
               >
                 <X className="w-4 h-4" />
               </button>
-
-              {/* Bouton Son */}
-              <button
-                onClick={toggleTeaserMute}
-                className="absolute top-4 left-4 z-20 w-9 h-9 rounded-full bg-[#1C1917]/70 hover:bg-[#1C1917] text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer backdrop-blur-xs"
-                title={isTeaserMuted ? 'Activer le son' : 'Couper le son'}
-              >
-                {isTeaserMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-[#C89B3C]" />}
-              </button>
-
-              {/* Play/Pause toggle central */}
-              <div 
-                onClick={toggleTeaserPlay}
-                className={`absolute inset-0 flex items-center justify-center transition-opacity cursor-pointer ${
-                  isTeaserPlaying ? 'opacity-0 hover:opacity-100' : 'opacity-100 bg-black/40'
-                }`}
-              >
-                <div className="w-16 h-16 rounded-full bg-black/60 border border-white/30 flex items-center justify-center text-white backdrop-blur-xs">
-                  {isTeaserPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-0.5" />}
-                </div>
-              </div>
-
-              {/* Bas de vidéo : Prénom, Territoire & citation */}
-              <div className="absolute bottom-0 inset-x-0 p-5 z-10 space-y-2 pointer-events-none">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{activeTeaserPerson.flag}</span>
-                  {activeTeaserPerson.universeTag && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#C89B3C] bg-black/60 px-2.5 py-0.5 rounded-full border border-[#C89B3C]/40">
-                      {activeTeaserPerson.universeTag}
-                    </span>
-                  )}
-                  <span className="text-[11px] text-white/90">
-                    {activeTeaserPerson.territory}
-                  </span>
-                </div>
-
-                <h3 className="font-editorial text-xl sm:text-2xl font-bold text-white leading-tight drop-shadow-md">
-                  {activeTeaserPerson.name}
-                </h3>
-
-                {activeTeaserPerson.teaserPitch && (
-                  <p className="text-xs sm:text-sm text-white/95 font-light italic leading-relaxed drop-shadow bg-black/50 p-2.5 rounded-xl border border-white/15">
-                    {activeTeaserPerson.teaserPitch}
-                  </p>
-                )}
-              </div>
             </div>
 
-            {/* Pied de carte : Découvrir son univers */}
-            <div className="p-4 bg-[#F9F5EC] border-t border-[#E7E5E4] flex items-center justify-between gap-3">
-              <button
-                onClick={() => setActiveTeaserPerson(null)}
-                className="px-4 py-2.5 rounded-full bg-white hover:bg-[#E7E5E4]/50 text-[#68655D] hover:text-[#1C1917] border border-[#E7E5E4] text-xs font-medium transition-colors cursor-pointer"
-              >
-                Fermer
-              </button>
+            {/* Barre inférieure : Prénom, âge en dessous, et petit bouton bonhomme */}
+            <div className="relative z-20 p-5 sm:p-6 flex items-center justify-between pointer-events-auto bg-gradient-to-t from-black/95 via-black/60 to-transparent">
+              <div className="text-left font-sans">
+                {/* Le prénom */}
+                <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                  {modalPerson.firstName || modalPerson.name.split(' ')[0]}
+                </h3>
+                {/* L'âge en dessous */}
+                <p className="text-xs sm:text-sm text-stone-300 mt-0.5 font-medium">
+                  {modalPerson.age ? `${modalPerson.age} ans` : '46 ans'}
+                </p>
+              </div>
 
+              {/* Le petit bouton avec l'icône du bonhomme */}
               <button
-                onClick={() => {
-                  const targetId = activeTeaserPerson.protagonistIdRef || 'koffi-tisserand';
-                  setActiveTeaserPerson(null);
-                  onNavigate({
-                    type: 'protagonist_profile',
-                    protagonistId: targetId
+                id={`modal-btn-universe-${modalPerson.id}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setModalPerson(null);
+                  onNavigate({ 
+                    type: 'protagonist_profile', 
+                    protagonistId: modalPerson.protagonistIdRef || modalPerson.id 
                   });
                 }}
-                className="flex-1 py-3 px-5 rounded-full bg-[#C89B3C] hover:bg-[#B58B35] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer transform hover:scale-[1.02]"
-                id="btn-explore-universe"
+                className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
+                title="Son univers"
               >
-                <span>Découvrir son univers</span>
-                <ArrowRight className="w-4 h-4" />
+                <User className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -960,3 +689,4 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ onNavigate }) =>
     </div>
   );
 };
+

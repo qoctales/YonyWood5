@@ -37,14 +37,24 @@ export const ReviewSystemScreen: React.FC<ReviewSystemScreenProps> = ({ onNaviga
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
-      {/* Back button */}
-      <button
-        onClick={() => onNavigate({ type: 'home' })}
-        className="text-xs font-semibold text-[#8B6845] hover:text-[#1C1917] flex items-center gap-1.5"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Retour à la forêt</span>
-      </button>
+      {/* Back button and Back-office link */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => onNavigate({ type: 'home' })}
+          className="text-xs font-semibold text-[#8B6845] hover:text-[#1C1917] flex items-center gap-1.5"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Retour à la forêt</span>
+        </button>
+
+        <button
+          onClick={() => onNavigate({ type: 'editorial_backoffice' })}
+          className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors flex items-center gap-1.5"
+        >
+          <ShieldCheck className="w-3.5 h-3.5 text-[#C89B3C]" />
+          <span>Back-Office Éditorial</span>
+        </button>
+      </div>
 
       {/* Header Banner */}
       <div className="bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 sm:p-8 shadow-card space-y-3 text-center max-w-3xl mx-auto">

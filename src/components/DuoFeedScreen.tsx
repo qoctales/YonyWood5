@@ -6,7 +6,6 @@ import {
   Tv, 
   Shuffle, 
   User, 
-  Link2,
   EyeOff,
   RotateCcw,
   Sparkles,
@@ -82,6 +81,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
   // Handlers for next / prev with direction tracking
   const handleNext = () => {
+    dragX.set(0);
     setSwipeDirection('next');
     setIsQuestionRevealed(false);
     setActiveProtagonist('A');
@@ -89,6 +89,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   };
 
   const handlePrev = () => {
+    dragX.set(0);
     setSwipeDirection('prev');
     setIsQuestionRevealed(false);
     setActiveProtagonist('A');
@@ -97,6 +98,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
   const handleShuffle = () => {
     if (filteredDuos.length <= 1) return;
+    dragX.set(0);
     setSwipeDirection('next');
     setIsQuestionRevealed(false);
     setActiveProtagonist('A');
@@ -288,7 +290,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
         {/* Conteneur Draggable avec Motion (Permanent Swipe) */}
         <div className="w-full flex justify-center items-center relative overflow-visible">
           
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={`duo-${currentDuo.id}-${safeIndex}`}
               drag="x"
@@ -309,17 +311,15 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                 }
               }}
               initial={{ 
-                opacity: 0, 
-                scale: 0.95,
-                x: swipeDirection === 'prev' ? -80 : swipeDirection === 'next' ? 80 : 0 
+                opacity: 0,
               }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
+              animate={{ 
+                opacity: 1,
+              }}
               exit={{ 
-                opacity: 0, 
-                scale: 0.92,
-                x: swipeDirection === 'prev' ? 120 : -120 
+                opacity: 0,
               }}
-              transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+              transition={{ duration: 0.32, ease: 'easeInOut' }}
               className="cursor-grab active:cursor-grabbing w-full max-w-4xl relative"
             >
               
@@ -408,7 +408,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         className="px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
                         title="Basculer vers l'autre univers du duo"
                       >
-                        <Link2 className="w-3 h-3 text-[#C89B3C]" />
+                        <span className="font-mono font-black text-[10px] text-[#C89B3C] tracking-wider select-none">&lt; &gt;</span>
                         <span>{activeProtagonist === 'A' ? pB.name.split(' ')[0] : pA.name.split(' ')[0]}</span>
                       </button>
                     </div>
@@ -467,17 +467,17 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         </div>
                       </div>
 
-                      {/* Son univers button */}
+                      {/* Son univers button (icône bonhomme seule) */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onNavigate({ type: 'protagonist_profile', protagonistId: currentP.id });
                         }}
-                        className="px-3.5 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-xs font-medium transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
+                        className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
                         title="Explorer son univers"
+                        id={`open-universe-${currentP.id}`}
                       >
-                        <User className="w-3.5 h-3.5" />
-                        <span>Univers</span>
+                        <User className="w-4 h-4" />
                       </button>
                     </div>
 
@@ -517,9 +517,9 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                     onClick={() => setActiveProtagonist(prev => prev === 'A' ? 'B' : 'A')}
                     id="mobile-btn-toggle-protagonist"
                     title="Basculer vers l'autre protagoniste"
-                    className="w-11 h-11 rounded-full bg-white hover:bg-stone-100 text-[#C89B3C] border border-stone-200 shadow-md flex items-center justify-center transition-all transform active:scale-90 cursor-pointer"
+                    className="w-11 h-11 rounded-full bg-white hover:bg-stone-100 text-[#C89B3C] border border-stone-200 shadow-md flex items-center justify-center transition-all transform active:scale-90 cursor-pointer font-mono font-black text-xs tracking-wider select-none"
                   >
-                    <Link2 className="w-4 h-4" />
+                    &lt; &gt;
                   </button>
 
                   {/* Suivant */}
@@ -599,20 +599,22 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                             e.stopPropagation();
                             onNavigate({ type: 'protagonist_profile', protagonistId: pA.id });
                           }}
-                          className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-medium backdrop-blur-md transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
+                          className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
                           title="Son univers"
                           id={`open-universe-${pA.id}`}
                         >
-                          <User className="w-3.5 h-3.5" />
-                          <span>Univers</span>
+                          <User className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
 
-                    {/* LIEN CENTRAL MIROIR ÉPURÉ */}
+                    {/* SYMBOLE CENTRAL DUO FACE-À-FACE : < > */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center pointer-events-none">
-                      <div className="w-12 h-12 rounded-full bg-[#1C1917] text-white border-2 border-white shadow-2xl flex items-center justify-center pointer-events-auto transition-transform hover:scale-110">
-                        <Link2 className="w-5 h-5 text-[#C89B3C]" />
+                      <div 
+                        className="w-12 h-12 rounded-full bg-[#1C1917] text-[#C89B3C] border-2 border-white shadow-2xl flex items-center justify-center pointer-events-auto transition-transform hover:scale-110 select-none font-mono font-black text-sm tracking-wider"
+                        title="Duo face-à-face < >"
+                      >
+                        &lt; &gt;
                       </div>
                     </div>
 
@@ -672,12 +674,11 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                             e.stopPropagation();
                             onNavigate({ type: 'protagonist_profile', protagonistId: pB.id });
                           }}
-                          className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-medium backdrop-blur-md transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
+                          className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
                           title="Son univers"
                           id={`open-universe-${pB.id}`}
                         >
-                          <User className="w-3.5 h-3.5" />
-                          <span>Univers</span>
+                          <User className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
