@@ -109,9 +109,15 @@ export default function App() {
         )}
 
         {currentScreen.type === 'protagonist_profile' && (
-          <ProtagonistProfileScreen 
+          <ProfileSettingsScreen 
             protagonistId={currentScreen.protagonistId} 
             onNavigate={setCurrentScreen} 
+            selectedDocFilter={selectedSeriesFilter}
+            onUpdateDocFilter={setSelectedSeriesFilter}
+            language={language}
+            onUpdateLanguage={setLanguage}
+            hideQuestionByDefault={hideQuestionByDefault}
+            onToggleHideQuestion={setHideQuestionByDefault}
           />
         )}
 

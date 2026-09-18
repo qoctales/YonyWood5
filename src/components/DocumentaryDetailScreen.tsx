@@ -74,7 +74,8 @@ export const DocumentaryDetailScreen: React.FC<DocumentaryDetailScreenProps> = (
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          {/* Voile très léger pour conserver toute la clarté de l'affiche */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
           <span className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[10px] font-mono tracking-widest text-white/90 uppercase whitespace-nowrap">
             AFFICHE OFFICIELLE
           </span>

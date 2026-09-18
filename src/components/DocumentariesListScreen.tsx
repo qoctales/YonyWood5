@@ -21,15 +21,16 @@ export const DocumentariesListScreen: React.FC<DocumentariesListScreenProps> = (
             {/* Cover Image with Title */}
             <div className="relative h-64 sm:h-72 overflow-hidden">
               <img
-                src={doc.coverImage}
+                src={doc.posterUrl || doc.coverImage}
                 alt={doc.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/90 via-[#1C1917]/20 to-transparent" />
+              {/* Voile léger pour préserver la clarté et l'éclat de l'affiche */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
               
               {/* Title only */}
-              <div className="absolute bottom-5 left-5 right-5 text-white">
+              <div className="absolute bottom-5 left-5 right-5 text-white drop-shadow-md">
                 <h2 className="font-editorial text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-[#D9AF52] transition-colors">
                   {doc.title}
                 </h2>

@@ -216,8 +216,8 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
     setMouseStartX(null);
   };
 
-  const toggleVideoPlayback = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleVideoPlayback = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     setIsPlaying(prev => !prev);
   };
 
@@ -327,7 +327,13 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
             {/* =================================================================== */}
             {activeTab === 'coproduire' && currentProd && (
               <div 
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6"
+                onClick={(e) => {
+                  if ((e.target as HTMLElement).closest('button, a, input, textarea')) {
+                    return;
+                  }
+                  toggleVideoPlayback();
+                }}
+                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 cursor-pointer"
                 id={`card-coproduire-${currentProd.id}`}
               >
                 {/* 1. Média de fond : Affiche officielle par défaut OU Vidéo si lecture activée */}
@@ -350,31 +356,39 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                   />
                 )}
 
-                {/* Voile sombre cinématographique doux pour contraste parfait */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
+                {/* Voile cinématographique clair pour préserver l'éclat de l'affiche */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
-                {/* HAUT : Badge du titre de la série prenant toute la largeur voulue */}
-                <div className="relative z-10 flex items-start justify-between">
+                {/* HAUT : Badge du titre de la série à gauche & Contrôle vidéo hybride doré en face en haut à droite */}
+                <div className="relative z-10 flex items-center justify-between gap-2">
                   <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-bold tracking-widest uppercase text-white/95 shadow-sm max-w-full leading-relaxed">
                     {currentProd.title.toUpperCase()}
                   </span>
-                </div>
 
-                {/* CENTRE : Gros bouton de lecture circulaire translucide identique à Proposer */}
-                <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-auto">
+                  {/* Bouton hybride interactif en face en haut à droite */}
                   <button
-                    onClick={toggleVideoPlayback}
-                    className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-[#C89B3C] text-white border border-white/25 backdrop-blur-xs flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-2xl cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideoPlayback();
+                    }}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                    }`}
                     title={isPlaying ? 'Mettre en pause' : `Visionner ${currentProd.title}`}
                     id={`play-pause-btn-${currentProd.id}`}
                   >
                     {isPlaying ? (
-                      <Pause className="w-7 h-7 sm:w-8 sm:h-8 fill-current" />
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
                     ) : (
-                      <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-current ml-1" />
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
                     )}
                   </button>
                 </div>
+
+                {/* CENTRE LIBÉRÉ : Affiche visible et sans encombrement */}
+                <div className="my-auto" />
 
                 {/* BAS : Prix de la part à gauche et bouton d'action Coproduire à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-2">
@@ -409,7 +423,13 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
             {/* =================================================================== */}
             {activeTab === 'marche' && currentOffer && (
               <div 
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6"
+                onClick={(e) => {
+                  if ((e.target as HTMLElement).closest('button, a, input, textarea')) {
+                    return;
+                  }
+                  toggleVideoPlayback();
+                }}
+                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 cursor-pointer"
                 id={`card-marche-${currentOffer.id}`}
               >
                 {/* 1. Média de fond : Affiche officielle par défaut OU Vidéo si lecture activée */}
@@ -432,31 +452,39 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                   />
                 )}
 
-                {/* Voile sombre cinématographique identique */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
+                {/* Voile cinématographique clair pour préserver l'éclat de l'affiche */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
-                {/* HAUT : Badge du titre de la série prenant toute la largeur voulue */}
-                <div className="relative z-10 flex items-start justify-between">
+                {/* HAUT : Badge du titre de la série à gauche & Contrôle vidéo hybride doré en face en haut à droite */}
+                <div className="relative z-10 flex items-center justify-between gap-2">
                   <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-bold tracking-widest uppercase text-white/95 shadow-sm max-w-full leading-relaxed">
                     {currentOffer.seriesTitle.toUpperCase()}
                   </span>
-                </div>
 
-                {/* CENTRE : Gros bouton de lecture vidéo circulaire identique pour revoir la vidéo */}
-                <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-auto">
+                  {/* Bouton hybride interactif en face en haut à droite */}
                   <button
-                    onClick={toggleVideoPlayback}
-                    className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-[#C89B3C] text-white border border-white/25 backdrop-blur-xs flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-2xl cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideoPlayback();
+                    }}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                    }`}
                     title={isPlaying ? 'Mettre en pause' : `Visionner ${currentOffer.seriesTitle}`}
                     id={`play-pause-marche-btn-${currentOffer.id}`}
                   >
                     {isPlaying ? (
-                      <Pause className="w-7 h-7 sm:w-8 sm:h-8 fill-current" />
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
                     ) : (
-                      <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-current ml-1" />
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
                     )}
                   </button>
                 </div>
+
+                {/* CENTRE LIBÉRÉ : Affiche visible et sans encombrement */}
+                <div className="my-auto" />
 
                 {/* BAS : À gauche (au-dessus : nb de parts et prix au même format / en dessous : vignette photo + prénom) */}
                 {/* Et à droite : bouton d'action Racheter */}

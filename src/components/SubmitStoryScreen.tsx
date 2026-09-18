@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, 
   ArrowRight,
@@ -175,8 +175,11 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
 
   // Touch handlers for mobile swipe (Étape 1)
   const minSwipeDistance = 45;
+  const hasDraggedRef = useRef(false);
+  const epHasDraggedRef = useRef(false);
 
   const onTouchStart = (e: React.TouchEvent) => {
+    hasDraggedRef.current = false;
     setTouchEndX(null);
     setTouchStartX(e.targetTouches[0].clientX);
   };
@@ -185,6 +188,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
     setTouchEndX(e.targetTouches[0].clientX);
     if (touchStartX !== null) {
       const diff = e.targetTouches[0].clientX - touchStartX;
+      if (Math.abs(diff) > 8) hasDraggedRef.current = true;
       setSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
     }
   };
@@ -203,6 +207,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   // Mouse handlers for desktop swipe (Étape 1)
   const onMouseDown = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('button, a, video, .synopsis-box')) return;
+    hasDraggedRef.current = false;
     setIsMouseDown(true);
     setMouseStartX(e.clientX);
   };
@@ -210,6 +215,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const onMouseMove = (e: React.MouseEvent) => {
     if (!isMouseDown || mouseStartX === null) return;
     const diff = e.clientX - mouseStartX;
+    if (Math.abs(diff) > 8) hasDraggedRef.current = true;
     setSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
   };
 
@@ -229,6 +235,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
 
   // Touch handlers for mobile swipe (Étape 2 - Épisodes)
   const onEpTouchStart = (e: React.TouchEvent) => {
+    epHasDraggedRef.current = false;
     setEpTouchEndX(null);
     setEpTouchStartX(e.targetTouches[0].clientX);
   };
@@ -237,6 +244,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
     setEpTouchEndX(e.targetTouches[0].clientX);
     if (epTouchStartX !== null) {
       const diff = e.targetTouches[0].clientX - epTouchStartX;
+      if (Math.abs(diff) > 8) epHasDraggedRef.current = true;
       setEpSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
     }
   };
@@ -255,6 +263,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   // Mouse handlers for desktop swipe (Étape 2 - Épisodes)
   const onEpMouseDown = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('button, a, video, .transcription-box')) return;
+    epHasDraggedRef.current = false;
     setIsEpMouseDown(true);
     setEpMouseStartX(e.clientX);
   };
@@ -262,6 +271,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const onEpMouseMove = (e: React.MouseEvent) => {
     if (!isEpMouseDown || epMouseStartX === null) return;
     const diff = e.clientX - epMouseStartX;
+    if (Math.abs(diff) > 8) epHasDraggedRef.current = true;
     setEpSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
   };
 
@@ -403,7 +413,17 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               style={{ transform: `translateX(${swipeOffset}px)` }}
             >
               <div 
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6"
+                onClick={(e) => {
+                  if (hasDraggedRef.current) {
+                    hasDraggedRef.current = false;
+                    return;
+                  }
+                  if ((e.target as HTMLElement).closest('button, a, input, textarea, .synopsis-box')) {
+                    return;
+                  }
+                  setIsCardVideoPlaying(prev => !prev);
+                }}
+                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 cursor-pointer"
                 id={`current-series-card-${currentDoc.id}`}
               >
                 {/* 1. Média de fond : Vidéo en lecture OU affiche de film */}
@@ -426,47 +446,54 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   />
                 )}
 
-                {/* Voile sombre cinématographique doux pour contraste parfait */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
+                {/* Voile cinématographique clair pour préserver l'éclat de l'affiche de la série */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/25 pointer-events-none" />
 
-                {/* HAUT : Badge du titre de la série (comme 'FINAGNON' sur la capture) */}
+                {/* HAUT : Badge du titre de la série à gauche & Contrôle vidéo hybride doré en face en haut à droite */}
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-bold tracking-widest uppercase text-white/95 shadow-sm">
                     {currentDoc.title.toUpperCase()}
                   </span>
 
-                  {isCardVideoPlaying && (
+                  {/* En face en haut à droite : Option 3 Hybride interactif (triangle doré pur + anneau au survol/lecture) */}
+                  <div className="flex items-center gap-2">
+                    {isCardVideoPlaying && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsMuted(!isMuted);
+                        }}
+                        className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                        title={isMuted ? 'Activer le son' : 'Couper le son'}
+                      >
+                        {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                      </button>
+                    )}
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setIsMuted(!isMuted);
+                        setIsCardVideoPlaying(!isCardVideoPlaying);
                       }}
-                      className="p-1.5 rounded-full bg-black/60 hover:bg-white/20 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
-                      title={isMuted ? 'Activer le son' : 'Couper le son'}
+                      className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                        isCardVideoPlaying
+                          ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                          : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                      }`}
+                      title={isCardVideoPlaying ? 'Mettre en pause' : `Visionner la bande-annonce de ${currentDoc.title}`}
+                      id={`play-pause-btn-${currentDoc.id}`}
                     >
-                      {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                      {isCardVideoPlaying ? (
+                        <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                      ) : (
+                        <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                      )}
                     </button>
-                  )}
+                  </div>
                 </div>
 
-                {/* CENTRE : Gros bouton de lecture circulaire translucide identique à la capture */}
-                <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-auto">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsCardVideoPlaying(!isCardVideoPlaying);
-                    }}
-                    className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-[#C89B3C] text-white border border-white/25 backdrop-blur-xs flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-2xl cursor-pointer"
-                    title={isCardVideoPlaying ? 'Mettre en pause' : `Visionner ${currentDoc.title}`}
-                    id={`play-pause-btn-${currentDoc.id}`}
-                  >
-                    {isCardVideoPlaying ? (
-                      <Pause className="w-7 h-7 sm:w-8 sm:h-8 fill-current" />
-                    ) : (
-                      <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-current ml-1" />
-                    )}
-                  </button>
-                </div>
+                {/* CENTRE LIBÉRÉ : Pas d'obstacle visuel, toute l'affiche est visible et cliquable */}
+                <div className="my-auto" />
 
                 {/* BAS : Transcription (Synopsis) à gauche et action Choisir cette série à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-2">
@@ -620,7 +647,17 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               onMouseDown={onEpMouseDown}
               onMouseMove={onEpMouseMove}
               onMouseUp={onEpMouseUp}
-              className="relative w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing"
+              onClick={(e) => {
+                if (epHasDraggedRef.current) {
+                  epHasDraggedRef.current = false;
+                  return;
+                }
+                if ((e.target as HTMLElement).closest('button, a, input, textarea, .transcription-box')) {
+                  return;
+                }
+                setIsEpisodeVideoPlaying(prev => !prev);
+              }}
+              className="relative w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 transition-transform duration-150 ease-out select-none cursor-pointer"
             >
               {/* Vidéo de l'épisode ou image de portrait de l'interlocuteur */}
               {isEpisodeVideoPlaying ? (
@@ -641,46 +678,52 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 />
               )}
 
-              {/* Voile sombre cinématographique pour une excellente lisibilité */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/60 pointer-events-none" />
+              {/* Voile cinématographique clair pour préserver la clarté de l'image */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/25 pointer-events-none" />
 
-              {/* HAUT : Badge du numéro de l'épisode & Contrôle du son */}
+              {/* HAUT : Badge du numéro de l'épisode & Contrôle vidéo hybride doré en face en haut à droite */}
               <div className="relative z-10 flex items-center justify-between">
                 <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-bold tracking-widest uppercase text-white/95 shadow-sm">
                   ÉPISODE {currentEpisode.number}
                 </span>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
+                  {isEpisodeVideoPlaying && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsEpisodeMuted(!isEpisodeMuted);
+                      }}
+                      className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                      title={isEpisodeMuted ? 'Activer le son' : 'Couper le son'}
+                    >
+                      {isEpisodeMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                    </button>
+                  )}
+
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setIsEpisodeMuted(!isEpisodeMuted);
+                      setIsEpisodeVideoPlaying(!isEpisodeVideoPlaying);
                     }}
-                    className="p-1.5 rounded-full bg-black/60 hover:bg-white/20 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
-                    title={isEpisodeMuted ? 'Activer le son' : 'Couper le son'}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isEpisodeVideoPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                    }`}
+                    title={isEpisodeVideoPlaying ? "Mettre en pause" : `Écouter l'épisode ${currentEpisode.number}`}
                   >
-                    {isEpisodeMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                    {isEpisodeVideoPlaying ? (
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                    ) : (
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                    )}
                   </button>
                 </div>
               </div>
 
-              {/* CENTRE : Grand bouton circulaire de lecture/écoute */}
-              <div className="relative z-10 flex items-center justify-center my-auto">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsEpisodeVideoPlaying(!isEpisodeVideoPlaying);
-                  }}
-                  className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-[#C89B3C] text-white border border-white/25 backdrop-blur-xs flex items-center justify-center shadow-2xl transition-all cursor-pointer transform hover:scale-110 active:scale-95 group"
-                  title={isEpisodeVideoPlaying ? "Mettre en pause" : `Écouter l'épisode ${currentEpisode.number}`}
-                >
-                  {isEpisodeVideoPlaying ? (
-                    <Pause className="w-8 h-8 text-white fill-white" />
-                  ) : (
-                    <Play className="w-8 h-8 text-white fill-white translate-x-0.5 group-hover:scale-105 transition-transform" />
-                  )}
-                </button>
-              </div>
+              {/* CENTRE LIBÉRÉ : Visuel dégagé */}
+              <div className="my-auto" />
 
               {/* BAS : Titre de l'épisode, bouton transcription & bouton pour continuer */}
               <div className="relative z-10 space-y-3">

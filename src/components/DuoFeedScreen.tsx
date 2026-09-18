@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Play, 
+  Pause,
+  Volume2,
+  VolumeX,
   ChevronLeft, 
   ChevronRight, 
   Tv, 
@@ -14,8 +17,9 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
 import { DUOS, DOCUMENTARIES } from '../data/mockData';
-import { ViewScreen, Duo } from '../types';
+import { ViewScreen, Duo, Protagonist } from '../types';
 import { RemoteControlModal } from './RemoteControlModal';
+import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 
 interface DuoFeedScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -34,6 +38,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 }) => {
   const [selectedDocId, setSelectedDocId] = useState<string | null>(initialDocId || null);
   const [isRemoteOpen, setIsRemoteOpen] = useState(false);
+  const [teaserProtagonist, setTeaserProtagonist] = useState<Protagonist | null>(null);
 
   // Compute starting duo index if initialDuoId is provided
   const startingIndex = initialDuoId
@@ -46,6 +51,16 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   // Mobile active protagonist: 'A' or 'B' (tap story toggle like Bumble)
   const [activeProtagonist, setActiveProtagonist] = useState<'A' | 'B'>('A');
 
+  // Inline video playback states: videos stay vertical side-by-side without entering fullscreen immersion
+  const [isPlayingA, setIsPlayingA] = useState(false);
+  const [isPlayingB, setIsPlayingB] = useState(false);
+  const [isMutedA, setIsMutedA] = useState(false);
+  const [isMutedB, setIsMutedB] = useState(false);
+
+  const videoRefA = useRef<HTMLVideoElement | null>(null);
+  const videoRefB = useRef<HTMLVideoElement | null>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement | null>(null);
+
   // Desktop view mode: 'mirror' (face-to-face 2 cards) | 'deck' (Bumble solo card deck)
   const [desktopViewMode, setDesktopViewMode] = useState<'mirror' | 'deck'>('mirror');
 
@@ -56,6 +71,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const dragX = useMotionValue(0);
   const dragRotate = useTransform(dragX, [-300, 0, 300], [-8, 0, 8]);
   const dragScale = useTransform(dragX, [-300, 0, 300], [0.97, 1, 0.97]);
+  const isDraggingRef = useRef(false);
 
   // Dynamic feedback stamps
   // Dragging right (dragX > 0) -> "REVENIR / PRÉCÉDENT"
@@ -79,12 +95,47 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
     ? DOCUMENTARIES.find(d => d.id === selectedDocId) 
     : (currentDuo ? DOCUMENTARIES.find(d => d.id === currentDuo.documentaryId) : undefined);
 
+  // Reset playback on duo change or series switch
+  useEffect(() => {
+    setIsPlayingA(false);
+    setIsPlayingB(false);
+  }, [currentIndex, selectedDocId]);
+
+  const togglePlayA = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setIsPlayingA(prev => {
+      const next = !prev;
+      if (next) setIsPlayingB(false);
+      return next;
+    });
+  };
+
+  const togglePlayB = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setIsPlayingB(prev => {
+      const next = !prev;
+      if (next) setIsPlayingA(false);
+      return next;
+    });
+  };
+
+  const toggleMobilePlay = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (activeProtagonist === 'A') {
+      togglePlayA();
+    } else {
+      togglePlayB();
+    }
+  };
+
   // Handlers for next / prev with direction tracking
   const handleNext = () => {
     dragX.set(0);
     setSwipeDirection('next');
     setIsQuestionRevealed(false);
     setActiveProtagonist('A');
+    setIsPlayingA(false);
+    setIsPlayingB(false);
     setCurrentIndex(prev => (prev + 1) % filteredDuos.length);
   };
 
@@ -93,6 +144,8 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
     setSwipeDirection('prev');
     setIsQuestionRevealed(false);
     setActiveProtagonist('A');
+    setIsPlayingA(false);
+    setIsPlayingB(false);
     setCurrentIndex(prev => (prev - 1 + filteredDuos.length) % filteredDuos.length);
   };
 
@@ -102,6 +155,8 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
     setSwipeDirection('next');
     setIsQuestionRevealed(false);
     setActiveProtagonist('A');
+    setIsPlayingA(false);
+    setIsPlayingB(false);
     let nextIdx = Math.floor(Math.random() * filteredDuos.length);
     if (nextIdx === safeIndex) {
       nextIdx = (nextIdx + 1) % filteredDuos.length;
@@ -155,6 +210,19 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const themeA = pA.universeTag || (activeDoc ? activeDoc.universes[0]?.name : 'PÔLE A');
   const themeB = pB.universeTag || (activeDoc ? activeDoc.universes[1]?.name : 'PÔLE B');
   const currentTheme = activeProtagonist === 'A' ? themeA : themeB;
+
+  // Video URLs for inline playback (keeping the 2 cards vertical side-by-side)
+  const videoUrlA = pA.videoAvatarUrl 
+    || DOCUMENTARIES.find(d => d.id === currentDuo.documentaryId)?.teaserVideoUrl 
+    || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+
+  const videoUrlB = pB.videoAvatarUrl 
+    || DOCUMENTARIES.find(d => d.id === currentDuo.documentaryId)?.teaserVideoUrl 
+    || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4';
+
+  const currentVideoUrl = activeProtagonist === 'A' ? videoUrlA : videoUrlB;
+  const isMobilePlaying = activeProtagonist === 'A' ? isPlayingA : isPlayingB;
+  const isMobileMuted = activeProtagonist === 'A' ? isMutedA : isMutedB;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] pb-28 pt-2 px-3 sm:px-6 max-w-6xl mx-auto flex flex-col justify-between select-none">
@@ -297,6 +365,9 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.75}
               style={{ x: dragX, rotate: dragRotate, scale: dragScale }}
+              onDragStart={() => {
+                isDraggingRef.current = true;
+              }}
               onDragEnd={(e, info) => {
                 const swipeThreshold = 60;
                 const velocityThreshold = 400;
@@ -309,6 +380,9 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                 else if (info.offset.x < -swipeThreshold || info.velocity.x < -velocityThreshold) {
                   handleNext();
                 }
+                setTimeout(() => {
+                  isDraggingRef.current = false;
+                }, 80);
               }}
               initial={{ 
                 opacity: 0,
@@ -347,15 +421,35 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
               {/* ========================================================================= */}
               <div className={`${desktopViewMode === 'mirror' ? 'block md:hidden' : 'block'} w-full max-w-sm sm:max-w-md mx-auto`}>
                 
-                <div className="relative rounded-[32px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/60 aspect-[9/16] sm:aspect-[9/15] flex flex-col justify-between">
+                <div 
+                  onClick={(e) => {
+                    if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
+                    if (isDraggingRef.current) return;
+                    toggleMobilePlay();
+                  }}
+                  className="relative rounded-[32px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/60 aspect-[9/16] sm:aspect-[9/15] flex flex-col justify-between cursor-pointer"
+                >
                   
-                  {/* Background Image of the active protagonist */}
-                  <img
-                    src={currentP.photoUrl}
-                    alt={currentP.name}
-                    referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-                  />
+                  {/* Background Video (when playing) or Poster Image */}
+                  {isMobilePlaying ? (
+                    <video
+                      ref={mobileVideoRef}
+                      key={`mobile-video-${activeProtagonist}-${currentDuo.id}`}
+                      src={currentVideoUrl}
+                      autoPlay
+                      loop
+                      playsInline
+                      muted={isMobileMuted}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={currentP.photoUrl}
+                      alt={currentP.name}
+                      referrerPolicy="no-referrer"
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none"
+                    />
+                  )}
                   
                   {/* Cinematic gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
@@ -393,61 +487,69 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       </button>
                     </div>
 
-                    {/* Top Row Header inside Card: Pole Pill + Switch Button */}
-                    <div className="flex items-center justify-between">
-                      <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] font-bold tracking-wider text-amber-300 uppercase shadow-md">
+                    {/* Top Row Header inside Card: Pole Pill on left & [Switch button + Golden play/pause button] on right */}
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] font-bold tracking-wider text-amber-300 uppercase shadow-md shrink-0">
                         {currentTheme}
                       </span>
 
-                      {/* Pill to toggle between Protagonist A and B */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveProtagonist(prev => prev === 'A' ? 'B' : 'A');
-                        }}
-                        className="px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-                        title="Basculer vers l'autre univers du duo"
-                      >
-                        <span className="font-mono font-black text-[10px] text-[#C89B3C] tracking-wider select-none">&lt; &gt;</span>
-                        <span>{activeProtagonist === 'A' ? pB.name.split(' ')[0] : pA.name.split(' ')[0]}</span>
-                      </button>
+                      {/* Right controls: Switch A/B pill + Audio toggle + Hybrid Golden Play/Pause button */}
+                      <div className="flex items-center gap-2">
+                        {/* Pill to toggle between Protagonist A and B */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveProtagonist(prev => prev === 'A' ? 'B' : 'A');
+                          }}
+                          className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                          title="Basculer vers l'autre univers du duo"
+                        >
+                          <span className="font-mono font-black text-[10px] text-[#C89B3C] tracking-wider select-none">&lt; &gt;</span>
+                          <span>{activeProtagonist === 'A' ? pB.name.split(' ')[0] : pA.name.split(' ')[0]}</span>
+                        </button>
+
+                        {/* Son activé / muet si vidéo en cours */}
+                        {isMobilePlaying && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (activeProtagonist === 'A') setIsMutedA(prev => !prev);
+                              else setIsMutedB(prev => !prev);
+                            }}
+                            className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-md cursor-pointer"
+                            title={isMobileMuted ? "Activer le son" : "Couper le son"}
+                          >
+                            {isMobileMuted ? (
+                              <VolumeX className="w-4 h-4 text-stone-300" />
+                            ) : (
+                              <Volume2 className="w-4 h-4 text-[#C89B3C]" />
+                            )}
+                          </button>
+                        )}
+
+                        {/* Symbole vidéo hybride doré - Lecture / Pause in-place */}
+                        <button
+                          onClick={(e) => toggleMobilePlay(e)}
+                          className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                            isMobilePlaying
+                              ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                              : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                          }`}
+                          title={isMobilePlaying ? `Mettre en pause ${currentP.name}` : `Visionner l'histoire de ${currentP.name}`}
+                          id={`play-mobile-story-${currentP.id}`}
+                        >
+                          {isMobilePlaying ? (
+                            <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                          ) : (
+                            <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  {/* INVISIBLE TAP ZONES: Tap Left = Univers A, Tap Right = Univers B */}
-                  <div className="absolute inset-0 z-10 grid grid-cols-2 pointer-events-auto">
-                    <div 
-                      onClick={() => setActiveProtagonist('A')}
-                      className="cursor-pointer"
-                      title="Toucher pour voir l'univers A"
-                    />
-                    <div 
-                      onClick={() => setActiveProtagonist('B')}
-                      className="cursor-pointer"
-                      title="Toucher pour voir l'univers B"
-                    />
-                  </div>
-
-                  {/* CENTER PLAY BUTTON */}
-                  <div className="relative z-20 flex items-center justify-center my-auto pointer-events-auto">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onNavigate({
-                          type: 'video_player',
-                          story: currentStory,
-                          protagonist: currentP,
-                          duoId: currentDuo.id,
-                          documentaryTitle: currentDuo.documentaryTitle
-                        });
-                      }}
-                      className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/70 hover:bg-[#C89B3C] text-white backdrop-blur-md border border-white/30 flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-2xl cursor-pointer group"
-                      id={`play-mobile-story-${currentP.id}`}
-                      title={`Écouter ${currentP.name}`}
-                    >
-                      <Play className="w-8 h-8 fill-current ml-1 text-white group-hover:text-black transition-colors" />
-                    </button>
-                  </div>
+                  {/* CENTRE LIBÉRÉ : Affiche et protagoniste 100% visibles sans obstacle */}
+                  <div className="my-auto" />
 
                   {/* BOTTOM IDENTITY & DETAILS */}
                   <div className="relative z-20 p-5 sm:p-6 space-y-3 pointer-events-auto">
@@ -467,35 +569,19 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         </div>
                       </div>
 
-                      {/* Son univers button (icône bonhomme seule) */}
+                      {/* Son univers button (icône bonhomme seule -> Teaser d'abord) */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          onNavigate({ type: 'protagonist_profile', protagonistId: currentP.id });
+                          setTeaserProtagonist(currentP);
                         }}
                         className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
-                        title="Explorer son univers"
+                        title="Découvrir son univers (Teaser)"
                         id={`open-universe-${currentP.id}`}
                       >
                         <User className="w-4 h-4" />
                       </button>
                     </div>
-
-                    {/* Question teaser bar inside card */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsQuestionRevealed(!isQuestionRevealed);
-                      }}
-                      className="w-full py-2 px-3 rounded-2xl bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-left transition-all cursor-pointer flex items-center justify-between text-xs"
-                    >
-                      <span className="text-stone-300 font-medium line-clamp-1">
-                        {isQuestionRevealed ? `« ${currentDuo.centralQuestion} »` : 'Question en miroir : toucher pour révéler'}
-                      </span>
-                      <span className="text-amber-400 font-bold ml-2 shrink-0">
-                        {isQuestionRevealed ? 'Masquer' : 'Voir'}
-                      </span>
-                    </button>
                   </div>
                 </div>
 
@@ -544,42 +630,82 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                   <div className="grid grid-cols-2 gap-6 lg:gap-10 relative max-w-3xl mx-auto items-center">
                     
                     {/* CARTE PROTAGONISTE A */}
-                    <div className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-end aspect-[9/15] transition-all duration-300">
-                      <img 
-                        src={pA.photoUrl} 
-                        alt={pA.name} 
-                        referrerPolicy="no-referrer"
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 pointer-events-none"
-                      />
+                    <div 
+                      onClick={(e) => {
+                        if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
+                        togglePlayA();
+                      }}
+                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/15] transition-all duration-300 cursor-pointer"
+                    >
+                      {/* Background Media: Video when isPlayingA, otherwise Poster Photo */}
+                      {isPlayingA ? (
+                        <video
+                          ref={videoRefA}
+                          key={`desktop-video-a-${currentDuo.id}`}
+                          src={videoUrlA}
+                          autoPlay
+                          loop
+                          playsInline
+                          muted={isMutedA}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img 
+                          src={pA.photoUrl} 
+                          alt={pA.name} 
+                          referrerPolicy="no-referrer"
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 pointer-events-none"
+                        />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
 
-                      {/* Top Left Pole Tag */}
-                      <div className="absolute top-4 left-4 z-10">
+                      {/* Top Header: Pole Tag on left & [Mute toggle + Hybrid Golden Play/Pause Button] on right */}
+                      <div className="relative z-10 p-4 flex items-center justify-between">
                         <span className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[11px] font-bold tracking-wider text-amber-300 uppercase shadow-md">
                           {themeA}
                         </span>
+
+                        <div className="flex items-center gap-2">
+                          {/* Audio toggle when playing */}
+                          {isPlayingA && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsMutedA(prev => !prev);
+                              }}
+                              className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-md cursor-pointer"
+                              title={isMutedA ? "Activer le son" : "Couper le son"}
+                            >
+                              {isMutedA ? (
+                                <VolumeX className="w-4 h-4 text-stone-300" />
+                              ) : (
+                                <Volume2 className="w-4 h-4 text-[#C89B3C]" />
+                              )}
+                            </button>
+                          )}
+
+                          {/* Symbole vidéo hybride doré en face en haut à droite - In-place Play/Pause */}
+                          <button
+                            onClick={(e) => togglePlayA(e)}
+                            className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                              isPlayingA
+                                ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                                : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                            }`}
+                            title={isPlayingA ? `Mettre en pause ${pA.name}` : `Visionner l'histoire de ${pA.name}`}
+                            id={`play-story-${pA.id}`}
+                          >
+                            {isPlayingA ? (
+                              <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                            ) : (
+                              <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                            )}
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Play Button */}
-                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-auto">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onNavigate({
-                              type: 'video_player',
-                              story: currentDuo.storyA,
-                              protagonist: pA,
-                              duoId: currentDuo.id,
-                              documentaryTitle: currentDuo.documentaryTitle
-                            });
-                          }}
-                          className="w-16 h-16 rounded-full bg-black/70 hover:bg-[#C89B3C] text-white backdrop-blur-md border border-white/30 flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 active:scale-95 shadow-2xl cursor-pointer"
-                          id={`play-story-${pA.id}`}
-                          title={`Écouter ${pA.name}`}
-                        >
-                          <Play className="w-7 h-7 fill-current ml-1" />
-                        </button>
-                      </div>
+                      {/* Centre libéré */}
+                      <div className="my-auto" />
 
                       {/* Bottom Info */}
                       <div className="relative z-10 p-5 flex items-center justify-between">
@@ -597,10 +723,10 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            onNavigate({ type: 'protagonist_profile', protagonistId: pA.id });
+                            setTeaserProtagonist(pA);
                           }}
                           className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
-                          title="Son univers"
+                          title="Son univers (Teaser)"
                           id={`open-universe-${pA.id}`}
                         >
                           <User className="w-4 h-4" />
@@ -619,42 +745,82 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                     </div>
 
                     {/* CARTE PROTAGONISTE B */}
-                    <div className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-end aspect-[9/15] transition-all duration-300">
-                      <img 
-                        src={pB.photoUrl} 
-                        alt={pB.name} 
-                        referrerPolicy="no-referrer"
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 pointer-events-none"
-                      />
+                    <div 
+                      onClick={(e) => {
+                        if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
+                        togglePlayB();
+                      }}
+                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/15] transition-all duration-300 cursor-pointer"
+                    >
+                      {/* Background Media: Video when isPlayingB, otherwise Poster Photo */}
+                      {isPlayingB ? (
+                        <video
+                          ref={videoRefB}
+                          key={`desktop-video-b-${currentDuo.id}`}
+                          src={videoUrlB}
+                          autoPlay
+                          loop
+                          playsInline
+                          muted={isMutedB}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img 
+                          src={pB.photoUrl} 
+                          alt={pB.name} 
+                          referrerPolicy="no-referrer"
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 pointer-events-none"
+                        />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
 
-                      {/* Top Left Pole Tag */}
-                      <div className="absolute top-4 left-4 z-10">
+                      {/* Top Header: Pole Tag on left & [Mute toggle + Hybrid Golden Play/Pause Button] on right */}
+                      <div className="relative z-10 p-4 flex items-center justify-between">
                         <span className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[11px] font-bold tracking-wider text-amber-300 uppercase shadow-md">
                           {themeB}
                         </span>
+
+                        <div className="flex items-center gap-2">
+                          {/* Audio toggle when playing */}
+                          {isPlayingB && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setIsMutedB(prev => !prev);
+                              }}
+                              className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-md cursor-pointer"
+                              title={isMutedB ? "Activer le son" : "Couper le son"}
+                            >
+                              {isMutedB ? (
+                                <VolumeX className="w-4 h-4 text-stone-300" />
+                              ) : (
+                                <Volume2 className="w-4 h-4 text-[#C89B3C]" />
+                              )}
+                            </button>
+                          )}
+
+                          {/* Symbole vidéo hybride doré en face en haut à droite - In-place Play/Pause */}
+                          <button
+                            onClick={(e) => togglePlayB(e)}
+                            className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                              isPlayingB
+                                ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                                : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                            }`}
+                            title={isPlayingB ? `Mettre en pause ${pB.name}` : `Visionner l'histoire de ${pB.name}`}
+                            id={`play-story-${pB.id}`}
+                          >
+                            {isPlayingB ? (
+                              <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                            ) : (
+                              <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                            )}
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Play Button */}
-                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-auto">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onNavigate({
-                              type: 'video_player',
-                              story: currentDuo.storyB,
-                              protagonist: pB,
-                              duoId: currentDuo.id,
-                              documentaryTitle: currentDuo.documentaryTitle
-                            });
-                          }}
-                          className="w-16 h-16 rounded-full bg-black/70 hover:bg-[#C89B3C] text-white backdrop-blur-md border border-white/30 flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 active:scale-95 shadow-2xl cursor-pointer"
-                          id={`play-story-${pB.id}`}
-                          title={`Écouter ${pB.name}`}
-                        >
-                          <Play className="w-7 h-7 fill-current ml-1" />
-                        </button>
-                      </div>
+                      {/* Centre libéré */}
+                      <div className="my-auto" />
 
                       {/* Bottom Info */}
                       <div className="relative z-10 p-5 flex items-center justify-between">
@@ -672,10 +838,10 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            onNavigate({ type: 'protagonist_profile', protagonistId: pB.id });
+                            setTeaserProtagonist(pB);
                           }}
                           className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
-                          title="Son univers"
+                          title="Son univers (Teaser)"
                           id={`open-universe-${pB.id}`}
                         >
                           <User className="w-4 h-4" />
@@ -732,6 +898,16 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
         onSelectDoc={(docId) => {
           setSelectedDocId(docId);
           setCurrentIndex(0);
+        }}
+      />
+
+      {/* Modale Teaser Présentation Vidéo avant d'entrer dans l'univers */}
+      <ProtagonistTeaserModal
+        protagonist={teaserProtagonist}
+        onClose={() => setTeaserProtagonist(null)}
+        onEnterUniverse={(id) => {
+          setTeaserProtagonist(null);
+          onNavigate({ type: 'protagonist_profile', protagonistId: id });
         }}
       />
     </div>

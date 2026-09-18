@@ -59,6 +59,7 @@ export interface Protagonist {
   flag: string;
   bio: string;
   photoUrl: string;
+  videoAvatarUrl?: string;
   documentaryId: string;
   universeTag: string;
   quote: string;

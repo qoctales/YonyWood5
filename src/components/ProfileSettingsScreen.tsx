@@ -15,6 +15,7 @@ import {
   MapPin,
   MessageSquare,
   Play,
+  Pause,
   Film,
   CheckCircle2,
   TrendingUp,
@@ -28,60 +29,74 @@ import {
   Image as ImageIcon,
   Video,
   LogOut,
-  Check
+  Check,
+  BookOpen,
+  Megaphone,
+  ArrowLeft,
+  DollarSign,
+  Send,
+  Sparkles,
+  Info,
+  Copy
 } from 'lucide-react';
 import { ViewScreen } from '../types';
+import { PROTAGONISTS, DOCUMENTARIES } from '../data/mockData';
 
-interface ProfileSettingsScreenProps {
+export type DimensionTab = 'recit' | 'episodes' | 'productions' | 'creations' | 'initiatives' | 'appels';
+
+export interface ProfileSettingsScreenProps {
   onNavigate: (screen: ViewScreen) => void;
-  selectedDocFilter: string[];
-  onUpdateDocFilter: (docIds: string[]) => void;
-  language: string;
-  onUpdateLanguage: (lang: string) => void;
-  hideQuestionByDefault: boolean;
-  onToggleHideQuestion: (val: boolean) => void;
+  selectedDocFilter?: string[];
+  onUpdateDocFilter?: (docIds: string[]) => void;
+  language?: string;
+  onUpdateLanguage?: (lang: string) => void;
+  hideQuestionByDefault?: boolean;
+  onToggleHideQuestion?: (val: boolean) => void;
+  protagonistId?: string; // Si fourni = mode Visiteur
+  initialTab?: DimensionTab;
 }
 
-// Presets multimédias pour le choix rapide d'images et vidéos
-const MEDIA_POSTER_PRESETS = [
-  { name: 'Lagune & Ciel', url: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Forêt & Végétal', url: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Indigo & Tissage', url: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80' },
-  { name: 'Terre & Poterie', url: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?auto=format&fit=crop&w=800&q=80' },
-];
-
-const MEDIA_VIDEO_PRESETS = [
-  { name: 'Extrait Nature', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4' },
-  { name: 'Bande-annonce Cinéma', url: 'https://media.w3.org/2010/05/sintel/trailer.mp4' },
-  { name: 'Animation Teaser', url: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-];
-
-// 1. Offre / Service avec format Vidéo Vertical 9:16
-export interface UserOfferItem {
+// 1. Récit : Vidéo personnelle / histoire personnelle
+export interface UserRecitItem {
   id: string;
   title: string;
-  seriesTitle: string;
-  categoryLabel: string;
-  type: 'produit' | 'service' | 'atelier' | 'consultation';
-  price: string;
-  priceNumeric: number;
-  stock: string;
+  chapter?: string;
+  subtitle?: string;
   description: string;
+  duration: string;
+  viewsCount?: number;
   videoUrl: string;
   posterUrl: string;
-  isActive: boolean;
+  year?: string;
+  quote?: string;
 }
 
-// 2. Part de coproduction avec Prix conseillé & Prévision de rendement
-export interface UserShareItem {
+// 2. Épisodes : Vidéos dans les séries documentaires
+export interface UserEpisodeVideo {
+  id: string;
+  title: string;
+  seriesId: string;
+  seriesTitle: string;
+  status?: string;
+  submissionDate?: string;
+  viewsCount: number;
+  duration: string;
+  videoUrl: string;
+  posterUrl: string;
+}
+
+// 3. Productions : Parts de coproduction
+export interface UserProductionShare {
   id: string;
   seriesId: string;
   seriesTitle: string;
-  sharesCount: number;
-  sharesOnSale?: number;
-  salePrice?: number;
+  sharesCount: number; // Total parts
+  sharesOnSale: number; // Mises en vente
+  startPrice?: number; // Prix de départ unitaire par part
+  salePrice: number; // Prix actuel unitaire
   purchasePrice: number;
   recommendedPrice: number;
+  rsiPercent?: number; // Retour sur investissement en %
   returnForecastPercent: number;
   returnForecastAmount: number;
   videoUrl: string;
@@ -89,11 +104,27 @@ export interface UserShareItem {
   status: string;
 }
 
-// 3. Projet de financement participatif (Crowdfunding)
-export interface UserProjectCrowdfunding {
+// 4. Créations : Artisanat, pièces & ateliers
+export interface UserCreationItem {
   id: string;
   title: string;
-  seriesTitle: string;
+  seriesTitle?: string;
+  categoryLabel: string;
+  type: 'produit' | 'service' | 'atelier' | 'consultation' | 'artisanat';
+  price: string;
+  priceNumeric: number;
+  stock?: string;
+  description: string;
+  specs?: string;
+  videoUrl: string;
+  posterUrl: string;
+}
+
+// 5. Initiatives : Financement participatif
+export interface UserInitiativeItem {
+  id: string;
+  title: string;
+  seriesTitle?: string;
   category: string;
   collectedAmount: number;
   targetAmount: number;
@@ -104,55 +135,86 @@ export interface UserProjectCrowdfunding {
   posterUrl: string;
 }
 
-// 4. Vidéo d'univers / Histoire publiée (Borne de montage)
-export interface UserStoryVideo {
+// 6. Appels : Besoins & collaborations
+export interface UserAppelItem {
   id: string;
   title: string;
-  seriesId: string;
-  seriesTitle: string;
-  episodeQuestion?: string;
-  summary?: string;
-  status: 'Validée' | 'Tournage planifié' | 'En cours de montage' | 'En revue';
-  submissionDate: string;
-  viewsCount: number;
-  duration: string;
+  category: string;
+  urgency: string;
+  description: string;
+  impact?: string;
   videoUrl: string;
   posterUrl: string;
 }
 
+// Presets multimédias pour l'ajout rapide
+const MEDIA_POSTER_PRESETS = [
+  { name: 'Lagune & Ciel', url: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Forêt & Végétal', url: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Indigo & Tissage', url: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80' },
+  { name: 'Terre & Poterie', url: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?auto=format&fit=crop&w=800&q=80' },
+];
+
+const MEDIA_VIDEO_PRESETS = [
+  { name: 'Extrait Lagune', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4' },
+  { name: 'Bande-annonce Cinéma', url: 'https://media.w3.org/2010/05/sintel/trailer.mp4' },
+  { name: 'Court Documentaire', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
+];
+
 export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   onNavigate,
-  language,
-  onUpdateLanguage,
-  hideQuestionByDefault,
-  onToggleHideQuestion
+  selectedDocFilter = [],
+  onUpdateDocFilter = (_docIds: string[]) => {},
+  language = 'fr',
+  onUpdateLanguage = (_lang: string) => {},
+  hideQuestionByDefault = false,
+  onToggleHideQuestion = (_val: boolean) => {},
+  protagonistId,
+  initialTab = 'recit'
 }) => {
-  // Pistes du Pupitre / Borne de montage :
-  // 'videos' (Mes vidéos) | 'shares' (Mes parts) | 'services' (Mes services) | 'projects' (Mes projets) | 'settings' (Paramètres)
-  const [activeTab, setActiveTab] = useState<'videos' | 'shares' | 'services' | 'projects' | 'settings'>('videos');
+  // Déterminer le mode : Propriétaire ou Visiteur
+  const targetProtagonist = protagonistId && protagonistId !== 'me'
+    ? PROTAGONISTS.find(p => p.id === protagonistId) || null
+    : null;
+  const isOwner = !targetProtagonist;
 
-  // Profile Identity
-  const [userName, setUserName] = useState<string>('Amina');
-  const [userFullName, setUserFullName] = useState<string>('Amina Traoré');
-  const [userAge, setUserAge] = useState<number>(34);
-  const [userTerritory, setUserTerritory] = useState<string>('Ganvié & Cotonou, Bénin');
+  // Onglet actif parmi les 6 dimensions poétiques (Proposition B)
+  const [activeTab, setActiveTab] = useState<DimensionTab>(initialTab);
+
+  // État d'ouverture de la modale Paramètres (accessible uniquement par l'icône dans l'en-tête)
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  // Identité du profil affiché
+  const [userName, setUserName] = useState<string>(
+    targetProtagonist ? targetProtagonist.name : 'Amina'
+  );
+  const [userFullName, setUserFullName] = useState<string>(
+    targetProtagonist ? targetProtagonist.name : 'Amina Traoré'
+  );
+  const [userRole, setUserRole] = useState<string>(
+    targetProtagonist ? targetProtagonist.role : 'Passeuse de mémoires sonores & artisane'
+  );
+  const [userTerritory, setUserTerritory] = useState<string>(
+    targetProtagonist ? `${targetProtagonist.territory}, ${targetProtagonist.country}` : 'Ganvié & Cotonou, Bénin'
+  );
   const [userBio, setUserBio] = useState<string>(
-    'Passeuse de mémoires sonores et artisane du tissage traditionnel. Entre la lagune de Ganvié et la terre rouge d’Allada, je recueille les chants du fleuve et les gestes millénaires.'
+    targetProtagonist ? targetProtagonist.bio : 'Passeuse de mémoires sonores et artisane du tissage traditionnel. Entre la lagune de Ganvié et la terre rouge d’Allada, je recueille les chants du fleuve et les gestes millénaires.'
   );
   const [userPhoto, setUserPhoto] = useState<string>(
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
+    targetProtagonist ? targetProtagonist.photoUrl : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
   );
+
+  // Édition de profil (propriétaire)
   const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
   const [shareToast, setShareToast] = useState<string | null>(null);
 
-  // Unread messages indicator
-  const totalUnreadMessages = 2;
-
-  // Indices de navigation par piste
-  const [storyIndex, setStoryIndex] = useState<number>(0);
+  // Indices de navigation par piste (chariot)
+  const [recitIndex, setRecitIndex] = useState<number>(0);
+  const [episodeIndex, setEpisodeIndex] = useState<number>(0);
   const [shareIndex, setShareIndex] = useState<number>(0);
-  const [offerIndex, setOfferIndex] = useState<number>(0);
-  const [projectIndex, setProjectIndex] = useState<number>(0);
+  const [creationIndex, setCreationIndex] = useState<number>(0);
+  const [initiativeIndex, setInitiativeIndex] = useState<number>(0);
+  const [appelIndex, setAppelIndex] = useState<number>(0);
 
   // Swiping state
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -163,91 +225,139 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Modales d'actions commerciales & gestion
-  const [isSellingShares, setIsSellingShares] = useState<boolean>(false);
-  const [sellPriceInput, setSellPriceInput] = useState<number>(55);
-  const [sellCountInput, setSellCountInput] = useState<number>(1);
-
-  // Modales gestion des Offres
-  const [editingOffer, setEditingOffer] = useState<UserOfferItem | null>(null);
-  const [offerFormTitle, setOfferFormTitle] = useState<string>('');
-  const [offerFormPrice, setOfferFormPrice] = useState<string>('');
-  const [offerFormDescription, setOfferFormDescription] = useState<string>('');
-  const [offerFormPoster, setOfferFormPoster] = useState<string>('');
-  const [offerFormVideo, setOfferFormVideo] = useState<string>('');
-  const [isDeletingOffer, setIsDeletingOffer] = useState<boolean>(false);
-
-  // Modales gestion des Projets
-  const [editingProject, setEditingProject] = useState<UserProjectCrowdfunding | null>(null);
-  const [projectFormTitle, setProjectFormTitle] = useState<string>('');
-  const [projectFormTarget, setProjectFormTarget] = useState<number>(5000);
-  const [projectFormDescription, setProjectFormDescription] = useState<string>('');
-  const [projectFormPoster, setProjectFormPoster] = useState<string>('');
-  const [projectFormVideo, setProjectFormVideo] = useState<string>('');
-  const [isDeletingProject, setIsDeletingProject] = useState<boolean>(false);
-
-  // Paramètres & Sécurité du compte
-  const [userEmail, setUserEmail] = useState<string>('amina.traore@yonywood.org');
-  const [isEditingEmail, setIsEditingEmail] = useState<boolean>(false);
-  const [tempEmail, setTempEmail] = useState<string>('amina.traore@yonywood.org');
-  const [currentPassword, setCurrentPassword] = useState<string>('');
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-
-  // Modales gestion de studio (Mes vidéos)
-  const [isDeletingStory, setIsDeletingStory] = useState<boolean>(false);
-
-  // 1. DATA: Mes Vidéos importées (Format 9:16)
-  const [stories, setStories] = useState<UserStoryVideo[]>([
-    {
-      id: 'story-1',
-      title: 'Le chant des piroguiers sous la brume de Ganvié',
-      seriesId: 'finagnon-qosqorico',
-      seriesTitle: 'Finagnon < > Qosqorico',
-      status: 'Validée',
-      submissionDate: '12 Fév 2026',
-      viewsCount: 1420,
-      duration: '4:18',
-      videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-      posterUrl: '/assets/posters/finagnon-qosqorico.png'
-    },
-    {
-      id: 'story-2',
-      title: 'Ce que murmurent les feuilles de karité avant l’aurore',
-      seriesId: 'jesus-legba',
-      seriesTitle: 'Jésus < > Èṣù',
-      status: 'Tournage planifié',
-      submissionDate: '28 Fév 2026',
-      viewsCount: 680,
-      duration: '3:45',
-      videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
-      posterUrl: '/assets/posters/jesus-esu.png'
-    },
-    {
-      id: 'story-3',
-      title: 'Le verbe et l’écho des carrefours à la nuit tombée',
-      seriesId: 'blacks-one-beyond-eve',
-      seriesTitle: 'Blacks One < > Beyond Eve',
-      status: 'En cours de montage',
-      submissionDate: '05 Mar 2026',
-      viewsCount: 230,
-      duration: '5:10',
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
+  // =========================================================================
+  // 1. DATA DIMENSION 1 : RÉCIT (Histoires personnelles de vie, études, etc.)
+  // =========================================================================
+  const [recits, setRecits] = useState<UserRecitItem[]>(() => {
+    if (targetProtagonist) {
+      return [
+        {
+          id: `recit-${targetProtagonist.id}-1`,
+          title: 'Mon chemin : l’enfance au bord de l’eau',
+          chapter: 'Chapitre 1',
+          subtitle: 'L’éveil du regard',
+          description: `Dans ce récit personnel, ${targetProtagonist.name} raconte ses premières années, l'héritage reçu et ce qui l'a mené à sa vocation.`,
+          quote: targetProtagonist.quote || '« Le tissu n’est pas fait par les yeux, mais par la pulsation du corps. »',
+          duration: '06:15',
+          viewsCount: 1420,
+          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+          posterUrl: targetProtagonist.photoUrl || '/assets/protagonists/amara-tisserande.jpg'
+        },
+        {
+          id: `recit-${targetProtagonist.id}-2`,
+          title: 'Ce que j’ai appris auprès des aînés',
+          chapter: 'Chapitre 2',
+          subtitle: 'Le temps de l’apprentissage',
+          description: 'Récit intime sur les années de formation, les doutes traversés et le secret de la persévérance.',
+          quote: '« Pour comprendre la matière, il faut accepter de ralentir et d’écouter. »',
+          duration: '08:40',
+          viewsCount: 890,
+          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+          posterUrl: '/assets/protagonists/koffi-tisserand.jpg'
+        }
+      ];
     }
-  ]);
+    return [
+      {
+        id: 'recit-1',
+        title: 'Le chant de la lagune : mes débuts à Ganvié',
+        chapter: 'Récit personnel',
+        subtitle: 'Origines & Mémoire',
+        description: 'Je raconte mon enfance sur l’eau, mes premières années d’études et la façon dont ma grand-mère m’a transmis la voix des femmes piroguières.',
+        quote: '« L’eau retient tout ce que les hommes oublient de nommer. »',
+        duration: '05:30',
+        viewsCount: 1840,
+        videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        posterUrl: '/assets/protagonists/amara-tisserande.jpg'
+      },
+      {
+        id: 'recit-2',
+        title: 'De l’Université aux métiers du fil : un choix de liberté',
+        chapter: 'Parcours de formation',
+        subtitle: 'Transmission & Métier',
+        description: 'Après ma formation en sociologie, j’ai choisi de réapprendre le geste du tissage auprès des aînées d’Allada pour en faire un pont entre générations.',
+        quote: '« Savoir d’où l’on vient donne à la navette son équilibre parfait. »',
+        duration: '07:15',
+        viewsCount: 920,
+        videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
+        posterUrl: '/assets/protagonists/koffi-tisserand.jpg'
+      }
+    ];
+  });
 
-  // 2. DATA: Mes Parts (avec Prix Conseillé, Stock en Réserve et en Vente)
-  const [productionShares, setProductionShares] = useState<UserShareItem[]>([
+  // =========================================================================
+  // 2. DATA DIMENSION 2 : ÉPISODES (Vidéos dans les séries documentaires)
+  // =========================================================================
+  const [episodes, setEpisodes] = useState<UserEpisodeVideo[]>(() => {
+    if (targetProtagonist && targetProtagonist.stories && targetProtagonist.stories.length > 0) {
+      return targetProtagonist.stories.map((st, idx) => ({
+        id: st.id,
+        title: st.title,
+        seriesId: targetProtagonist.documentaryId || 'finagnon-qosqorico',
+        seriesTitle: 'Finagnon < > Qosqorico',
+        status: 'Validée',
+        submissionDate: '15 Fév 2026',
+        viewsCount: 1200 + idx * 300,
+        duration: st.duration || '07:30',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        posterUrl: st.videoCoverUrl || '/assets/posters/finagnon-qosqorico.png'
+      }));
+    }
+    return [
+      {
+        id: 'ep-1',
+        title: 'Le chant des piroguiers sous la brume de Ganvié',
+        seriesId: 'finagnon-qosqorico',
+        seriesTitle: 'Finagnon < > Qosqorico',
+        status: 'Validée',
+        submissionDate: '12 Fév 2026',
+        viewsCount: 1420,
+        duration: '4:18',
+        videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        posterUrl: '/assets/posters/finagnon-qosqorico.png'
+      },
+      {
+        id: 'ep-2',
+        title: 'Ce que murmurent les feuilles de karité avant l’aurore',
+        seriesId: 'jesus-legba',
+        seriesTitle: 'Jésus < > Èṣù',
+        status: 'Tournage planifié',
+        submissionDate: '28 Fév 2026',
+        viewsCount: 680,
+        duration: '3:45',
+        videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
+        posterUrl: '/assets/posters/jesus-esu.png'
+      },
+      {
+        id: 'ep-3',
+        title: 'Le verbe et l’écho des carrefours à la nuit tombée',
+        seriesId: 'blacks-one-beyond-eve',
+        seriesTitle: 'Blacks One < > Beyond Eve',
+        status: 'En cours de montage',
+        submissionDate: '05 Mar 2026',
+        viewsCount: 230,
+        duration: '5:10',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
+      }
+    ];
+  });
+
+  // =========================================================================
+  // 3. DATA DIMENSION 3 : PRODUCTIONS (Parts de coproduction avec Prix départ & RSI)
+  // =========================================================================
+  const [productions, setProductions] = useState<UserProductionShare[]>([
     {
-      id: 'share-1',
+      id: 'prod-1',
       seriesId: 'finagnon-qosqorico',
       seriesTitle: 'Finagnon < > Qosqorico',
       sharesCount: 10,
-      sharesOnSale: 0,
+      sharesOnSale: isOwner ? 2 : 2, // Pour visiteur : parts disponibles à l'achat
+      startPrice: 35,
       salePrice: 55,
       purchasePrice: 350,
       recommendedPrice: 55,
+      rsiPercent: 57.1,
       returnForecastPercent: 18.5,
       returnForecastAmount: 64.75,
       status: 'Diffusion internationale',
@@ -255,14 +365,16 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       posterUrl: '/assets/posters/finagnon-qosqorico.png'
     },
     {
-      id: 'share-2',
+      id: 'prod-2',
       seriesId: 'jesus-legba',
       seriesTitle: 'Jésus < > Èṣù',
       sharesCount: 5,
       sharesOnSale: 2,
+      startPrice: 40,
       salePrice: 50,
       purchasePrice: 200,
       recommendedPrice: 48,
+      rsiPercent: 25.0,
       returnForecastPercent: 12.0,
       returnForecastAmount: 24.00,
       status: 'Post-production active',
@@ -270,86 +382,125 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       posterUrl: '/assets/posters/jesus-esu.png'
     },
     {
-      id: 'share-3',
+      id: 'prod-3',
       seriesId: 'blacks-one-beyond-eve',
       seriesTitle: 'Blacks One < > Beyond Eve',
       sharesCount: 8,
       sharesOnSale: 1,
+      startPrice: 42,
       salePrice: 52,
       purchasePrice: 380,
       recommendedPrice: 50,
+      rsiPercent: 23.8,
       returnForecastPercent: 15.0,
       returnForecastAmount: 41.60,
       status: 'En diffusion',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
-    },
-    {
-      id: 'share-4',
-      seriesId: 'dixeat-fiat-luxe',
-      seriesTitle: 'Dixeat < > Fiat Luxe',
-      sharesCount: 4,
-      sharesOnSale: 0,
-      salePrice: 65,
-      purchasePrice: 260,
-      recommendedPrice: 65,
-      returnForecastPercent: 20.0,
-      returnForecastAmount: 52.00,
-      status: 'Production terminée',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-      posterUrl: '/assets/posters/dixeat-fiat-luxe.png'
     }
   ]);
 
-  // 3. DATA: Mes Offres (Titre + Prix + Modifier / Supprimer)
-  const [offers, setOffers] = useState<UserOfferItem[]>([
+  // =========================================================================
+  // 4. DATA DIMENSION 4 : CRÉATIONS (Artisanat, Pièces, Ateliers)
+  // =========================================================================
+  const [creations, setCreations] = useState<UserCreationItem[]>(() => {
+    if (targetProtagonist) {
+      return [
+        {
+          id: `cr-${targetProtagonist.id}-1`,
+          title: 'Étoffe rituelle tissée au fil de coton',
+          seriesTitle: 'Finagnon < > Qosqorico',
+          categoryLabel: 'Artisanat d’art traditionnel',
+          type: 'artisanat',
+          price: '120 €',
+          priceNumeric: 120,
+          stock: '3 pièces numérotées',
+          description: 'Pièce tissée sur métier traditionnel en fil de coton biologique cultivé localement et teinté à l’indigo naturel.',
+          specs: '180 x 60 cm • 100% Coton brut biologique',
+          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+          posterUrl: '/assets/protagonists/amara-tisserande.jpg'
+        },
+        {
+          id: `cr-${targetProtagonist.id}-2`,
+          title: 'Atelier d’écoute et d’initiation aux savoirs',
+          seriesTitle: 'Finagnon < > Qosqorico',
+          categoryLabel: 'Atelier immersif',
+          type: 'atelier',
+          price: '45 € / pers.',
+          priceNumeric: 45,
+          stock: '6 places disponibles',
+          description: 'Une marche de 3 heures pour déceler les polyrythmies du vivant et la mémoire des gestes.',
+          specs: 'Durée : 3h00 • Matériel fourni',
+          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+          posterUrl: '/assets/protagonists/koffi-tisserand.jpg'
+        }
+      ];
+    }
+    return [
+      {
+        id: 'cr-1',
+        title: 'Étoffe rituelle tissée au fil de coton',
+        seriesTitle: 'Finagnon < > Qosqorico',
+        categoryLabel: 'Artisanat d’art traditionnel',
+        type: 'artisanat',
+        price: '120 €',
+        priceNumeric: 120,
+        stock: '3 pièces numérotées',
+        description: 'Pièce tissée sur métier traditionnel en fil de coton biologique cultivé localement et teinté à l’indigo naturel.',
+        specs: '180 x 60 cm • 100% Coton brut biologique',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+        posterUrl: '/assets/protagonists/amara-tisserande.jpg'
+      },
+      {
+        id: 'cr-2',
+        title: 'Atelier d’écoute des chants de la lagune',
+        seriesTitle: 'Finagnon < > Qosqorico',
+        categoryLabel: 'Transmission orale & Ateliers',
+        type: 'atelier',
+        price: '45 € / pers.',
+        priceNumeric: 45,
+        stock: '8 places par session',
+        description: 'Session de 2h30 en pirogue à Ganvié pour apprendre à enregistrer et capter les sons sacrés de l’eau.',
+        specs: 'Durée : 2h30 • Pirogue incluse • Casque audio fourni',
+        videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        posterUrl: '/assets/protagonists/koffi-tisserand.jpg'
+      },
+      {
+        id: 'cr-3',
+        title: 'Navette sculptée en bois d’iroko patiné',
+        seriesTitle: 'Jésus < > Èṣù',
+        categoryLabel: 'Objet de collection & Outils',
+        type: 'produit',
+        price: '65 €',
+        priceNumeric: 65,
+        stock: '2 exemplaires disponibles',
+        description: 'Navette sculptée à la main par les menuisiers de Porto-Novo dans des chutes de charpentes centenaires.',
+        specs: 'Longueur : 28 cm • Bois d’iroko poli à la cire d’abeille',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        posterUrl: '/assets/protagonists/chef-koffi.jpg'
+      }
+    ];
+  });
+
+  // =========================================================================
+  // 5. DATA DIMENSION 5 : INITIATIVES (Projets participatifs)
+  // =========================================================================
+  const [initiatives, setInitiatives] = useState<UserInitiativeItem[]>([
     {
-      id: 'off-1',
-      title: 'Étoffe rituelle tissée au fil de coton sauvage',
+      id: 'init-1',
+      title: 'L’Atelier Solidaire des Voix de la Lagune',
       seriesTitle: 'Finagnon < > Qosqorico',
-      categoryLabel: 'Artisanat Textile',
-      type: 'produit',
-      price: '180 €',
-      priceNumeric: 180,
-      stock: '4 pièces numérotées',
-      description: 'Pièce cérémonielle tissée selon les motifs traditionnels toffinou.',
-      videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80',
-      isActive: true
-    },
-    {
-      id: 'off-2',
-      title: 'Atelier immersif d’écoute & initiation aux chants de lagune',
-      seriesTitle: 'Jésus < > Èṣù',
-      categoryLabel: 'Transmission Vivante',
-      type: 'atelier',
-      price: '65 € / pers',
-      priceNumeric: 65,
-      stock: 'Sessions de 4 pers. max',
-      description: 'Découverte des fréquences et mémoires d’eau au lever du jour à Ganvié.',
-      videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?auto=format&fit=crop&w=800&q=80',
-      isActive: true
-    }
-  ]);
-
-  // 4. DATA: Mes Projets (Financement Participatif)
-  const [projects, setProjects] = useState<UserProjectCrowdfunding[]>([
-    {
-      id: 'proj-1',
-      title: 'Le Sanctuaire Sonore de la Forêt de Kpassè',
-      seriesTitle: 'Jésus < > Èṣù',
-      category: 'Préservation & Patrimoine Acoustique',
+      category: 'Préservation du Patrimoine Vivant',
       collectedAmount: 3450,
       targetAmount: 5000,
-      backersCount: 47,
+      backersCount: 42,
       daysRemaining: 18,
-      description: 'Enregistrement binaural immersif des derniers chants rituels des prêtresses de Kpassè.',
-      videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80'
+      description: 'Financement d’un studio d’enregistrement flottant à Ganvié pour sauvegarder les oraisons et contes aquatiques.',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+      posterUrl: '/assets/posters/finagnon-qosqorico.png'
     },
     {
-      id: 'proj-2',
+      id: 'init-2',
       title: 'Le Grand Métier à Tisser d’Allada',
       seriesTitle: 'Finagnon < > Qosqorico',
       category: 'Équipement d’Atelier Collectif',
@@ -359,9 +510,121 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       daysRemaining: 34,
       description: 'Reconstruction d’un métier à tisser en bois d’iroko pour former 8 jeunes apprenties.',
       videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
-      posterUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80'
+      posterUrl: '/assets/posters/jesus-esu.png'
     }
   ]);
+
+  // =========================================================================
+  // 6. DATA DIMENSION 6 : APPELS (Besoins, Collaborations, Compétences)
+  // =========================================================================
+  const [appels, setAppels] = useState<UserAppelItem[]>([
+    {
+      id: 'app-1',
+      title: 'Sourcing de fil de coton biologique ouest-africain',
+      category: 'Matières premières & Éco-filière',
+      urgency: 'Prioritaire pour la session d’octobre',
+      description: 'Recherche de coopératives agricoles féminines produisant 50 kg de fil écru sans intrants chimiques pour notre atelier de formation.',
+      impact: 'Garantit 6 mois d’apprentissage continu pour 12 apprentis sans recours aux matières synthétiques.',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+      posterUrl: '/assets/protagonists/amara-tisserande.jpg'
+    },
+    {
+      id: 'app-2',
+      title: 'Prêt ou don d’un enregistreur audio numérique portable (Zoom / Tascam)',
+      category: 'Matériel technique & Enregistrement',
+      urgency: 'D’ici fin avril',
+      description: 'Pour capturer les voix des anciens sur les berges sans distorsion avec microphone stéréo XY.',
+      impact: 'Permettra d’archiver 25 entretiens avant la saison des pluies.',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+      posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
+    }
+  ]);
+
+  // Modales d'actions pour le Propriétaire
+  const [isSellingShares, setIsSellingShares] = useState<boolean>(false);
+  const [sellPriceInput, setSellPriceInput] = useState<number>(55);
+  const [sellCountInput, setSellCountInput] = useState<number>(1);
+
+  // Modification Récit
+  const [editingRecit, setEditingRecit] = useState<UserRecitItem | null>(null);
+  const [recitFormTitle, setRecitFormTitle] = useState<string>('');
+  const [recitFormSubtitle, setRecitFormSubtitle] = useState<string>('');
+  const [isDeletingRecit, setIsDeletingRecit] = useState<boolean>(false);
+
+  // Modification Épisode
+  const [editingEpisode, setEditingEpisode] = useState<UserEpisodeVideo | null>(null);
+  const [episodeFormDuration, setEpisodeFormDuration] = useState<string>('');
+  const [episodeFormViews, setEpisodeFormViews] = useState<number>(0);
+  const [isDeletingEpisode, setIsDeletingEpisode] = useState<boolean>(false);
+
+  // Modification Production
+  const [editingProduction, setEditingProduction] = useState<UserProductionShare | null>(null);
+  const [prodFormStartPrice, setProdFormStartPrice] = useState<number>(35);
+  const [prodFormSalePrice, setProdFormSalePrice] = useState<number>(55);
+  const [prodFormRsi, setProdFormRsi] = useState<number>(57.1);
+  const [prodFormSharesCount, setProdFormSharesCount] = useState<number>(10);
+  const [prodFormSharesOnSale, setProdFormSharesOnSale] = useState<number>(2);
+
+  // Modification Création
+  const [editingCreation, setEditingCreation] = useState<UserCreationItem | null>(null);
+  const [creationFormTitle, setCreationFormTitle] = useState<string>('');
+  const [creationFormPrice, setCreationFormPrice] = useState<string>('');
+  const [creationFormCategory, setCreationFormCategory] = useState<string>('');
+  const [creationFormDescription, setCreationFormDescription] = useState<string>('');
+  const [creationFormPoster, setCreationFormPoster] = useState<string>('');
+  const [creationFormVideo, setCreationFormVideo] = useState<string>('');
+  const [isDeletingCreation, setIsDeletingCreation] = useState<boolean>(false);
+
+  // Modification Initiative
+  const [editingInitiative, setEditingInitiative] = useState<UserInitiativeItem | null>(null);
+  const [initiativeFormTitle, setInitiativeFormTitle] = useState<string>('');
+  const [initiativeFormTarget, setInitiativeFormTarget] = useState<number>(5000);
+  const [initiativeFormDescription, setInitiativeFormDescription] = useState<string>('');
+  const [initiativeFormPoster, setInitiativeFormPoster] = useState<string>('');
+  const [initiativeFormVideo, setInitiativeFormVideo] = useState<string>('');
+  const [isDeletingInitiative, setIsDeletingInitiative] = useState<boolean>(false);
+
+  // Modification Appel
+  const [editingAppel, setEditingAppel] = useState<UserAppelItem | null>(null);
+  const [appelFormTitle, setAppelFormTitle] = useState<string>('');
+  const [appelFormUrgency, setAppelFormUrgency] = useState<string>('');
+  const [appelFormDescription, setAppelFormDescription] = useState<string>('');
+  const [appelFormImpact, setAppelFormImpact] = useState<string>('');
+  const [isDeletingAppel, setIsDeletingAppel] = useState<boolean>(false);
+
+  // Modale de Partage Réseaux Sociaux
+  const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+
+  // Modales d'actions interactives pour le Visiteur
+  const [isBuyingSharesModalOpen, setIsBuyingSharesModalOpen] = useState<boolean>(false);
+  const [buySharesCount, setBuySharesCount] = useState<number>(1);
+
+  const [isOrderingCreationModalOpen, setIsOrderingCreationModalOpen] = useState<boolean>(false);
+  const [orderQuantity, setOrderQuantity] = useState<number>(1);
+  const [orderContact, setOrderContact] = useState<string>('');
+
+  const [isContributingModalOpen, setIsContributingModalOpen] = useState<boolean>(false);
+  const [contributionAmount, setContributionAmount] = useState<number>(50);
+
+  const [isOfferingHelpModalOpen, setIsOfferingHelpModalOpen] = useState<boolean>(false);
+  const [helpMessage, setHelpMessage] = useState<string>('');
+
+  // Paramètres & Sécurité du compte (modal paramètres)
+  const [userEmail, setUserEmail] = useState<string>('amina.traore@yonywood.org');
+  const [isEditingEmail, setIsEditingEmail] = useState<boolean>(false);
+  const [tempEmail, setTempEmail] = useState<string>('amina.traore@yonywood.org');
+  const [currentPassword, setCurrentPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+
+  // Synchroniser la vidéo lors du changement de slide
+  useEffect(() => {
+    setIsPlaying(false);
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.pause();
+    }
+  }, [activeTab, recitIndex, episodeIndex, shareIndex, creationIndex, initiativeIndex, appelIndex]);
 
   // Gérer la lecture vidéo
   const toggleVideoPlayback = (e?: React.MouseEvent) => {
@@ -375,37 +638,36 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     }
   };
 
-  // Synchroniser la vidéo lors du changement de slide
-  useEffect(() => {
-    setIsPlaying(false);
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.pause();
-    }
-  }, [activeTab, storyIndex, shareIndex, offerIndex, projectIndex]);
-
   // Navigation Swipes & Chariot
   const handlePrev = () => {
-    if (activeTab === 'videos') {
-      setStoryIndex(prev => (prev > 0 ? prev - 1 : stories.length - 1));
-    } else if (activeTab === 'shares') {
-      setShareIndex(prev => (prev > 0 ? prev - 1 : productionShares.length - 1));
-    } else if (activeTab === 'services') {
-      setOfferIndex(prev => (prev > 0 ? prev - 1 : offers.length - 1));
-    } else if (activeTab === 'projects') {
-      setProjectIndex(prev => (prev > 0 ? prev - 1 : projects.length - 1));
+    if (activeTab === 'recit') {
+      setRecitIndex(prev => (prev > 0 ? prev - 1 : recits.length - 1));
+    } else if (activeTab === 'episodes') {
+      setEpisodeIndex(prev => (prev > 0 ? prev - 1 : episodes.length - 1));
+    } else if (activeTab === 'productions') {
+      setShareIndex(prev => (prev > 0 ? prev - 1 : productions.length - 1));
+    } else if (activeTab === 'creations') {
+      setCreationIndex(prev => (prev > 0 ? prev - 1 : creations.length - 1));
+    } else if (activeTab === 'initiatives') {
+      setInitiativeIndex(prev => (prev > 0 ? prev - 1 : initiatives.length - 1));
+    } else if (activeTab === 'appels') {
+      setAppelIndex(prev => (prev > 0 ? prev - 1 : appels.length - 1));
     }
   };
 
   const handleNext = () => {
-    if (activeTab === 'videos') {
-      setStoryIndex(prev => (prev < stories.length - 1 ? prev + 1 : 0));
-    } else if (activeTab === 'shares') {
-      setShareIndex(prev => (prev < productionShares.length - 1 ? prev + 1 : 0));
-    } else if (activeTab === 'services') {
-      setOfferIndex(prev => (prev < offers.length - 1 ? prev + 1 : 0));
-    } else if (activeTab === 'projects') {
-      setProjectIndex(prev => (prev < projects.length - 1 ? prev + 1 : 0));
+    if (activeTab === 'recit') {
+      setRecitIndex(prev => (prev < recits.length - 1 ? prev + 1 : 0));
+    } else if (activeTab === 'episodes') {
+      setEpisodeIndex(prev => (prev < episodes.length - 1 ? prev + 1 : 0));
+    } else if (activeTab === 'productions') {
+      setShareIndex(prev => (prev < productions.length - 1 ? prev + 1 : 0));
+    } else if (activeTab === 'creations') {
+      setCreationIndex(prev => (prev < creations.length - 1 ? prev + 1 : 0));
+    } else if (activeTab === 'initiatives') {
+      setInitiativeIndex(prev => (prev < initiatives.length - 1 ? prev + 1 : 0));
+    } else if (activeTab === 'appels') {
+      setAppelIndex(prev => (prev < appels.length - 1 ? prev + 1 : 0));
     }
   };
 
@@ -461,233 +723,32 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     setSwipeOffset(0);
   };
 
-  // Actions Mes Vidéos (Borne Studio)
-  const handleDeleteCurrentStory = () => {
-    if (stories.length <= 1) {
-      setShareToast("Impossible de supprimer la seule vidéo restante de la borne.");
-      setIsDeletingStory(false);
-      setTimeout(() => setShareToast(null), 3500);
-      return;
-    }
-    const currentId = stories[storyIndex]?.id;
-    setStories(prev => prev.filter(s => s.id !== currentId));
-    setStoryIndex(prev => Math.max(0, prev - 1));
-    setIsDeletingStory(false);
-    setShareToast("Vidéo retirée.");
-    setTimeout(() => setShareToast(null), 3500);
-  };
+  // Prénom uniquement pour l'en-tête (demandé par l'utilisateur)
+  const profileFirstName = targetProtagonist 
+    ? (targetProtagonist.name ? targetProtagonist.name.trim().split(' ')[0] : 'Amina')
+    : (userName ? userName.trim().split(' ')[0] : 'Amina');
 
-  // Actions Mes Parts : Gérer la mise en vente et stock
-  const handleOpenManageShares = () => {
-    const cur = productionShares[shareIndex];
-    if (!cur) return;
-    const availableReserve = cur.sharesCount - (cur.sharesOnSale || 0);
-    setSellCountInput(cur.sharesOnSale && cur.sharesOnSale > 0 ? cur.sharesOnSale : Math.max(1, availableReserve));
-    setSellPriceInput(cur.salePrice || cur.recommendedPrice);
-    setIsSellingShares(true);
-  };
-
-  const handleConfirmSellShares = () => {
-    const cur = productionShares[shareIndex];
-    if (!cur) return;
-    setProductionShares(prev => prev.map((s, idx) => {
-      if (idx === shareIndex) {
-        return {
-          ...s,
-          sharesOnSale: Math.min(s.sharesCount, sellCountInput),
-          salePrice: sellPriceInput
-        };
-      }
-      return s;
-    }));
-    setShareToast(`${sellCountInput} part(s) mises en vente à ${sellPriceInput} € / part sur le Marché.`);
-    setIsSellingShares(false);
-    setTimeout(() => setShareToast(null), 3500);
-  };
-
-  const handleCancelSaleShares = () => {
-    setProductionShares(prev => prev.map((s, idx) => {
-      if (idx === shareIndex) {
-        return {
-          ...s,
-          sharesOnSale: 0
-        };
-      }
-      return s;
-    }));
-    setShareToast("Parts retirées de la vente et remises en réserve.");
-    setIsSellingShares(false);
-    setTimeout(() => setShareToast(null), 3500);
-  };
-
-  // Actions Mes Offres (Modifier / Supprimer)
-  const handleOpenEditOffer = (offer: UserOfferItem) => {
-    setEditingOffer(offer);
-    setOfferFormTitle(offer.title);
-    setOfferFormPrice(offer.price);
-    setOfferFormDescription(offer.description);
-    setOfferFormPoster(offer.posterUrl);
-    setOfferFormVideo(offer.videoUrl);
-  };
-
-  const handleSaveOffer = () => {
-    if (!editingOffer) return;
-    setOffers(prev => prev.map(o => o.id === editingOffer.id ? {
-      ...o,
-      title: offerFormTitle,
-      price: offerFormPrice,
-      description: offerFormDescription,
-      posterUrl: offerFormPoster,
-      videoUrl: offerFormVideo
-    } : o));
-    setEditingOffer(null);
-    setShareToast("Offre mise à jour avec succès !");
-    setTimeout(() => setShareToast(null), 3500);
-  };
-
-  const handleDeleteCurrentOffer = () => {
-    if (offers.length <= 1) {
-      setShareToast("Impossible de supprimer la seule offre active.");
-      setIsDeletingOffer(false);
-      setTimeout(() => setShareToast(null), 3500);
-      return;
-    }
-    const currentId = offers[offerIndex]?.id;
-    setOffers(prev => prev.filter(o => o.id !== currentId));
-    setOfferIndex(prev => Math.max(0, prev - 1));
-    setIsDeletingOffer(false);
-    setShareToast("Offre supprimée.");
-    setTimeout(() => setShareToast(null), 3500);
-  };
-
-  // Actions Mes Projets (Modifier / Supprimer)
-  const handleOpenEditProject = (proj: UserProjectCrowdfunding) => {
-    setEditingProject(proj);
-    setProjectFormTitle(proj.title);
-    setProjectFormTarget(proj.targetAmount);
-    setProjectFormDescription(proj.description);
-    setProjectFormPoster(proj.posterUrl);
-    setProjectFormVideo(proj.videoUrl);
-  };
-
-  const handleSaveProject = () => {
-    if (!editingProject) return;
-    setProjects(prev => prev.map(p => p.id === editingProject.id ? {
-      ...p,
-      title: projectFormTitle,
-      targetAmount: projectFormTarget,
-      description: projectFormDescription,
-      posterUrl: projectFormPoster,
-      videoUrl: projectFormVideo
-    } : p));
-    setEditingProject(null);
-    setShareToast("Projet mis à jour avec succès !");
-    setTimeout(() => setShareToast(null), 3500);
-  };
-
-  const handleDeleteCurrentProject = () => {
-    if (projects.length <= 1) {
-      setShareToast("Impossible de supprimer le seul projet actif.");
-      setIsDeletingProject(false);
-      setTimeout(() => setShareToast(null), 3500);
-      return;
-    }
-    const currentId = projects[projectIndex]?.id;
-    setProjects(prev => prev.filter(p => p.id !== currentId));
-    setProjectIndex(prev => Math.max(0, prev - 1));
-    setIsDeletingProject(false);
-    setShareToast("Projet supprimé.");
-    setTimeout(() => setShareToast(null), 3500);
-  };
-
-  // Actions Paramètres : Sécurité du compte
-  const handleSaveEmail = () => {
-    if (!tempEmail || !tempEmail.includes('@')) {
-      setShareToast("Veuillez saisir une adresse email valide.");
-      setTimeout(() => setShareToast(null), 3000);
-      return;
-    }
-    setUserEmail(tempEmail);
-    setIsEditingEmail(false);
-    setShareToast("Adresse email mise à jour avec succès.");
-    setTimeout(() => setShareToast(null), 3000);
-  };
-
-  const handleUpdatePassword = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentPassword) {
-      setShareToast("Veuillez renseigner votre mot de passe actuel.");
-      setTimeout(() => setShareToast(null), 3000);
-      return;
-    }
-    if (newPassword.length < 6) {
-      setShareToast("Le nouveau mot de passe doit comporter au moins 6 caractères.");
-      setTimeout(() => setShareToast(null), 3000);
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setShareToast("Les nouveaux mots de passe ne correspondent pas.");
-      setTimeout(() => setShareToast(null), 3000);
-      return;
-    }
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    setShareToast("Mot de passe mis à jour avec succès !");
-    setTimeout(() => setShareToast(null), 3500);
-  };
-
-  // Upload local simulé pour les médias
-  const handleUploadPosterFile = (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setter(URL.createObjectURL(file));
-      setShareToast("Image sélectionnée.");
-      setTimeout(() => setShareToast(null), 2000);
-    }
-  };
-
-  const handleUploadVideoFile = (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setter(URL.createObjectURL(file));
-      setShareToast("Vidéo sélectionnée.");
-      setTimeout(() => setShareToast(null), 2000);
-    }
-  };
-
-  // Partager le profil
+  // Partager le profil (ouvre la modale des réseaux sociaux + copie de lien)
   const handleShareProfile = () => {
-    navigator.clipboard?.writeText(window.location.href);
-    setShareToast("Lien de la borne de profil copié !");
-    setTimeout(() => setShareToast(null), 3000);
+    setIsShareModalOpen(true);
   };
 
-  // Active items
-  const currentStory = stories[storyIndex] || stories[0];
-  const currentShare = productionShares[shareIndex] || productionShares[0];
-  const currentOffer = offers[offerIndex] || offers[0];
-  const currentProject = projects[projectIndex] || projects[0];
+  // Items actifs
+  const currentRecit = recits[recitIndex] || recits[0];
+  const currentEpisode = episodes[episodeIndex] || episodes[0];
+  const currentProduction = productions[shareIndex] || productions[0];
+  const currentCreation = creations[creationIndex] || creations[0];
+  const currentInitiative = initiatives[initiativeIndex] || initiatives[0];
+  const currentAppel = appels[appelIndex] || appels[0];
 
-  // Helper count for current active track
-  const activeTrackItemsCount = 
-    activeTab === 'videos' ? stories.length :
-    activeTab === 'shares' ? productionShares.length :
-    activeTab === 'services' ? offers.length :
-    activeTab === 'projects' ? projects.length : 0;
-
-  const activeCurrentIndex = 
-    activeTab === 'videos' ? storyIndex :
-    activeTab === 'shares' ? shareIndex :
-    activeTab === 'services' ? offerIndex :
-    activeTab === 'projects' ? projectIndex : 0;
-
-  // Titre de série actif selon l'onglet courant
+  // Helper titre série avec mise en valeur du symbole < >
   const currentSeriesTitle = 
-    activeTab === 'videos' ? currentStory?.seriesTitle :
-    activeTab === 'shares' ? currentShare?.seriesTitle :
-    activeTab === 'services' ? currentOffer?.seriesTitle :
-    activeTab === 'projects' ? currentProject?.seriesTitle : '';
+    activeTab === 'recit' ? (userName || 'Récit personnel') :
+    activeTab === 'episodes' ? currentEpisode?.seriesTitle :
+    activeTab === 'productions' ? currentProduction?.seriesTitle :
+    activeTab === 'creations' ? (currentCreation?.seriesTitle || 'Créations d’atelier') :
+    activeTab === 'initiatives' ? (currentInitiative?.seriesTitle || 'Initiative') :
+    (currentAppel?.category || 'Appel');
 
   const parseSeriesTitle = (title?: string) => {
     if (!title) return { partA: '', partB: '', hasSeparator: false };
@@ -704,16 +765,37 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   const parsedSeries = parseSeriesTitle(currentSeriesTitle);
 
+  // Configuration des 6 onglets poétiques (Proposition B)
+  const DIMENSIONS_CONFIG: { key: DimensionTab; label: string; icon: React.FC<{ className?: string }> }[] = [
+    { key: 'recit', label: 'Récit', icon: BookOpen },
+    { key: 'episodes', label: 'Épisodes', icon: Film },
+    { key: 'productions', label: 'Productions', icon: Coins },
+    { key: 'creations', label: 'Créations', icon: ShoppingBag },
+    { key: 'initiatives', label: 'Initiatives', icon: HeartHandshake },
+    { key: 'appels', label: 'Appels', icon: Megaphone },
+  ];
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-36 space-y-6 text-[#1C1917]">
       
       {/* ========================================================================= */}
-      {/* 1. EN-TÊTE D'IDENTITÉ & ACTIONS RAPIDES                                   */}
+      {/* 1. EN-TÊTE D'IDENTITÉ UNIFIÉ : MODE PROPRIÉTAIRE & VISITEUR               */}
       {/* ========================================================================= */}
       <div className="space-y-4 border-b border-stone-200 pb-4">
         
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3.5">
+            {/* Bouton retour si visiteur */}
+            {!isOwner && (
+              <button
+                onClick={() => onNavigate({ type: 'duo_feed' })}
+                className="p-2 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 transition-colors shadow-xs cursor-pointer mr-1"
+                title="Retour au flux"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            )}
+
             <div className="relative">
               <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-0.5 border-2 border-[#C89B3C] shadow-sm overflow-hidden bg-white">
                 <img
@@ -722,134 +804,122 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   className="w-full h-full object-cover rounded-full"
                 />
               </div>
-              <button
-                onClick={() => setIsEditingProfile(true)}
-                className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#1C1917] text-white flex items-center justify-center text-[10px] shadow-xs cursor-pointer hover:bg-stone-800"
-                title="Modifier mon profil"
-                id="btn-edit-profile-avatar"
-              >
-                <Camera className="w-3 h-3" />
-              </button>
+              {isOwner && (
+                <button
+                  onClick={() => setIsEditingProfile(true)}
+                  className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#1C1917] text-white flex items-center justify-center text-[10px] shadow-xs cursor-pointer hover:bg-stone-800"
+                  title="Modifier mon profil"
+                  id="btn-edit-profile-avatar"
+                >
+                  <Camera className="w-3 h-3" />
+                </button>
+              )}
             </div>
 
             <div>
-              <h1 className="font-editorial text-lg sm:text-xl font-bold text-[#1C1917] leading-tight">
-                {userName || userFullName}
-              </h1>
+              <div className="flex items-center gap-2">
+                <h1 className="font-editorial text-lg sm:text-xl font-bold text-[#1C1917] leading-tight">
+                  {profileFirstName}
+                </h1>
+                {targetProtagonist?.flag && <span className="text-sm">{targetProtagonist.flag}</span>}
+              </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Bouton Messagerie -> Ouvre directement la page Messagerie dédiée sans conflit */}
-            <button
-              onClick={() => onNavigate({ type: 'messaging' })}
-              id="btn-profile-messages"
-              className="px-3.5 py-1.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-medium text-[#1C1917] flex items-center gap-1.5 transition-all shadow-xs cursor-pointer relative"
-              title="Ouvrir la messagerie"
-            >
-              <MessageSquare className="w-3.5 h-3.5 text-stone-700" />
-              <span>Messages</span>
-              {totalUnreadMessages > 0 && (
-                <span className="w-4 h-4 rounded-full bg-[#C89B3C] text-white text-[9px] font-bold flex items-center justify-center">
-                  {totalUnreadMessages}
-                </span>
-              )}
-            </button>
+            {isOwner ? (
+              <>
+                {/* Propriétaire : Bouton Messagerie */}
+                <button
+                  onClick={() => onNavigate({ type: 'messaging' })}
+                  id="btn-profile-messages"
+                  className="px-3.5 py-1.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-medium text-[#1C1917] flex items-center gap-1.5 transition-all shadow-xs cursor-pointer relative"
+                  title="Ouvrir la messagerie"
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-stone-700" />
+                  <span>Messages</span>
+                  <span className="w-4 h-4 rounded-full bg-[#C89B3C] text-white text-[9px] font-bold flex items-center justify-center">
+                    2
+                  </span>
+                </button>
 
-            {/* Bouton Partager */}
-            <button
-              onClick={handleShareProfile}
-              id="btn-share-profile"
-              className="p-2 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 hover:text-[#1C1917] transition-colors cursor-pointer shadow-xs"
-              title="Partager le profil"
-            >
-              <Share2 className="w-4 h-4" />
-            </button>
+                {/* Propriétaire : Bouton Partager */}
+                <button
+                  onClick={handleShareProfile}
+                  id="btn-share-profile"
+                  className="p-2 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 hover:text-[#1C1917] transition-colors cursor-pointer shadow-xs"
+                  title="Partager mon profil"
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
+
+                {/* Propriétaire : Icône discrète PARAMÈTRES dans l'en-tête */}
+                <button
+                  onClick={() => setIsSettingsOpen(true)}
+                  id="btn-profile-settings-gear"
+                  className="p-2 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-700 transition-colors cursor-pointer shadow-xs"
+                  title="Paramètres du compte"
+                >
+                  <Sliders className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Visiteur : Bouton Envoyer un message */}
+                <button
+                  onClick={() => onNavigate({ type: 'messaging' })}
+                  id="btn-visitor-message"
+                  className="px-3.5 py-1.5 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-medium text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                  title={`Envoyer un message à ${userName}`}
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-[#C89B3C]" />
+                  <span>Message</span>
+                </button>
+
+                {/* Visiteur : Bouton Partager */}
+                <button
+                  onClick={handleShareProfile}
+                  id="btn-share-visitor-profile"
+                  className="p-2 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 hover:text-[#1C1917] transition-colors cursor-pointer shadow-xs"
+                  title={`Partager le profil de ${userName}`}
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* LE MENU DE NAVIGATION DU PROFIL (DESIGN ÉPURÉ & OPTIMISÉ STYLE BUMBLE)    */}
-        {/* 1. Mes vidéos | 2. Mes parts | 3. Mes offres | 4. Mes projets | 5. Paramètres */}
+        {/* BARRE DES 6 DIMENSIONS (PROPOSITION B : PLUS CINÉMATOGRAPHIQUE & POÉTIQUE)  */}
+        {/* 1. Récit | 2. Épisodes | 3. Productions | 4. Créations | 5. Initiatives | 6. Appels */}
+        {/* Note : Paramètres a été déplacé dans l'icône d'en-tête                        */}
         {/* ========================================================================= */}
         <div className="bg-stone-100/90 p-1.5 rounded-2xl border border-stone-200/80 shadow-xs">
           <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
-            
-            {/* Piste 1: Mes vidéos */}
-            <button
-              onClick={() => setActiveTab('videos')}
-              id="tab-profile-videos"
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 outline-none ${
-                activeTab === 'videos'
-                  ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60 font-bold'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
-              }`}
-            >
-              <Film className={`w-3.5 h-3.5 ${activeTab === 'videos' ? 'text-[#C89B3C]' : 'text-stone-400'}`} />
-              <span>Mes vidéos</span>
-            </button>
-
-            {/* Piste 2: Mes parts */}
-            <button
-              onClick={() => setActiveTab('shares')}
-              id="tab-profile-shares"
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 outline-none ${
-                activeTab === 'shares'
-                  ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60 font-bold'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
-              }`}
-            >
-              <Coins className={`w-3.5 h-3.5 ${activeTab === 'shares' ? 'text-[#C89B3C]' : 'text-stone-400'}`} />
-              <span>Mes parts</span>
-            </button>
-
-            {/* Piste 3: Mes offres */}
-            <button
-              onClick={() => setActiveTab('services')}
-              id="tab-profile-services"
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 outline-none ${
-                activeTab === 'services'
-                  ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60 font-bold'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
-              }`}
-            >
-              <ShoppingBag className={`w-3.5 h-3.5 ${activeTab === 'services' ? 'text-[#C89B3C]' : 'text-stone-400'}`} />
-              <span>Mes offres</span>
-            </button>
-
-            {/* Piste 4: Mes projets */}
-            <button
-              onClick={() => setActiveTab('projects')}
-              id="tab-profile-projects"
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 outline-none ${
-                activeTab === 'projects'
-                  ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60 font-bold'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
-              }`}
-            >
-              <HeartHandshake className={`w-3.5 h-3.5 ${activeTab === 'projects' ? 'text-[#C89B3C]' : 'text-stone-400'}`} />
-              <span>Mes projets</span>
-            </button>
-
-            {/* Piste 5: Paramètres */}
-            <button
-              onClick={() => setActiveTab('settings')}
-              id="tab-profile-settings"
-              className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ml-auto outline-none ${
-                activeTab === 'settings'
-                  ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60 font-bold'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
-              }`}
-            >
-              <Sliders className={`w-3.5 h-3.5 ${activeTab === 'settings' ? 'text-[#C89B3C]' : 'text-stone-400'}`} />
-              <span className="hidden sm:inline">Paramètres</span>
-            </button>
-
+            {DIMENSIONS_CONFIG.map(({ key, label, icon: IconComponent }) => {
+              const isActive = activeTab === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key)}
+                  id={`tab-profile-${key}`}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 outline-none whitespace-nowrap ${
+                    isActive
+                      ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60 font-bold'
+                      : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
+                  }`}
+                >
+                  <IconComponent className={`w-3.5 h-3.5 ${isActive ? 'text-[#C89B3C]' : 'text-stone-400'}`} />
+                  <span>{label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* TOAST SUCCÈS LUDIQUE */}
+      {/* TOAST SUCCÈS */}
       {shareToast && (
         <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 max-w-sm w-full px-4 py-2.5 rounded-2xl bg-[#1C1917] text-white text-xs font-semibold flex items-center gap-2 shadow-xl animate-in fade-in">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -858,418 +928,622 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* 2. AFFICHAGE ÉPURÉ SUR FOND BEIGE (FORMAT 9:16 AVEC NAVIGATION FLÈCHES)    */}
+      {/* 2. VISIONNEUSE VERTICALE 9:16 (AVEC NAVIGATION PAR FLÈCHES ET GESTES)     */}
       {/* ========================================================================= */}
-      {activeTab !== 'settings' ? (
-        <div className="space-y-4 animate-in fade-in duration-200">
+      <div className="space-y-4 animate-in fade-in duration-200">
 
-          {/* Conteneur principal sur fond beige avec flèches latérales */}
-          <div className="relative flex items-center justify-center gap-3 sm:gap-6 py-2">
-            
-            {/* Flèche Gauche sur fond beige */}
-            <button
-              onClick={handlePrev}
-              className="hidden sm:flex p-3.5 rounded-full bg-white hover:bg-[#FAFAF9] border border-[#E7E5E4] text-[#8B6845] hover:text-[#1C1917] transition-all shadow-sm cursor-pointer hover:scale-105 outline-none focus:outline-none ring-0"
-              title="Précédent"
-              id="prev-studio-card-btn"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
+        {/* Conteneur principal avec flèches latérales */}
+        <div className="relative flex items-center justify-center gap-3 sm:gap-6 py-2">
+          
+          {/* Flèche Gauche */}
+          <button
+            onClick={handlePrev}
+            className="hidden sm:flex p-3.5 rounded-full bg-white hover:bg-[#FAFAF9] border border-[#E7E5E4] text-[#8B6845] hover:text-[#1C1917] transition-all shadow-sm cursor-pointer hover:scale-105 outline-none focus:outline-none ring-0"
+            title="Précédent"
+            id="prev-studio-card-btn"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
 
-            {/* ÉCRAN DE VISIONNAGE VERTICAL FORMAT 9:16 (Sans repères de coins) */}
-            <div
-              onTouchStart={onTouchStart}
-              onTouchMove={onTouchMove}
-              onTouchEnd={onTouchEnd}
-              onMouseDown={onMouseDown}
-              onMouseMove={onMouseMove}
-              onMouseUp={onMouseUp}
-              className="w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing relative rounded-3xl overflow-hidden shadow-xl border border-[#E7E5E4] bg-black outline-none focus:outline-none ring-0"
-              style={{ transform: `translateX(${swipeOffset}px)` }}
-            >
-              {/* ================================================================= */}
-              {/* PISTE 1. MES VIDÉOS (Sans titre, juste statistiques + supprimer) */}
-              {/* ================================================================= */}
-              {activeTab === 'videos' && currentStory && (
-                <div 
-                  className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
-                  id={`card-video-${currentStory.id}`}
-                >
-                  {/* Image de couverture toujours visible pour éviter tout cadre ou clignotement */}
-                  <img
-                    src={currentStory.posterUrl}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                  />
-                  {/* Vidéo de fond (activée uniquement en lecture) */}
-                  <video
-                    ref={videoRef}
-                    src={currentStory.videoUrl}
-                    loop
-                    muted
-                    playsInline
-                    preload="none"
-                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300 ${
-                      isPlaying ? 'opacity-100' : 'opacity-0'
+          {/* CARTE FORMAT 9:16 VERTICAL SANS CADRE NI REPERES */}
+          <div
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
+              toggleVideoPlayback();
+            }}
+            className="w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-3xl overflow-hidden shadow-xl border border-[#E7E5E4] bg-black outline-none focus:outline-none ring-0"
+            style={{ transform: `translateX(${swipeOffset}px)` }}
+          >
+            {/* ================================================================= */}
+            {/* DIMENSION 1 : RÉCIT (Vidéos personnelles / histoire de vie)       */}
+            {/* ================================================================= */}
+            {activeTab === 'recit' && currentRecit && (
+              <div 
+                className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
+                id={`card-recit-${currentRecit.id}`}
+              >
+                <img
+                  src={currentRecit.posterUrl}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                />
+                <video
+                  ref={videoRef}
+                  src={currentRecit.videoUrl}
+                  loop
+                  muted
+                  playsInline
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+                    isPlaying ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+
+                {/* HAUT : Juste le titre en haut à gauche, Icône vidéo dorée à droite */}
+                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
+                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/95 shadow-md truncate max-w-[210px]" title={currentRecit.title}>
+                    <span>{currentRecit.title}</span>
+                  </div>
+
+                  {/* Icône vidéo hybride dorée en haut à droite */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideoPlayback(e);
+                    }}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
                     }`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
+                    title={isPlaying ? 'Mettre en pause' : `Visionner le récit`}
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                    ) : (
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                    )}
+                  </button>
+                </div>
 
-                  {/* HAUT : Titre de la série centré avec le symbole face à face */}
-                  <div className="relative z-10 flex items-center justify-center w-full">
-                    <div className="px-3.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white/95 flex items-center gap-1.5 shadow-md">
-                      {parsedSeries.hasSeparator ? (
-                        <>
-                          <span className="font-editorial font-bold">{parsedSeries.partA}</span>
-                          <span className="font-mono text-xs font-black text-[#C89B3C] px-0.5 select-none tracking-wider flex items-center gap-0.5">
-                            <span>&lt;</span>
-                            <span>&gt;</span>
-                          </span>
-                          <span className="font-editorial font-bold">{parsedSeries.partB}</span>
-                        </>
-                      ) : (
-                        <span className="font-editorial font-bold">{currentStory.seriesTitle}</span>
-                      )}
-                    </div>
+                {/* MILIEU : Vue épurée sans texte */}
+                <div className="my-auto" />
+
+                {/* BAS : Juste un petit titre en bas & actions */}
+                <div className="relative z-10 space-y-2.5">
+                  <div>
+                    <p className="font-editorial text-sm sm:text-base font-bold text-white leading-snug">
+                      {currentRecit.subtitle || currentRecit.chapter}
+                    </p>
                   </div>
 
-                  {/* CENTRE : Lecture / Pause Vidéo */}
-                  <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                    <button
-                      onClick={toggleVideoPlayback}
-                      className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-[#C89B3C] text-white hover:text-black border border-white/25 backdrop-blur-xs flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-2xl cursor-pointer pointer-events-auto outline-none focus:outline-none ring-0"
-                      title={isPlaying ? 'Mettre en pause' : 'Visionner la vidéo'}
-                      id={`play-video-btn-${currentStory.id}`}
-                    >
-                      <Play className={`w-8 h-8 ${isPlaying ? 'opacity-30' : 'fill-current ml-1'}`} />
-                    </button>
-                  </div>
-
-                  {/* BAS : Uniquement les statistiques & le bouton Supprimer (pas de titre, pas de renommer) */}
-                  <div className="relative z-10 space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-xs border border-white/15 text-[11px] text-[#E7E5E4] font-mono">
-                          {currentStory.duration}
-                        </span>
-                        <span className="px-2.5 py-1 rounded-full bg-[#C89B3C]/20 border border-[#C89B3C]/40 text-[11px] text-[#F3E5C8] font-bold font-mono">
-                          {currentStory.viewsCount} vues
-                        </span>
-                      </div>
-
-                      {/* Bouton Supprimer uniquement */}
+                  {/* Actions propriétaire vs visiteur */}
+                  {isOwner ? (
+                    <div className="grid grid-cols-2 gap-2 pt-1">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setIsDeletingStory(true);
+                          setEditingRecit(currentRecit);
+                          setRecitFormTitle(currentRecit.title);
+                          setRecitFormSubtitle(currentRecit.subtitle || '');
                         }}
-                        className="py-1.5 px-3 rounded-xl bg-red-600/30 hover:bg-red-600/60 border border-red-500/40 text-red-200 hover:text-white text-xs font-semibold backdrop-blur-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm outline-none focus:outline-none ring-0"
-                        title="Retirer cette vidéo"
-                        id="btn-delete-video"
+                        className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>Supprimer</span>
+                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
+                        <span>Modifier</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsDeletingRecit(true);
+                        }}
+                        className="py-2 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <span>Retirer</span>
                       </button>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="pt-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleVideoPlayback(e);
+                        }}
+                        className="w-full py-2.5 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Play className="w-3.5 h-3.5 fill-current" />
+                        <span>{isPlaying ? 'Mettre en pause' : 'Écouter le récit'}</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* ================================================================= */}
-              {/* PISTE 2. MES PARTS (Stock en réserve, en vente & Mettre en vente) */}
-              {/* ================================================================= */}
-              {activeTab === 'shares' && currentShare && (
-                <div 
-                  className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
-                  id={`card-share-${currentShare.id}`}
-                >
-                  <img
-                    src={currentShare.posterUrl}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                  />
-                  <video
-                    ref={videoRef}
-                    src={currentShare.videoUrl}
-                    loop
-                    muted
-                    playsInline
-                    preload="none"
-                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300 ${
-                      isPlaying ? 'opacity-100' : 'opacity-0'
+            {/* ================================================================= */}
+            {/* DIMENSION 2 : ÉPISODES (Vidéos dans les séries documentaires)     */}
+            {/* ================================================================= */}
+            {activeTab === 'episodes' && currentEpisode && (
+              <div 
+                className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
+                id={`card-episode-${currentEpisode.id}`}
+              >
+                <img
+                  src={currentEpisode.posterUrl}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                />
+                <video
+                  ref={videoRef}
+                  src={currentEpisode.videoUrl}
+                  loop
+                  muted
+                  playsInline
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+                    isPlaying ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+
+                {/* HAUT : Titre de la série à gauche, Icône vidéo dorée à droite */}
+                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
+                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/90 shadow-md">
+                    {parsedSeries.hasSeparator ? (
+                      <span className="flex items-center gap-1.5 font-bold">
+                        <span>{parsedSeries.partA}</span>
+                        <span className="text-[#C89B3C] font-mono font-bold">&lt; &gt;</span>
+                        <span>{parsedSeries.partB}</span>
+                      </span>
+                    ) : (
+                      <span>{currentEpisode.seriesTitle}</span>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideoPlayback(e);
+                    }}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
                     }`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
+                    title={isPlaying ? 'Mettre en pause' : `Visionner l'épisode`}
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                    ) : (
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                    )}
+                  </button>
+                </div>
 
-                  {/* HAUT : Titre série centré avec symbole face à face & Parts détenues */}
-                  <div className="relative z-10 flex items-center justify-between gap-2 w-full">
-                    <div className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white/95 flex items-center gap-1.5 shadow-md">
-                      {parsedSeries.hasSeparator ? (
-                        <>
-                          <span className="font-editorial font-bold">{parsedSeries.partA}</span>
-                          <span className="font-mono text-xs font-black text-[#C89B3C] px-0.5 select-none tracking-wider flex items-center gap-0.5">
-                            <span>&lt;</span>
-                            <span>&gt;</span>
-                          </span>
-                          <span className="font-editorial font-bold">{parsedSeries.partB}</span>
-                        </>
-                      ) : (
-                        <span className="font-editorial font-bold">{currentShare.seriesTitle}</span>
-                      )}
-                    </div>
-                    <span className="px-3 py-1 rounded-full bg-white text-[#1C1917] border border-white/40 text-xs font-bold shadow-md shrink-0">
-                      {currentShare.sharesCount} part(s)
-                    </span>
+                <div className="my-auto" />
+
+                {/* BAS : Pas de titre ! Juste la durée et le nombre de vues, c'est tout */}
+                <div className="relative z-10 space-y-2.5">
+                  <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 inline-block">
+                    <p className="text-xs sm:text-sm font-semibold text-white/95 tracking-wide">
+                      {currentEpisode.duration} • {currentEpisode.viewsCount.toLocaleString()} vues
+                    </p>
                   </div>
 
-                  {/* CENTRE : Lecture */}
-                  <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                    <button
-                      onClick={toggleVideoPlayback}
-                      className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-[#C89B3C] text-white hover:text-black border border-white/25 backdrop-blur-xs flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-2xl cursor-pointer pointer-events-auto outline-none focus:outline-none ring-0"
-                      title={isPlaying ? 'Mettre en pause' : `Visionner ${currentShare.seriesTitle}`}
-                      id={`play-share-btn-${currentShare.id}`}
-                    >
-                      <Play className={`w-8 h-8 ${isPlaying ? 'opacity-30' : 'fill-current ml-1'}`} />
-                    </button>
-                  </div>
-
-                  {/* BAS : STOCK EN RÉSERVE, STOCK EN VENTE + BOUTON METTRE EN VENTE */}
-                  <div className="relative z-10 space-y-3">
-                    <div className="p-3 rounded-2xl bg-black/65 backdrop-blur-md border border-white/20 text-left space-y-2">
-                      <div className="flex items-center justify-between text-xs pb-1.5 border-b border-white/10">
-                        <span className="text-white/70">Stock total détenu</span>
-                        <span className="font-bold text-white font-mono">{currentShare.sharesCount} part(s)</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-white/70">En réserve</span>
-                        <span className="font-bold text-emerald-400 font-mono">
-                          {currentShare.sharesCount - (currentShare.sharesOnSale || 0)} part(s)
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-white/70">En vente sur le Marché</span>
-                        <span className="font-bold font-mono">
-                          {(currentShare.sharesOnSale || 0) > 0 ? (
-                            <span className="text-[#C89B3C]">
-                              {currentShare.sharesOnSale} part(s) à {currentShare.salePrice || currentShare.recommendedPrice} €
-                            </span>
-                          ) : (
-                            <span className="text-white/50">Aucune</span>
-                          )}
-                        </span>
-                      </div>
+                  {isOwner ? (
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingEpisode(currentEpisode);
+                          setEpisodeFormDuration(currentEpisode.duration);
+                          setEpisodeFormViews(currentEpisode.viewsCount);
+                        }}
+                        className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
+                        <span>Modifier</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsDeletingEpisode(true);
+                        }}
+                        className="py-2 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <span>Retirer</span>
+                      </button>
                     </div>
-
+                  ) : (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleOpenManageShares();
+                        toggleVideoPlayback(e);
                       }}
-                      className="w-full py-2.5 rounded-2xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-xl border border-white/40 flex items-center justify-center gap-1.5 cursor-pointer"
-                      id="btn-sell-shares-modal"
+                      className="w-full py-2.5 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <Coins className="w-3.5 h-3.5 text-[#C89B3C]" />
-                      <span>Mettre en vente</span>
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>{isPlaying ? 'Mettre en pause' : 'Visionner l’épisode'}</span>
                     </button>
-                  </div>
+                  )}
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* ================================================================= */}
-              {/* PISTE 3. MES OFFRES (Prix en haut, Titre, Modifier / Supprimer)    */}
-              {/* ================================================================= */}
-              {activeTab === 'services' && currentOffer && (
-                <div 
-                  className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
-                  id={`card-service-${currentOffer.id}`}
-                >
-                  <img
-                    src={currentOffer.posterUrl}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                  />
-                  <video
-                    ref={videoRef}
-                    src={currentOffer.videoUrl}
-                    loop
-                    muted
-                    playsInline
-                    preload="none"
-                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300 ${
-                      isPlaying ? 'opacity-100' : 'opacity-0'
+            {/* ================================================================= */}
+            {/* DIMENSION 3 : PRODUCTIONS (Parts de coproduction)                 */}
+            {/* ================================================================= */}
+            {activeTab === 'productions' && currentProduction && (
+              <div 
+                className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
+                id={`card-production-${currentProduction.id}`}
+              >
+                <img
+                  src={currentProduction.posterUrl}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                />
+                <video
+                  ref={videoRef}
+                  src={currentProduction.videoUrl}
+                  loop
+                  muted
+                  playsInline
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+                    isPlaying ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+
+                {/* HAUT : Titre de la série à gauche, Icône vidéo dorée à droite */}
+                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
+                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/90 shadow-md">
+                    {parsedSeries.hasSeparator ? (
+                      <span className="flex items-center gap-1.5 font-bold">
+                        <span>{parsedSeries.partA}</span>
+                        <span className="text-[#C89B3C] font-mono font-bold">&lt; &gt;</span>
+                        <span>{parsedSeries.partB}</span>
+                      </span>
+                    ) : (
+                      <span>{currentProduction.seriesTitle}</span>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideoPlayback(e);
+                    }}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
                     }`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
+                    title={isPlaying ? 'Mettre en pause' : `Teaser de coproduction`}
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                    ) : (
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                    )}
+                  </button>
+                </div>
 
-                  {/* HAUT : Titre série centré avec symbole face à face & Prix */}
-                  <div className="relative z-10 flex items-center justify-between gap-2 w-full">
-                    <div className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white/95 flex items-center gap-1.5 shadow-md">
-                      {parsedSeries.hasSeparator ? (
-                        <>
-                          <span className="font-editorial font-bold">{parsedSeries.partA}</span>
-                          <span className="font-mono text-xs font-black text-[#C89B3C] px-0.5 select-none tracking-wider flex items-center gap-0.5">
-                            <span>&lt;</span>
-                            <span>&gt;</span>
-                          </span>
-                          <span className="font-editorial font-bold">{parsedSeries.partB}</span>
-                        </>
-                      ) : (
-                        <span className="font-editorial font-bold">{currentOffer.seriesTitle}</span>
-                      )}
+                <div className="my-auto" />
+
+                {/* BAS : Détail des parts (design classique) avec Prix de départ + RSI */}
+                <div className="relative z-10 space-y-3">
+                  <div className="p-3.5 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20 space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-white/80 font-medium">{currentProduction.status}</span>
+                      {/* Composant RSI */}
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-mono font-bold text-[11px]">
+                        <TrendingUp className="w-3 h-3 text-emerald-400" />
+                        <span>RSI +{currentProduction.rsiPercent || 57.1}%</span>
+                      </div>
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-[#C89B3C] border border-white/20 text-xs font-bold text-[#181816] shadow-md shrink-0">
-                      {currentOffer.price}
+
+                    {/* Grille : Prix de départ & Prix de vente / actuel */}
+                    <div className="grid grid-cols-2 gap-2 pt-1.5 border-t border-white/10 text-xs">
+                      <div>
+                        <span className="text-white/60 block text-[10px]">Prix de départ</span>
+                        <span className="font-mono font-bold text-white text-sm">{currentProduction.startPrice || 35} €</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-white/60 block text-[10px]">{isOwner ? 'Prix de vente' : 'Prix actuel'}</span>
+                        <span className="font-mono font-bold text-[#C89B3C] text-base">{currentProduction.salePrice} €</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-1.5 border-t border-white/10 flex items-center justify-between text-xs text-white/80">
+                      <span>{isOwner ? 'Parts détenues' : 'Disponibilité'}</span>
+                      <span className="font-bold text-white">
+                        {isOwner 
+                          ? `${currentProduction.sharesCount} parts (${currentProduction.sharesOnSale || 0} en vente)` 
+                          : `${currentProduction.sharesOnSale || 2} part(s) en vente`}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Boutons Propriétaire vs Visiteur */}
+                  {isOwner ? (
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingProduction(currentProduction);
+                          setProdFormStartPrice(currentProduction.startPrice || 35);
+                          setProdFormSalePrice(currentProduction.salePrice);
+                          setProdFormRsi(currentProduction.rsiPercent || 57.1);
+                          setProdFormSharesCount(currentProduction.sharesCount);
+                          setProdFormSharesOnSale(currentProduction.sharesOnSale || 0);
+                        }}
+                        className="py-2.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
+                        <span>Modifier</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSellCountInput(currentProduction.sharesOnSale || 1);
+                          setSellPriceInput(currentProduction.salePrice || currentProduction.recommendedPrice);
+                          setIsSellingShares(true);
+                        }}
+                        className="py-2.5 px-3 rounded-xl bg-stone-900/80 hover:bg-[#1C1917] border border-white/20 text-[#C89B3C] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Coins className="w-3.5 h-3.5 text-[#C89B3C]" />
+                        <span>Mettre en vente</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsBuyingSharesModalOpen(true);
+                      }}
+                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Coins className="w-3.5 h-3.5 text-[#1C1917]" />
+                      <span>Acheter des parts</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ================================================================= */}
+            {/* DIMENSION 4 : CRÉATIONS (Artisanat, Pièces, Ateliers)             */}
+            {/* ================================================================= */}
+            {activeTab === 'creations' && currentCreation && (
+              <div 
+                className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
+                id={`card-creation-${currentCreation.id}`}
+              >
+                <img
+                  src={currentCreation.posterUrl}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                />
+                <video
+                  ref={videoRef}
+                  src={currentCreation.videoUrl}
+                  loop
+                  muted
+                  playsInline
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+                    isPlaying ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+
+                {/* HAUT : Titre court de série/atelier à gauche, Icône vidéo dorée à droite */}
+                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
+                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/90 shadow-md truncate max-w-[200px]">
+                    <span>{currentCreation.seriesTitle || 'Créations d’atelier'}</span>
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideoPlayback(e);
+                    }}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                    }`}
+                    title={isPlaying ? 'Mettre en pause' : `Découvrir la création`}
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                    ) : (
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                    )}
+                  </button>
+                </div>
+
+                <div className="my-auto" />
+
+                {/* BAS : Titre court sur 1 ligne, catégorie juste en dessous, prix doré en dessous */}
+                <div className="relative z-10 space-y-2.5">
+                  <div>
+                    {/* Titre court sur 1 ligne */}
+                    <h3 className="font-editorial text-base sm:text-lg font-bold text-white leading-snug truncate" title={currentCreation.title}>
+                      {currentCreation.title}
+                    </h3>
+                    {/* Catégorie juste en dessous */}
+                    <p className="text-xs text-white/80 font-medium pt-0.5 truncate">
+                      {currentCreation.categoryLabel}
+                    </p>
+                    {/* Prix juste en dessous en doré */}
+                    <p className="font-mono text-base font-bold text-[#C89B3C] pt-1">
+                      {currentCreation.price}
+                    </p>
+                  </div>
+
+                  {/* Actions Propriétaire vs Visiteur */}
+                  {isOwner ? (
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingCreation(currentCreation);
+                          setCreationFormTitle(currentCreation.title);
+                          setCreationFormPrice(currentCreation.price);
+                          setCreationFormCategory(currentCreation.categoryLabel);
+                          setCreationFormDescription(currentCreation.description);
+                          setCreationFormPoster(currentCreation.posterUrl);
+                          setCreationFormVideo(currentCreation.videoUrl);
+                        }}
+                        className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
+                        <span>Modifier</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsDeletingCreation(true);
+                        }}
+                        className="py-2 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <span>Supprimer</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOrderingCreationModalOpen(true);
+                      }}
+                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5 text-[#1C1917]" />
+                      <span>
+                        {currentCreation.type === 'atelier' ? 'Réserver ma place' : 'Commander'}
+                      </span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ================================================================= */}
+            {/* DIMENSION 5 : INITIATIVES (Financement participatif / Projets)     */}
+            {/* ================================================================= */}
+            {activeTab === 'initiatives' && currentInitiative && (
+              <div 
+                className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
+                id={`card-initiative-${currentInitiative.id}`}
+              >
+                <img
+                  src={currentInitiative.posterUrl}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                />
+                <video
+                  ref={videoRef}
+                  src={currentInitiative.videoUrl}
+                  loop
+                  muted
+                  playsInline
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+                    isPlaying ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+
+                {/* HAUT : % et jours restants en haut à gauche, Icône vidéo dorée en haut à droite */}
+                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
+                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-md flex items-center gap-1.5">
+                    <span className="text-[#C89B3C] font-mono font-black">
+                      {Math.round((currentInitiative.collectedAmount / currentInitiative.targetAmount) * 100)}%
                     </span>
+                    <span className="text-white/40">•</span>
+                    <span>{currentInitiative.daysRemaining} j restants</span>
                   </div>
 
-                  {/* CENTRE : Lecture */}
-                  <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                    <button
-                      onClick={toggleVideoPlayback}
-                      className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-[#C89B3C] text-white hover:text-black border border-white/25 backdrop-blur-xs flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-2xl cursor-pointer pointer-events-auto outline-none focus:outline-none ring-0"
-                      title={isPlaying ? 'Mettre en pause' : `Découvrir ${currentOffer.title}`}
-                      id={`play-service-btn-${currentOffer.id}`}
-                    >
-                      <Play className={`w-8 h-8 ${isPlaying ? 'opacity-30' : 'fill-current ml-1'}`} />
-                    </button>
-                  </div>
-
-                  {/* BAS : Titre & Boutons Modifier / Supprimer */}
-                  <div className="relative z-10 space-y-3">
-                    <div>
-                      <h3 className="font-editorial text-base sm:text-lg font-bold text-white leading-snug">
-                        {currentOffer.title}
-                      </h3>
-                      <p className="text-[11px] text-[#E7E5E4] mt-0.5">{currentOffer.categoryLabel}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 pt-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenEditOffer(currentOffer);
-                        }}
-                        className="py-2.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-xl border border-white/40 flex items-center justify-center gap-1.5 cursor-pointer outline-none focus:outline-none ring-0"
-                        id="btn-edit-offer"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
-                        <span>Modifier</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsDeletingOffer(true);
-                        }}
-                        className="py-2.5 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer outline-none focus:outline-none ring-0"
-                        id="btn-delete-offer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                        <span>Supprimer</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ================================================================= */}
-              {/* PISTE 4. MES PROJETS (Titre, Jauge participative, Modifier / Supprimer) */}
-              {/* ================================================================= */}
-              {activeTab === 'projects' && currentProject && (
-                <div 
-                  className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
-                  id={`card-project-${currentProject.id}`}
-                >
-                  <img
-                    src={currentProject.posterUrl}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                  />
-                  <video
-                    ref={videoRef}
-                    src={currentProject.videoUrl}
-                    loop
-                    muted
-                    playsInline
-                    preload="none"
-                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300 ${
-                      isPlaying ? 'opacity-100' : 'opacity-0'
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideoPlayback(e);
+                    }}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
                     }`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
+                    title={isPlaying ? 'Mettre en pause' : `Pitch de l’initiative`}
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                    ) : (
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                    )}
+                  </button>
+                </div>
 
-                  {/* HAUT : Titre série centré avec symbole face à face */}
-                  <div className="relative z-10 flex items-center justify-center w-full">
-                    <div className="px-3.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white/95 flex items-center gap-1.5 shadow-md">
-                      {parsedSeries.hasSeparator ? (
-                        <>
-                          <span className="font-editorial font-bold">{parsedSeries.partA}</span>
-                          <span className="font-mono text-xs font-black text-[#C89B3C] px-0.5 select-none tracking-wider flex items-center gap-0.5">
-                            <span>&lt;</span>
-                            <span>&gt;</span>
-                          </span>
-                          <span className="font-editorial font-bold">{parsedSeries.partB}</span>
-                        </>
-                      ) : (
-                        <span className="font-editorial font-bold">{currentProject.seriesTitle}</span>
-                      )}
-                    </div>
+                <div className="my-auto" />
+
+                {/* BAS : Titre court sur 1 ligne, Jauge & Nombre de contributeurs */}
+                <div className="relative z-10 space-y-3">
+                  <div>
+                    <h3 className="font-editorial text-base sm:text-lg font-bold text-white leading-snug truncate" title={currentInitiative.title}>
+                      {currentInitiative.title}
+                    </h3>
                   </div>
 
-                  {/* CENTRE : Lecture */}
-                  <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                    <button
-                      onClick={toggleVideoPlayback}
-                      className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black/65 hover:bg-[#C89B3C] text-white hover:text-black border border-white/25 backdrop-blur-xs flex items-center justify-center transition-all duration-300 transform group-hover:scale-110 shadow-2xl cursor-pointer pointer-events-auto outline-none focus:outline-none ring-0"
-                      title={isPlaying ? 'Mettre en pause' : `Pitch de ${currentProject.title}`}
-                      id={`play-project-btn-${currentProject.id}`}
-                    >
-                      <Play className={`w-8 h-8 ${isPlaying ? 'opacity-30' : 'fill-current ml-1'}`} />
-                    </button>
-                  </div>
-
-                  {/* BAS : Titre, Pourcentage/Jours & Boutons Modifier / Supprimer */}
-                  <div className="relative z-10 space-y-3">
-                    <div>
-                      <h3 className="font-editorial text-base sm:text-lg font-bold text-white leading-snug">
-                        {currentProject.title}
-                      </h3>
+                  <div className="space-y-2 p-3 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-white/80 font-medium">Objectif : {currentInitiative.targetAmount.toLocaleString()} €</span>
+                      <span className="font-mono text-[#C89B3C] font-bold">{currentInitiative.collectedAmount.toLocaleString()} € récoltés</span>
+                    </div>
+                    
+                    <div className="w-full h-2 rounded-full bg-white/20 overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-[#C89B3C] to-emerald-400 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(100, (currentInitiative.collectedAmount / currentInitiative.targetAmount) * 100)}%` }}
+                      />
                     </div>
 
-                    {/* Jauge participative avec POURCENTAGE placé au niveau des jours & contributeurs */}
-                    <div className="space-y-1.5 p-2.5 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20">
-                      <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="text-[#C89B3C]">
-                          {currentProject.collectedAmount.toLocaleString()} € <span className="text-[10px] font-normal text-white/80">/ {currentProject.targetAmount.toLocaleString()} €</span>
+                    {/* Nombre de contributeurs écrit en gros */}
+                    <div className="pt-1 flex items-center justify-between">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-black text-white font-mono leading-none tracking-tight">
+                          {currentInitiative.backersCount}
                         </span>
-                        
-                        <div className="flex items-center gap-1.5">
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold shadow-xs">
-                            {Math.round((currentProject.collectedAmount / currentProject.targetAmount) * 100)} %
-                          </span>
-                          <span className="text-white/80 text-[10px]">
-                            {currentProject.backersCount} cont. • {currentProject.daysRemaining} j
-                          </span>
-                        </div>
+                        <span className="text-xs font-bold text-[#C89B3C] uppercase tracking-wider">
+                          contributeurs
+                        </span>
                       </div>
-                      
-                      <div className="w-full h-2 rounded-full bg-white/20 overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-[#C89B3C] to-emerald-400 rounded-full transition-all duration-500"
-                          style={{ width: `${Math.min(100, (currentProject.collectedAmount / currentProject.targetAmount) * 100)}%` }}
-                        />
-                      </div>
+                      <span className="text-[11px] text-white/70">
+                        Campagne active
+                      </span>
                     </div>
+                  </div>
 
-                    {/* Boutons Modifier & Supprimer */}
+                  {isOwner ? (
                     <div className="grid grid-cols-2 gap-2 pt-1">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleOpenEditProject(currentProject);
+                          setEditingInitiative(currentInitiative);
+                          setInitiativeFormTitle(currentInitiative.title);
+                          setInitiativeFormTarget(currentInitiative.targetAmount);
+                          setInitiativeFormDescription(currentInitiative.description);
+                          setInitiativeFormPoster(currentInitiative.posterUrl);
+                          setInitiativeFormVideo(currentInitiative.videoUrl);
                         }}
-                        className="py-2.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-xl border border-white/40 flex items-center justify-center gap-1.5 cursor-pointer outline-none focus:outline-none ring-0"
-                        id="btn-edit-project"
+                        className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
                         <span>Modifier</span>
@@ -1277,844 +1551,686 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setIsDeletingProject(true);
+                          setIsDeletingInitiative(true);
                         }}
-                        className="py-2.5 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer outline-none focus:outline-none ring-0"
-                        id="btn-delete-project"
+                        className="py-2 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5 text-red-400" />
                         <span>Supprimer</span>
                       </button>
                     </div>
-                  </div>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsContributingModalOpen(true);
+                      }}
+                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <HeartHandshake className="w-3.5 h-3.5 text-[#1C1917]" />
+                      <span>Contribuer au projet</span>
+                    </button>
+                  )}
                 </div>
-              )}
+              </div>
+            )}
 
-            </div>
+            {/* ================================================================= */}
+            {/* DIMENSION 6 : APPELS (Besoins, Collaborations, Compétences)       */}
+            {/* ================================================================= */}
+            {activeTab === 'appels' && currentAppel && (
+              <div 
+                className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
+                id={`card-appel-${currentAppel.id}`}
+              >
+                <img
+                  src={currentAppel.posterUrl}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                />
+                <video
+                  ref={videoRef}
+                  src={currentAppel.videoUrl}
+                  loop
+                  muted
+                  playsInline
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
+                    isPlaying ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
 
-            {/* Flèche Droite sur fond beige */}
-            <button
-              onClick={handleNext}
-              className="hidden sm:flex p-3.5 rounded-full bg-white hover:bg-[#FAFAF9] border border-[#E7E5E4] text-[#8B6845] hover:text-[#1C1917] transition-all shadow-sm cursor-pointer hover:scale-105 outline-none focus:outline-none ring-0"
-              title="Suivant"
-              id="next-studio-card-btn"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+                {/* HAUT : Urgence/Catégorie à gauche, Icône vidéo dorée à droite */}
+                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
+                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-amber-300 shadow-md">
+                    <span>{currentAppel.urgency}</span>
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideoPlayback(e);
+                    }}
+                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                      isPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                    }`}
+                    title={isPlaying ? 'Mettre en pause' : `Pitch du besoin`}
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                    ) : (
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                    )}
+                  </button>
+                </div>
+
+                <div className="my-auto" />
+
+                {/* BAS : Titre court sur 1 ligne sans texte supplémentaire & actions */}
+                <div className="relative z-10 space-y-2.5">
+                  <div>
+                    <h3 className="font-editorial text-base sm:text-lg font-bold text-white leading-snug truncate" title={currentAppel.title}>
+                      {currentAppel.title}
+                    </h3>
+                  </div>
+
+                  {isOwner ? (
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingAppel(currentAppel);
+                          setAppelFormTitle(currentAppel.title);
+                          setAppelFormUrgency(currentAppel.urgency);
+                          setAppelFormDescription(currentAppel.description);
+                          setAppelFormImpact(currentAppel.impact || '');
+                        }}
+                        className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
+                        <span>Modifier</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsDeletingAppel(true);
+                        }}
+                        className="py-2 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <span>Supprimer</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOfferingHelpModalOpen(true);
+                      }}
+                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-[#1C1917]" />
+                      <span>Proposer mon aide</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
 
           </div>
 
+          {/* Flèche Droite */}
+          <button
+            onClick={handleNext}
+            className="hidden sm:flex p-3.5 rounded-full bg-white hover:bg-[#FAFAF9] border border-[#E7E5E4] text-[#8B6845] hover:text-[#1C1917] transition-all shadow-sm cursor-pointer hover:scale-105 outline-none focus:outline-none ring-0"
+            title="Suivant"
+            id="next-studio-card-btn"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
         </div>
-      ) : (
-        <div className="space-y-6 animate-in fade-in duration-200">
-          
-          {/* CARTE 1 : SÉCURITÉ DU COMPTE (EMAIL & MOT DE PASSE) */}
-          <div className="bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-5 sm:p-6 shadow-xs space-y-5">
-            <div className="flex items-center gap-2.5 pb-3 border-b border-[#E7E5E4]">
-              <div className="w-8 h-8 rounded-full bg-[#1C1917]/10 text-[#1C1917] flex items-center justify-center">
-                <Lock className="w-4 h-4" />
+
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 3. MODALE DES PARAMÈTRES DU COMPTE (Accessible par l'icône dans l'en-tête)  */}
+      {/* ========================================================================= */}
+      {isSettingsOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-lg w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-6 max-h-[90vh] overflow-y-auto">
+            
+            <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-stone-100 text-[#1C1917] flex items-center justify-center">
+                  <Sliders className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
+                    Paramètres du compte
+                  </h3>
+                  <p className="text-xs text-[#8B6845]">
+                    Sécurité, préférences de lecture et identifiants.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917]">
-                  Sécurité du compte
-                </h3>
-                <p className="text-[11px] text-[#8B6845]">
-                  Gestion de vos identifiants d'accès et protection du profil.
-                </p>
-              </div>
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                className="p-1.5 rounded-full hover:bg-stone-100 text-stone-500 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Email de connexion */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-[#1C1917] flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-[#8B6845]" />
-                  Adresse email
-                </label>
-                {!isEditingEmail ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setTempEmail(userEmail);
-                      setIsEditingEmail(true);
-                    }}
-                    className="text-[11px] text-[#1C1917] hover:underline font-semibold cursor-pointer"
-                  >
-                    Modifier
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleSaveEmail}
-                    className="text-[11px] text-emerald-700 hover:underline font-bold cursor-pointer"
-                  >
-                    Enregistrer
-                  </button>
-                )}
-              </div>
-              {isEditingEmail ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="email"
-                    value={tempEmail}
-                    onChange={(e) => setTempEmail(e.target.value)}
-                    className="flex-1 text-xs p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-[#1C1917] focus:border-[#1C1917] outline-none"
-                    placeholder="nouvelle@adresse.org"
-                  />
-                  <button
-                    onClick={handleSaveEmail}
-                    className="px-3.5 py-2 rounded-xl bg-[#1C1917] text-white text-xs font-bold hover:bg-stone-800 cursor-pointer shadow-xs"
-                  >
-                    Valider
-                  </button>
-                  <button
-                    onClick={() => setIsEditingEmail(false)}
-                    className="px-3 py-2 rounded-xl bg-[#FAF7EF] border border-[#E7E5E4] text-xs font-semibold text-[#8B6845] hover:text-[#1C1917] cursor-pointer"
-                  >
-                    Annuler
-                  </button>
-                </div>
-              ) : (
-                <div className="p-3 rounded-xl bg-[#FAF7EF] border border-[#E7E5E4] text-xs font-medium text-[#1C1917] flex items-center justify-between">
-                  <span>{userEmail}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                    Vérifié
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Modification de mot de passe */}
-            <form onSubmit={handleUpdatePassword} className="space-y-3 pt-2">
+            <div className="space-y-3 bg-stone-50 p-4 rounded-2xl border border-stone-200">
               <label className="text-xs font-bold text-[#1C1917] flex items-center gap-1.5">
-                <Key className="w-3.5 h-3.5 text-[#8B6845]" />
-                Modifier le mot de passe
+                <Mail className="w-3.5 h-3.5 text-[#8B6845]" />
+                <span>Adresse email</span>
               </label>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <div>
-                  <input
-                    type="password"
-                    placeholder="Mot de passe actuel"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-[#1C1917] placeholder:text-[#9E9B90] focus:border-[#1C1917] outline-none"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="password"
-                    placeholder="Nouveau mot de passe"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-[#1C1917] placeholder:text-[#9E9B90] focus:border-[#1C1917] outline-none"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="password"
-                    placeholder="Confirmer nouveau"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-[#1C1917] placeholder:text-[#9E9B90] focus:border-[#1C1917] outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-1">
+              <div className="flex items-center gap-2">
+                <input
+                  type="email"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  className="flex-1 px-3 py-2 text-xs bg-white border border-stone-300 rounded-xl"
+                />
                 <button
-                  type="submit"
-                  disabled={!currentPassword || !newPassword || !confirmPassword}
-                  className="px-4 py-2 rounded-xl bg-[#1C1917] hover:bg-stone-800 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold cursor-pointer transition-all shadow-xs"
+                  onClick={() => {
+                    setShareToast("Adresse email enregistrée.");
+                    setTimeout(() => setShareToast(null), 2500);
+                  }}
+                  className="px-3 py-2 bg-[#1C1917] text-white text-xs font-semibold rounded-xl"
                 >
-                  Mettre à jour le mot de passe
+                  Valider
                 </button>
               </div>
-            </form>
-          </div>
-
-          {/* CARTE 2 : PRÉFÉRENCES (LANGUE & QUESTIONS) */}
-          <div className="bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-5 sm:p-6 shadow-xs space-y-4">
-            <div className="flex items-center gap-2.5 pb-3 border-b border-[#E7E5E4]">
-              <div className="w-8 h-8 rounded-full bg-[#C89B3C]/15 text-[#C89B3C] flex items-center justify-center">
-                <Sliders className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917]">
-                  Préférences
-                </h3>
-                <p className="text-[11px] text-[#8B6845]">
-                  Langue d'affichage et options de l'interface.
-                </p>
-              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-[#1C1917] block">Langue de navigation</label>
+            {/* Mot de passe */}
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                setShareToast("Mot de passe mis à jour !");
+                setTimeout(() => setShareToast(null), 2500);
+              }} 
+              className="space-y-3 bg-stone-50 p-4 rounded-2xl border border-stone-200"
+            >
+              <label className="text-xs font-bold text-[#1C1917] flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[#8B6845]" />
+                <span>Modifier le mot de passe</span>
+              </label>
+              <input
+                type="password"
+                placeholder="Nouveau mot de passe"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full px-3 py-2 text-xs bg-white border border-stone-300 rounded-xl"
+              />
+              <button
+                type="submit"
+                className="w-full py-2 bg-stone-200 hover:bg-stone-300 text-[#1C1917] text-xs font-bold rounded-xl"
+              >
+                Mettre à jour le mot de passe
+              </button>
+            </form>
+
+            {/* Préférences */}
+            <div className="space-y-3 pt-2">
+              <h4 className="text-xs font-bold text-[#1C1917] uppercase tracking-wider">
+                Préférences de l'application
+              </h4>
+
+              <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200">
+                <div>
+                  <p className="text-xs font-semibold text-[#1C1917]">Langue des sous-titres</p>
+                  <p className="text-[11px] text-stone-500">Français, Fon, Quechua...</p>
+                </div>
                 <select
                   value={language}
                   onChange={(e) => onUpdateLanguage(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-[#1C1917] focus:border-[#1C1917] outline-none"
+                  className="px-2.5 py-1.5 rounded-lg border border-stone-300 bg-white text-xs font-medium"
                 >
-                  <option value="fr">Français (Langue principale)</option>
-                  <option value="en">English (Translation)</option>
-                  <option value="fon">Fongbe (Bénin)</option>
-                  <option value="wo">Wolof (Sénégal)</option>
+                  <option value="fr">Français</option>
+                  <option value="fon">Fongbe</option>
+                  <option value="quz">Quechua</option>
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
                 </select>
               </div>
 
-              <div className="space-y-1.5 flex flex-col justify-end">
-                <label className="text-xs font-bold text-[#1C1917] block">Affichage des questions</label>
-                <button
-                  type="button"
-                  onClick={() => onToggleHideQuestion(!hideQuestionByDefault)}
-                  className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-left flex items-center justify-between cursor-pointer"
-                >
-                  <span>Masquer la question par défaut</span>
-                  <span className={`w-8 h-4 rounded-full p-0.5 transition-colors ${hideQuestionByDefault ? 'bg-[#1C1917]' : 'bg-[#E7E5E4]'}`}>
-                    <span className={`block w-3 h-3 rounded-full bg-white transition-transform ${hideQuestionByDefault ? 'translate-x-4' : ''}`} />
-                  </span>
-                </button>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200">
+                <div>
+                  <p className="text-xs font-semibold text-[#1C1917]">Masquer la question par défaut</p>
+                  <p className="text-[11px] text-stone-500">Privilégie une immersion totale</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={hideQuestionByDefault}
+                  onChange={(e) => onToggleHideQuestion(e.target.checked)}
+                  className="w-4 h-4 rounded text-[#C89B3C] accent-[#C89B3C]"
+                />
               </div>
             </div>
-          </div>
 
-          {/* DÉCONNEXION */}
-          <div className="pt-2 flex justify-center">
-            <button
-              onClick={() => {
-                setShareToast("Session clôturée avec succès.");
-                setTimeout(() => setShareToast(null), 3000);
-              }}
-              className="py-2.5 px-6 rounded-2xl bg-white hover:bg-red-50 border border-red-200 text-red-700 hover:text-red-800 text-xs font-bold flex items-center gap-2 cursor-pointer transition-colors shadow-xs"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Se déconnecter de ce profil</span>
-            </button>
-          </div>
+            <div className="pt-2">
+              <button
+                onClick={() => {
+                  setIsSettingsOpen(false);
+                  onNavigate({ type: 'duo_feed' });
+                }}
+                className="w-full py-2.5 px-4 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Se déconnecter</span>
+              </button>
+            </div>
 
+          </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* 3. MODALE : CONFIRMATION DE SUPPRESSION VIDÉO                             */}
+      {/* 4. MODALES D'ACTIONS POUR LE VISITEUR                                      */}
       {/* ========================================================================= */}
-      {isDeletingStory && (
-        <div 
-          onClick={() => setIsDeletingStory(false)}
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 shadow-2xl space-y-4 text-xs text-[#1C1917]"
-          >
-            <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
-              <AlertTriangle className="w-6 h-6" />
+
+      {/* A. Modale Acheter des parts */}
+      {isBuyingSharesModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <Coins className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Acquérir des parts</h3>
+              </div>
+              <button onClick={() => setIsBuyingSharesModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="text-center space-y-1.5">
-              <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
-                Retirer cette vidéo ?
-              </h3>
-              <p className="text-xs text-[#68655D] leading-relaxed">
-                Voulez-vous vraiment retirer cette vidéo de votre profil ?
+            <div className="space-y-3 text-xs">
+              <p className="text-stone-600">
+                Vous investissez dans la série <span className="font-bold text-[#1C1917]">{currentProduction.seriesTitle}</span> auprès de {userName}.
               </p>
-            </div>
-
-            <div className="flex items-center gap-2 pt-2">
-              <button
-                onClick={() => setIsDeletingStory(false)}
-                className="flex-1 py-2.5 rounded-xl border border-[#E7E5E4] bg-white text-[#1C1917] font-bold hover:bg-[#FAF7EF] cursor-pointer"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleDeleteCurrentStory}
-                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer transition-all shadow-sm"
-              >
-                Supprimer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 4. MODALE : GESTION ET MISE EN VENTE DES PARTS SUR LE MARCHÉ              */}
-      {/* ========================================================================= */}
-      {isSellingShares && currentShare && (
-        <div 
-          onClick={() => setIsSellingShares(false)}
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 shadow-2xl space-y-4 text-xs text-[#1C1917]"
-          >
-            <div className="flex justify-between items-center border-b border-[#E7E5E4] pb-3">
-              <div>
-                <h3 className="font-editorial text-base font-bold text-[#1C1917]">
-                  Mettre en vente sur le Marché
-                </h3>
-                <p className="text-[11px] text-[#8B6845]">{currentShare.seriesTitle}</p>
-              </div>
-              <button onClick={() => setIsSellingShares(false)} className="text-[#8B6845] hover:text-[#1C1917] p-1">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-3.5">
-              {/* Récapitulatif du stock */}
-              <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-[#FAF7EF] border border-[#E7E5E4] text-center">
-                <div>
-                  <span className="text-[10px] text-[#8B6845] block">Total détenu</span>
-                  <span className="text-sm font-bold text-[#1C1917] font-mono">{currentShare.sharesCount}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-[#8B6845] block">En réserve</span>
-                  <span className="text-sm font-bold text-emerald-600 font-mono">
-                    {currentShare.sharesCount - (currentShare.sharesOnSale || 0)}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-[#8B6845] block">En vente</span>
-                  <span className="text-sm font-bold text-[#C89B3C] font-mono">
-                    {currentShare.sharesOnSale || 0}
-                  </span>
+              
+              <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200">
+                <span className="font-semibold text-stone-700">Nombre de parts :</span>
+                <div className="flex items-center gap-2.5">
+                  <button 
+                    onClick={() => setBuySharesCount(Math.max(1, buySharesCount - 1))}
+                    className="w-7 h-7 rounded-full bg-white border border-stone-300 flex items-center justify-center font-bold text-sm"
+                  >-</button>
+                  <span className="font-mono font-bold text-sm">{buySharesCount}</span>
+                  <button 
+                    onClick={() => setBuySharesCount(buySharesCount + 1)}
+                    className="w-7 h-7 rounded-full bg-white border border-stone-300 flex items-center justify-center font-bold text-sm"
+                  >+</button>
                 </div>
               </div>
 
-              {/* Si des parts sont actuellement en vente */}
-              {(currentShare.sharesOnSale || 0) > 0 && (
-                <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-bold text-amber-900 block">
-                      {currentShare.sharesOnSale} part(s) en vente à {currentShare.salePrice || currentShare.recommendedPrice} €
-                    </span>
-                    <span className="text-[10px] text-amber-700">Visibles par les acheteurs sur le Marché</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleCancelSaleShares}
-                    className="py-1 px-2.5 rounded-lg bg-white border border-amber-300 text-amber-900 font-bold text-[10px] hover:bg-amber-100 cursor-pointer transition-colors shadow-2xs"
-                  >
-                    Retirer de la vente
-                  </button>
-                </div>
-              )}
-
-              {/* Nombre de parts à mettre en vente */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="font-bold text-[#1C1917]">Nombre de parts à mettre en vente :</label>
-                  <span className="text-[11px] text-[#8B6845]">
-                    Max disponible : <strong>{currentShare.sharesCount}</strong>
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 mb-2">
-                  {[1, 2, 5, currentShare.sharesCount].filter((v, i, a) => v <= currentShare.sharesCount && a.indexOf(v) === i).map(n => (
-                    <button
-                      key={n}
-                      type="button"
-                      onClick={() => setSellCountInput(n)}
-                      className={`flex-1 py-1.5 rounded-xl border text-xs font-semibold cursor-pointer ${
-                        sellCountInput === n 
-                          ? 'bg-[#1C1917] text-white border-[#1C1917]' 
-                          : 'bg-white border-[#E7E5E4] text-[#1C1917]'
-                      }`}
-                    >
-                      {n} part{n > 1 ? 's' : ''}
-                    </button>
-                  ))}
-                </div>
-                <input
-                  type="number"
-                  min="1"
-                  max={currentShare.sharesCount}
-                  value={sellCountInput}
-                  onChange={(e) => setSellCountInput(Math.min(currentShare.sharesCount, Math.max(1, Number(e.target.value))))}
-                  className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-sm font-bold text-[#1C1917] outline-none focus:border-[#1C1917]"
-                />
-              </div>
-
-              {/* Prix unitaire souhaité */}
-              <div>
-                <label className="font-bold text-[#1C1917] block mb-1">Prix de vente souhaité par part (€) :</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={sellPriceInput}
-                  onChange={(e) => setSellPriceInput(Math.max(1, Number(e.target.value)))}
-                  className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-sm font-bold text-[#1C1917] outline-none focus:border-[#1C1917]"
-                />
-                <span className="text-[11px] text-[#8B6845] mt-1 block">
-                  Prix d'achat conseillé : <strong className="text-[#C89B3C]">{currentShare.recommendedPrice} €</strong>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#C89B3C]/10 border border-[#C89B3C]/30 text-[#8B6845]">
+                <span className="font-semibold">Montant total :</span>
+                <span className="font-mono font-black text-base text-[#1C1917]">
+                  {buySharesCount * currentProduction.salePrice} €
                 </span>
               </div>
-
-              {/* Récapitulatif total */}
-              <div className="p-3 rounded-2xl bg-[#FAF7EF] border border-[#E7E5E4] flex items-center justify-between font-bold">
-                <span>Montant brut espéré :</span>
-                <span className="text-base text-[#1C1917] font-mono">{sellCountInput * sellPriceInput} €</span>
-              </div>
-
-              <button
-                onClick={handleConfirmSellShares}
-                className="w-full py-3 rounded-2xl bg-[#1C1917] hover:bg-stone-800 text-white font-bold cursor-pointer transition-all shadow-sm"
-              >
-                Confirmer la mise en vente ({sellCountInput * sellPriceInput} €)
-              </button>
             </div>
+
+            <button
+              onClick={() => {
+                setIsBuyingSharesModalOpen(false);
+                setShareToast(`Félicitations ! Vous êtes coproducteur de ${currentProduction.seriesTitle}.`);
+                setTimeout(() => setShareToast(null), 3500);
+              }}
+              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+            >
+              Confirmer l’acquisition
+            </button>
           </div>
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* 5. MODALE : MODIFIER UNE OFFRE (TITRE, PRIX, PHOTOS, VIDÉOS, DESCRIPTION) */}
-      {/* ========================================================================= */}
-      {editingOffer && (
-        <div 
-          onClick={() => setEditingOffer(null)}
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 shadow-2xl space-y-4 text-xs text-[#1C1917] max-h-[90vh] overflow-y-auto"
-          >
-            <div className="flex justify-between items-center border-b border-[#E7E5E4] pb-3">
-              <div>
+      {/* B. Modale Commander / Réserver une création */}
+      {isOrderingCreationModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-[#C89B3C]" />
                 <h3 className="font-editorial text-base font-bold text-[#1C1917]">
-                  Modifier l'offre
+                  {currentCreation.type === 'atelier' ? 'Réserver ma place' : 'Commander la création'}
                 </h3>
-                <p className="text-[11px] text-[#8B6845]">{editingOffer.categoryLabel}</p>
               </div>
-              <button onClick={() => setEditingOffer(null)} className="text-[#8B6845] hover:text-[#1C1917] p-1">
-                <X className="w-5 h-5" />
+              <button onClick={() => setIsOrderingCreationModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSaveOffer();
-              }}
-              className="space-y-3.5"
-            >
-              {/* Titre et Prix */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="sm:col-span-2 space-y-1">
-                  <label className="font-bold text-[#1C1917] block">Titre de l'offre :</label>
-                  <input
-                    type="text"
-                    required
-                    value={offerFormTitle}
-                    onChange={(e) => setOfferFormTitle(e.target.value)}
-                    className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-xs font-semibold text-[#1C1917] outline-none focus:border-[#1C1917]"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-bold text-[#1C1917] block">Prix affiché :</label>
-                  <input
-                    type="text"
-                    required
-                    value={offerFormPrice}
-                    onChange={(e) => setOfferFormPrice(e.target.value)}
-                    placeholder="ex: 75 € / séance"
-                    className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-xs font-semibold text-[#1C1917] outline-none focus:border-[#1C1917]"
-                  />
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="space-y-1">
-                <label className="font-bold text-[#1C1917] block">Description & conditions :</label>
-                <textarea
-                  rows={3}
-                  value={offerFormDescription}
-                  onChange={(e) => setOfferFormDescription(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-xs text-[#1C1917] outline-none focus:border-[#1C1917]"
-                />
-              </div>
-
-              {/* Image de couverture (Photo) */}
-              <div className="p-3 rounded-2xl bg-[#FAF7EF] border border-[#E7E5E4] space-y-2">
-                <label className="font-bold text-[#1C1917] flex items-center gap-1.5">
-                  <Camera className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  Photo de couverture
-                </label>
-                <div className="flex items-center gap-3">
-                  <div className="w-16 h-20 rounded-xl overflow-hidden border border-[#E7E5E4] bg-black/10 shrink-0">
-                    <img src={offerFormPoster} alt="Aperçu" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E7E5E4] hover:bg-[#FAF7EF] text-[11px] font-bold text-[#1C1917] cursor-pointer shadow-2xs">
-                      <UploadCloud className="w-3.5 h-3.5" />
-                      <span>Choisir un fichier image</span>
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={(e) => handleUploadPosterFile(e, setOfferFormPoster)} 
-                      />
-                    </label>
-                    <input
-                      type="url"
-                      value={offerFormPoster}
-                      onChange={(e) => setOfferFormPoster(e.target.value)}
-                      placeholder="Ou coller une URL d'image"
-                      className="w-full p-1.5 rounded-lg bg-white border border-[#E7E5E4] text-[11px] text-[#1C1917] outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Vidéo de présentation */}
-              <div className="p-3 rounded-2xl bg-[#FAF7EF] border border-[#E7E5E4] space-y-2">
-                <label className="font-bold text-[#1C1917] flex items-center gap-1.5">
-                  <Video className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  Vidéo de démonstration
-                </label>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E7E5E4] hover:bg-[#FAF7EF] text-[11px] font-bold text-[#1C1917] cursor-pointer shadow-2xs">
-                      <UploadCloud className="w-3.5 h-3.5" />
-                      <span>Choisir un fichier vidéo (MP4/WebM)</span>
-                      <input 
-                        type="file" 
-                        accept="video/*" 
-                        className="hidden" 
-                        onChange={(e) => handleUploadVideoFile(e, setOfferFormVideo)} 
-                      />
-                    </label>
-                  </div>
-                  <input
-                    type="url"
-                    value={offerFormVideo}
-                    onChange={(e) => setOfferFormVideo(e.target.value)}
-                    placeholder="Ou coller une URL de vidéo"
-                    className="w-full p-1.5 rounded-lg bg-white border border-[#E7E5E4] text-[11px] text-[#1C1917] outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2 pt-2 border-t border-[#E7E5E4]">
-                <button
-                  type="button"
-                  onClick={() => setEditingOffer(null)}
-                  className="flex-1 py-2.5 rounded-xl border border-[#E7E5E4] bg-white text-[#1C1917] font-bold hover:bg-[#FAF7EF] cursor-pointer"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-[#1C1917] hover:bg-stone-800 text-white font-bold cursor-pointer transition-all shadow-sm"
-                >
-                  Enregistrer les modifications
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 6. MODALE : CONFIRMATION SUPPRESSION OFFRE                                */}
-      {/* ========================================================================= */}
-      {isDeletingOffer && (
-        <div 
-          onClick={() => setIsDeletingOffer(false)}
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 shadow-2xl space-y-4 text-xs text-[#1C1917]"
-          >
-            <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
-              <Trash2 className="w-6 h-6" />
-            </div>
-
-            <div className="text-center space-y-1.5">
-              <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
-                Supprimer cette offre ?
-              </h3>
-              <p className="text-xs text-[#68655D] leading-relaxed">
-                Êtes-vous sûr de vouloir supprimer l'offre « {currentOffer?.title} » ? Les réservations en cours resteront consultables.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 pt-2">
-              <button
-                onClick={() => setIsDeletingOffer(false)}
-                className="flex-1 py-2.5 rounded-xl border border-[#E7E5E4] bg-white text-[#1C1917] font-bold hover:bg-[#FAF7EF] cursor-pointer"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleDeleteCurrentOffer}
-                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer transition-all shadow-sm"
-              >
-                Supprimer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 7. MODALE : MODIFIER UN PROJET (TITRE, OBJECTIF, PHOTOS, VIDÉOS, DESC)    */}
-      {/* ========================================================================= */}
-      {editingProject && (
-        <div 
-          onClick={() => setEditingProject(null)}
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 shadow-2xl space-y-4 text-xs text-[#1C1917] max-h-[90vh] overflow-y-auto"
-          >
-            <div className="flex justify-between items-center border-b border-[#E7E5E4] pb-3">
+            <div className="space-y-3 text-xs">
               <div>
-                <h3 className="font-editorial text-base font-bold text-[#1C1917]">
-                  Modifier le projet
-                </h3>
-                <p className="text-[11px] text-[#8B6845]">{editingProject.category}</p>
-              </div>
-              <button onClick={() => setEditingProject(null)} className="text-[#8B6845] hover:text-[#1C1917] p-1">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSaveProject();
-              }}
-              className="space-y-3.5"
-            >
-              {/* Titre et Objectif */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="sm:col-span-2 space-y-1">
-                  <label className="font-bold text-[#1C1917] block">Titre du projet :</label>
-                  <input
-                    type="text"
-                    required
-                    value={projectFormTitle}
-                    onChange={(e) => setProjectFormTitle(e.target.value)}
-                    className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-xs font-semibold text-[#1C1917] outline-none focus:border-[#1C1917]"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-bold text-[#1C1917] block">Objectif (€) :</label>
-                  <input
-                    type="number"
-                    required
-                    min="100"
-                    value={projectFormTarget}
-                    onChange={(e) => setProjectFormTarget(Number(e.target.value))}
-                    className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-xs font-semibold text-[#1C1917] outline-none focus:border-[#1C1917]"
-                  />
-                </div>
+                <p className="font-bold text-[#1C1917]">{currentCreation.title}</p>
+                <p className="text-stone-500">{currentCreation.categoryLabel}</p>
+                <p className="font-mono text-[#C89B3C] font-bold text-sm pt-0.5">{currentCreation.price}</p>
               </div>
 
-              {/* Description */}
               <div className="space-y-1">
-                <label className="font-bold text-[#1C1917] block">Présentation et utilité :</label>
-                <textarea
-                  rows={3}
-                  value={projectFormDescription}
-                  onChange={(e) => setProjectFormDescription(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4] text-xs text-[#1C1917] outline-none focus:border-[#1C1917]"
-                />
-              </div>
-
-              {/* Image de couverture (Photo) */}
-              <div className="p-3 rounded-2xl bg-[#FAF7EF] border border-[#E7E5E4] space-y-2">
-                <label className="font-bold text-[#1C1917] flex items-center gap-1.5">
-                  <Camera className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  Photo d'illustration
-                </label>
-                <div className="flex items-center gap-3">
-                  <div className="w-16 h-20 rounded-xl overflow-hidden border border-[#E7E5E4] bg-black/10 shrink-0">
-                    <img src={projectFormPoster} alt="Aperçu" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E7E5E4] hover:bg-[#FAF7EF] text-[11px] font-bold text-[#1C1917] cursor-pointer shadow-2xs">
-                      <UploadCloud className="w-3.5 h-3.5" />
-                      <span>Choisir un fichier image</span>
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={(e) => handleUploadPosterFile(e, setProjectFormPoster)} 
-                      />
-                    </label>
-                    <input
-                      type="url"
-                      value={projectFormPoster}
-                      onChange={(e) => setProjectFormPoster(e.target.value)}
-                      placeholder="Ou coller une URL d'image"
-                      className="w-full p-1.5 rounded-lg bg-white border border-[#E7E5E4] text-[11px] text-[#1C1917] outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Vidéo du pitch */}
-              <div className="p-3 rounded-2xl bg-[#FAF7EF] border border-[#E7E5E4] space-y-2">
-                <label className="font-bold text-[#1C1917] flex items-center gap-1.5">
-                  <Video className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  Vidéo du pitch
-                </label>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E7E5E4] hover:bg-[#FAF7EF] text-[11px] font-bold text-[#1C1917] cursor-pointer shadow-2xs">
-                      <UploadCloud className="w-3.5 h-3.5" />
-                      <span>Choisir un fichier vidéo (MP4/WebM)</span>
-                      <input 
-                        type="file" 
-                        accept="video/*" 
-                        className="hidden" 
-                        onChange={(e) => handleUploadVideoFile(e, setProjectFormVideo)} 
-                      />
-                    </label>
-                  </div>
-                  <input
-                    type="url"
-                    value={projectFormVideo}
-                    onChange={(e) => setProjectFormVideo(e.target.value)}
-                    placeholder="Ou coller une URL de vidéo"
-                    className="w-full p-1.5 rounded-lg bg-white border border-[#E7E5E4] text-[11px] text-[#1C1917] outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2 pt-2 border-t border-[#E7E5E4]">
-                <button
-                  type="button"
-                  onClick={() => setEditingProject(null)}
-                  className="flex-1 py-2.5 rounded-xl border border-[#E7E5E4] bg-white text-[#1C1917] font-bold hover:bg-[#FAF7EF] cursor-pointer"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-[#1C1917] hover:bg-stone-800 text-white font-bold cursor-pointer transition-all shadow-sm"
-                >
-                  Enregistrer les modifications
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 8. MODALE : CONFIRMATION SUPPRESSION PROJET                               */}
-      {/* ========================================================================= */}
-      {isDeletingProject && (
-        <div 
-          onClick={() => setIsDeletingProject(false)}
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 shadow-2xl space-y-4 text-xs text-[#1C1917]"
-          >
-            <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
-              <Trash2 className="w-6 h-6" />
-            </div>
-
-            <div className="text-center space-y-1.5">
-              <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
-                Supprimer ce projet ?
-              </h3>
-              <p className="text-xs text-[#68655D] leading-relaxed">
-                Êtes-vous sûr de vouloir supprimer le projet « {currentProject?.title} » ? Cette action annulera la campagne en cours.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 pt-2">
-              <button
-                onClick={() => setIsDeletingProject(false)}
-                className="flex-1 py-2.5 rounded-xl border border-[#E7E5E4] bg-white text-[#1C1917] font-bold hover:bg-[#FAF7EF] cursor-pointer"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleDeleteCurrentProject}
-                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer transition-all shadow-sm"
-              >
-                Supprimer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 9. MODALE D'ÉDITION DU PROFIL                                             */}
-      {/* ========================================================================= */}
-      {isEditingProfile && (
-        <div 
-          onClick={() => setIsEditingProfile(false)}
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 shadow-2xl space-y-4 text-xs text-[#1C1917]"
-          >
-            <div className="flex justify-between items-center border-b border-[#E7E5E4] pb-3">
-              <h3 className="font-editorial text-base font-bold text-[#1C1917]">
-                Modifier mon profil
-              </h3>
-              <button onClick={() => setIsEditingProfile(false)} className="text-[#8B6845] hover:text-[#1C1917] p-1">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setIsEditingProfile(false);
-                setShareToast("Profil mis à jour avec succès !");
-                setTimeout(() => setShareToast(null), 3000);
-              }}
-              className="space-y-3"
-            >
-              <div>
-                <label className="font-bold text-[#1C1917] block mb-1">Prénom :</label>
+                <label className="text-stone-700 font-semibold block">Vos coordonnées (email ou téléphone) :</label>
                 <input
                   type="text"
-                  required
-                  value={userName}
-                  onChange={(e) => {
-                    setUserName(e.target.value);
-                    setUserFullName(e.target.value);
-                  }}
-                  className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4]"
+                  placeholder="contact@exemple.com"
+                  value={orderContact}
+                  onChange={(e) => setOrderContact(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50"
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setIsOrderingCreationModalOpen(false);
+                setShareToast("Votre demande a été transmise à l'artisan.");
+                setTimeout(() => setShareToast(null), 3500);
+              }}
+              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+            >
+              Confirmer la demande
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* C. Modale Contribuer à l'initiative */}
+      {isContributingModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <HeartHandshake className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Soutenir l'initiative</h3>
+              </div>
+              <button onClick={() => setIsContributingModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <p className="font-bold text-[#1C1917]">{currentInitiative.title}</p>
+              <p className="text-stone-600">Choisissez votre montant de contribution :</p>
+              
+              <div className="grid grid-cols-3 gap-2">
+                {[20, 50, 100].map((amt) => (
+                  <button
+                    key={amt}
+                    type="button"
+                    onClick={() => setContributionAmount(amt)}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
+                      contributionAmount === amt 
+                        ? 'bg-[#1C1917] text-white border-[#1C1917]' 
+                        : 'bg-stone-50 hover:bg-stone-100 text-stone-800 border-stone-200'
+                    }`}
+                  >
+                    {amt} €
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setIsContributingModalOpen(false);
+                setShareToast(`Merci pour votre contribution de ${contributionAmount} € !`);
+                setTimeout(() => setShareToast(null), 3500);
+              }}
+              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+            >
+              Valider mon soutien
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* D. Modale Proposer mon aide (Appels) */}
+      {isOfferingHelpModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Proposer mon aide</h3>
+              </div>
+              <button onClick={() => setIsOfferingHelpModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <p className="font-bold text-[#1C1917]">{currentAppel.title}</p>
+              <p className="text-stone-600">Expliquez brièvement comment vous pouvez contribuer :</p>
+              <textarea
+                rows={4}
+                value={helpMessage}
+                onChange={(e) => setHelpMessage(e.target.value)}
+                placeholder="Je dispose de matériel / de compétences et je peux vous aider..."
+                className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 resize-none"
+              />
+            </div>
+
+            <button
+              onClick={() => {
+                setIsOfferingHelpModalOpen(false);
+                setShareToast("Votre proposition d'aide a été envoyée !");
+                setTimeout(() => setShareToast(null), 3500);
+              }}
+              className="w-full py-3 px-4 rounded-xl bg-[#1C1917] hover:bg-stone-800 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
+            >
+              <Send className="w-3.5 h-3.5 text-[#C89B3C]" />
+              <span>Envoyer ma proposition</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 5. MODALES DE GESTION DU PROPRIÉTAIRE (Mise en vente, Suppression, etc.)    */}
+      {/* ========================================================================= */}
+
+      {/* Gérer la mise en vente de parts */}
+      {isSellingShares && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <h3 className="font-editorial text-base font-bold text-[#1C1917]">Mise en vente de parts</h3>
+              <button onClick={() => setIsSellingShares(false)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-stone-700 font-semibold block">Nombre de parts à mettre en vente :</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={currentProduction.sharesCount}
+                  value={sellCountInput}
+                  onChange={(e) => setSellCountInput(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
                 />
               </div>
 
               <div>
-                <label className="font-bold text-[#1C1917] block mb-1">Biographie / Démarche :</label>
-                <textarea
-                  rows={3}
-                  value={userBio}
-                  onChange={(e) => setUserBio(e.target.value)}
-                  className="w-full p-2.5 rounded-xl bg-white border border-[#E7E5E4]"
+                <label className="text-stone-700 font-semibold block">Prix de vente unitaire (€) :</label>
+                <input
+                  type="number"
+                  value={sellPriceInput}
+                  onChange={(e) => setSellPriceInput(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
                 />
+                <span className="text-[11px] text-stone-500 pt-0.5 block">Prix conseillé : {currentProduction.recommendedPrice} €</span>
               </div>
+            </div>
 
+            <div className="flex gap-2">
               <button
-                type="submit"
-                className="w-full py-2.5 rounded-xl bg-[#1C1917] hover:bg-stone-800 text-white font-bold cursor-pointer transition-all shadow-sm"
+                onClick={() => {
+                  setProductions(prev => prev.map((p, idx) => idx === shareIndex ? { ...p, sharesOnSale: sellCountInput, salePrice: sellPriceInput } : p));
+                  setIsSellingShares(false);
+                  setShareToast(`${sellCountInput} part(s) mises en vente sur le Marché.`);
+                  setTimeout(() => setShareToast(null), 3000);
+                }}
+                className="flex-1 py-2.5 bg-[#1C1917] text-white font-bold text-xs rounded-xl"
               >
-                Enregistrer les modifications
+                Mettre en vente
               </button>
-            </form>
+              <button
+                onClick={() => {
+                  setProductions(prev => prev.map((p, idx) => idx === shareIndex ? { ...p, sharesOnSale: 0 } : p));
+                  setIsSellingShares(false);
+                  setShareToast("Parts remises en réserve.");
+                  setTimeout(() => setShareToast(null), 3000);
+                }}
+                className="px-3 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs rounded-xl"
+              >
+                Retirer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation suppression récit */}
+      {isDeletingRecit && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <h3 className="font-editorial text-base font-bold text-[#1C1917]">Retirer ce récit ?</h3>
+            <p className="text-xs text-stone-600">Cette vidéo de récit personnel ne sera plus visible sur votre profil.</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setRecits(prev => prev.filter((_, idx) => idx !== recitIndex));
+                  setRecitIndex(0);
+                  setIsDeletingRecit(false);
+                  setShareToast("Récit retiré.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-red-600 text-white font-bold text-xs rounded-xl"
+              >
+                Confirmer
+              </button>
+              <button onClick={() => setIsDeletingRecit(false)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation suppression épisode */}
+      {isDeletingEpisode && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <h3 className="font-editorial text-base font-bold text-[#1C1917]">Retirer cet épisode ?</h3>
+            <p className="text-xs text-stone-600">Cet épisode ne sera plus mis en avant sur votre profil.</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setEpisodes(prev => prev.filter((_, idx) => idx !== episodeIndex));
+                  setEpisodeIndex(0);
+                  setIsDeletingEpisode(false);
+                  setShareToast("Épisode retiré.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-red-600 text-white font-bold text-xs rounded-xl"
+              >
+                Confirmer
+              </button>
+              <button onClick={() => setIsDeletingEpisode(false)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation suppression création */}
+      {isDeletingCreation && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <h3 className="font-editorial text-base font-bold text-[#1C1917]">Supprimer cette création ?</h3>
+            <p className="text-xs text-stone-600">L'article ou l'atelier sera retiré de vos créations.</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setCreations(prev => prev.filter((_, idx) => idx !== creationIndex));
+                  setCreationIndex(0);
+                  setIsDeletingCreation(false);
+                  setShareToast("Création supprimée.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-red-600 text-white font-bold text-xs rounded-xl"
+              >
+                Supprimer
+              </button>
+              <button onClick={() => setIsDeletingCreation(false)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation suppression initiative */}
+      {isDeletingInitiative && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <h3 className="font-editorial text-base font-bold text-[#1C1917]">Supprimer cette initiative ?</h3>
+            <p className="text-xs text-stone-600">La campagne ne sera plus visible sur votre profil.</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setInitiatives(prev => prev.filter((_, idx) => idx !== initiativeIndex));
+                  setInitiativeIndex(0);
+                  setIsDeletingInitiative(false);
+                  setShareToast("Initiative supprimée.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-red-600 text-white font-bold text-xs rounded-xl"
+              >
+                Supprimer
+              </button>
+              <button onClick={() => setIsDeletingInitiative(false)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation suppression appel */}
+      {isDeletingAppel && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <h3 className="font-editorial text-base font-bold text-[#1C1917]">Supprimer cet appel ?</h3>
+            <p className="text-xs text-stone-600">L'appel à compétences ou matériel sera retiré.</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setAppels(prev => prev.filter((_, idx) => idx !== appelIndex));
+                  setAppelIndex(0);
+                  setIsDeletingAppel(false);
+                  setShareToast("Appel supprimé.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-red-600 text-white font-bold text-xs rounded-xl"
+              >
+                Supprimer
+              </button>
+              <button onClick={() => setIsDeletingAppel(false)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
           </div>
         </div>
       )}

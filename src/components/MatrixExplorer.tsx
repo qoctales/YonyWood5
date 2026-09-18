@@ -11,9 +11,11 @@ import {
   User
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
-import { AffiliationPerson, ViewScreen } from '../types';
+import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
 import { CentralAstrolabeJoystick } from './CentralAstrolabeJoystick';
 import { VerticalZoomSlider } from './VerticalZoomSlider';
+import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
+import { PROTAGONISTS } from '../data/mockData';
 
 interface MatrixExplorerProps {
   onNavigate: (screen: ViewScreen | any) => void;
@@ -40,6 +42,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   // 1. Filtrage par série : 'ALL' ou ID de la série
   const [selectedFilter, setSelectedFilter] = useState<string>('ALL');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState<boolean>(false);
+  const [teaserProtagonist, setTeaserProtagonist] = useState<Protagonist | null>(null);
 
   // 2. Navigation spatiale : rotation, zoom et translation (pan)
   const [rotationAngle, setRotationAngle] = useState<number>(0);
@@ -637,8 +640,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
               />
             )}
 
-            {/* Dégradé supérieur et inférieur identique aux cartes du haut */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/60 pointer-events-none" />
+            {/* Dégradé doux et clair pour préserver l'éclat de l'image */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
             {/* Barre supérieure : Bouton Fermer (sans nom de série) */}
             <div className="absolute top-4 right-4 z-20 flex items-center justify-end pointer-events-auto">
@@ -665,19 +668,27 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 </p>
               </div>
 
-              {/* Le petit bouton avec l'icône du bonhomme */}
+              {/* Le petit bouton avec l'icône du bonhomme -> Ouvre le Teaser */}
               <button
                 id={`modal-btn-universe-${modalPerson.id}`}
                 onClick={(e) => {
                   e.stopPropagation();
+                  const pId = modalPerson.protagonistIdRef || modalPerson.id;
+                  const found = PROTAGONISTS.find(p => p.id === pId) || {
+                    id: pId,
+                    name: modalPerson.name,
+                    role: modalPerson.role,
+                    country: modalPerson.country || 'Bénin',
+                    territory: modalPerson.city || 'Ganvié',
+                    photoUrl: modalPerson.avatar,
+                    bio: `Artisan et passeur de savoirs dans la série ${modalPerson.seriesTitle || 'Finagnon < > Qosqorico'}.`,
+                    stories: []
+                  } as unknown as Protagonist;
                   setModalPerson(null);
-                  onNavigate({ 
-                    type: 'protagonist_profile', 
-                    protagonistId: modalPerson.protagonistIdRef || modalPerson.id 
-                  });
+                  setTeaserProtagonist(found);
                 }}
                 className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
-                title="Son univers"
+                title="Découvrir son univers (Teaser)"
               >
                 <User className="w-4 h-4" />
               </button>
@@ -686,6 +697,18 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         </div>
       )}
 
+      {/* Modale Teaser Présentation Vidéo avant d'entrer dans l'univers */}
+      <ProtagonistTeaserModal
+        protagonist={teaserProtagonist}
+        onClose={() => setTeaserProtagonist(null)}
+        onEnterUniverse={(id) => {
+          setTeaserProtagonist(null);
+          onNavigate({ 
+            type: 'protagonist_profile', 
+            protagonistId: id 
+          });
+        }}
+      />
     </div>
   );
 };
