@@ -60,6 +60,7 @@ export interface Protagonist {
   bio: string;
   photoUrl: string;
   videoAvatarUrl?: string;
+  teaserVideoUrl?: string;
   documentaryId: string;
   universeTag: string;
   quote: string;
@@ -297,6 +298,51 @@ export interface SeriesAffiliationTree {
   totalAffiliatedCount: number;
   generationsCount: number;
   pioneers: AffiliationPerson[];
+}
+
+export interface StoryResonanceRating {
+  storyId: string;
+  topicId: string;
+  percentage?: number;
+  ratings?: {
+    authenticity: number;
+    relevance: number;
+    impact: number;
+  };
+  createdAt: string;
+}
+
+export type ExplorerCategory = 
+  | 'series' 
+  | 'thematics' 
+  | 'topics' 
+  | 'offers' 
+  | 'opportunities' 
+  | 'brands';
+
+export interface ExplorerTopicItem {
+  id: string;
+  title: string;
+  category: ExplorerCategory;
+  tagline?: string;
+}
+
+export interface ExplorerStoryItem {
+  id: string;
+  topicId: string;
+  protagonistIdRef: string;
+  name: string;
+  firstName?: string;
+  age: number;
+  role: string;
+  territory: string;
+  country: string;
+  flag: string;
+  photoUrl: string;
+  teaserVideoUrl: string;
+  teaserPitch: string;
+  storyTitle: string;
+  universeTag: string;
 }
 
 export type ViewScreen = 

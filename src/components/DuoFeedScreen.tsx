@@ -206,10 +206,26 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const currentP = activeProtagonist === 'A' ? pA : pB;
   const currentStory = activeProtagonist === 'A' ? currentDuo.storyA : currentDuo.storyB;
 
+  // Format title part to capitalize only the first letter (e.g. "Jésus", "Èṣù", "Finagnon", "Qosqorico")
+  const formatTitlePart = (raw?: string) => {
+    if (!raw) return '';
+    const trimmed = raw.trim();
+    if (!trimmed) return '';
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+  };
+
   // Derive the 2 thematic terms for this duo
-  const themeA = pA.universeTag || (activeDoc ? activeDoc.universes[0]?.name : 'PÔLE A');
-  const themeB = pB.universeTag || (activeDoc ? activeDoc.universes[1]?.name : 'PÔLE B');
+  const themeA = formatTitlePart(pA.universeTag || (activeDoc ? activeDoc.universes[0]?.name : 'Pôle A'));
+  const themeB = formatTitlePart(pB.universeTag || (activeDoc ? activeDoc.universes[1]?.name : 'Pôle B'));
   const currentTheme = activeProtagonist === 'A' ? themeA : themeB;
+
+  // Clean quotes helper: strips leading and trailing quotes (« », ", ') and extra spaces
+  const cleanQuotes = (str?: string) => {
+    if (!str) return '';
+    return str
+      .replace(/^[«"'\s]+|[»"'\s]+$/g, '')
+      .trim();
+  };
 
   // Video URLs for inline playback (keeping the 2 cards vertical side-by-side)
   const videoUrlA = pA.videoAvatarUrl 
@@ -451,8 +467,8 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                     />
                   )}
                   
-                  {/* Cinematic gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/60 pointer-events-none" />
+                  {/* Cinematic gradient overlay - plus clair et lumineux */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/25 pointer-events-none" />
 
                   {/* TOP: Bumble-style segmented story bars (Univers A vs Univers B) */}
                   <div className="relative z-20 pt-3 px-3 sm:px-4">
@@ -489,7 +505,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
                     {/* Top Row Header inside Card: Pole Pill on left & [Switch button + Golden play/pause button] on right */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] font-bold tracking-wider text-amber-300 uppercase shadow-md shrink-0">
+                      <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-medium text-white shadow-md shrink-0">
                         {currentTheme}
                       </span>
 
@@ -657,11 +673,11 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                           className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 pointer-events-none"
                         />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/25 pointer-events-none" />
 
                       {/* Top Header: Pole Tag on left & [Mute toggle + Hybrid Golden Play/Pause Button] on right */}
                       <div className="relative z-10 p-4 flex items-center justify-between">
-                        <span className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[11px] font-bold tracking-wider text-amber-300 uppercase shadow-md">
+                        <span className="w-fit max-w-[150px] truncate px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-medium text-white shadow-md shrink-0">
                           {themeA}
                         </span>
 
@@ -772,11 +788,11 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                           className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 pointer-events-none"
                         />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/25 pointer-events-none" />
 
                       {/* Top Header: Pole Tag on left & [Mute toggle + Hybrid Golden Play/Pause Button] on right */}
                       <div className="relative z-10 p-4 flex items-center justify-between">
-                        <span className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[11px] font-bold tracking-wider text-amber-300 uppercase shadow-md">
+                        <span className="w-fit max-w-[150px] truncate px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-medium text-white shadow-md shrink-0">
                           {themeB}
                         </span>
 
@@ -867,13 +883,12 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
           <button
             onClick={() => setIsQuestionRevealed(true)}
             id="reveal-question-btn"
-            className="px-5 py-2 rounded-full bg-white hover:bg-stone-50 border border-stone-300 hover:border-stone-400 text-stone-700 text-xs font-semibold transition-all shadow-xs cursor-pointer flex items-center gap-2"
+            className="px-5 py-2 rounded-full bg-white hover:bg-stone-50 border border-stone-300 hover:border-stone-400 text-stone-700 text-xs font-semibold transition-all shadow-xs cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#C89B3C]" />
             <span>Révéler la question en miroir</span>
           </button>
         ) : (
-          <div className="w-full p-4 rounded-2xl bg-white border border-stone-200 shadow-md text-center relative animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-full p-4 sm:p-5 rounded-2xl bg-white border border-stone-200 shadow-md text-center relative animate-in fade-in zoom-in-95 duration-200">
             <button
               onClick={() => setIsQuestionRevealed(false)}
               className="absolute top-2.5 right-2.5 p-1 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition-colors cursor-pointer"
@@ -881,12 +896,11 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
             >
               <EyeOff className="w-3.5 h-3.5" />
             </button>
-            <p className="font-editorial text-sm sm:text-base font-medium text-[#1C1917] leading-relaxed px-6">
-              « {currentDuo.centralQuestion} »
+            <p className="font-serif-editorial text-base sm:text-lg font-normal text-[#1C1917] leading-relaxed px-6 italic">
+              {cleanQuotes(currentDuo.centralQuestion)}
             </p>
           </div>
         )}
-
 
       </div>
 

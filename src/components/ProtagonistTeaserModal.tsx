@@ -1,21 +1,46 @@
-import React, { useState, useRef } from 'react';
-import { Play, Pause, Volume2, VolumeX, X, ArrowRight, Sparkles, MapPin } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Play, Pause, Volume2, VolumeX, X, ArrowRight, Sparkles, MapPin, Gem } from 'lucide-react';
 import { Protagonist } from '../types';
+import { ResonanceModal } from './ResonanceModal';
 
 interface ProtagonistTeaserModalProps {
   protagonist: Protagonist | null;
+  storyId?: string;
+  topicId?: string;
   onClose: () => void;
   onEnterUniverse: (protagonistId: string) => void;
 }
 
 export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
   protagonist,
+  storyId,
+  topicId,
   onClose,
   onEnterUniverse,
 }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(true);
+  const [isResonanceModalOpen, setIsResonanceModalOpen] = useState<boolean>(false);
+  const [resonancePct, setResonancePct] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    if (protagonist) {
+      const activeStoryId = storyId || protagonist.stories?.[0]?.id || `story-${protagonist.id}`;
+      try {
+        const stored = localStorage.getItem(`yonywood_resonance_${activeStoryId}`);
+        if (stored) {
+          const val = parseInt(stored, 10);
+          setResonancePct(isNaN(val) ? null : val);
+        } else {
+          setResonancePct(null);
+        }
+      } catch {
+        setResonancePct(null);
+      }
+      setIsResonanceModalOpen(false);
+    }
+  }, [protagonist, storyId]);
 
   if (!protagonist) return null;
 
@@ -51,7 +76,7 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
     >
       {/* Container vertical 9:16 */}
       <div 
-        className="relative w-full max-w-[340px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl border border-white/25 bg-black flex flex-col justify-between p-5 text-white animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-[340px] max-h-[94vh] overflow-y-auto rounded-3xl shadow-2xl border border-white/25 bg-black flex flex-col justify-between p-5 text-white animate-in zoom-in-95 duration-200 scrollbar-none"
         onClick={(e) => {
           e.stopPropagation();
           togglePlay();
@@ -78,12 +103,22 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
         {/* Voile d'ambiance cinématographique */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/50 pointer-events-none" />
 
-        {/* HAUT : Badge Présentation & Contrôles */}
+        {/* HAUT : Bouton Évaluer (Diamant) & Contrôles */}
         <div className="relative z-10 flex items-center justify-between gap-2 w-full">
-          <div className="px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-xs font-medium text-white/95 flex items-center gap-1.5 shadow-md">
-            <Sparkles className="w-3.5 h-3.5 text-[#C89B3C]" />
-            <span className="font-editorial font-bold">Récit de vie</span>
-          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsResonanceModalOpen(true);
+            }}
+            className={`w-9 h-9 rounded-full backdrop-blur-md border flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+              resonancePct !== null
+                ? 'bg-black/80 border-[#C89B3C]/80 text-[#E5C16C] shadow-[0_0_12px_rgba(200,155,60,0.35)]'
+                : 'bg-black/60 hover:bg-black/80 border-white/20 hover:border-[#C89B3C]/50 text-white'
+            }`}
+            title={resonancePct !== null ? `Résonance : ${resonancePct}%` : "Évaluer la résonance"}
+          >
+            <Gem className="w-4 h-4" />
+          </button>
 
           <div className="flex items-center gap-1.5">
             {/* Bouton Muet / Son */}
@@ -126,6 +161,19 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
           </div>
         </div>
 
+        {/* Modale d'évaluation de la résonance (au clic sur l'icône) */}
+        <ResonanceModal
+          isOpen={isResonanceModalOpen}
+          onClose={() => setIsResonanceModalOpen(false)}
+          storyId={storyId || protagonist.stories?.[0]?.id || `story-${protagonist.id}`}
+          topicId={topicId || protagonist.documentaryId || 'exploration-generale'}
+          personName={protagonist.name}
+          initialPercentage={resonancePct}
+          onRatingSubmitted={(pct) => {
+            setResonancePct(pct);
+          }}
+        />
+
         {/* BAS : Identité & Bouton Entrer dans son univers */}
         <div className="relative z-10 space-y-3.5 pt-4">
           <div className="space-y-1.5">
@@ -152,18 +200,20 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
             )}
           </div>
 
-          {/* Bouton d'action doré principal : Entrer dans son univers */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onEnterUniverse(protagonist.id);
-            }}
-            id={`enter-universe-btn-${protagonist.id}`}
-            className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-[0_4px_20px_rgba(200,155,60,0.4)] flex items-center justify-center gap-2 cursor-pointer transition-all transform hover:scale-[1.02] active:scale-95 border border-white/30"
-          >
-            <span>Entrer dans son univers</span>
-            <ArrowRight className="w-4 h-4 text-[#1C1917]" />
-          </button>
+          {/* Action : Entrer dans son univers */}
+          <div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEnterUniverse(protagonist.id);
+              }}
+              id={`enter-universe-btn-${protagonist.id}`}
+              className="w-full h-11 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+            >
+              <span>Entrer dans son univers</span>
+              <ArrowRight className="w-4 h-4 text-[#1C1917]" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

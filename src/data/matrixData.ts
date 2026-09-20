@@ -47,7 +47,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnier fondateur ayant osé dépasser les dogmes pour tendre la main à l’autre rive de la foi.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« À l’endroit exact où l’on croit que tout nous sépare, c’est là que le mystère commence. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1,
         invitedPeople: [
           {
@@ -65,7 +64,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Invitée par Dah Zounon après avoir soigné ensemble des enfants au dispensaire de Toffo.',
             teaserVideoUrl: TEASER_VIDEOS[1],
             teaserPitch: '« Le silence de la prière et celui de la forêt ne font qu’un quand on écoute avec le cœur. »',
-            protagonistIdRef: 'dah-zounon',
             generation: 2,
             invitedPeople: [
               {
@@ -83,7 +81,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Invité par Sœur Blandine pour son écoute du bourdonnement sacré de la nature.',
                 teaserVideoUrl: TEASER_VIDEOS[2],
                 teaserPitch: '« Les abeilles fabriquent la cire des cierges sans jamais savoir qu’elles éclairent le divin. »',
-                protagonistIdRef: 'dah-zounon',
                 generation: 3,
                 invitedPeople: [
                   {
@@ -101,7 +98,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                     invitationStory: 'Accueilli par Jean-Baptiste pour cartographier les fleurs des sanctuaires.',
                     teaserVideoUrl: TEASER_VIDEOS[0],
                     teaserPitch: '« Chaque fleur qui s’ouvre à l’aube est un cantique que la rosée bénit. »',
-                    protagonistIdRef: 'dah-zounon',
                     generation: 4,
                     invitedPeople: [
                       {
@@ -119,7 +115,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                         invitationStory: 'Protège la descendance végétale des anciens couvents.',
                         teaserVideoUrl: TEASER_VIDEOS[1],
                         teaserPitch: '« Dans une graine minuscule repose toute la mémoire d’une forêt. »',
-                        protagonistIdRef: 'dah-zounon',
                         generation: 5
                       }
                     ]
@@ -139,7 +134,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                     invitationStory: 'Élève les voix des matines au lever du soleil.',
                     teaserVideoUrl: TEASER_VIDEOS[3],
                     teaserPitch: '« Chanter à l’aube lave les blessures du jour précédent. »',
-                    protagonistIdRef: 'dah-zounon',
                     generation: 4
                   }
                 ]
@@ -159,7 +153,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Soigne les aînés avec les tisanes formulées par Blandine.',
                 teaserVideoUrl: TEASER_VIDEOS[5],
                 teaserPitch: '« Toucher un corps qui souffre avec bienveillance, c’est déjà la moitié de la guérison. »',
-                protagonistIdRef: 'dah-zounon',
                 generation: 3,
                 invitedPeople: [
                   {
@@ -177,7 +170,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                     invitationStory: 'Distille les baumes d’eucalyptus et de moringa.',
                     teaserVideoUrl: TEASER_VIDEOS[6],
                     teaserPitch: '« La plante sait comment guérir l’homme parce qu’ils sont nés du même limon. »',
-                    protagonistIdRef: 'dah-zounon',
                     generation: 4
                   }
                 ]
@@ -199,7 +191,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Initié par Dah Zounon pour sculpter les autels de fer forgé.',
             teaserVideoUrl: TEASER_VIDEOS[3],
             teaserPitch: '« Frapper le fer incandescent, c’est purifier la violence du monde pour en faire une offrande. »',
-            protagonistIdRef: 'dah-zounon',
             generation: 2
           }
         ]
@@ -220,7 +211,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnier fondateur qui a invité la spiritualité traditionnelle dans les cercles de méditation.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« La foi n’est pas une forteresse qu’on protège, c’est une table où l’on invite l’inconnu. »',
-        protagonistIdRef: 'pere-matthieu',
         generation: 1,
         invitedPeople: [
           {
@@ -238,7 +228,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Fait entrer par le Père Matthieu pour son refuge ouvert nuit et jour à Dantokpa.',
             teaserVideoUrl: TEASER_VIDEOS[5],
             teaserPitch: '« Quand un enfant vous sourit après trois jours de faim, vous comprenez ce qu’est la grâce. »',
-            protagonistIdRef: 'pere-matthieu',
             generation: 2
           }
         ]
@@ -259,7 +248,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'A composé des polyphonies qui intègrent les tambours royaux aux chants d’adoration.',
         teaserVideoUrl: TEASER_VIDEOS[6],
         teaserPitch: '« Quand la voix monte sur l’eau, elle ne demande pas quelle est ton église : elle te traverse. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1,
         invitedPeople: [
           {
@@ -277,7 +265,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Invité par Gisèle pour cadencer les chants sur les pirogues.',
             teaserVideoUrl: TEASER_VIDEOS[4],
             teaserPitch: '« Le rythme de la calebasse dans l’eau apaise la houle du cœur. »',
-            protagonistIdRef: 'dah-zounon',
             generation: 2,
             invitedPeople: [
               {
@@ -295,7 +282,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Formée par Séraphin au vibrato traditionnel de la lagune.',
                 teaserVideoUrl: TEASER_VIDEOS[5],
                 teaserPitch: '« Quand nous chantons sur l’eau calme, les échos répondent depuis les berges. »',
-                protagonistIdRef: 'dah-zounon',
                 generation: 3,
                 invitedPeople: [
                   {
@@ -313,7 +299,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                     invitationStory: 'Initié par Kévine pour accompagner les départs de pêche à l’aube.',
                     teaserVideoUrl: TEASER_VIDEOS[6],
                     teaserPitch: '« Le roseau souffle la brise que Dieu envoie sur l’eau. »',
-                    protagonistIdRef: 'dah-zounon',
                     generation: 4
                   }
                 ]
@@ -335,7 +320,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Rassemble chrétiens et adeptes du Vodoun dans une chorale polyphonique.',
             teaserVideoUrl: TEASER_VIDEOS[1],
             teaserPitch: '« La concorde commence quand deux voix différentes s’accordent. »',
-            protagonistIdRef: 'dah-zounon',
             generation: 2
           }
         ]
@@ -356,7 +340,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Transmetteur des 256 signes du Fa et de leur écho avec les paraboles bibliques.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Le Fa et l’Évangile disent la même chose : choisis la vie pour que ta descendance vive. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1,
         invitedPeople: [
           {
@@ -374,7 +357,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Élève spirituel de Kpakpa réputé pour sa neutralité et sa sagesse apaisante.',
             teaserVideoUrl: TEASER_VIDEOS[2],
             teaserPitch: '« Les signes ne condamnent personne, ils indiquent où poser le pied pour ne pas trébucher. »',
-            protagonistIdRef: 'dah-zounon',
             generation: 2,
             invitedPeople: [
               {
@@ -392,7 +374,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Trace les figures du destin dans la poudre sacrée d’Irosun.',
                 teaserVideoUrl: TEASER_VIDEOS[3],
                 teaserPitch: '« Le doigt qui trace la ligne sur le plateau d’Opon Fa efface la rancœur. »',
-                protagonistIdRef: 'dah-zounon',
                 generation: 3
               }
             ]
@@ -415,7 +396,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'A brisé le tabou des confrontations religieuses en organisant des repas de réconciliation.',
         teaserVideoUrl: TEASER_VIDEOS[1],
         teaserPitch: '« Nous avons passé des siècles à nous jeter des anathèmes. Il est temps de nous asseoir ensemble. »',
-        protagonistIdRef: 'pere-matthieu',
         generation: 1
       },
       {
@@ -434,7 +414,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnière ayant accueilli les femmes en détresse sans jamais leur demander leur obédience.',
         teaserVideoUrl: TEASER_VIDEOS[2],
         teaserPitch: '« L’eau ne demande pas à celui qui boit s’il est baptisé ou initié. Elle étanche la soif. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1
       },
       {
@@ -453,7 +432,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Compose des vitraux mêlant symbolique chrétienne et motifs royaux béninois.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« La lumière traverse le verre rouge et bleu de la même façon qu’elle illumine l’Afrique. »',
-        protagonistIdRef: 'pere-matthieu',
         generation: 1
       },
       {
@@ -472,7 +450,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Ses étoffes de lin pur habillent aussi bien les initiés que les novices catholiques.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« Le blanc n’appartient à personne. C’est la couleur du commencement. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1
       },
       {
@@ -491,7 +468,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnier conciliant médecine moderne et écoute spirituelle des familles en fin de vie.',
         teaserVideoUrl: TEASER_VIDEOS[5],
         teaserPitch: '« À l’article de la mort, les querelles religieuses s’effacent : il ne reste que l’amour. »',
-        protagonistIdRef: 'pere-matthieu',
         generation: 1
       },
       {
@@ -510,7 +486,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Détenteur des chants d’exil et des psaumes oraux des Yoruba.',
         teaserVideoUrl: TEASER_VIDEOS[6],
         teaserPitch: '« Quand la nuit tombe sur la terre, les ancêtres et les saints se donnent la main. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1
       },
       {
@@ -529,7 +504,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Élève 60 orphelins en valorisant à la fois leur identité culturelle et l’espérance.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Un enfant aimé ne craint ni le masque, ni l’avenir : il sait qu’il est attendu. »',
-        protagonistIdRef: 'pere-matthieu',
         generation: 1
       },
       {
@@ -548,7 +522,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'A protégé les arbres centenaires où les moines viennent aujourd’hui se recueillir.',
         teaserVideoUrl: TEASER_VIDEOS[1],
         teaserPitch: '« L’arbre ne sait pas quel Dieu a créé sa sève, il sait seulement qu’il doit monter vers le ciel. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1
       },
       {
@@ -567,7 +540,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Crée des instruments hybrides qui accompagnent les vigiles nocturnes.',
         teaserVideoUrl: TEASER_VIDEOS[2],
         teaserPitch: '« La résonance d’un tuyau de bambou a la douceur d’un pardon murmuré. »',
-        protagonistIdRef: 'pere-matthieu',
         generation: 1
       },
       {
@@ -586,7 +558,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Grave sur les mêmes linteaux de bois le poisson christique et le serpent Dan.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« La porte est là pour s’ouvrir, pas pour enfermer les âmes. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1
       },
       {
@@ -605,7 +576,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Documente les histoires de familles béninoises où chaque membre suit un culte différent en paix.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« Dans nos concessions familiales, on fête Pâques et la fête du Vodoun sous le même toit. »',
-        protagonistIdRef: 'pere-matthieu',
         generation: 1
       },
       {
@@ -624,7 +594,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Plus jeune pionnier, il écrit des poèmes sur la réconciliation des générations.',
         teaserVideoUrl: TEASER_VIDEOS[5],
         teaserPitch: '« Ma génération ne veut plus hériter des querelles : nous voulons hériter de la sagesse. »',
-        protagonistIdRef: 'dah-zounon',
         generation: 1
       }
     ]
@@ -653,7 +622,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnier fondateur de Finagnon, artisan de la patience et des liens intercontinentaux.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Un fil tout seul se brise au premier vent. Mille fils entrelacés soutiennent le poids d’une vie. »',
-        protagonistIdRef: 'koffi-tisserand',
         generation: 1,
         invitedPeople: [
           {
@@ -671,7 +639,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Fait entrer par Koffi pour sa science du bois de teck immergé.',
             teaserVideoUrl: TEASER_VIDEOS[1],
             teaserPitch: '« La pirogue est notre terre ferme au milieu de l’eau. »',
-            protagonistIdRef: 'koffi-tisserand',
             generation: 2,
             invitedPeople: [
               {
@@ -689,7 +656,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Invitée par Tobi pour enregistrer la pulsation secrète de la lagune.',
                 teaserVideoUrl: TEASER_VIDEOS[2],
                 teaserPitch: '« Le silence de Ganvié la nuit est le chant le plus puissant d’Afrique. »',
-                protagonistIdRef: 'koffi-tisserand',
                 generation: 3,
                 invitedPeople: [
                   {
@@ -707,7 +673,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                     invitationStory: 'Initié par Amina après avoir fabriqué la première harpe d’eau.',
                     teaserVideoUrl: TEASER_VIDEOS[3],
                     teaserPitch: '« Quand l’eau passe dans le roseau, l’instrument pleure de joie. »',
-                    protagonistIdRef: 'koffi-tisserand',
                     generation: 4
                   }
                 ]
@@ -732,7 +697,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnière de Qosqorico, elle a fait dialoguer la laine d’alpaga avec le coton de Koffi.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« Nos montagnes ne sont pas des murs : ce sont des escaliers vers le monde entier. »',
-        protagonistIdRef: 'amara-tisserande',
         generation: 1,
         invitedPeople: [
           {
@@ -750,7 +714,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Invité par Amara pour ses terrasses agricoles millénaires.',
             teaserVideoUrl: TEASER_VIDEOS[5],
             teaserPitch: '« Semer, c’est faire confiance à la terre qui nous portera encore demain. »',
-            protagonistIdRef: 'amara-tisserande',
             generation: 2,
             invitedPeople: [
               {
@@ -768,7 +731,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Inspirée par Sayri pour documenter la dignité des jeunes fileuses.',
                 teaserVideoUrl: TEASER_VIDEOS[6],
                 teaserPitch: '« Ne touchez pas nos tissus comme des souvenirs : touchez-les comme des prières. »',
-                protagonistIdRef: 'amara-tisserande',
                 generation: 3
               }
             ]
@@ -791,7 +753,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Détenteur des secrets de la cochenille fixée à l’eau volcanique.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« La couleur ne vient pas de la peinture, elle vient de la patience du soleil. »',
-        protagonistIdRef: 'amara-tisserande',
         generation: 1
       },
       {
@@ -810,7 +771,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Protège la mangrove et les plantes tinctoriales du littoral atlantique.',
         teaserVideoUrl: TEASER_VIDEOS[1],
         teaserPitch: '« Le sel conserve la chair, mais la parole sincère conserve l’amitié. »',
-        protagonistIdRef: 'koffi-tisserand',
         generation: 1
       },
       {
@@ -829,7 +789,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Fait chanter le vent des Andes à travers des flûtes sculptées dans le roseau sauvage.',
         teaserVideoUrl: TEASER_VIDEOS[2],
         teaserPitch: '« Le souffle qui passe dans la flûte est le même qui fait bouger les nuages. »',
-        protagonistIdRef: 'amara-tisserande',
         generation: 1
       },
       {
@@ -848,7 +807,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Bâtit les maisons sur pilotis qui résistent aux crues depuis quatre décennies.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« La maison ne doit pas lutter contre l’eau : elle doit danser avec elle. »',
-        protagonistIdRef: 'koffi-tisserand',
         generation: 1
       },
       {
@@ -867,7 +825,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Doyenne de Chinchero, transmettrice des tisanes de muña et de coca pour soulager l’âme.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« La plante sait déjà où tu as mal avant que tu n’aies ouvert la bouche. »',
-        protagonistIdRef: 'amara-tisserande',
         generation: 1
       },
       {
@@ -886,7 +843,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Raconte sur toiles tendues les victoires pacifiques de la jeunesse béninoise.',
         teaserVideoUrl: TEASER_VIDEOS[5],
         teaserPitch: '« Chaque motif est une armoirie de dignité pour celui qui n’a rien d’autre. »',
-        protagonistIdRef: 'koffi-tisserand',
         generation: 1
       },
       {
@@ -905,7 +861,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Restaure les canaux de pierre taillée qui abreuvent les villages sans une seule pompe électrique.',
         teaserVideoUrl: TEASER_VIDEOS[6],
         teaserPitch: '« Les anciens savaient parler à l’eau pour qu’elle coule sans éroder la montagne. »',
-        protagonistIdRef: 'amara-tisserande',
         generation: 1
       },
       {
@@ -924,7 +879,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Conduit chaque matin 70 enfants à l’école sur sa grande barque peinte aux couleurs nationales.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Voir leurs yeux s’allumer quand ils apprennent à lire au milieu de l’eau, c’est ma vie. »',
-        protagonistIdRef: 'koffi-tisserand',
         generation: 1
       },
       {
@@ -943,7 +897,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Documente les regards d’enfants et les mains calleuses des tisseuses sans aucun artifice.',
         teaserVideoUrl: TEASER_VIDEOS[1],
         teaserPitch: '« L’appareil photo n’est pas là pour capturer, mais pour rendre hommage à ceux qui veillent. »',
-        protagonistIdRef: 'amara-tisserande',
         generation: 1
       },
       {
@@ -962,7 +915,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Chante les épopées de la transhumance et l’alliance séculaire entre pasteurs et pêcheurs.',
         teaserVideoUrl: TEASER_VIDEOS[2],
         teaserPitch: '« La terre ne nous appartient pas : nous appartenons à l’herbe qui nourrit le troupeau. »',
-        protagonistIdRef: 'koffi-tisserand',
         generation: 1
       },
       {
@@ -981,7 +933,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Surveille les glaciers sacrés menacés par le réchauffement et alerte les communautés.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« Quand la glace pleure, c’est le monde entier qui aura soif demain. »',
-        protagonistIdRef: 'amara-tisserande',
         generation: 1
       },
       {
@@ -1000,7 +951,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Façonne des jarres à eau qui gardent la fraîcheur même sous 40 degrés à l’ombre.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« L’argile est la mémoire la plus fidèle du Bénin : elle prend la forme qu’on lui donne par amour. »',
-        protagonistIdRef: 'koffi-tisserand',
         generation: 1
       },
       {
@@ -1019,7 +969,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Grave au fer chaud des scènes miniatures retraçant toute la mythologie andine.',
         teaserVideoUrl: TEASER_VIDEOS[5],
         teaserPitch: '« Sur une calebasse de la taille d’une orange, je grave cinq cents ans d’histoire d’un peuple. »',
-        protagonistIdRef: 'amara-tisserande',
         generation: 1
       },
       {
@@ -1038,7 +987,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Recense les plantes aquatiques qui épurent naturellement les eaux de la lagune.',
         teaserVideoUrl: TEASER_VIDEOS[6],
         teaserPitch: '« La nature a déjà inventé toutes les solutions. Nous devons juste nous souvenir de regarder. »',
-        protagonistIdRef: 'koffi-tisserand',
         generation: 1
       }
     ]
@@ -1067,7 +1015,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnier fondateur qui a rassemblé la jeunesse autour du rythme du sabar contemporain.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Danser, ce n’est pas faire un spectacle : c’est refuser de baisser la tête face à la poussière. »',
-        protagonistIdRef: 'malik-barou',
         generation: 1,
         invitedPeople: [
           {
@@ -1085,7 +1032,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Invité par Malik pour sa plume engagée dans les nuits de Dakar.',
             teaserVideoUrl: TEASER_VIDEOS[1],
             teaserPitch: '« Le micro n’est rien sans la colère noble de ceux qui n’ont plus peur. »',
-            protagonistIdRef: 'malik-barou',
             generation: 2,
             invitedPeople: [
               {
@@ -1103,7 +1049,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Fait entrer par Cheikh pour ses beats mixant percussions et cris de marchands.',
                 teaserVideoUrl: TEASER_VIDEOS[2],
                 teaserPitch: '« Mon sampler écoute ce que la rue murmure quand tout le monde dort. »',
-                protagonistIdRef: 'malik-barou',
                 generation: 3
               }
             ]
@@ -1126,7 +1071,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnière de Beyond Eve, créatrice des cercles de sororité et des malles de mémoire.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« Nous avons dénoué les nœuds de nos mères pour que nos filles marchent le dos droit. »',
-        protagonistIdRef: 'eleonore-saint-cloud',
         generation: 1,
         invitedPeople: [
           {
@@ -1144,7 +1088,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Invitée par Éléonore pour avoir conquis un atelier de fonderie d’hommes.',
             teaserVideoUrl: TEASER_VIDEOS[4],
             teaserPitch: '« Le bronze en fusion ne demande pas si les mains qui le versent sont des mains de femme. »',
-            protagonistIdRef: 'eleonore-saint-cloud',
             generation: 2
           }
         ]
@@ -1165,7 +1108,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'A transformé un hangar en centre de formation aux arts numériques.',
         teaserVideoUrl: TEASER_VIDEOS[5],
         teaserPitch: '« Si la jeunesse n’a pas d’espace pour rêver, elle prend la mer au péril de sa vie. »',
-        protagonistIdRef: 'malik-barou',
         generation: 1
       },
       {
@@ -1184,7 +1126,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Redonne aux tisserandes de Korhogo l’autonomie financière par la création moderne.',
         teaserVideoUrl: TEASER_VIDEOS[6],
         teaserPitch: '« S’habiller, c’est porter son manifeste sans avoir besoin de crier. »',
-        protagonistIdRef: 'eleonore-saint-cloud',
         generation: 1
       },
       {
@@ -1203,7 +1144,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Couvre les murs des banlieues de fresques représentant les héros méconnus d’Afrique.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Le mur gris enferme, mais le mur peint ouvre une fenêtre sur l’infini. »',
-        protagonistIdRef: 'malik-barou',
         generation: 1
       },
       {
@@ -1222,7 +1162,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Enregistre les dernières femmes dépositaires des poèmes wolofs de résistance.',
         teaserVideoUrl: TEASER_VIDEOS[1],
         teaserPitch: '« Chaque fois qu’une grand-mère s’éteint sans avoir parlé, c’est une bibliothèque qui brûle. »',
-        protagonistIdRef: 'eleonore-saint-cloud',
         generation: 1
       },
       {
@@ -1241,7 +1180,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Fusionne le swing de Harlem avec la gamme pentatonique mandingue.',
         teaserVideoUrl: TEASER_VIDEOS[2],
         teaserPitch: '« Les notes noires et blanches du piano se rencontrent exactement comme nos mémoires. »',
-        protagonistIdRef: 'malik-barou',
         generation: 1
       },
       {
@@ -1260,7 +1198,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Filme les femmes migrantes dans leur souveraineté plutôt que dans la misère.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« Regarder quelqu’un à hauteur de regard, c’est le premier acte de justice. »',
-        protagonistIdRef: 'eleonore-saint-cloud',
         generation: 1
       },
       {
@@ -1279,7 +1216,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Apprend aux jeunes la discipline du ring pour canaliser la colère sociale.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« La force véritable, ce n’est pas de frapper fort : c’est de ne jamais frapper sans raison. »',
-        protagonistIdRef: 'malik-barou',
         generation: 1
       },
       {
@@ -1298,7 +1234,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Réintroduit le fonio et le mil rouge dans la gastronomie urbaine ivoirienne.',
         teaserVideoUrl: TEASER_VIDEOS[5],
         teaserPitch: '« Manger notre propre graine, c’est l’indépendance la plus intime qu’on puisse vivre. »',
-        protagonistIdRef: 'eleonore-saint-cloud',
         generation: 1
       },
       {
@@ -1317,7 +1252,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Transforme les fripes venues d’Occident en vêtements haute couture africaine.',
         teaserVideoUrl: TEASER_VIDEOS[6],
         teaserPitch: '« Vous nous jetez vos surplus : nous en faisons des tenues de rois. »',
-        protagonistIdRef: 'malik-barou',
         generation: 1
       },
       {
@@ -1336,7 +1270,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Explore la double appartenance et la mémoire corporelle du déracinement.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Mon corps se souvient de l’océan même quand je danse sur les pavés parisiens. »',
-        protagonistIdRef: 'eleonore-saint-cloud',
         generation: 1
       },
       {
@@ -1355,7 +1288,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Enregistre les cris des mouettes, les sabars et le grondement des camions de fret.',
         teaserVideoUrl: TEASER_VIDEOS[1],
         teaserPitch: '« Dakar a son propre battement de cœur : je ne fais que brancher le stéthoscope. »',
-        protagonistIdRef: 'malik-barou',
         generation: 1
       },
       {
@@ -1374,7 +1306,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Plonge les mains dans la cuve d’indigo depuis 30 ans avec une noblesse royale.',
         teaserVideoUrl: TEASER_VIDEOS[2],
         teaserPitch: '« Le bleu profond de l’indigo protège celui qui le porte des esprits mauvais et de l’oubli. »',
-        protagonistIdRef: 'eleonore-saint-cloud',
         generation: 1
       },
       {
@@ -1393,7 +1324,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Filme les acrobaties des ados entre les taxis jaunes avec une fluidité cinématographique.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« Le bitume est notre toile, les roulettes nos pinceaux. »',
-        protagonistIdRef: 'malik-barou',
         generation: 1
       },
       {
@@ -1412,7 +1342,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Bataille pour que les brevets sur les pagnes et les musiques restent entre les mains des femmes d’Afrique.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« Notre art n’est pas un folklore à piller, c’est notre héritage économique. »',
-        protagonistIdRef: 'eleonore-saint-cloud',
         generation: 1
       }
     ]
@@ -1441,7 +1370,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnière de Dixeat, sert 400 repas chaque jour dès l’aube à Dantokpa avec une dignité royale.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Quand tu prépares une sauce, n’y mets pas seulement du piment : mets-y la paix que tu veux pour le monde. »',
-        protagonistIdRef: 'chef-koffi',
         generation: 1,
         invitedPeople: [
           {
@@ -1459,7 +1387,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Fait entrer par Henriette pour son huile de palme rouge pressée à froid au pilon.',
             teaserVideoUrl: TEASER_VIDEOS[1],
             teaserPitch: '« L’huile rouge pressée lentement au soleil a l’odeur de la bienveillance maternelle. »',
-            protagonistIdRef: 'chef-koffi',
             generation: 2,
             invitedPeople: [
               {
@@ -1477,7 +1404,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Invitée par Roland pour faire redécouvrir les graines de paradis de la savane.',
                 teaserVideoUrl: TEASER_VIDEOS[2],
                 teaserPitch: '« Une seule graine de paradis concassée réveille mille souvenirs d’enfance. »',
-                protagonistIdRef: 'chef-koffi',
                 generation: 3
               }
             ]
@@ -1500,7 +1426,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Pionnière de Fiat Luxe, conçoit des dîners immersifs où chaque sens est honoré.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« Le vrai luxe n’est pas le prix des verres : c’est l’intensité de la présence que l’on s’accorde. »',
-        protagonistIdRef: 'helene-saint-amand',
         generation: 1,
         invitedPeople: [
           {
@@ -1518,7 +1443,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
             invitationStory: 'Invité par Hélène pour ses accords d’infusions sauvages et fermentations naturelles.',
             teaserVideoUrl: TEASER_VIDEOS[4],
             teaserPitch: '« Une goutte d’eau de rose sauvage distillée à l’alambic de cuivre ouvre l’esprit. »',
-            protagonistIdRef: 'helene-saint-amand',
             generation: 2,
             invitedPeople: [
               {
@@ -1536,7 +1460,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
                 invitationStory: 'Invitée par Marc-Antoine pour créer la brume olfactive de résine de cèdre et d’oranger.',
                 teaserVideoUrl: TEASER_VIDEOS[5],
                 teaserPitch: '« L’odeur est le seul sens qui touche le cerveau sans passer par les filtres de la raison. »',
-                protagonistIdRef: 'helene-saint-amand',
                 generation: 3
               }
             ]
@@ -1559,7 +1482,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Torréfie les grains de café sauvage au feu de bois doux de manguier.',
         teaserVideoUrl: TEASER_VIDEOS[6],
         teaserPitch: '« La bonne braise ne brûle pas le café : elle lui chuchote de libérer son âme. »',
-        protagonistIdRef: 'chef-koffi',
         generation: 1
       },
       {
@@ -1578,7 +1500,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Façonne des assiettes translucides qui laissent transparaître la flamme des bougies.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Tenir une assiette légère comme une plume transforme la moindre bouchée en cérémonie. »',
-        protagonistIdRef: 'helene-saint-amand',
         generation: 1
       },
       {
@@ -1597,7 +1518,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Fournit les restaurateurs en crevettes fumées au bois de palétuvier séché.',
         teaserVideoUrl: TEASER_VIDEOS[1],
         teaserPitch: '« La fumée doit caresser le poisson, jamais l’étouffer. »',
-        protagonistIdRef: 'chef-koffi',
         generation: 1
       },
       {
@@ -1616,7 +1536,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Crée des cierges de cire d’abeille pure dont la mèche ne fume jamais.',
         teaserVideoUrl: TEASER_VIDEOS[2],
         teaserPitch: '« La flamme de la bougie est le seul éclairage qui rend chaque visage immédiatement sublime. »',
-        protagonistIdRef: 'helene-saint-amand',
         generation: 1
       },
       {
@@ -1635,7 +1554,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Récolte le miel des vergers d’anacardiers sans enfumer les essaims.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« Le miel de fleur d’anacardier a une pointe d’amertume qui sublime les sauces salées. »',
-        protagonistIdRef: 'chef-koffi',
         generation: 1
       },
       {
@@ -1654,7 +1572,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Forge à la main des couteaux dont le manche épouse la paume comme une caresse.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« Le couvert est l’instrument de médiation entre le vivant et notre corps. »',
-        protagonistIdRef: 'helene-saint-amand',
         generation: 1
       },
       {
@@ -1673,7 +1590,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Piler l’igname avec deux pilons synchronisés en chantant les hymnes de gratitude.',
         teaserVideoUrl: TEASER_VIDEOS[5],
         teaserPitch: '« Le pilonnage n’est pas un labeur : c’est une prière qui nourrit tout un quartier. »',
-        protagonistIdRef: 'chef-koffi',
         generation: 1
       },
       {
@@ -1692,7 +1608,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Compose des chemins de table avec des branchages sauvages et lichens cueillis le matin même.',
         teaserVideoUrl: TEASER_VIDEOS[6],
         teaserPitch: '« La fleur fanée a autant de grâce que le bouton si on sait regarder sa fragilité. »',
-        protagonistIdRef: 'helene-saint-amand',
         generation: 1
       },
       {
@@ -1711,7 +1626,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Nourrit ses pintades exclusivement de termites et graines de savane pour une saveur authentique.',
         teaserVideoUrl: TEASER_VIDEOS[0],
         teaserPitch: '« Un animal élevé dans la liberté et le respect donne une viande qui apaise celui qui la mange. »',
-        protagonistIdRef: 'chef-koffi',
         generation: 1
       },
       {
@@ -1730,7 +1644,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Calibre l’acoustique des salles de dîner pour que chaque chuchotement soit un velours.',
         teaserVideoUrl: TEASER_VIDEOS[1],
         teaserPitch: '« Le bruit fatigue, mais le murmure bien réverbéré invite aux plus grandes confidences. »',
-        protagonistIdRef: 'helene-saint-amand',
         generation: 1
       },
       {
@@ -1749,7 +1662,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Fermente le sorgho rouge dans des canaris centenaires au pied des collines sacrées.',
         teaserVideoUrl: TEASER_VIDEOS[2],
         teaserPitch: '« Boire ensemble une calebasse fraîche sous l’arbre à palabres ressoude toute la communauté. »',
-        protagonistIdRef: 'chef-koffi',
         generation: 1
       },
       {
@@ -1768,7 +1680,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Chaque pas dans la salle est synchronisé comme dans un ballet d’opéra classique.',
         teaserVideoUrl: TEASER_VIDEOS[3],
         teaserPitch: '« Servir est le plus noble des arts : c’est s’effacer pour que l’autre vive un enchantement. »',
-        protagonistIdRef: 'helene-saint-amand',
         generation: 1
       },
       {
@@ -1787,7 +1698,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Sauve de l’oubli les amarantes sauvages et les tomates grappes d’antan.',
         teaserVideoUrl: TEASER_VIDEOS[4],
         teaserPitch: '« Un légume qui a grandi sans chimie a la force vitale de la terre intacte. »',
-        protagonistIdRef: 'chef-koffi',
         generation: 1
       },
       {
@@ -1806,7 +1716,6 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         invitationStory: 'Travaille directement avec les planteuses de cacao en fermentation douce.',
         teaserVideoUrl: TEASER_VIDEOS[5],
         teaserPitch: '« Le cacao n’est pas une confiserie : c’est un élixir sacré des dieux mésoaméricains. »',
-        protagonistIdRef: 'helene-saint-amand',
         generation: 1
       }
     ]

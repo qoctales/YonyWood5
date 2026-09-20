@@ -3,12 +3,16 @@ import {
   Tv, 
   X, 
   Play, 
+  Pause,
+  Volume2,
+  VolumeX,
   Compass, 
   Sparkles,
   ArrowRight,
   UserCheck,
   Award,
-  User
+  User,
+  Gem
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
@@ -16,6 +20,7 @@ import { CentralAstrolabeJoystick } from './CentralAstrolabeJoystick';
 import { VerticalZoomSlider } from './VerticalZoomSlider';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 import { PROTAGONISTS } from '../data/mockData';
+import { ResonanceModal } from './ResonanceModal';
 
 interface MatrixExplorerProps {
   onNavigate: (screen: ViewScreen | any) => void;
@@ -60,8 +65,62 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   // Démarre vide pour que le premier clic déploie les liens du pionnier et le second ouvre la modale
   const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
-  // 4. Modale de présentation détaillée (ouverte au 2ème clic sur la même personne)
+  // 4. Modale de présentation détaillée (format 9:16 vidéo avec commandes immersives)
   const [modalPerson, setModalPerson] = useState<AffiliationPerson | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
+  const [isResonanceModalOpen, setIsResonanceModalOpen] = useState<boolean>(false);
+  const [personResonancePct, setPersonResonancePct] = useState<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Synchronisation de la note de résonance lorsque la personne affichée change
+  useEffect(() => {
+    if (modalPerson) {
+      try {
+        const stored = localStorage.getItem(`yonywood_resonance_story-${modalPerson.id}`);
+        if (stored) {
+          const val = parseInt(stored, 10);
+          setPersonResonancePct(isNaN(val) ? null : val);
+        } else {
+          setPersonResonancePct(null);
+        }
+      } catch {
+        setPersonResonancePct(null);
+      }
+      setIsResonanceModalOpen(false);
+    } else {
+      setIsResonanceModalOpen(false);
+    }
+  }, [modalPerson]);
+
+  const toggleVideoPlayback = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsMuted(videoRef.current.muted);
+  };
+
+  const handleOpenUniverse = (person: AffiliationPerson) => {
+    setModalPerson(null);
+    setIsPlaying(false);
+    // On transmet l'identifiant unique exact de la personne pour garantir
+    // d'atterrir sur sa page profil avec sa photo, son nom et sa vidéo.
+    onNavigate({ 
+      type: 'protagonist_profile', 
+      protagonistId: person.id 
+    });
+  };
 
   // Récupération de la série active ou de la collection complète
   const activeSeries = useMemo<MatrixSeriesConfig>(() => {
@@ -236,21 +295,15 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   };
 
   // Clic sur une personne :
-  // - 1er clic : déploie ses liens et sa descendance sur le cercle suivant
-  // - 2ème clic sur la même personne : ouvre la modale avec sa vidéo, son prénom, son âge et le bouton univers
+  // Déploie immédiatement sa lignée ET ouvre directement sa vidéo de présentation
   const handleNodeClick = (person: AffiliationPerson, gen: number) => {
-    const isAlreadySelected = selectedPath[gen - 1] === person.id;
-    if (isAlreadySelected) {
-      // 2ème clic sur la personne active : ouverture de la modale
-      setModalPerson(person);
-    } else {
-      // 1er clic : déploiement des cooptés sur l'anneau concentrique suivant
-      setSelectedPath(prev => {
-        const next = prev.slice(0, gen - 1);
-        next.push(person.id);
-        return next;
-      });
-    }
+    setSelectedPath(prev => {
+      const next = prev.slice(0, gen - 1);
+      next.push(person.id);
+      return next;
+    });
+    setModalPerson(person);
+    setIsPlaying(true);
   };
 
   // Zoom à la molette de souris
@@ -498,6 +551,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     onDoubleClick={(e) => {
                       e.stopPropagation();
                       setModalPerson(node.person);
+                      setIsPlaying(true);
                     }}
                   >
                     {/* Zone de détection tactile & souris stable : évite tout décrochage ou vibration au bord */}
@@ -608,90 +662,157 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         </div>
       </div>
 
-      {/* 4. MODALE DE PRÉSENTATION DU PROTAGONISTE (OUVERTE AU 2ÈME CLIC SUR LA PERSONNE) */}
-      {/* Reproduit fidèlement le style des fiches du haut (DuoFeed) : vidéo, prénom, âge en dessous, petit bouton univers */}
+      {/* 4. CARTE VIDÉO 9:16 DU PROTAGONISTE (AVEC PRÉNOM, ÂGE, PETIT BONHOMME & ICÔNE VIDÉO DORÉE) */}
       {modalPerson && (
         <div 
           id="person-detail-modal-backdrop"
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setModalPerson(null)}
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200"
+          onClick={() => {
+            setModalPerson(null);
+            setIsPlaying(false);
+          }}
         >
           <div 
             id="person-detail-modal"
-            className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-700/60 flex flex-col justify-end w-full max-w-sm sm:max-w-md aspect-[9/14] sm:aspect-[9/13] max-h-[85vh] animate-in zoom-in-95 duration-200 select-none"
-            onClick={(e) => e.stopPropagation()}
+            className="group relative rounded-3xl overflow-hidden bg-stone-900 text-white shadow-2xl border border-stone-700/60 flex flex-col justify-between w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] animate-in zoom-in-95 duration-200 select-none cursor-pointer"
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
+              toggleVideoPlayback();
+            }}
           >
-            {/* 1. Média de présentation : vidéo en lecture OU photo */}
-            {modalPerson.teaserVideoUrl ? (
-              <video 
-                src={modalPerson.teaserVideoUrl} 
-                poster={modalPerson.photoUrl}
-                controls
-                playsInline
-                autoPlay
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            ) : (
-              <img 
-                src={modalPerson.photoUrl} 
-                alt={modalPerson.name} 
-                referrerPolicy="no-referrer"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            )}
+            {/* 1. Média de présentation : Affiche poster & Vidéo fluide en boucle */}
+            <img 
+              src={modalPerson.photoUrl} 
+              alt={modalPerson.name} 
+              referrerPolicy="no-referrer"
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            />
+            <video 
+              ref={videoRef}
+              key={`modal-video-${modalPerson.id}`}
+              src={modalPerson.teaserVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'} 
+              poster={modalPerson.photoUrl}
+              playsInline
+              autoPlay
+              loop
+              muted={isMuted}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                isPlaying ? 'opacity-100' : 'opacity-40'
+              }`}
+            />
 
-            {/* Dégradé doux et clair pour préserver l'éclat de l'image */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
+            {/* Voile lumineux équilibré pour sublimer la vidéo sans l'assombrir */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/30 pointer-events-none" />
 
-            {/* Barre supérieure : Bouton Fermer (sans nom de série) */}
-            <div className="absolute top-4 right-4 z-20 flex items-center justify-end pointer-events-auto">
-              <button 
-                id="btn-close-modal"
-                onClick={() => setModalPerson(null)}
-                className="w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 text-stone-300 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-colors cursor-pointer"
-                title="Fermer"
-              >
-                <X className="w-4 h-4" />
-              </button>
+            {/* HAUT : [Bouton Son + Icône Vidéo Dorée + Bouton Fermer] en haut à droite */}
+            <div className="relative z-20 p-4 flex items-center justify-end pointer-events-auto">
+              <div className="flex items-center gap-2">
+                {/* Bouton Muet / Son */}
+                <button
+                  onClick={toggleMute}
+                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95"
+                  title={isMuted ? 'Activer le son' : 'Couper le son'}
+                >
+                  {isMuted ? (
+                    <VolumeX className="w-4 h-4 text-white/80" />
+                  ) : (
+                    <Volume2 className="w-4 h-4 text-[#C89B3C]" />
+                  )}
+                </button>
+
+                {/* Icône vidéo hybride dorée */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleVideoPlayback();
+                  }}
+                  className={`group/btn relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
+                    isPlaying
+                      ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
+                      : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
+                  }`}
+                  title={isPlaying ? 'Mettre en pause' : 'Lire la vidéo'}
+                >
+                  {isPlaying ? (
+                    <Pause className="w-5 h-5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
+                  ) : (
+                    <Play className="w-5 h-5 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
+                  )}
+                </button>
+
+                {/* Bouton Fermer */}
+                <button 
+                  id="btn-close-modal"
+                  onClick={() => {
+                    setModalPerson(null);
+                    setIsPlaying(false);
+                  }}
+                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-stone-200 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95"
+                  title="Fermer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            {/* Barre inférieure : Prénom, âge en dessous, et petit bouton bonhomme */}
-            <div className="relative z-20 p-5 sm:p-6 flex items-center justify-between pointer-events-auto bg-gradient-to-t from-black/95 via-black/60 to-transparent">
+            {/* Modale d'évaluation de la résonance (au clic sur le diamant) */}
+            <ResonanceModal
+              isOpen={isResonanceModalOpen}
+              onClose={() => setIsResonanceModalOpen(false)}
+              storyId={`story-${modalPerson.id}`}
+              topicId={modalPerson.universeTag || 'exploration'}
+              personName={modalPerson.firstName || modalPerson.name.split(' ')[0]}
+              initialPercentage={personResonancePct}
+              onRatingSubmitted={(pct) => {
+                setPersonResonancePct(pct);
+              }}
+            />
+
+            {/* BAS : Fiche sobre (prénom + âge) et colonne latérale droite (diamant au-dessus du bonhomme) */}
+            <div className="relative z-20 p-5 sm:p-6 flex items-end justify-between pointer-events-auto bg-gradient-to-t from-black/85 via-black/45 to-transparent">
               <div className="text-left font-sans">
-                {/* Le prénom */}
-                <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                {/* Le prénom uniquement (sans nom de famille coupé) */}
+                <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none drop-shadow-md">
                   {modalPerson.firstName || modalPerson.name.split(' ')[0]}
                 </h3>
                 {/* L'âge en dessous */}
-                <p className="text-xs sm:text-sm text-stone-300 mt-0.5 font-medium">
+                <p className="text-xs sm:text-sm text-stone-200 mt-1.5 font-medium drop-shadow">
                   {modalPerson.age ? `${modalPerson.age} ans` : '46 ans'}
                 </p>
               </div>
 
-              {/* Le petit bouton avec l'icône du bonhomme -> Ouvre le Teaser */}
-              <button
-                id={`modal-btn-universe-${modalPerson.id}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const pId = modalPerson.protagonistIdRef || modalPerson.id;
-                  const found = PROTAGONISTS.find(p => p.id === pId) || {
-                    id: pId,
-                    name: modalPerson.name,
-                    role: modalPerson.role,
-                    country: modalPerson.country || 'Bénin',
-                    territory: modalPerson.city || 'Ganvié',
-                    photoUrl: modalPerson.avatar,
-                    bio: `Artisan et passeur de savoirs dans la série ${modalPerson.seriesTitle || 'Finagnon < > Qosqorico'}.`,
-                    stories: []
-                  } as unknown as Protagonist;
-                  setModalPerson(null);
-                  setTeaserProtagonist(found);
-                }}
-                className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
-                title="Découvrir son univers (Teaser)"
-              >
-                <User className="w-4 h-4" />
-              </button>
+              {/* Colonne latérale droite : Diamant (évaluation) relevé pour laisser plus d'air, Bonhomme (univers) en dessous */}
+              <div className="flex flex-col items-center gap-3.5 shrink-0">
+                {/* Icône diamant pour évaluer la résonance (légèrement relevée pour laisser de l'air) */}
+                <button
+                  id={`btn-eval-resonance-${modalPerson.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsResonanceModalOpen(true);
+                  }}
+                  className={`w-10 h-10 rounded-full backdrop-blur-md border flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 mb-1 ${
+                    personResonancePct !== null
+                      ? 'bg-black/60 border-[#C89B3C]/80 text-[#E5C16C] shadow-[0_0_12px_rgba(200,155,60,0.4)]'
+                      : 'bg-white/20 hover:bg-white/30 border-white/25 text-white'
+                  }`}
+                  title={personResonancePct !== null ? `Résonance : ${personResonancePct}%` : "Évaluer la résonance"}
+                >
+                  <Gem className="w-5 h-5" />
+                </button>
+
+                {/* Bonhomme discret pour découvrir son univers */}
+                <button
+                  id={`modal-btn-universe-${modalPerson.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenUniverse(modalPerson);
+                  }}
+                  className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                  title="Découvrir son univers"
+                >
+                  <User className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

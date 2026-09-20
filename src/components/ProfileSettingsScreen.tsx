@@ -37,10 +37,12 @@ import {
   Send,
   Sparkles,
   Info,
-  Copy
+  Copy,
+  Users
 } from 'lucide-react';
-import { ViewScreen } from '../types';
+import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
 import { PROTAGONISTS, DOCUMENTARIES } from '../data/mockData';
+import { MATRIX_SERIES_DATA } from '../data/matrixData';
 
 export type DimensionTab = 'recit' | 'episodes' | 'productions' | 'creations' | 'initiatives' | 'appels';
 
@@ -173,10 +175,64 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   initialTab = 'recit'
 }) => {
   // Déterminer le mode : Propriétaire ou Visiteur
-  const targetProtagonist = protagonistId && protagonistId !== 'me'
-    ? PROTAGONISTS.find(p => p.id === protagonistId) || null
-    : null;
-  const isOwner = !targetProtagonist;
+  const isOwner = !protagonistId || protagonistId === 'me';
+
+  // Résolution du protagoniste cible (depuis MATRIX_SERIES_DATA ou PROTAGONISTS)
+  const targetProtagonist = React.useMemo<Protagonist | null>(() => {
+    if (isOwner) return null;
+
+    // 1. Chercher d'abord dans MATRIX_SERIES_DATA par l'identifiant exact cliqué dans l'explorateur
+    for (const series of MATRIX_SERIES_DATA) {
+      const search = (list: AffiliationPerson[]): AffiliationPerson | null => {
+        for (const p of list) {
+          if (p.id === protagonistId) return p;
+          if (p.invitedPeople && p.invitedPeople.length > 0) {
+            const res = search(p.invitedPeople);
+            if (res) return res;
+          }
+        }
+        return null;
+      };
+      const foundInMatrix = search(series.pioneers);
+      if (foundInMatrix) {
+        return {
+          id: foundInMatrix.id,
+          slug: foundInMatrix.id,
+          name: foundInMatrix.name,
+          role: foundInMatrix.role,
+          age: foundInMatrix.age,
+          territory: foundInMatrix.territory || 'Ganvié',
+          country: foundInMatrix.country || 'Bénin',
+          flag: foundInMatrix.flag || '🇧🇯',
+          photoUrl: foundInMatrix.photoUrl,
+          teaserVideoUrl: foundInMatrix.teaserVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+          quote: foundInMatrix.teaserPitch,
+          bio: foundInMatrix.teaserPitch ? foundInMatrix.teaserPitch.replace(/«|»/g, '').trim() : `Passeur de savoirs et créateur dans la transmission ${foundInMatrix.universeTag || series.seriesTitle}.`,
+          universeTag: foundInMatrix.universeTag,
+          documentaryId: series.seriesId,
+          stories: []
+        } as unknown as Protagonist;
+      }
+    }
+
+    // 2. Si non trouvé dans MATRIX_SERIES_DATA, chercher dans les protagonistes globaux PROTAGONISTS
+    const found = PROTAGONISTS.find(p => p.id === protagonistId || p.slug === protagonistId);
+    if (found) return found;
+
+    // 3. Fallback de secours
+    return {
+      id: protagonistId,
+      slug: protagonistId,
+      name: 'Artisan Passeur',
+      role: 'Passeur de savoirs traditionnels',
+      territory: 'Ganvié',
+      country: 'Bénin',
+      photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+      bio: 'Artisan et passeur de savoirs dans la transmission des savoirs ancestraux.',
+      teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      stories: []
+    } as unknown as Protagonist;
+  }, [protagonistId, isOwner]);
 
   // Onglet actif parmi les 6 dimensions poétiques (Proposition B)
   const [activeTab, setActiveTab] = useState<DimensionTab>(initialTab);
@@ -204,6 +260,49 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     targetProtagonist ? targetProtagonist.photoUrl : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
   );
 
+  useEffect(() => {
+    if (targetProtagonist) {
+      setUserName(targetProtagonist.name);
+      setUserFullName(targetProtagonist.name);
+      setUserRole(targetProtagonist.role);
+      setUserTerritory(`${targetProtagonist.territory || 'Ganvié'}, ${targetProtagonist.country || 'Bénin'}`);
+      setUserBio(targetProtagonist.bio);
+      setUserPhoto(targetProtagonist.photoUrl);
+
+      const vUrl = targetProtagonist.teaserVideoUrl || (targetProtagonist.stories && targetProtagonist.stories[0]?.videoUrl) || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+      const pUrl = targetProtagonist.photoUrl || '/assets/protagonists/amara-tisserande.jpg';
+
+      setRecits([
+        {
+          id: `recit-${targetProtagonist.id}-1`,
+          title: `Mon chemin - ${targetProtagonist.name}`,
+          chapter: 'Chapitre 1',
+          subtitle: 'L’éveil du regard & la transmission',
+          description: `Dans ce récit personnel, ${targetProtagonist.name} raconte ses premières années, l'héritage reçu et ce qui l'a mené à sa vocation.`,
+          quote: targetProtagonist.quote || '« Le tissu n’est pas fait par les yeux, mais par la pulsation du corps. »',
+          duration: '06:15',
+          viewsCount: 1420,
+          videoUrl: vUrl,
+          posterUrl: pUrl
+        },
+        {
+          id: `recit-${targetProtagonist.id}-2`,
+          title: 'L’apprentissage',
+          chapter: 'Chapitre 2',
+          subtitle: 'Le temps de l’apprentissage',
+          description: 'Récit intime sur les années de formation, les doutes traversés et le secret de la persévérance.',
+          quote: '« Pour comprendre la matière, il faut accepter de ralentir et d’écouter. »',
+          duration: '08:40',
+          viewsCount: 890,
+          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+          posterUrl: pUrl
+        }
+      ]);
+      setRecitIndex(0);
+      setIsPlaying(false);
+    }
+  }, [targetProtagonist]);
+
   // Édition de profil (propriétaire)
   const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
   const [shareToast, setShareToast] = useState<string | null>(null);
@@ -230,22 +329,24 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   // =========================================================================
   const [recits, setRecits] = useState<UserRecitItem[]>(() => {
     if (targetProtagonist) {
+      const vUrl = targetProtagonist.teaserVideoUrl || (targetProtagonist.stories && targetProtagonist.stories[0]?.videoUrl) || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+      const pUrl = targetProtagonist.photoUrl || '/assets/protagonists/amara-tisserande.jpg';
       return [
         {
           id: `recit-${targetProtagonist.id}-1`,
-          title: 'Mon chemin : l’enfance au bord de l’eau',
+          title: `Mon chemin - ${targetProtagonist.name}`,
           chapter: 'Chapitre 1',
-          subtitle: 'L’éveil du regard',
+          subtitle: 'L’éveil du regard & la transmission',
           description: `Dans ce récit personnel, ${targetProtagonist.name} raconte ses premières années, l'héritage reçu et ce qui l'a mené à sa vocation.`,
           quote: targetProtagonist.quote || '« Le tissu n’est pas fait par les yeux, mais par la pulsation du corps. »',
           duration: '06:15',
           viewsCount: 1420,
-          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-          posterUrl: targetProtagonist.photoUrl || '/assets/protagonists/amara-tisserande.jpg'
+          videoUrl: vUrl,
+          posterUrl: pUrl
         },
         {
           id: `recit-${targetProtagonist.id}-2`,
-          title: 'Ce que j’ai appris auprès des aînés',
+          title: 'L’apprentissage',
           chapter: 'Chapitre 2',
           subtitle: 'Le temps de l’apprentissage',
           description: 'Récit intime sur les années de formation, les doutes traversés et le secret de la persévérance.',
@@ -253,14 +354,14 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
           duration: '08:40',
           viewsCount: 890,
           videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-          posterUrl: '/assets/protagonists/koffi-tisserand.jpg'
+          posterUrl: pUrl
         }
       ];
     }
     return [
       {
         id: 'recit-1',
-        title: 'Le chant de la lagune : mes débuts à Ganvié',
+        title: 'Le chant de la lagune',
         chapter: 'Récit personnel',
         subtitle: 'Origines & Mémoire',
         description: 'Je raconte mon enfance sur l’eau, mes premières années d’études et la façon dont ma grand-mère m’a transmis la voix des femmes piroguières.',
@@ -272,7 +373,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       },
       {
         id: 'recit-2',
-        title: 'De l’Université aux métiers du fil : un choix de liberté',
+        title: 'Les métiers du fil',
         chapter: 'Parcours de formation',
         subtitle: 'Transmission & Métier',
         description: 'Après ma formation en sociologie, j’ai choisi de réapprendre le geste du tissage auprès des aînées d’Allada pour en faire un pont entre générations.',
@@ -488,7 +589,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [initiatives, setInitiatives] = useState<UserInitiativeItem[]>([
     {
       id: 'init-1',
-      title: 'L’Atelier Solidaire des Voix de la Lagune',
+      title: 'L’Atelier solidaire des voix',
       seriesTitle: 'Finagnon < > Qosqorico',
       category: 'Préservation du Patrimoine Vivant',
       collectedAmount: 3450,
@@ -501,7 +602,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     },
     {
       id: 'init-2',
-      title: 'Le Grand Métier à Tisser d’Allada',
+      title: 'Le Métier à tisser d’Allada',
       seriesTitle: 'Finagnon < > Qosqorico',
       category: 'Équipement d’Atelier Collectif',
       collectedAmount: 1820,
@@ -520,9 +621,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [appels, setAppels] = useState<UserAppelItem[]>([
     {
       id: 'app-1',
-      title: 'Sourcing de fil de coton biologique ouest-africain',
+      title: 'Fil de coton biologique',
       category: 'Matières premières & Éco-filière',
-      urgency: 'Prioritaire pour la session d’octobre',
+      urgency: 'Prioritaire',
       description: 'Recherche de coopératives agricoles féminines produisant 50 kg de fil écru sans intrants chimiques pour notre atelier de formation.',
       impact: 'Garantit 6 mois d’apprentissage continu pour 12 apprentis sans recours aux matières synthétiques.',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
@@ -530,7 +631,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     },
     {
       id: 'app-2',
-      title: 'Prêt ou don d’un enregistreur audio numérique portable (Zoom / Tascam)',
+      title: 'Enregistreur audio portable',
       category: 'Matériel technique & Enregistrement',
       urgency: 'D’ici fin avril',
       description: 'Pour capturer les voix des anciens sur les berges sans distorsion avec microphone stéréo XY.',
@@ -600,14 +701,18 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [buySharesCount, setBuySharesCount] = useState<number>(1);
 
   const [isOrderingCreationModalOpen, setIsOrderingCreationModalOpen] = useState<boolean>(false);
+  const [orderActionType, setOrderActionType] = useState<'commander' | 'reserver' | 'acheter'>('commander');
   const [orderQuantity, setOrderQuantity] = useState<number>(1);
   const [orderContact, setOrderContact] = useState<string>('');
 
   const [isContributingModalOpen, setIsContributingModalOpen] = useState<boolean>(false);
+  const [initiativeActionType, setInitiativeActionType] = useState<'contribuer' | 'participer'>('contribuer');
   const [contributionAmount, setContributionAmount] = useState<number>(50);
+  const [volunteerMessage, setVolunteerMessage] = useState<string>('');
 
   const [isOfferingHelpModalOpen, setIsOfferingHelpModalOpen] = useState<boolean>(false);
   const [helpMessage, setHelpMessage] = useState<string>('');
+  const [helpContact, setHelpContact] = useState<string>('');
 
   // Paramètres & Sécurité du compte (modal paramètres)
   const [userEmail, setUserEmail] = useState<string>('amina.traore@yonywood.org');
@@ -723,10 +828,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     setSwipeOffset(0);
   };
 
-  // Prénom uniquement pour l'en-tête (demandé par l'utilisateur)
-  const profileFirstName = targetProtagonist 
-    ? (targetProtagonist.name ? targetProtagonist.name.trim().split(' ')[0] : 'Amina')
-    : (userName ? userName.trim().split(' ')[0] : 'Amina');
+  // Nom complet affiché pour garantir une stricte cohérence avec l'explorateur
+  const profileDisplayName = targetProtagonist 
+    ? targetProtagonist.name 
+    : (userFullName || userName || 'Amina Traoré');
 
   // Partager le profil (ouvre la modale des réseaux sociaux + copie de lien)
   const handleShareProfile = () => {
@@ -765,9 +870,16 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   const parsedSeries = parseSeriesTitle(currentSeriesTitle);
 
+  // Helper pour raccourcir le titre tout en haut afin qu'il tienne parfaitement dans la capsule
+  const getShortTitle = (title?: string) => {
+    if (!title) return '';
+    const clean = title.split(/[:–—]/)[0].trim();
+    return clean;
+  };
+
   // Configuration des 6 onglets poétiques (Proposition B)
   const DIMENSIONS_CONFIG: { key: DimensionTab; label: string; icon: React.FC<{ className?: string }> }[] = [
-    { key: 'recit', label: 'Récit', icon: BookOpen },
+    { key: 'recit', label: 'Récits', icon: BookOpen },
     { key: 'episodes', label: 'Épisodes', icon: Film },
     { key: 'productions', label: 'Productions', icon: Coins },
     { key: 'creations', label: 'Créations', icon: ShoppingBag },
@@ -788,9 +900,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             {/* Bouton retour si visiteur */}
             {!isOwner && (
               <button
-                onClick={() => onNavigate({ type: 'duo_feed' })}
+                onClick={() => onNavigate({ type: 'home' })}
                 className="p-2 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 transition-colors shadow-xs cursor-pointer mr-1"
-                title="Retour au flux"
+                title="Retour à l'explorateur"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
@@ -819,10 +931,11 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="font-editorial text-lg sm:text-xl font-bold text-[#1C1917] leading-tight">
-                  {profileFirstName}
+                  {profileDisplayName}
                 </h1>
                 {targetProtagonist?.flag && <span className="text-sm">{targetProtagonist.flag}</span>}
               </div>
+              <p className="text-xs text-[#8B6845] font-medium mt-0.5 line-clamp-1">{userRole}</p>
             </div>
           </div>
 
@@ -869,11 +982,11 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 <button
                   onClick={() => onNavigate({ type: 'messaging' })}
                   id="btn-visitor-message"
-                  className="px-3.5 py-1.5 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-medium text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-medium text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer whitespace-nowrap"
                   title={`Envoyer un message à ${userName}`}
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  <span>Message</span>
+                  <span>Envoyer un message</span>
                 </button>
 
                 {/* Visiteur : Bouton Partager */}
@@ -957,7 +1070,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
               toggleVideoPlayback();
             }}
-            className="w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-3xl overflow-hidden shadow-xl border border-[#E7E5E4] bg-black outline-none focus:outline-none ring-0"
+            className="w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-3xl overflow-hidden shadow-xl border border-[#E7E5E4] bg-stone-900 outline-none focus:outline-none ring-0"
             style={{ transform: `translateX(${swipeOffset}px)` }}
           >
             {/* ================================================================= */}
@@ -983,12 +1096,16 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+                {/* Filtre plus clair et lumineux sur l'image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
 
-                {/* HAUT : Juste le titre en haut à gauche, Icône vidéo dorée à droite */}
+                {/* HAUT : Titre court qui s'adapte à la capsule à gauche, Icône vidéo dorée à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/95 shadow-md truncate max-w-[210px]" title={currentRecit.title}>
-                    <span>{currentRecit.title}</span>
+                  <div 
+                    className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white shadow-md flex items-center shrink-0" 
+                    title={currentRecit.title}
+                  >
+                    <span className="truncate">{getShortTitle(currentRecit.title)}</span>
                   </div>
 
                   {/* Icône vidéo hybride dorée en haut à droite */}
@@ -1056,10 +1173,19 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           e.stopPropagation();
                           toggleVideoPlayback(e);
                         }}
-                        className="w-full py-2.5 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                        className="w-full h-11 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                       >
-                        <Play className="w-3.5 h-3.5 fill-current" />
-                        <span>{isPlaying ? 'Mettre en pause' : 'Écouter le récit'}</span>
+                        {isPlaying ? (
+                          <>
+                            <Pause className="w-4 h-4 fill-current" />
+                            <span>Mettre en pause</span>
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-4 h-4 fill-current" />
+                            <span>Écouter le récit</span>
+                          </>
+                        )}
                       </button>
                     </div>
                   )}
@@ -1090,19 +1216,20 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+                {/* Filtre plus clair et lumineux sur l'image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
 
-                {/* HAUT : Titre de la série à gauche, Icône vidéo dorée à droite */}
+                {/* HAUT : Titre de la série à gauche dans capsule adaptable, Icône vidéo dorée à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/90 shadow-md">
+                  <div className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white tracking-wide shadow-md flex items-center shrink-0">
                     {parsedSeries.hasSeparator ? (
-                      <span className="flex items-center gap-1.5 font-bold">
+                      <span className="flex items-center gap-1.5 font-semibold text-white tracking-wide truncate">
                         <span>{parsedSeries.partA}</span>
-                        <span className="text-[#C89B3C] font-mono font-bold">&lt; &gt;</span>
+                        <span className="text-white/70 font-mono text-[11px]">&lt; &gt;</span>
                         <span>{parsedSeries.partB}</span>
                       </span>
                     ) : (
-                      <span>{currentEpisode.seriesTitle}</span>
+                      <span className="tracking-wide text-white truncate">{currentEpisode.seriesTitle}</span>
                     )}
                   </div>
 
@@ -1128,10 +1255,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
                 <div className="my-auto" />
 
-                {/* BAS : Pas de titre ! Juste la durée et le nombre de vues, c'est tout */}
+                {/* BAS : Pas de titre ! Durée et nombre de vues dans une police avec taille plus basse harmonisée */}
                 <div className="relative z-10 space-y-2.5">
-                  <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 inline-block">
-                    <p className="text-xs sm:text-sm font-semibold text-white/95 tracking-wide">
+                  <div className="px-3 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/15 inline-block">
+                    <p className="text-[11px] font-medium text-white/90 tracking-normal">
                       {currentEpisode.duration} • {currentEpisode.viewsCount.toLocaleString()} vues
                     </p>
                   </div>
@@ -1200,19 +1327,20 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+                {/* Filtre plus clair et lumineux sur l'image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
 
-                {/* HAUT : Titre de la série à gauche, Icône vidéo dorée à droite */}
+                {/* HAUT : Titre de la série à gauche en blanc dans capsule adaptable, Icône vidéo dorée à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/90 shadow-md">
+                  <div className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white tracking-wide shadow-md flex items-center shrink-0">
                     {parsedSeries.hasSeparator ? (
-                      <span className="flex items-center gap-1.5 font-bold">
+                      <span className="flex items-center gap-1.5 font-semibold text-white tracking-wide truncate">
                         <span>{parsedSeries.partA}</span>
-                        <span className="text-[#C89B3C] font-mono font-bold">&lt; &gt;</span>
+                        <span className="text-white/70 font-mono text-[11px]">&lt; &gt;</span>
                         <span>{parsedSeries.partB}</span>
                       </span>
                     ) : (
-                      <span>{currentProduction.seriesTitle}</span>
+                      <span className="tracking-wide text-white truncate">{currentProduction.seriesTitle}</span>
                     )}
                   </div>
 
@@ -1238,58 +1366,39 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
                 <div className="my-auto" />
 
-                {/* BAS : Détail des parts (design classique) avec Prix de départ + RSI */}
-                <div className="relative z-10 space-y-3">
-                  <div className="p-3.5 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20 space-y-2">
+                {/* BAS : Détail des parts - Propriétaire vs Visiteur */}
+                <div className="relative z-10 space-y-2.5">
+                  <div className="p-3.5 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-white/80 font-medium">{currentProduction.status}</span>
-                      {/* Composant RSI */}
-                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-mono font-bold text-[11px]">
-                        <TrendingUp className="w-3 h-3 text-emerald-400" />
-                        <span>RSI +{currentProduction.rsiPercent || 57.1}%</span>
-                      </div>
-                    </div>
-
-                    {/* Grille : Prix de départ & Prix de vente / actuel */}
-                    <div className="grid grid-cols-2 gap-2 pt-1.5 border-t border-white/10 text-xs">
-                      <div>
-                        <span className="text-white/60 block text-[10px]">Prix de départ</span>
-                        <span className="font-mono font-bold text-white text-sm">{currentProduction.startPrice || 35} €</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-white/60 block text-[10px]">{isOwner ? 'Prix de vente' : 'Prix actuel'}</span>
-                        <span className="font-mono font-bold text-[#C89B3C] text-base">{currentProduction.salePrice} €</span>
-                      </div>
-                    </div>
-
-                    <div className="pt-1.5 border-t border-white/10 flex items-center justify-between text-xs text-white/80">
-                      <span>{isOwner ? 'Parts détenues' : 'Disponibilité'}</span>
-                      <span className="font-bold text-white">
-                        {isOwner 
-                          ? `${currentProduction.sharesCount} parts (${currentProduction.sharesOnSale || 0} en vente)` 
-                          : `${currentProduction.sharesOnSale || 2} part(s) en vente`}
-                      </span>
+                      {isOwner ? (
+                        <>
+                          <div>
+                            <span className="text-white/60 block text-[10px] tracking-wide">Prix de départ</span>
+                            <span className="font-mono font-bold text-white text-base">{currentProduction.startPrice || 35} €</span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-white/60 block text-[10px] tracking-wide">Parts détenues</span>
+                            <span className="font-mono font-bold text-white text-base">{currentProduction.sharesCount} parts</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <span className="text-white/60 block text-[10px] tracking-wide">Prix de la part</span>
+                            <span className="font-mono font-bold text-[#C89B3C] text-base">{currentProduction.salePrice || currentProduction.startPrice || 55} €</span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-white/60 block text-[10px] tracking-wide">Parts en vente</span>
+                            <span className="font-mono font-bold text-white text-base">{currentProduction.sharesOnSale || 2} disponibles</span>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 
-                  {/* Boutons Propriétaire vs Visiteur */}
+                  {/* Actions Propriétaire vs Visiteur - Pas de mise en vente pour le visiteur */}
                   {isOwner ? (
-                    <div className="grid grid-cols-2 gap-2 pt-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingProduction(currentProduction);
-                          setProdFormStartPrice(currentProduction.startPrice || 35);
-                          setProdFormSalePrice(currentProduction.salePrice);
-                          setProdFormRsi(currentProduction.rsiPercent || 57.1);
-                          setProdFormSharesCount(currentProduction.sharesCount);
-                          setProdFormSharesOnSale(currentProduction.sharesOnSale || 0);
-                        }}
-                        className="py-2.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
-                        <span>Modifier</span>
-                      </button>
+                    <div className="pt-1">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1297,9 +1406,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setSellPriceInput(currentProduction.salePrice || currentProduction.recommendedPrice);
                           setIsSellingShares(true);
                         }}
-                        className="py-2.5 px-3 rounded-xl bg-stone-900/80 hover:bg-[#1C1917] border border-white/20 text-[#C89B3C] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="w-full h-11 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                       >
-                        <Coins className="w-3.5 h-3.5 text-[#C89B3C]" />
+                        <Coins className="w-4 h-4 text-[#1C1917]" />
                         <span>Mettre en vente</span>
                       </button>
                     </div>
@@ -1309,10 +1418,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                         e.stopPropagation();
                         setIsBuyingSharesModalOpen(true);
                       }}
-                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full h-11 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                     >
-                      <Coins className="w-3.5 h-3.5 text-[#1C1917]" />
-                      <span>Acheter des parts</span>
+                      <Coins className="w-4 h-4 text-[#1C1917]" />
+                      <span>Acheter ses parts</span>
                     </button>
                   )}
                 </div>
@@ -1342,12 +1451,16 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+                {/* Filtre plus clair et lumineux sur l'image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
 
-                {/* HAUT : Titre court de série/atelier à gauche, Icône vidéo dorée à droite */}
+                {/* HAUT : Titre court de série/atelier à gauche dans capsule adaptable, Icône vidéo dorée à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/90 shadow-md truncate max-w-[200px]">
-                    <span>{currentCreation.seriesTitle || 'Créations d’atelier'}</span>
+                  <div 
+                    className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white tracking-wide shadow-md flex items-center shrink-0" 
+                    title={currentCreation.seriesTitle || 'Créations d’atelier'}
+                  >
+                    <span className="truncate">{getShortTitle(currentCreation.seriesTitle) || 'Créations d’atelier'}</span>
                   </div>
 
                   <button
@@ -1403,9 +1516,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setCreationFormPoster(currentCreation.posterUrl);
                           setCreationFormVideo(currentCreation.videoUrl);
                         }}
-                        className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="h-11 px-3 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
+                        <Edit3 className="w-4 h-4 text-[#1C1917]" />
                         <span>Modifier</span>
                       </button>
                       <button
@@ -1413,9 +1526,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           e.stopPropagation();
                           setIsDeletingCreation(true);
                         }}
-                        className="py-2 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="h-11 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                       >
-                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <Trash2 className="w-4 h-4 text-red-400" />
                         <span>Supprimer</span>
                       </button>
                     </div>
@@ -1423,14 +1536,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        setOrderActionType('commander');
                         setIsOrderingCreationModalOpen(true);
                       }}
-                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full h-11 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                     >
-                      <ShoppingBag className="w-3.5 h-3.5 text-[#1C1917]" />
-                      <span>
-                        {currentCreation.type === 'atelier' ? 'Réserver ma place' : 'Commander'}
-                      </span>
+                      <ShoppingBag className="w-4 h-4 text-[#1C1917]" />
+                      <span>Commander</span>
                     </button>
                   )}
                 </div>
@@ -1460,12 +1572,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+                {/* Filtre plus clair et lumineux sur l'image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
 
-                {/* HAUT : % et jours restants en haut à gauche, Icône vidéo dorée en haut à droite */}
+                {/* HAUT : % et jours restants en haut à gauche dans capsule adaptable, Icône vidéo dorée en haut à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-md flex items-center gap-1.5">
-                    <span className="text-[#C89B3C] font-mono font-black">
+                  <div className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white shadow-md flex items-center gap-1.5 shrink-0">
+                    <span className="text-white font-mono font-bold">
                       {Math.round((currentInitiative.collectedAmount / currentInitiative.targetAmount) * 100)}%
                     </span>
                     <span className="text-white/40">•</span>
@@ -1497,7 +1610,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 {/* BAS : Titre court sur 1 ligne, Jauge & Nombre de contributeurs */}
                 <div className="relative z-10 space-y-3">
                   <div>
-                    <h3 className="font-editorial text-base sm:text-lg font-bold text-white leading-snug truncate" title={currentInitiative.title}>
+                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug break-words" title={currentInitiative.title}>
                       {currentInitiative.title}
                     </h3>
                   </div>
@@ -1543,9 +1656,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setInitiativeFormPoster(currentInitiative.posterUrl);
                           setInitiativeFormVideo(currentInitiative.videoUrl);
                         }}
-                        className="py-2 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="h-11 px-3 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-[#1C1917]" />
+                        <Edit3 className="w-4 h-4 text-[#1C1917]" />
                         <span>Modifier</span>
                       </button>
                       <button
@@ -1553,9 +1666,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           e.stopPropagation();
                           setIsDeletingInitiative(true);
                         }}
-                        className="py-2 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="h-11 px-3 rounded-xl bg-black/60 hover:bg-red-600/80 border border-white/20 hover:border-red-500 text-white/90 hover:text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                       >
-                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <Trash2 className="w-4 h-4 text-red-400" />
                         <span>Supprimer</span>
                       </button>
                     </div>
@@ -1563,12 +1676,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        setInitiativeActionType('contribuer');
                         setIsContributingModalOpen(true);
                       }}
-                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full h-11 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                     >
-                      <HeartHandshake className="w-3.5 h-3.5 text-[#1C1917]" />
-                      <span>Contribuer au projet</span>
+                      <Users className="w-4 h-4 text-[#1C1917]" />
+                      <span>Contribuer</span>
                     </button>
                   )}
                 </div>
@@ -1598,12 +1712,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/60 pointer-events-none" />
+                {/* Filtre plus clair et lumineux sur l'image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
 
-                {/* HAUT : Urgence/Catégorie à gauche, Icône vidéo dorée à droite */}
+                {/* HAUT : Urgence/Catégorie à gauche écrit en blanc dans capsule adaptable, Icône vidéo dorée à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-amber-300 shadow-md">
-                    <span>{currentAppel.urgency}</span>
+                  <div className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-medium text-white shadow-md shrink-0">
+                    <span className="truncate">{currentAppel.urgency}</span>
                   </div>
 
                   <button
@@ -1628,10 +1743,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
                 <div className="my-auto" />
 
-                {/* BAS : Titre court sur 1 ligne sans texte supplémentaire & actions */}
+                {/* BAS : Titre court sur 1 ou 2 lignes qui tient bien sans coupure & actions */}
                 <div className="relative z-10 space-y-2.5">
                   <div>
-                    <h3 className="font-editorial text-base sm:text-lg font-bold text-white leading-snug truncate" title={currentAppel.title}>
+                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2" title={currentAppel.title}>
                       {currentAppel.title}
                     </h3>
                   </div>
@@ -1669,10 +1784,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                         e.stopPropagation();
                         setIsOfferingHelpModalOpen(true);
                       }}
-                      className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full h-11 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                     >
-                      <MessageSquare className="w-3.5 h-3.5 text-[#1C1917]" />
-                      <span>Proposer mon aide</span>
+                      <Send className="w-4 h-4 text-[#1C1917]" />
+                      <span>Répondre à cet appel</span>
                     </button>
                   )}
                 </div>
@@ -1855,25 +1970,31 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 Vous investissez dans la série <span className="font-bold text-[#1C1917]">{currentProduction.seriesTitle}</span> auprès de {userName}.
               </p>
               
-              <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200">
-                <span className="font-semibold text-stone-700">Nombre de parts :</span>
-                <div className="flex items-center gap-2.5">
-                  <button 
-                    onClick={() => setBuySharesCount(Math.max(1, buySharesCount - 1))}
-                    className="w-7 h-7 rounded-full bg-white border border-stone-300 flex items-center justify-center font-bold text-sm"
-                  >-</button>
-                  <span className="font-mono font-bold text-sm">{buySharesCount}</span>
-                  <button 
-                    onClick={() => setBuySharesCount(buySharesCount + 1)}
-                    className="w-7 h-7 rounded-full bg-white border border-stone-300 flex items-center justify-center font-bold text-sm"
-                  >+</button>
+              <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-600 font-medium">Prix unitaire de la part :</span>
+                  <span className="font-mono font-bold text-[#C89B3C] text-sm">{currentProduction.salePrice || currentProduction.startPrice || 55} €</span>
+                </div>
+                <div className="flex items-center justify-between pt-1 border-t border-stone-200/60">
+                  <span className="font-semibold text-stone-700">Nombre de parts :</span>
+                  <div className="flex items-center gap-2.5">
+                    <button 
+                      onClick={() => setBuySharesCount(Math.max(1, buySharesCount - 1))}
+                      className="w-7 h-7 rounded-full bg-white border border-stone-300 flex items-center justify-center font-bold text-sm cursor-pointer hover:bg-stone-100"
+                    >-</button>
+                    <span className="font-mono font-bold text-sm">{buySharesCount}</span>
+                    <button 
+                      onClick={() => setBuySharesCount(Math.min(currentProduction.sharesOnSale || 5, buySharesCount + 1))}
+                      className="w-7 h-7 rounded-full bg-white border border-stone-300 flex items-center justify-center font-bold text-sm cursor-pointer hover:bg-stone-100"
+                    >+</button>
+                  </div>
                 </div>
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-xl bg-[#C89B3C]/10 border border-[#C89B3C]/30 text-[#8B6845]">
-                <span className="font-semibold">Montant total :</span>
+                <span className="font-semibold">Montant total à régler :</span>
                 <span className="font-mono font-black text-base text-[#1C1917]">
-                  {buySharesCount * currentProduction.salePrice} €
+                  {buySharesCount * (currentProduction.salePrice || currentProduction.startPrice || 55)} €
                 </span>
               </div>
             </div>
@@ -1881,26 +2002,30 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             <button
               onClick={() => {
                 setIsBuyingSharesModalOpen(false);
-                setShareToast(`Félicitations ! Vous êtes coproducteur de ${currentProduction.seriesTitle}.`);
+                setShareToast(`Félicitations ! Vous avez acquis vos parts de coproduction auprès de ${userName}.`);
                 setTimeout(() => setShareToast(null), 3500);
               }}
-              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
             >
-              Confirmer l’acquisition
+              Confirmer l’achat des parts
             </button>
           </div>
         </div>
       )}
 
-      {/* B. Modale Commander / Réserver une création */}
+      {/* B. Modale Commander / Réserver / Acheter une création */}
       {isOrderingCreationModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-stone-200">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-[#C89B3C]" />
                 <h3 className="font-editorial text-base font-bold text-[#1C1917]">
-                  {currentCreation.type === 'atelier' ? 'Réserver ma place' : 'Commander la création'}
+                  {orderActionType === 'reserver' 
+                    ? 'Réserver' 
+                    : orderActionType === 'acheter' 
+                    ? 'Acheter' 
+                    : 'Commander'}
                 </h3>
               </div>
               <button onClick={() => setIsOrderingCreationModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
@@ -1908,8 +2033,33 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               </button>
             </div>
 
+            {/* Onglets d'action rapide */}
+            <div className="grid grid-cols-3 gap-1 bg-stone-100 p-1 rounded-xl text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => setOrderActionType('commander')}
+                className={`py-1.5 px-2 rounded-lg transition-all ${orderActionType === 'commander' ? 'bg-white text-[#1C1917] shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
+              >
+                Commander
+              </button>
+              <button
+                type="button"
+                onClick={() => setOrderActionType('reserver')}
+                className={`py-1.5 px-2 rounded-lg transition-all ${orderActionType === 'reserver' ? 'bg-white text-[#1C1917] shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
+              >
+                Réserver
+              </button>
+              <button
+                type="button"
+                onClick={() => setOrderActionType('acheter')}
+                className={`py-1.5 px-2 rounded-lg transition-all ${orderActionType === 'acheter' ? 'bg-white text-[#1C1917] shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
+              >
+                Acheter
+              </button>
+            </div>
+
             <div className="space-y-3 text-xs">
-              <div>
+              <div className="p-3 bg-stone-50 rounded-xl border border-stone-200">
                 <p className="font-bold text-[#1C1917]">{currentCreation.title}</p>
                 <p className="text-stone-500">{currentCreation.categoryLabel}</p>
                 <p className="font-mono text-[#C89B3C] font-bold text-sm pt-0.5">{currentCreation.price}</p>
@@ -1930,75 +2080,123 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             <button
               onClick={() => {
                 setIsOrderingCreationModalOpen(false);
-                setShareToast("Votre demande a été transmise à l'artisan.");
+                const actionLabel = orderActionType === 'reserver' 
+                  ? 'réservation' 
+                  : orderActionType === 'acheter' 
+                  ? 'achat' 
+                  : 'commande';
+                setShareToast(`Votre demande de ${actionLabel} a été transmise à ${userName}.`);
                 setTimeout(() => setShareToast(null), 3500);
               }}
-              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
             >
-              Confirmer la demande
+              {orderActionType === 'reserver' 
+                ? 'Confirmer la réservation' 
+                : orderActionType === 'acheter' 
+                ? 'Confirmer l’achat' 
+                : 'Confirmer la commande'}
             </button>
           </div>
         </div>
       )}
 
-      {/* C. Modale Contribuer à l'initiative */}
+      {/* C. Modale Contribuer / Participer à l'initiative */}
       {isContributingModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-stone-200">
               <div className="flex items-center gap-2">
                 <HeartHandshake className="w-5 h-5 text-[#C89B3C]" />
-                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Soutenir l'initiative</h3>
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">
+                  {initiativeActionType === 'contribuer' ? 'Soutenir l’initiative' : 'Participer au projet'}
+                </h3>
               </div>
               <button onClick={() => setIsContributingModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
+            {/* Onglets Contribuer vs Participer */}
+            <div className="grid grid-cols-2 gap-1 bg-stone-100 p-1 rounded-xl text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => setInitiativeActionType('contribuer')}
+                className={`py-1.5 px-2 rounded-lg transition-all ${initiativeActionType === 'contribuer' ? 'bg-white text-[#1C1917] shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
+              >
+                Contribuer (€)
+              </button>
+              <button
+                type="button"
+                onClick={() => setInitiativeActionType('participer')}
+                className={`py-1.5 px-2 rounded-lg transition-all ${initiativeActionType === 'participer' ? 'bg-white text-[#1C1917] shadow-xs' : 'text-stone-500 hover:text-stone-800'}`}
+              >
+                Participer (Aide / Bénévolat)
+              </button>
+            </div>
+
             <div className="space-y-3 text-xs">
               <p className="font-bold text-[#1C1917]">{currentInitiative.title}</p>
-              <p className="text-stone-600">Choisissez votre montant de contribution :</p>
               
-              <div className="grid grid-cols-3 gap-2">
-                {[20, 50, 100].map((amt) => (
-                  <button
-                    key={amt}
-                    type="button"
-                    onClick={() => setContributionAmount(amt)}
-                    className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
-                      contributionAmount === amt 
-                        ? 'bg-[#1C1917] text-white border-[#1C1917]' 
-                        : 'bg-stone-50 hover:bg-stone-100 text-stone-800 border-stone-200'
-                    }`}
-                  >
-                    {amt} €
-                  </button>
-                ))}
-              </div>
+              {initiativeActionType === 'contribuer' ? (
+                <>
+                  <p className="text-stone-600">Choisissez votre montant de contribution :</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[20, 50, 100].map((amt) => (
+                      <button
+                        key={amt}
+                        type="button"
+                        onClick={() => setContributionAmount(amt)}
+                        className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all ${
+                          contributionAmount === amt 
+                            ? 'bg-[#1C1917] text-white border-[#1C1917]' 
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-800 border-stone-200'
+                        }`}
+                      >
+                        {amt} €
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-stone-600">Comment souhaitez-vous vous impliquer ?</p>
+                  <textarea
+                    rows={3}
+                    value={volunteerMessage}
+                    onChange={(e) => setVolunteerMessage(e.target.value)}
+                    placeholder="Compétences, aide sur le terrain, mise en relation..."
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 resize-none"
+                  />
+                </div>
+              )}
             </div>
 
             <button
               onClick={() => {
                 setIsContributingModalOpen(false);
-                setShareToast(`Merci pour votre contribution de ${contributionAmount} € !`);
+                if (initiativeActionType === 'contribuer') {
+                  setShareToast(`Merci pour votre contribution de ${contributionAmount} € !`);
+                } else {
+                  setShareToast(`Merci ! Votre proposition de participation a été envoyée à ${userName}.`);
+                }
                 setTimeout(() => setShareToast(null), 3500);
               }}
-              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+              className="w-full py-3 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#D4A94E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
             >
-              Valider mon soutien
+              {initiativeActionType === 'contribuer' ? 'Valider mon soutien' : 'Rejoindre le projet'}
             </button>
           </div>
         </div>
       )}
 
-      {/* D. Modale Proposer mon aide (Appels) */}
+      {/* D. Modale Répondre à l'appel (Formulaire ou Messagerie privée) */}
       {isOfferingHelpModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-stone-200">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-[#C89B3C]" />
-                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Proposer mon aide</h3>
+                <Send className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Répondre à l’appel</h3>
               </div>
               <button onClick={() => setIsOfferingHelpModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
                 <X className="w-4 h-4" />
@@ -2006,28 +2204,66 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             </div>
 
             <div className="space-y-3 text-xs">
-              <p className="font-bold text-[#1C1917]">{currentAppel.title}</p>
-              <p className="text-stone-600">Expliquez brièvement comment vous pouvez contribuer :</p>
-              <textarea
-                rows={4}
-                value={helpMessage}
-                onChange={(e) => setHelpMessage(e.target.value)}
-                placeholder="Je dispose de matériel / de compétences et je peux vous aider..."
-                className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 resize-none"
-              />
+              <div className="p-3 bg-stone-50 rounded-xl border border-stone-200">
+                <span className="text-[10px] uppercase font-bold text-[#C89B3C] tracking-wider block mb-0.5">
+                  {currentAppel.urgency}
+                </span>
+                <p className="font-bold text-[#1C1917] leading-tight">{currentAppel.title}</p>
+              </div>
+
+              {/* Formulaire de réponse directe */}
+              <div className="space-y-2">
+                <label className="text-stone-700 font-semibold block">Votre proposition de solution / aide :</label>
+                <textarea
+                  rows={3}
+                  value={helpMessage}
+                  onChange={(e) => setHelpMessage(e.target.value)}
+                  placeholder="Je dispose de matériel / de compétences et je peux vous aider..."
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 resize-none"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-stone-700 font-semibold block">Vos coordonnées :</label>
+                <input
+                  type="text"
+                  placeholder="Email ou téléphone"
+                  value={helpContact}
+                  onChange={(e) => setHelpContact(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50"
+                />
+              </div>
             </div>
 
-            <button
-              onClick={() => {
-                setIsOfferingHelpModalOpen(false);
-                setShareToast("Votre proposition d'aide a été envoyée !");
-                setTimeout(() => setShareToast(null), 3500);
-              }}
-              className="w-full py-3 px-4 rounded-xl bg-[#1C1917] hover:bg-stone-800 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
-            >
-              <Send className="w-3.5 h-3.5 text-[#C89B3C]" />
-              <span>Envoyer ma proposition</span>
-            </button>
+            <div className="space-y-2 pt-1">
+              <button
+                onClick={() => {
+                  setIsOfferingHelpModalOpen(false);
+                  setShareToast(`Votre réponse a été transmise à ${userName} !`);
+                  setTimeout(() => setShareToast(null), 3500);
+                }}
+                className="w-full py-3 px-4 rounded-xl bg-[#1C1917] hover:bg-stone-800 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5 text-[#C89B3C]" />
+                <span>Envoyer ma réponse</span>
+              </button>
+
+              {/* Alternative : Messagerie privée directe */}
+              <div className="pt-2 border-t border-stone-200 text-center">
+                <p className="text-[11px] text-stone-500 mb-1.5">Ou échanger directement :</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsOfferingHelpModalOpen(false);
+                    onNavigate({ type: 'messaging' });
+                  }}
+                  className="w-full py-2 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-[#1C1917] font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-[#C89B3C]" />
+                  <span>Contacter en messagerie privée</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -2037,7 +2273,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       {/* ========================================================================= */}
 
       {/* Gérer la mise en vente de parts */}
-      {isSellingShares && (
+      {isOwner && isSellingShares && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
             <div className="flex items-center justify-between pb-2 border-b border-stone-200">
@@ -2101,7 +2337,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       )}
 
       {/* Confirmation suppression récit */}
-      {isDeletingRecit && (
+      {isOwner && isDeletingRecit && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
             <h3 className="font-editorial text-base font-bold text-[#1C1917]">Retirer ce récit ?</h3>
@@ -2128,7 +2364,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       )}
 
       {/* Confirmation suppression épisode */}
-      {isDeletingEpisode && (
+      {isOwner && isDeletingEpisode && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
             <h3 className="font-editorial text-base font-bold text-[#1C1917]">Retirer cet épisode ?</h3>
@@ -2155,7 +2391,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       )}
 
       {/* Confirmation suppression création */}
-      {isDeletingCreation && (
+      {isOwner && isDeletingCreation && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
             <h3 className="font-editorial text-base font-bold text-[#1C1917]">Supprimer cette création ?</h3>
@@ -2182,7 +2418,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       )}
 
       {/* Confirmation suppression initiative */}
-      {isDeletingInitiative && (
+      {isOwner && isDeletingInitiative && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
             <h3 className="font-editorial text-base font-bold text-[#1C1917]">Supprimer cette initiative ?</h3>
@@ -2209,7 +2445,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       )}
 
       {/* Confirmation suppression appel */}
-      {isDeletingAppel && (
+      {isOwner && isDeletingAppel && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
             <h3 className="font-editorial text-base font-bold text-[#1C1917]">Supprimer cet appel ?</h3>
@@ -2229,6 +2465,561 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               </button>
               <button onClick={() => setIsDeletingAppel(false)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
                 Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 6. MODALES D'ÉDITION POUR LE PROPRIÉTAIRE                                 */}
+      {/* ========================================================================= */}
+
+      {/* Modifier Récit */}
+      {isOwner && editingRecit && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Modifier le récit</h3>
+              </div>
+              <button onClick={() => setEditingRecit(null)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-stone-700 font-semibold block">Titre (en haut à gauche) :</label>
+                <input
+                  type="text"
+                  value={recitFormTitle}
+                  onChange={(e) => setRecitFormTitle(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Sous-titre (en bas) :</label>
+                <input
+                  type="text"
+                  value={recitFormSubtitle}
+                  onChange={(e) => setRecitFormSubtitle(e.target.value)}
+                  placeholder="Ex: Parcours & transmission"
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setRecits(prev => prev.map((r, idx) => idx === recitIndex ? { ...r, title: recitFormTitle, subtitle: recitFormSubtitle } : r));
+                  setEditingRecit(null);
+                  setShareToast("Récit mis à jour.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-[#1C1917] text-white font-bold text-xs rounded-xl hover:bg-stone-800"
+              >
+                Enregistrer
+              </button>
+              <button onClick={() => setEditingRecit(null)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modifier Épisode */}
+      {isOwner && editingEpisode && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Modifier l'épisode</h3>
+              </div>
+              <button onClick={() => setEditingEpisode(null)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-stone-700 font-semibold block">Durée affichée :</label>
+                <input
+                  type="text"
+                  value={episodeFormDuration}
+                  onChange={(e) => setEpisodeFormDuration(e.target.value)}
+                  placeholder="Ex: 8 min"
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Nombre de vues :</label>
+                <input
+                  type="number"
+                  value={episodeFormViews}
+                  onChange={(e) => setEpisodeFormViews(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setEpisodes(prev => prev.map((ep, idx) => idx === episodeIndex ? { ...ep, duration: episodeFormDuration, viewsCount: episodeFormViews } : ep));
+                  setEditingEpisode(null);
+                  setShareToast("Épisode mis à jour.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-[#1C1917] text-white font-bold text-xs rounded-xl hover:bg-stone-800"
+              >
+                Enregistrer
+              </button>
+              <button onClick={() => setEditingEpisode(null)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modifier Production (Coproduction / Parts) */}
+      {isOwner && editingProduction && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Modifier les parts de production</h3>
+              </div>
+              <button onClick={() => setEditingProduction(null)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-stone-700 font-semibold block">Prix de départ (€) :</label>
+                  <input
+                    type="number"
+                    value={prodFormStartPrice}
+                    onChange={(e) => setProdFormStartPrice(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-stone-700 font-semibold block">Prix de vente (€) :</label>
+                  <input
+                    type="number"
+                    value={prodFormSalePrice}
+                    onChange={(e) => setProdFormSalePrice(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Indicateur RSI (%) :</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={prodFormRsi}
+                  onChange={(e) => setProdFormRsi(Number(e.target.value))}
+                  placeholder="Ex: 57.1"
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-stone-700 font-semibold block">Total parts :</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={prodFormSharesCount}
+                    onChange={(e) => setProdFormSharesCount(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-stone-700 font-semibold block">En vente :</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={prodFormSharesCount}
+                    value={prodFormSharesOnSale}
+                    onChange={(e) => setProdFormSharesOnSale(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setProductions(prev => prev.map((prod, idx) => idx === shareIndex ? { 
+                    ...prod, 
+                    startPrice: prodFormStartPrice,
+                    salePrice: prodFormSalePrice,
+                    rsiPercent: prodFormRsi,
+                    sharesCount: prodFormSharesCount,
+                    sharesOnSale: prodFormSharesOnSale
+                  } : prod));
+                  setEditingProduction(null);
+                  setShareToast("Parts de production mises à jour.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-[#1C1917] text-white font-bold text-xs rounded-xl hover:bg-stone-800"
+              >
+                Enregistrer
+              </button>
+              <button onClick={() => setEditingProduction(null)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modifier Création */}
+      {isOwner && editingCreation && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Modifier la création</h3>
+              </div>
+              <button onClick={() => setEditingCreation(null)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-stone-700 font-semibold block">Titre :</label>
+                <input
+                  type="text"
+                  value={creationFormTitle}
+                  onChange={(e) => setCreationFormTitle(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-stone-700 font-semibold block">Prix :</label>
+                  <input
+                    type="text"
+                    value={creationFormPrice}
+                    onChange={(e) => setCreationFormPrice(e.target.value)}
+                    placeholder="Ex: 85 €"
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                  />
+                </div>
+                <div>
+                  <label className="text-stone-700 font-semibold block">Catégorie / Type :</label>
+                  <input
+                    type="text"
+                    value={creationFormCategory}
+                    onChange={(e) => setCreationFormCategory(e.target.value)}
+                    placeholder="Ex: Tissage d'Art"
+                    className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Description :</label>
+                <textarea
+                  rows={3}
+                  value={creationFormDescription}
+                  onChange={(e) => setCreationFormDescription(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setCreations(prev => prev.map((cr, idx) => idx === creationIndex ? {
+                    ...cr,
+                    title: creationFormTitle,
+                    price: creationFormPrice,
+                    categoryLabel: creationFormCategory,
+                    description: creationFormDescription
+                  } : cr));
+                  setEditingCreation(null);
+                  setShareToast("Création mise à jour.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-[#1C1917] text-white font-bold text-xs rounded-xl hover:bg-stone-800"
+              >
+                Enregistrer
+              </button>
+              <button onClick={() => setEditingCreation(null)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modifier Initiative */}
+      {isOwner && editingInitiative && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Modifier l'initiative</h3>
+              </div>
+              <button onClick={() => setEditingInitiative(null)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-stone-700 font-semibold block">Titre de l'initiative :</label>
+                <input
+                  type="text"
+                  value={initiativeFormTitle}
+                  onChange={(e) => setInitiativeFormTitle(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Objectif (€) :</label>
+                <input
+                  type="number"
+                  value={initiativeFormTarget}
+                  onChange={(e) => setInitiativeFormTarget(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Description :</label>
+                <textarea
+                  rows={3}
+                  value={initiativeFormDescription}
+                  onChange={(e) => setInitiativeFormDescription(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setInitiatives(prev => prev.map((init, idx) => idx === initiativeIndex ? {
+                    ...init,
+                    title: initiativeFormTitle,
+                    targetAmount: initiativeFormTarget,
+                    description: initiativeFormDescription
+                  } : init));
+                  setEditingInitiative(null);
+                  setShareToast("Initiative mise à jour.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-[#1C1917] text-white font-bold text-xs rounded-xl hover:bg-stone-800"
+              >
+                Enregistrer
+              </button>
+              <button onClick={() => setEditingInitiative(null)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modifier Appel */}
+      {isOwner && editingAppel && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Modifier l'appel</h3>
+              </div>
+              <button onClick={() => setEditingAppel(null)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-stone-700 font-semibold block">Titre de l'appel :</label>
+                <input
+                  type="text"
+                  value={appelFormTitle}
+                  onChange={(e) => setAppelFormTitle(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Degré d'urgence :</label>
+                <input
+                  type="text"
+                  value={appelFormUrgency}
+                  onChange={(e) => setAppelFormUrgency(e.target.value)}
+                  placeholder="Ex: Urgent, Prioritaire"
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Description :</label>
+                <textarea
+                  rows={3}
+                  value={appelFormDescription}
+                  onChange={(e) => setAppelFormDescription(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-stone-700 font-semibold block">Impact visé :</label>
+                <input
+                  type="text"
+                  value={appelFormImpact}
+                  onChange={(e) => setAppelFormImpact(e.target.value)}
+                  placeholder="Ex: Archiver 25 entretiens"
+                  className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setAppels(prev => prev.map((app, idx) => idx === appelIndex ? {
+                    ...app,
+                    title: appelFormTitle,
+                    urgency: appelFormUrgency,
+                    description: appelFormDescription,
+                    impact: appelFormImpact
+                  } : app));
+                  setEditingAppel(null);
+                  setShareToast("Appel mis à jour.");
+                  setTimeout(() => setShareToast(null), 2500);
+                }}
+                className="flex-1 py-2.5 bg-[#1C1917] text-white font-bold text-xs rounded-xl hover:bg-stone-800"
+              >
+                Enregistrer
+              </button>
+              <button onClick={() => setEditingAppel(null)} className="flex-1 py-2.5 bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 7. MODALE DE PARTAGE RÉSEAUX SOCIAUX                                      */}
+      {/* ========================================================================= */}
+      {isShareModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-200">
+              <div className="flex items-center gap-2">
+                <Share2 className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="font-editorial text-base font-bold text-[#1C1917]">Partager le profil</h3>
+              </div>
+              <button onClick={() => setIsShareModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-stone-600">
+              Faites rayonner le profil de <span className="font-bold text-[#1C1917]">{profileDisplayName}</span> sur vos réseaux :
+            </p>
+
+            {/* Réseaux sociaux */}
+            <div className="grid grid-cols-2 gap-2.5">
+              {/* WhatsApp */}
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Découvrez le profil de ${profileDisplayName} sur Racines & Horizons : ${window.location.href}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-bold transition-all"
+              >
+                <span className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-black">W</span>
+                <span>WhatsApp</span>
+              </a>
+
+              {/* Twitter / X */}
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Découvrez le profil de ${profileDisplayName} sur Racines & Horizons`)}&url=${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 p-3 rounded-2xl bg-stone-100 hover:bg-stone-200 border border-stone-300 text-stone-900 text-xs font-bold transition-all"
+              >
+                <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-black">𝕏</span>
+                <span>Twitter / X</span>
+              </a>
+
+              {/* Facebook */}
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 text-xs font-bold transition-all"
+              >
+                <span className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-black">f</span>
+                <span>Facebook</span>
+              </a>
+
+              {/* Telegram */}
+              <a
+                href={`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Découvrez le profil de ${profileDisplayName}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 p-3 rounded-2xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 text-xs font-bold transition-all"
+              >
+                <span className="w-6 h-6 rounded-full bg-sky-500 text-white flex items-center justify-center text-xs font-black">✈</span>
+                <span>Telegram</span>
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="col-span-2 flex items-center justify-center gap-2.5 p-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 text-xs font-bold transition-all"
+              >
+                <span className="w-6 h-6 rounded-full bg-indigo-700 text-white flex items-center justify-center text-xs font-black">in</span>
+                <span>Partager sur LinkedIn</span>
+              </a>
+            </div>
+
+            {/* Bouton Copier le lien */}
+            <div className="pt-1">
+              <button
+                onClick={() => {
+                  navigator.clipboard?.writeText(window.location.href);
+                  setIsShareModalOpen(false);
+                  setShareToast("Lien du profil copié dans le presse-papiers !");
+                  setTimeout(() => setShareToast(null), 3000);
+                }}
+                className="w-full py-3 px-4 rounded-xl bg-[#1C1917] hover:bg-stone-800 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+              >
+                <Copy className="w-4 h-4 text-[#C89B3C]" />
+                <span>Copier le lien direct</span>
               </button>
             </div>
           </div>

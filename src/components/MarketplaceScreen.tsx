@@ -361,8 +361,8 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
 
                 {/* HAUT : Badge du titre de la série à gauche & Contrôle vidéo hybride doré en face en haut à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-2">
-                  <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-bold tracking-widest uppercase text-white/95 shadow-sm max-w-full leading-relaxed">
-                    {currentProd.title.toUpperCase()}
+                  <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-semibold tracking-widest text-white shadow-sm max-w-full leading-relaxed">
+                    {currentProd.title}
                   </span>
 
                   {/* Bouton hybride interactif en face en haut à droite */}
@@ -457,8 +457,8 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
 
                 {/* HAUT : Badge du titre de la série à gauche & Contrôle vidéo hybride doré en face en haut à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-2">
-                  <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-bold tracking-widest uppercase text-white/95 shadow-sm max-w-full leading-relaxed">
-                    {currentOffer.seriesTitle.toUpperCase()}
+                  <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-semibold tracking-widest text-white shadow-sm max-w-full leading-relaxed">
+                    {currentOffer.seriesTitle}
                   </span>
 
                   {/* Bouton hybride interactif en face en haut à droite */}

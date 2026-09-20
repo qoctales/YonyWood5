@@ -110,6 +110,7 @@ export default function App() {
 
         {currentScreen.type === 'protagonist_profile' && (
           <ProfileSettingsScreen 
+            key={currentScreen.protagonistId || 'default-protagonist'}
             protagonistId={currentScreen.protagonistId} 
             onNavigate={setCurrentScreen} 
             selectedDocFilter={selectedSeriesFilter}
