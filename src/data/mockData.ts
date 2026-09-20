@@ -397,6 +397,98 @@ export const DOCUMENTARIES: Documentary[] = [
     episodeCount: 5,
     protagonistsCount: 6,
     territories: ['Cotonou', 'Paris', 'Marrakech', 'Lomé']
+  },
+  {
+    id: 'investors-builders',
+    slug: 'investors-builders',
+    title: 'Investors < > Builders',
+    subtitle: 'Ceux qui financent le futur < > ceux qui bâtissent le réel.',
+    centralQuestion: 'L\'alliance',
+    shortSynopsis: 'Entre l’audace du capital patient et la rigueur du terrain, une rencontre sans filtre entre investisseurs d’impact et bâtisseurs d’infrastructures.',
+    description: 'D’un côté, ceux qui allouent des capitaux, évaluent les risques et parient sur des visions à long terme. De l’autre, ceux qui conçoivent, bâtissent et transforment la matière au quotidien. Investors < > Builders explore l’alliance féconde et la confiance nécessaire entre investisseurs d’impact et bâtisseurs de terrain. Comment accorder le temps long du capital avec l’urgence de la matière ? Une réflexion profonde sur la création de valeur partagée et la souveraineté économique.',
+    coverImage: '/investors-builders.png',
+    posterUrl: '/investors-builders.png',
+    teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    teaserDuration: '1:35',
+    universes: [
+      {
+        name: 'Investors',
+        tagline: 'Le capital patient, l’allocation stratégique et le discernement',
+        description: 'Mécènes, fonds d’impact et investisseurs engagés qui soutiennent l’économie productive et les visions pérennes.',
+        territory: 'Paris, Dakar, Abidjan & Diaspora'
+      },
+      {
+        name: 'Builders',
+        tagline: 'L’ancrage dans la matière, le prototype et la force bâtisseuse',
+        description: 'Entrepreneurs d’infrastructures, ingénieurs et maîtres artisans qui construisent les piliers de l’économie concrète.',
+        territory: 'Cotonou, Kigali, Nairobi, Abidjan'
+      }
+    ],
+    questions: [
+      {
+        number: '01',
+        title: 'Le Pari Fondateur',
+        prompt: 'Racontez-nous le premier projet ou pari décisif où vous avez engagé vos ressources ou vos mains sans certitude de réussir. Que s\'est-il passé ?',
+        audioDuration: '0:42',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        audioVoiceName: 'Fatou Diallo & Kwame Mensah',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Racontez-nous le premier projet ou pari décisif où vous avez engagé vos ressources ou vos mains sans certitude de réussir. Que s\'est-il passé ?' },
+          { lang: 'en', label: 'English', prompt: 'Tell us about the first decisive gamble where you committed your resources or hands without knowing if you would succeed. What happened?' }
+        ]
+      },
+      {
+        number: '02',
+        title: 'Le Risque & La Tempête',
+        prompt: 'Racontez-nous une situation critique où tout semblait menacer de s’effondrer. Comment avez-vous tenu le cap ?',
+        audioDuration: '0:45',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        audioVoiceName: 'Kwame Mensah',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Racontez-nous une situation critique où tout semblait menacer de s’effondrer. Comment avez-vous tenu le cap ?' },
+          { lang: 'en', label: 'English', prompt: 'Tell us about a crisis when everything threatened to collapse. How did you hold the line?' }
+        ]
+      },
+      {
+        number: '03',
+        title: 'La Rencontre Décisive',
+        prompt: 'Racontez-nous une rencontre entre financeur et bâtisseur qui a changé votre regard sur la valeur de ce que vous faites.',
+        audioDuration: '0:40',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        audioVoiceName: 'Fatou Diallo',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Racontez-nous une rencontre entre financeur et bâtisseur qui a changé votre regard sur la valeur de ce que vous faites.' },
+          { lang: 'en', label: 'English', prompt: 'Tell us about an encounter between an investor and a builder that transformed how you see value.' }
+        ]
+      },
+      {
+        number: '04',
+        title: 'La Réalité du Terrain',
+        prompt: 'Que vous a appris la poussière du chantier ou la confrontation à la matière que les chiffres ne disaient pas ?',
+        audioDuration: '0:48',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        audioVoiceName: 'Bâtisseurs du réel',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Que vous a appris la poussière du chantier que les chiffres ne disaient pas ?' },
+          { lang: 'en', label: 'English', prompt: 'What did the dust of the field teach you that spreadsheets never could?' }
+        ]
+      },
+      {
+        number: '05',
+        title: 'L\'Héritage Durable',
+        prompt: 'Dans cinquante ans, quelle empreinte tangible souhaitez-vous que votre alliance ait laissée dans le tissu humain et économique ?',
+        audioDuration: '0:50',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        audioVoiceName: 'Voix de la Communauté',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Dans cinquante ans, quelle empreinte tangible souhaitez-vous avoir laissée ?' },
+          { lang: 'en', label: 'English', prompt: 'In fifty years, what tangible legacy do you hope your alliance will have left behind?' }
+        ]
+      }
+    ],
+    episodeCount: 5,
+    protagonistsCount: 6,
+    territories: ['Dakar', 'Cotonou', 'Abidjan', 'Paris', 'Kigali']
   }
 ];
 
@@ -1334,6 +1426,206 @@ export const PROTAGONISTS: Protagonist[] = [
         ]
       }
     ]
+  },
+  {
+    id: 'fatou-diallo',
+    slug: 'fatou-diallo',
+    name: 'Fatou Diallo',
+    age: 42,
+    role: 'Investisseuse à impact & mécène',
+    territory: 'Dakar & Paris',
+    country: 'Sénégal',
+    flag: '🇸🇳',
+    bio: 'Pionnière de l’investissement à impact, Fatou finance des ateliers artisanaux, des coopératives agricoles et des infrastructures régénératrices à travers l’Afrique de l’Ouest.',
+    photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+    documentaryId: 'investors-builders',
+    universeTag: 'Investors',
+    quote: '« Investir, ce n’est pas acheter l’avenir, c’est donner les moyens au présent de s’enraciner. »',
+    tree: {
+      passeurs: [
+        {
+          id: 'p-amadou',
+          name: 'Amadou Kane',
+          role: 'Banquier de développement solidaire',
+          country: 'Sénégal',
+          photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+        }
+      ],
+      heritiers: [
+        {
+          id: 'h-mariama',
+          name: 'Mariama Fall',
+          role: 'Analyste d’impact environnemental',
+          country: 'Sénégal',
+          photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+        }
+      ],
+      transmissions: [
+        {
+          id: 't-fatou-1',
+          title: 'Le discernement du capital patient',
+          ancestorOrMentor: 'Amadou Kane, mentor en microfinance rurale',
+          description: 'Savoir attendre sept récoltes avant de juger de la fécondité d’une semence économique.'
+        }
+      ],
+      duos: [
+        {
+          id: 'duo-fatou-kwame-ref',
+          partnerName: 'Kwame',
+          partnerRole: 'Éco-constructeur & bâtisseur de terre',
+          partnerPhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
+          duoId: 'duo-investors-builders-01',
+          question: '« Que vaut le capital sans la sueur de celui qui bâtit ? »'
+        }
+      ],
+      creations: [
+        {
+          id: 'c-fatou-1',
+          title: 'Fonds d’Amorçage Terres Fertiles',
+          type: 'Dotation solidaire',
+          description: 'Financement patient pour les chantiers de construction en terre crue et matériaux biosourcés.'
+        }
+      ],
+      projects: [
+        {
+          id: 'p-fatou-1',
+          title: 'Manufacture Sahélienne de Briques de Terre Compressée',
+          stage: 'En chantier (68%)',
+          description: 'Production locale de matériaux décarbonés pour l’habitat populaire.'
+        }
+      ],
+      opportunities: [
+        {
+          id: 'o-fatou-1',
+          title: 'Appel à projets Bâtisseurs Régénératifs',
+          description: 'Dotation d’amorçage jusqu’à 50 000 € pour les coopératives d’éco-matériaux.',
+          badge: 'Candidatures ouvertes'
+        }
+      ],
+      needs: [
+        {
+          id: 'n-fatou-1',
+          title: 'Experts en certification thermique des terres locales',
+          urgency: 'Prioritaire',
+          description: 'Recherche de laboratoires partenaires pour homologuer les blocs de latérite et pisé.'
+        }
+      ]
+    },
+    stories: [
+      {
+        id: 'story-fatou-01',
+        title: 'Le premier chèque signé sur une table de chantier',
+        questionNumber: '01',
+        questionTitle: 'Le Pari Fondateur',
+        duration: '08:15',
+        videoDurationSeconds: 495,
+        summary: 'Fatou raconte le jour où elle a décidé de risquer ses premières économies pour soutenir un atelier de menuiserie villageois dont les banques ne voulaient pas.',
+        videoCoverUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+        credits: [
+          { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Fatou Diallo' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'kwame-mensah',
+    slug: 'kwame-mensah',
+    name: 'Kwame Mensah',
+    age: 38,
+    role: 'Éco-constructeur & bâtisseur de terre',
+    territory: 'Cotonou & Kigali',
+    country: 'Bénin',
+    flag: '🇧🇯',
+    bio: 'Ingénieur et artisan de la terre crue, Kwame réinvente les techniques ancestrales de construction pour bâtir des cités fraîches, durables et accessibles à tous.',
+    photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+    documentaryId: 'investors-builders',
+    universeTag: 'Builders',
+    quote: '« La terre ne ment pas. Elle ne demande qu’un toit pour la protéger et une main pour la tasser. »',
+    tree: {
+      passeurs: [
+        {
+          id: 'p-kofi',
+          name: 'Maître Kofi Annan',
+          role: 'Maçon traditionnel de voûtes nubiennes',
+          country: 'Ghana',
+          photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+        }
+      ],
+      heritiers: [
+        {
+          id: 'h-junior',
+          name: 'Sena Houndété',
+          role: 'Apprenti maçon en terre battue',
+          country: 'Bénin',
+          photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+        }
+      ],
+      transmissions: [
+        {
+          id: 't-kwame-1',
+          title: 'L’art du pisé sans adjuvant chimique',
+          ancestorOrMentor: 'Maître Kofi, artisan de la terre',
+          description: 'Savoir doser l’argile et le sable par le toucher et le séchage au soleil levant.'
+        }
+      ],
+      duos: [
+        {
+          id: 'duo-kwame-fatou-ref',
+          partnerName: 'Fatou',
+          partnerRole: 'Investisseuse à impact & mécène',
+          partnerPhoto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+          duoId: 'duo-investors-builders-01',
+          question: '« Que vaut le capital sans la sueur de celui qui bâtit ? »'
+        }
+      ],
+      creations: [
+        {
+          id: 'c-kwame-1',
+          title: 'Briques de terre compressée stabilisée (BTC)',
+          type: 'Matériau éco-conçu',
+          description: 'Blocs porteurs régulateurs thermiques pour constructions bioclimatiques.'
+        }
+      ],
+      projects: [
+        {
+          id: 'p-kwame-1',
+          title: 'Écocentre d’Apprentissage de Ouidah',
+          stage: 'En cours (82%)',
+          description: 'Complexe de formation aux métiers de la terre crue et du bambou.'
+        }
+      ],
+      opportunities: [
+        {
+          id: 'o-kwame-1',
+          title: 'Chantier-école Voûtes & Pisé d’Afrique de l’Ouest',
+          description: 'Session de formation pratique de 4 semaines ouverte à 15 apprentis maçons et architectes.',
+          badge: 'Inscriptions ouvertes'
+        }
+      ],
+      needs: [
+        {
+          id: 'n-kwame-1',
+          title: 'Presse hydraulique manuelle pour briques de terre compressée',
+          urgency: 'Immédiat',
+          description: 'Acquisition d’une seconde presse pour doubler la cadence du chantier de Ouidah.'
+        }
+      ]
+    },
+    stories: [
+      {
+        id: 'story-kwame-01',
+        title: 'Quand le mur a tenu la première mousson',
+        questionNumber: '01',
+        questionTitle: 'Le Pari Fondateur',
+        duration: '09:20',
+        videoDurationSeconds: 560,
+        summary: 'Kwame relate l’angoisse de sa première voûte nubienne inaugurée la veille d’une tornade tropicale, et la fierté de voir la bâtisse intacte au matin.',
+        videoCoverUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+        credits: [
+          { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Kwame Mensah' }
+        ]
+      }
+    ]
   }
 ];
 
@@ -1427,6 +1719,24 @@ export const DUOS: Duo[] = [
     storyA: (PROTAGONISTS.find(p => p.id === 'chef-koffi') || PROTAGONISTS[0]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'helene-saint-amand') || PROTAGONISTS[1]).stories[0],
     editorialReflection: 'Entre la marmite populaire et le salon d’apparat, la grandeur de l’expérience ne réside jamais dans le prix facturé, mais dans l’intensité du soin offert à l’autre.'
+  },
+  {
+    id: 'duo-investors-builders-01',
+    slug: 'duo-investors-builders-01',
+    documentaryId: 'investors-builders',
+    documentaryTitle: 'Investors < > Builders',
+    episodeNumber: 'ÉPISODE 01',
+    protagonistA: PROTAGONISTS.find(p => p.id === 'fatou-diallo') || PROTAGONISTS[0],
+    protagonistB: PROTAGONISTS.find(p => p.id === 'kwame-mensah') || PROTAGONISTS[1],
+    questionNumber: '01',
+    questionTitle: 'Le Pari Fondateur',
+    centralQuestion: '« Racontez-nous le premier pari où vous avez engagé vos ressources ou vos mains sans certitude de réussir. »',
+    quoteA: '« Le jour où j’ai signé ce premier financement pour l’atelier sans garantie bancaire, j’ai compris que ma responsabilité n’était pas de me protéger, mais de faire confiance. »',
+    quoteB: '« Quand la voûte en terre crue a résisté à la première tornade, j’ai su que nos mains portaient une force que nulle machine ne peut remplacer. »',
+    coverImage: '/investors-builders.png',
+    storyA: (PROTAGONISTS.find(p => p.id === 'fatou-diallo') || PROTAGONISTS[0]).stories[0],
+    storyB: (PROTAGONISTS.find(p => p.id === 'kwame-mensah') || PROTAGONISTS[1]).stories[0],
+    editorialReflection: 'Entre l’encre des contrats et la poussière des chantiers, la véritable valeur ne naît pas dans le calcul du profit, mais dans l’engagement réciproque de bâtir ce qui perdure.'
   }
 ];
 
@@ -2356,6 +2666,99 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
                 protagonistIdRef: 'helene-saint-amand'
               }
             ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    seriesId: 'investors-builders',
+    seriesTitle: 'Investors < > Builders',
+    subtitle: 'Ceux qui financent le futur < > ceux qui bâtissent le réel.',
+    description: 'Une alliance puissante entre la vision patiente du capital et la rigueur concrète du terrain, unissant investisseurs d’impact et bâtisseurs écologiques.',
+    centralQuestion: 'L\'alliance',
+    totalAffiliatedCount: 14,
+    generationsCount: 3,
+    pioneers: [
+      {
+        id: 'fatou-diallo',
+        name: 'Fatou Diallo',
+        age: 42,
+        role: 'Investisseuse à impact & mécène',
+        territory: 'Dakar & Paris',
+        country: 'Sénégal',
+        flag: '🇸🇳',
+        universeTag: 'Investors',
+        photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+        isPioneer: true,
+        badge: 'Première effigie',
+        invitationStory: 'Pionnière de l’investissement à impact, engagée à prouver que le capital peut nourrir la souveraineté plutôt que la dépendance.',
+        duoPartnerName: 'Kwame Mensah',
+        duoPartnerPhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
+        duoId: 'duo-investors-builders-01',
+        episodeQuestion: '01 — Le premier pari où vous avez engagé vos ressources ou vos mains sans certitude.',
+        protagonistIdRef: 'fatou-diallo',
+        invitedPeople: [
+          {
+            id: 'amadou-kane',
+            name: 'Amadou Kane',
+            age: 58,
+            role: 'Banquier de développement solidaire',
+            territory: 'Saint-Louis',
+            country: 'Sénégal',
+            flag: '🇸🇳',
+            universeTag: 'Investors',
+            photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+            badge: 'Invité(e)',
+            invitedById: 'fatou-diallo',
+            invitedByName: 'Fatou Diallo',
+            invitationStory: 'Mentor de Fatou, pionnier des caisses de crédit mutuel rurale en Casamance.',
+            duoPartnerName: 'Maître Kofi Annan',
+            duoId: 'duo-investors-builders-01',
+            episodeQuestion: '02 — La tempête financière qui a éprouvé la fidélité de l’alliance.',
+            protagonistIdRef: 'fatou-diallo',
+            invitedPeople: []
+          }
+        ]
+      },
+      {
+        id: 'kwame-mensah',
+        name: 'Kwame Mensah',
+        age: 38,
+        role: 'Éco-constructeur & bâtisseur de terre',
+        territory: 'Cotonou & Kigali',
+        country: 'Bénin',
+        flag: '🇧🇯',
+        universeTag: 'Builders',
+        photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
+        isPioneer: true,
+        badge: 'Première effigie',
+        invitationStory: 'Bâtisseur de terre crue et concepteur d’éco-matériaux, il matérialise les visions d’infrastructures durables.',
+        duoPartnerName: 'Fatou Diallo',
+        duoPartnerPhoto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+        duoId: 'duo-investors-builders-01',
+        episodeQuestion: '01 — Le premier pari où vous avez engagé vos ressources ou vos mains sans certitude.',
+        protagonistIdRef: 'kwame-mensah',
+        invitedPeople: [
+          {
+            id: 'sena-houndete',
+            name: 'Sena Houndété',
+            age: 26,
+            role: 'Ingénieure en architecture bioclimatique',
+            territory: 'Cotonou',
+            country: 'Bénin',
+            flag: '🇧🇯',
+            universeTag: 'Builders',
+            photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+            badge: 'Invité(e)',
+            invitedById: 'kwame-mensah',
+            invitedByName: 'Kwame Mensah',
+            invitationStory: 'Apprentie formée sur les chantiers de voûtes nubiennes, devenue conceptrice de campus zéro-carbone.',
+            duoPartnerName: 'Mariama Fall',
+            duoId: 'duo-investors-builders-01',
+            episodeQuestion: '03 — La rencontre décisive entre finance et matière.',
+            protagonistIdRef: 'kwame-mensah',
+            invitedPeople: []
           }
         ]
       }

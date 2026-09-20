@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   Sliders,
   ChevronLeft,
@@ -11,6 +11,7 @@ import {
   HeartHandshake,
   X,
   Share2,
+  Share,
   Camera,
   MapPin,
   MessageSquare,
@@ -45,7 +46,8 @@ import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
 import { PROTAGONISTS, DOCUMENTARIES } from '../data/mockData';
 import { MATRIX_SERIES_DATA } from '../data/matrixData';
 
-export type DimensionTab = 'recit' | 'episodes' | 'productions' | 'creations' | 'initiatives' | 'appels';
+export type ProfileCategory = 'recit' | 'production' | 'offre' | 'appel';
+export type DimensionTab = ProfileCategory | 'episodes' | 'productions' | 'creations' | 'initiatives' | 'appels';
 
 export interface ProfileSettingsScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -164,6 +166,105 @@ const MEDIA_VIDEO_PRESETS = [
   { name: 'Court Documentaire', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
 ];
 
+// Sous-composant : En-tête épuré haut de vidéo (Titre à gauche, bouton Partager à droite - Image 2)
+interface VideoTopHeaderProps {
+  title: string;
+  author: string;
+  onShare: () => void;
+}
+
+const VideoTopHeader: React.FC<VideoTopHeaderProps> = ({ title, author, onShare }) => (
+  <div className="relative z-10 flex items-center justify-between gap-3 w-full pr-14">
+    <div className="flex items-center min-w-0 pr-1">
+      <p className="font-editorial text-xs sm:text-sm font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] truncate tracking-wide">
+        {title} <span className="opacity-75 font-normal">— {author}</span>
+      </p>
+    </div>
+
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onShare();
+      }}
+      id="btn-video-top-share"
+      className="w-8.5 h-8.5 rounded-xl bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md border border-white/25 text-white flex items-center justify-center shadow-md transition-all cursor-pointer shrink-0"
+      title="Partager"
+    >
+      <Share className="w-4 h-4 text-white drop-shadow-sm" />
+    </button>
+  </div>
+);
+
+// Sous-composant : Lecteur Timeline moderne (Timestamps + Scrubber corail + Bouton Soundwave - Image 2)
+interface VideoModernPlayerBarProps {
+  videoCurrentTime: number;
+  activeDuration: number;
+  progressPercent: number;
+  isPlaying: boolean;
+  onTogglePlayback: (e: React.MouseEvent) => void;
+  onSeek: (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => void;
+  formatTime: (sec: number) => string;
+}
+
+const VideoModernPlayerBar: React.FC<VideoModernPlayerBarProps> = ({
+  videoCurrentTime,
+  activeDuration,
+  progressPercent,
+  isPlaying,
+  onTogglePlayback,
+  onSeek,
+  formatTime,
+}) => (
+  <div className="pt-1.5 space-y-1.5">
+    {/* Timestamps */}
+    <div className="flex items-center justify-between text-[11px] font-mono font-medium text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] px-0.5">
+      <span>{formatTime(videoCurrentTime)}</span>
+      <span>{formatTime(activeDuration)}</span>
+    </div>
+
+    {/* Timeline Scrubber cliquable & déplaçable (Style Image 2) */}
+    <div 
+      onClick={onSeek}
+      className="relative w-full h-3 py-1 flex items-center cursor-pointer group"
+      title="Avancer / reculer dans la lecture"
+    >
+      <div className="w-full h-1 bg-white/30 rounded-full overflow-hidden backdrop-blur-xs">
+        <div 
+          className="h-full bg-[#E5855E] rounded-full transition-all duration-100"
+          style={{ width: `${progressPercent}%` }}
+        />
+      </div>
+      <div 
+        className="absolute w-2.5 h-2.5 bg-[#E5855E] border-2 border-white rounded-full shadow-md -translate-x-1/2 transition-transform group-hover:scale-150"
+        style={{ left: `${progressPercent}%` }}
+      />
+    </div>
+
+    {/* Bouton Waveform Audio/Vidéo centré (Style Image 2) */}
+    <div className="flex items-center justify-center pt-0.5">
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onTogglePlayback(e);
+        }}
+        id="btn-player-soundwave"
+        className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#E5855E] hover:bg-[#DC724B] text-[#1C1917] flex items-center justify-center shadow-[0_6px_20px_rgba(229,133,94,0.55)] cursor-pointer transition-all hover:scale-105 active:scale-95 z-20 shrink-0 border border-white/20"
+        title={isPlaying ? 'Mettre en pause' : 'Lancer la lecture'}
+      >
+        <div className="flex items-center justify-center gap-1">
+          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-5 animate-[pulse_0.6s_ease-in-out_infinite]' : 'h-3'}`} />
+          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-7 animate-[pulse_0.8s_ease-in-out_infinite_0.2s]' : 'h-6'}`} />
+          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-4 animate-[pulse_0.5s_ease-in-out_infinite_0.4s]' : 'h-4'}`} />
+          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-6 animate-[pulse_0.7s_ease-in-out_infinite_0.1s]' : 'h-5'}`} />
+          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-3 animate-[pulse_0.6s_ease-in-out_infinite_0.3s]' : 'h-2'}`} />
+        </div>
+      </button>
+    </div>
+  </div>
+);
+
 export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   onNavigate,
   selectedDocFilter = [],
@@ -235,8 +336,19 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     } as unknown as Protagonist;
   }, [protagonistId, isOwner]);
 
-  // Onglet actif parmi les 6 dimensions poétiques (Proposition B)
-  const [activeTab, setActiveTab] = useState<DimensionTab>(initialTab);
+  const mapInitialCategory = (tab?: string): ProfileCategory => {
+    if (!tab) return 'recit';
+    if (tab === 'episodes' || tab === 'recit') return 'recit';
+    if (tab === 'productions' || tab === 'production') return 'production';
+    if (tab === 'creations' || tab === 'offre') return 'offre';
+    if (tab === 'initiatives' || tab === 'appels' || tab === 'appel') return 'appel';
+    return 'recit';
+  };
+
+  // 4 catégories : Récit (récits + épisodes), Production, Offre, Appel (initiatives + appels)
+  const [activeCategory, setActiveCategory] = useState<ProfileCategory>(() => mapInitialCategory(initialTab));
+  const activeTab = activeCategory;
+  const setActiveTab = (tab: DimensionTab) => setActiveCategory(mapInitialCategory(tab));
 
   // État d'ouverture de la modale Paramètres (accessible uniquement par l'icône dans l'en-tête)
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
@@ -318,7 +430,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [profileEditPhoto, setProfileEditPhoto] = useState<string>(userPhoto);
   const [shareToast, setShareToast] = useState<string | null>(null);
 
-  // Indices de navigation par piste (chariot)
+  // Indices de navigation par catégorie (chariot horizontal)
+  const [categoryIndices, setCategoryIndices] = useState<Record<ProfileCategory, number>>({
+    recit: 0,
+    production: 0,
+    offre: 0,
+    appel: 0,
+  });
   const [recitIndex, setRecitIndex] = useState<number>(0);
   const [episodeIndex, setEpisodeIndex] = useState<number>(0);
   const [shareIndex, setShareIndex] = useState<number>(0);
@@ -326,13 +444,19 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [initiativeIndex, setInitiativeIndex] = useState<number>(0);
   const [appelIndex, setAppelIndex] = useState<number>(0);
 
-  // Swiping state
+  // 2D Swiping state (Vertical = changer catégorie, Horizontal = changer vidéo)
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
-  const [swipeOffset, setSwipeOffset] = useState<number>(0);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [swipeOffsetX, setSwipeOffsetX] = useState<number>(0);
+  const [swipeOffsetY, setSwipeOffsetY] = useState<number>(0);
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false);
+  const lastWheelTime = useRef<number>(0);
 
-  // Video playback
+  // Video playback & scrubber (Style Image 2)
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [videoCurrentTime, setVideoCurrentTime] = useState<number>(0);
+  const [videoDuration, setVideoDuration] = useState<number>(0);
+  const [isScrubbing, setIsScrubbing] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // =========================================================================
@@ -733,14 +857,68 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
-  // Synchroniser la vidéo lors du changement de slide
+  // ---------------------------------------------------------------------------
+  // 4 CATÉGORIES DEMANDÉES :
+  // 1. Récit : réunit récits personnels et épisodes documentaires
+  // 2. Production : parts de coproduction
+  // 3. Offre : artisanat, pièces et ateliers
+  // 4. Appel : réunit initiatives et appels
+  // ---------------------------------------------------------------------------
+  type RecitItemUnion = 
+    | { kind: 'recit'; item: UserRecitItem }
+    | { kind: 'episode'; item: UserEpisodeVideo };
+
+  const recitUnifiedItems: RecitItemUnion[] = React.useMemo(() => {
+    const list: RecitItemUnion[] = [];
+    recits.forEach((r) => list.push({ kind: 'recit', item: r }));
+    episodes.forEach((ep) => list.push({ kind: 'episode', item: ep }));
+    return list;
+  }, [recits, episodes]);
+
+  const productionItems = productions;
+  const offreItems = creations;
+
+  type AppelItemUnion = 
+    | { kind: 'initiative'; item: UserInitiativeItem }
+    | { kind: 'appel'; item: UserAppelItem };
+
+  const appelUnifiedItems: AppelItemUnion[] = React.useMemo(() => {
+    const list: AppelItemUnion[] = [];
+    initiatives.forEach((init) => list.push({ kind: 'initiative', item: init }));
+    appels.forEach((app) => list.push({ kind: 'appel', item: app }));
+    return list;
+  }, [initiatives, appels]);
+
+  const CATEGORY_KEYS: ProfileCategory[] = ['recit', 'production', 'offre', 'appel'];
+
+  const CATEGORIES: { key: ProfileCategory; label: string; icon: React.FC<{ className?: string }> }[] = [
+    { key: 'recit', label: 'Récits & Épisodes', icon: BookOpen },
+    { key: 'production', label: 'Productions', icon: Coins },
+    { key: 'offre', label: 'Offre', icon: ShoppingBag },
+    { key: 'appel', label: 'Appels & Initiatives', icon: Megaphone },
+  ];
+
+  // Calcul du nombre de vidéos de la catégorie active
+  const totalItemsInActiveCategory = 
+    activeCategory === 'recit' ? recitUnifiedItems.length :
+    activeCategory === 'production' ? productionItems.length :
+    activeCategory === 'offre' ? offreItems.length :
+    appelUnifiedItems.length;
+
+  const currentCategoryRawIndex = categoryIndices[activeCategory] || 0;
+  const currentCategorySafeIndex = totalItemsInActiveCategory > 0
+    ? ((currentCategoryRawIndex % totalItemsInActiveCategory) + totalItemsInActiveCategory) % totalItemsInActiveCategory
+    : 0;
+
+  // Synchroniser la vidéo lors du changement de catégorie ou d'index vidéo
   useEffect(() => {
     setIsPlaying(false);
+    setVideoCurrentTime(0);
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.pause();
     }
-  }, [activeTab, recitIndex, episodeIndex, shareIndex, creationIndex, initiativeIndex, appelIndex]);
+  }, [activeCategory, categoryIndices]);
 
   // Gérer la lecture vidéo
   const toggleVideoPlayback = (e?: React.MouseEvent) => {
@@ -754,89 +932,158 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     }
   };
 
-  // Navigation Swipes & Chariot
-  const handlePrev = () => {
-    if (activeTab === 'recit') {
-      setRecitIndex(prev => (prev > 0 ? prev - 1 : recits.length - 1));
-    } else if (activeTab === 'episodes') {
-      setEpisodeIndex(prev => (prev > 0 ? prev - 1 : episodes.length - 1));
-    } else if (activeTab === 'productions') {
-      setShareIndex(prev => (prev > 0 ? prev - 1 : productions.length - 1));
-    } else if (activeTab === 'creations') {
-      setCreationIndex(prev => (prev > 0 ? prev - 1 : creations.length - 1));
-    } else if (activeTab === 'initiatives') {
-      setInitiativeIndex(prev => (prev > 0 ? prev - 1 : initiatives.length - 1));
-    } else if (activeTab === 'appels') {
-      setAppelIndex(prev => (prev > 0 ? prev - 1 : appels.length - 1));
-    }
+  // SWIPE VERTICAL : Passer d'une catégorie à l'autre
+  const handleNextCategory = () => {
+    setActiveCategory((prev) => {
+      const idx = CATEGORY_KEYS.indexOf(prev);
+      const nextIdx = (idx + 1) % CATEGORY_KEYS.length;
+      return CATEGORY_KEYS[nextIdx];
+    });
   };
 
-  const handleNext = () => {
-    if (activeTab === 'recit') {
-      setRecitIndex(prev => (prev < recits.length - 1 ? prev + 1 : 0));
-    } else if (activeTab === 'episodes') {
-      setEpisodeIndex(prev => (prev < episodes.length - 1 ? prev + 1 : 0));
-    } else if (activeTab === 'productions') {
-      setShareIndex(prev => (prev < productions.length - 1 ? prev + 1 : 0));
-    } else if (activeTab === 'creations') {
-      setCreationIndex(prev => (prev < creations.length - 1 ? prev + 1 : 0));
-    } else if (activeTab === 'initiatives') {
-      setInitiativeIndex(prev => (prev < initiatives.length - 1 ? prev + 1 : 0));
-    } else if (activeTab === 'appels') {
-      setAppelIndex(prev => (prev < appels.length - 1 ? prev + 1 : 0));
-    }
+  const handlePrevCategory = () => {
+    setActiveCategory((prev) => {
+      const idx = CATEGORY_KEYS.indexOf(prev);
+      const prevIdx = (idx - 1 + CATEGORY_KEYS.length) % CATEGORY_KEYS.length;
+      return CATEGORY_KEYS[prevIdx];
+    });
   };
 
-  // Touch Swipe Handlers
+  const switchCategory = (cat: ProfileCategory) => {
+    setActiveCategory(cat);
+  };
+
+  // SWIPE HORIZONTAL : Passer de vidéo en vidéo selon la catégorie
+  const handleNextVideo = () => {
+    if (totalItemsInActiveCategory <= 1) return;
+    setCategoryIndices((prev) => ({
+      ...prev,
+      [activeCategory]: ((prev[activeCategory] || 0) + 1) % totalItemsInActiveCategory,
+    }));
+  };
+
+  const handlePrevVideo = () => {
+    if (totalItemsInActiveCategory <= 1) return;
+    setCategoryIndices((prev) => ({
+      ...prev,
+      [activeCategory]: ((prev[activeCategory] || 0) - 1 + totalItemsInActiveCategory) % totalItemsInActiveCategory,
+    }));
+  };
+
+  const handlePrev = handlePrevVideo;
+  const handleNext = handleNextVideo;
+
+  // Touch Swipe Handlers (2D : Vertical = catégorie, Horizontal = vidéo)
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
-    setSwipeOffset(0);
+    setTouchStartY(e.touches[0].clientY);
+    setSwipeOffsetX(0);
+    setSwipeOffsetY(0);
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
-    if (touchStartX === null) return;
+    if (touchStartX === null || touchStartY === null) return;
     const currentX = e.touches[0].clientX;
-    const diff = currentX - touchStartX;
-    if (Math.abs(diff) < 120) {
-      setSwipeOffset(diff);
+    const currentY = e.touches[0].clientY;
+    const diffX = currentX - touchStartX;
+    const diffY = currentY - touchStartY;
+
+    if (Math.abs(diffY) > Math.abs(diffX)) {
+      if (Math.abs(diffY) < 120) {
+        setSwipeOffsetY(diffY);
+        setSwipeOffsetX(0);
+      }
+    } else {
+      if (Math.abs(diffX) < 120) {
+        setSwipeOffsetX(diffX);
+        setSwipeOffsetY(0);
+      }
     }
   };
 
   const onTouchEnd = () => {
-    if (swipeOffset < -40) {
-      handleNext();
-    } else if (swipeOffset > 40) {
-      handlePrev();
+    const threshold = 35;
+    if (Math.abs(swipeOffsetY) > Math.abs(swipeOffsetX) && Math.abs(swipeOffsetY) > threshold) {
+      if (swipeOffsetY < -threshold) {
+        handleNextCategory();
+      } else if (swipeOffsetY > threshold) {
+        handlePrevCategory();
+      }
+    } else if (Math.abs(swipeOffsetX) > threshold) {
+      if (swipeOffsetX < -threshold) {
+        handleNextVideo();
+      } else if (swipeOffsetX > threshold) {
+        handlePrevVideo();
+      }
     }
     setTouchStartX(null);
-    setSwipeOffset(0);
+    setTouchStartY(null);
+    setSwipeOffsetX(0);
+    setSwipeOffsetY(0);
   };
 
-  // Mouse Drag Handlers
+  // Mouse Drag Handlers (2D)
   const onMouseDown = (e: React.MouseEvent) => {
     setIsMouseDown(true);
     setTouchStartX(e.clientX);
-    setSwipeOffset(0);
+    setTouchStartY(e.clientY);
+    setSwipeOffsetX(0);
+    setSwipeOffsetY(0);
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
-    if (!isMouseDown || touchStartX === null) return;
-    const diff = e.clientX - touchStartX;
-    if (Math.abs(diff) < 120) {
-      setSwipeOffset(diff);
+    if (!isMouseDown || touchStartX === null || touchStartY === null) return;
+    const diffX = e.clientX - touchStartX;
+    const diffY = e.clientY - touchStartY;
+
+    if (Math.abs(diffY) > Math.abs(diffX)) {
+      if (Math.abs(diffY) < 120) {
+        setSwipeOffsetY(diffY);
+        setSwipeOffsetX(0);
+      }
+    } else {
+      if (Math.abs(diffX) < 120) {
+        setSwipeOffsetX(diffX);
+        setSwipeOffsetY(0);
+      }
     }
   };
 
   const onMouseUp = () => {
     if (!isMouseDown) return;
-    if (swipeOffset < -40) {
-      handleNext();
-    } else if (swipeOffset > 40) {
-      handlePrev();
+    const threshold = 35;
+    if (Math.abs(swipeOffsetY) > Math.abs(swipeOffsetX) && Math.abs(swipeOffsetY) > threshold) {
+      if (swipeOffsetY < -threshold) {
+        handleNextCategory();
+      } else if (swipeOffsetY > threshold) {
+        handlePrevCategory();
+      }
+    } else if (Math.abs(swipeOffsetX) > threshold) {
+      if (swipeOffsetX < -threshold) {
+        handleNextVideo();
+      } else if (swipeOffsetX > threshold) {
+        handlePrevVideo();
+      }
     }
     setIsMouseDown(false);
     setTouchStartX(null);
-    setSwipeOffset(0);
+    setTouchStartY(null);
+    setSwipeOffsetX(0);
+    setSwipeOffsetY(0);
+  };
+
+  // Molette souris : navigation verticale entre catégories
+  const onWheel = (e: React.WheelEvent) => {
+    const now = Date.now();
+    if (now - lastWheelTime.current < 450) return;
+    if (Math.abs(e.deltaY) > 30) {
+      lastWheelTime.current = now;
+      if (e.deltaY > 0) {
+        handleNextCategory();
+      } else {
+        handlePrevCategory();
+      }
+    }
   };
 
   // Nom complet affiché pour garantir une stricte cohérence avec l'explorateur
@@ -849,68 +1096,99 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     setIsShareModalOpen(true);
   };
 
-  // Items actifs
+  // Items actifs dans les 4 catégories
+  const currentRecitUnified = recitUnifiedItems[currentCategorySafeIndex] || recitUnifiedItems[0];
+  const currentProduction = productionItems[currentCategorySafeIndex] || productionItems[0];
+  const currentCreation = offreItems[currentCategorySafeIndex] || offreItems[0];
+  const currentAppelUnified = appelUnifiedItems[currentCategorySafeIndex] || appelUnifiedItems[0];
+
   const currentRecit = recits[recitIndex] || recits[0];
   const currentEpisode = episodes[episodeIndex] || episodes[0];
-  const currentProduction = productions[shareIndex] || productions[0];
-  const currentCreation = creations[creationIndex] || creations[0];
   const currentInitiative = initiatives[initiativeIndex] || initiatives[0];
   const currentAppel = appels[appelIndex] || appels[0];
 
-  // Helper titre série avec mise en valeur du symbole < >
-  const currentSeriesTitle = 
-    activeTab === 'recit' ? (userName || 'Récit personnel') :
-    activeTab === 'episodes' ? currentEpisode?.seriesTitle :
-    activeTab === 'productions' ? currentProduction?.seriesTitle :
-    activeTab === 'creations' ? (currentCreation?.seriesTitle || 'Créations d’atelier') :
-    activeTab === 'initiatives' ? (currentInitiative?.seriesTitle || 'Initiative') :
-    (currentAppel?.category || 'Appel');
-
-  const parseSeriesTitle = (title?: string) => {
-    if (!title) return { partA: '', partB: '', hasSeparator: false };
-    if (title.includes('< >')) {
-      const parts = title.split('< >');
-      return { partA: parts[0].trim(), partB: parts.slice(1).join('< >').trim(), hasSeparator: true };
-    }
-    if (title.includes('<>')) {
-      const parts = title.split('<>');
-      return { partA: parts[0].trim(), partB: parts.slice(1).join('<>').trim(), hasSeparator: true };
-    }
-    return { partA: title.trim(), partB: '', hasSeparator: false };
-  };
-
-  const parsedSeries = parseSeriesTitle(currentSeriesTitle);
-
-  const currentDimensionIndex = activeTab === 'recit' ? recitIndex 
-    : activeTab === 'episodes' ? episodeIndex 
-    : activeTab === 'productions' ? shareIndex 
-    : activeTab === 'creations' ? creationIndex 
-    : activeTab === 'initiatives' ? initiativeIndex 
-    : appelIndex;
-
-  const totalDimensionItems = activeTab === 'recit' ? recits.length 
-    : activeTab === 'episodes' ? episodes.length 
-    : activeTab === 'productions' ? productions.length 
-    : activeTab === 'creations' ? creations.length 
-    : activeTab === 'initiatives' ? initiatives.length 
-    : appels.length;
-
-  // Helper pour raccourcir le titre tout en haut afin qu'il tienne parfaitement dans la capsule
+  // Helper pour raccourcir le titre tout en haut
   const getShortTitle = (title?: string) => {
     if (!title) return '';
     const clean = title.split(/[:–—]/)[0].trim();
     return clean;
   };
 
-  // Configuration des 6 onglets poétiques (Proposition B)
-  const DIMENSIONS_CONFIG: { key: DimensionTab; label: string; icon: React.FC<{ className?: string }> }[] = [
-    { key: 'recit', label: 'Récits', icon: BookOpen },
-    { key: 'episodes', label: 'Épisodes', icon: Film },
-    { key: 'productions', label: 'Productions', icon: Coins },
-    { key: 'creations', label: 'Créations', icon: ShoppingBag },
-    { key: 'initiatives', label: 'Initiatives', icon: HeartHandshake },
-    { key: 'appels', label: 'Appels', icon: Megaphone },
-  ];
+  // Résolution du média actif pour le lecteur moderne style Image 2
+  const currentMedia = useMemo(() => {
+    if (activeCategory === 'recit') {
+      const item = currentRecitUnified?.item;
+      const title = currentRecitUnified?.kind === 'recit' 
+        ? (item?.title || 'Mon chemin')
+        : ((item as any)?.seriesTitle || 'Épisode');
+      return {
+        posterUrl: item?.posterUrl || '/assets/protagonists/amara-tisserande.jpg',
+        videoUrl: item?.videoUrl || '',
+        title: title,
+        durationStr: item?.duration || '03:45',
+      };
+    }
+    if (activeCategory === 'production') {
+      return {
+        posterUrl: currentProduction?.posterUrl || '/assets/protagonists/koffi-tisserand.jpg',
+        videoUrl: currentProduction?.videoUrl || '',
+        title: currentProduction?.seriesTitle || 'Production',
+        durationStr: currentProduction?.duration || '04:12',
+      };
+    }
+    if (activeCategory === 'offre') {
+      return {
+        posterUrl: currentCreation?.posterUrl || '/assets/protagonists/fatou-restauratrice.jpg',
+        videoUrl: currentCreation?.videoUrl || '',
+        title: currentCreation?.title || 'Création',
+        durationStr: '02:50',
+      };
+    }
+    const item = currentAppelUnified?.item;
+    return {
+      posterUrl: item?.posterUrl || '/assets/protagonists/amadou-pecheur.jpg',
+      videoUrl: item?.videoUrl || '',
+      title: item?.title || 'Appel',
+      durationStr: '03:45',
+    };
+  }, [activeCategory, currentRecitUnified, currentProduction, currentCreation, currentAppelUnified]);
+
+  const parseDurationSeconds = (dur?: string): number => {
+    if (!dur) return 225; // 03:45 (comme sur Image 2)
+    const parts = dur.split(':').map(p => parseInt(p.trim(), 10));
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      return parts[0] * 60 + parts[1];
+    }
+    return 225;
+  };
+
+  const activeDuration = (videoDuration && videoDuration > 0) 
+    ? videoDuration 
+    : parseDurationSeconds(currentMedia.durationStr);
+
+  const progressPercent = activeDuration > 0 
+    ? Math.min(100, Math.max(0, (videoCurrentTime / activeDuration) * 100))
+    : 0;
+
+  const formatVideoTime = (seconds: number): string => {
+    if (isNaN(seconds) || seconds < 0) return '00:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  const handleTimelineSeek = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+    const clickX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+    const newTime = ratio * activeDuration;
+    setVideoCurrentTime(newTime);
+    if (videoRef.current) {
+      videoRef.current.currentTime = newTime;
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-36 space-y-6 text-[#1C1917]">
@@ -1027,34 +1305,6 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             )}
           </div>
         </div>
-
-        {/* ========================================================================= */}
-        {/* BARRE DES 6 DIMENSIONS (PROPOSITION B : PLUS CINÉMATOGRAPHIQUE & POÉTIQUE)  */}
-        {/* 1. Récit | 2. Épisodes | 3. Productions | 4. Créations | 5. Initiatives | 6. Appels */}
-        {/* Note : Paramètres a été déplacé dans l'icône d'en-tête                        */}
-        {/* ========================================================================= */}
-        <div className="bg-stone-100/90 p-1.5 rounded-2xl border border-stone-200/80 shadow-xs">
-          <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
-            {DIMENSIONS_CONFIG.map(({ key, label, icon: IconComponent }) => {
-              const isActive = activeTab === key;
-              return (
-                <button
-                  key={key}
-                  onClick={() => setActiveTab(key)}
-                  id={`tab-profile-${key}`}
-                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 outline-none whitespace-nowrap ${
-                    isActive
-                      ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60 font-bold'
-                      : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
-                  }`}
-                >
-                  <IconComponent className={`w-3.5 h-3.5 ${isActive ? 'text-[#C89B3C]' : 'text-stone-400'}`} />
-                  <span>{label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
       {/* TOAST SUCCÈS */}
@@ -1083,7 +1333,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             <ChevronLeft className="w-5 h-5" />
           </button>
 
-          {/* CARTE FORMAT 9:16 VERTICAL SANS CADRE NI REPERES */}
+          {/* CARTE FORMAT 9:16 VERTICAL AVEC GESTION DU SWIPE 2D */}
           <div
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
@@ -1091,92 +1341,136 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
+            onWheel={onWheel}
             onClick={(e) => {
               if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
               toggleVideoPlayback();
             }}
-            className="w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-3xl overflow-hidden shadow-xl border border-[#E7E5E4] bg-stone-900 outline-none focus:outline-none ring-0"
-            style={{ transform: `translateX(${swipeOffset}px)` }}
+            className="w-full max-w-[320px] sm:max-w-[360px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-3xl overflow-hidden shadow-2xl border border-stone-800 bg-stone-950 outline-none focus:outline-none ring-0"
+            style={{ transform: `translate(${swipeOffsetX}px, ${swipeOffsetY}px)` }}
           >
             {/* ================================================================= */}
-            {/* DIMENSION 1 : RÉCIT (Vidéos personnelles / histoire de vie)       */}
+            {/* 4 ICÔNES FLOTTANTES SUR LE CÔTÉ DROIT DE LA VIDÉO (STYLE IMAGE 1) */}
+            {/* Sans capsule ni barre de fond noire, flottant directement sur     */}
+            {/* l'image avec ombre portée. Active en jaune avec repère vertical.  */}
             {/* ================================================================= */}
-            {activeTab === 'recit' && currentRecit && (
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-5 pointer-events-auto">
+              {CATEGORIES.map(({ key, label, icon: IconComponent }) => {
+                const isActive = activeCategory === key;
+                return (
+                  <div key={key} className="relative flex items-center justify-center">
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        switchCategory(key);
+                      }}
+                      id={`btn-profile-cat-${key}`}
+                      title={label}
+                      className="p-1 flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-90 group"
+                    >
+                      <IconComponent
+                        className={`w-6 h-6 transition-all duration-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] ${
+                          isActive
+                            ? 'text-[#FACC15] scale-110 stroke-[2.3]'
+                            : 'text-white/80 hover:text-white hover:scale-110 stroke-[1.8]'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Indication visuelle discrète au centre quand la vidéo est en pause */}
+            {!isPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl">
+                  <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-90" />
+                </div>
+              </div>
+            )}
+
+            {/* ================================================================= */}
+            {/* CATÉGORIE 1 : RÉCIT (Récits personnels & Épisodes réunis)         */}
+            {/* ================================================================= */}
+            {activeCategory === 'recit' && currentRecitUnified && (
               <div 
                 className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
-                id={`card-recit-${currentRecit.id}`}
+                id={`card-recit-${currentRecitUnified.item.id}`}
               >
                 <img
-                  src={currentRecit.posterUrl}
+                  src={currentRecitUnified.item.posterUrl}
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                 />
                 <video
                   ref={videoRef}
-                  src={currentRecit.videoUrl}
+                  src={currentRecitUnified.item.videoUrl}
                   loop
                   muted
                   playsInline
+                  onTimeUpdate={(e) => {
+                    const v = e.currentTarget;
+                    if (!isScrubbing) {
+                      setVideoCurrentTime(v.currentTime);
+                    }
+                  }}
+                  onLoadedMetadata={(e) => {
+                    const v = e.currentTarget;
+                    if (v.duration && !isNaN(v.duration) && isFinite(v.duration)) {
+                      setVideoDuration(v.duration);
+                    }
+                  }}
+                  onEnded={() => setIsPlaying(false)}
                   className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                {/* Filtre plus clair et lumineux sur l'image */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/35 pointer-events-none" />
 
-                {/* HAUT : Titre court qui s'adapte à la capsule à gauche, Icône vidéo dorée à droite */}
-                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div 
-                    className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white shadow-md flex items-center shrink-0" 
-                    title={currentRecit.title}
-                  >
-                    <span className="truncate">{getShortTitle(currentRecit.title)}</span>
-                  </div>
+                {/* HAUT : Titre à gauche (sans capsule) & Bouton Partager à droite (Style Image 2) */}
+                <VideoTopHeader 
+                  title={getShortTitle(currentRecitUnified.kind === 'recit' ? currentRecitUnified.item.title : currentRecitUnified.item.seriesTitle) || 'Récit personnel'}
+                  author={profileDisplayName}
+                  onShare={handleShareProfile}
+                />
 
-                  {/* Icône vidéo hybride dorée en haut à droite */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleVideoPlayback(e);
-                    }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isPlaying ? 'Mettre en pause' : `Visionner le récit`}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
-                  </button>
-                </div>
-
-                {/* MILIEU : Vue épurée sans texte */}
                 <div className="my-auto" />
 
-                {/* BAS : Juste un petit titre en bas & actions */}
-                <div className="relative z-10 space-y-2.5">
+                {/* BAS : Titre, durée/vues, actions & lecteur moderne (Style Image 2) */}
+                <div className="relative z-10 space-y-2.5 pr-14">
                   <div>
-                    <p className="font-editorial text-sm sm:text-base font-bold text-white leading-snug">
-                      {currentRecit.subtitle || currentRecit.chapter}
-                    </p>
+                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                      {currentRecitUnified.kind === 'recit'
+                        ? (currentRecitUnified.item.subtitle || currentRecitUnified.item.chapter || currentRecitUnified.item.title)
+                        : currentRecitUnified.item.title}
+                    </h3>
+                    <div className="flex items-center gap-2 text-[11px] text-white/80 mt-1 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                      <span>{currentRecitUnified.item.duration}</span>
+                      <span>•</span>
+                      <span>{currentRecitUnified.item.viewsCount?.toLocaleString()} vues</span>
+                    </div>
                   </div>
 
-                  {/* Actions propriétaire */}
                   {isOwner && (
-                    <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="grid grid-cols-2 gap-2 pt-0.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setEditingRecit(currentRecit);
-                          setRecitFormTitle(currentRecit.title);
-                          setRecitFormSubtitle(currentRecit.subtitle || '');
+                          if (currentRecitUnified.kind === 'recit') {
+                            setEditingRecit(currentRecitUnified.item);
+                            setRecitFormTitle(currentRecitUnified.item.title);
+                            setRecitFormSubtitle(currentRecitUnified.item.subtitle || '');
+                          } else {
+                            setEditingEpisode(currentRecitUnified.item);
+                            setEpisodeFormDuration(currentRecitUnified.item.duration);
+                            setEpisodeFormViews(currentRecitUnified.item.viewsCount);
+                          }
                         }}
-                        className="h-10 px-3.5 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] border border-stone-200/50"
-                        id="btn-edit-recit"
+                        className="h-8.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                        id="btn-edit-recit-unified"
                       >
                         <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
                         <span>Modifier</span>
@@ -1184,126 +1478,41 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setIsDeletingRecit(true);
+                          if (currentRecitUnified.kind === 'recit') {
+                            setEditingRecit(currentRecitUnified.item);
+                            setIsDeletingRecit(true);
+                          } else {
+                            setEditingEpisode(currentRecitUnified.item);
+                            setIsDeletingEpisode(true);
+                          }
                         }}
-                        className="h-10 px-3.5 rounded-xl bg-black/60 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white/95 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
-                        id="btn-delete-recit"
+                        className="h-8.5 px-3 rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                        id="btn-delete-recit-unified"
                       >
                         <Trash2 className="w-3.5 h-3.5 text-red-400" />
                         <span>Retirer</span>
                       </button>
                     </div>
                   )}
+
+                  {/* Lecteur moderne Image 2 */}
+                  <VideoModernPlayerBar 
+                    videoCurrentTime={videoCurrentTime}
+                    activeDuration={activeDuration}
+                    progressPercent={progressPercent}
+                    isPlaying={isPlaying}
+                    onTogglePlayback={toggleVideoPlayback}
+                    onSeek={handleTimelineSeek}
+                    formatTime={formatVideoTime}
+                  />
                 </div>
               </div>
             )}
 
             {/* ================================================================= */}
-            {/* DIMENSION 2 : ÉPISODES (Vidéos dans les séries documentaires)     */}
+            {/* CATÉGORIE 2 : PRODUCTION (Parts de coproduction)                  */}
             {/* ================================================================= */}
-            {activeTab === 'episodes' && currentEpisode && (
-              <div 
-                className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
-                id={`card-episode-${currentEpisode.id}`}
-              >
-                <img
-                  src={currentEpisode.posterUrl}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                />
-                <video
-                  ref={videoRef}
-                  src={currentEpisode.videoUrl}
-                  loop
-                  muted
-                  playsInline
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
-                    isPlaying ? 'opacity-100' : 'opacity-0'
-                  }`}
-                />
-                {/* Filtre plus clair et lumineux sur l'image */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
-
-                {/* HAUT : Titre de la série à gauche dans capsule adaptable, Icône vidéo dorée à droite */}
-                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white tracking-wide shadow-md flex items-center shrink-0">
-                    {parsedSeries.hasSeparator ? (
-                      <span className="flex items-center gap-1.5 font-semibold text-white tracking-wide truncate">
-                        <span>{parsedSeries.partA}</span>
-                        <span className="text-white/70 font-mono text-[11px]">&lt; &gt;</span>
-                        <span>{parsedSeries.partB}</span>
-                      </span>
-                    ) : (
-                      <span className="tracking-wide text-white truncate">{currentEpisode.seriesTitle}</span>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleVideoPlayback(e);
-                    }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isPlaying ? 'Mettre en pause' : `Visionner l'épisode`}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
-                  </button>
-                </div>
-
-                <div className="my-auto" />
-
-                {/* BAS : Pas de titre ! Durée et nombre de vues dans une police avec taille plus basse harmonisée */}
-                <div className="relative z-10 space-y-2.5">
-                  <div className="px-3 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/15 inline-block">
-                    <p className="text-[11px] font-medium text-white/90 tracking-normal">
-                      {currentEpisode.duration} • {currentEpisode.viewsCount.toLocaleString()} vues
-                    </p>
-                  </div>
-
-                  {isOwner && (
-                    <div className="grid grid-cols-2 gap-2 pt-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingEpisode(currentEpisode);
-                          setEpisodeFormDuration(currentEpisode.duration);
-                          setEpisodeFormViews(currentEpisode.viewsCount);
-                        }}
-                        className="h-10 px-3.5 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] border border-stone-200/50"
-                        id="btn-edit-episode"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
-                        <span>Modifier</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsDeletingEpisode(true);
-                        }}
-                        className="h-10 px-3.5 rounded-xl bg-black/60 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white/95 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
-                        id="btn-delete-episode"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                        <span>Retirer</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* ================================================================= */}
-            {/* DIMENSION 3 : PRODUCTIONS (Parts de coproduction)                 */}
-            {/* ================================================================= */}
-            {activeTab === 'productions' && currentProduction && (
+            {activeCategory === 'production' && currentProduction && (
               <div 
                 className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
                 id={`card-production-${currentProduction.id}`}
@@ -1319,82 +1528,49 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   loop
                   muted
                   playsInline
+                  onTimeUpdate={(e) => {
+                    const v = e.currentTarget;
+                    if (!isScrubbing) {
+                      setVideoCurrentTime(v.currentTime);
+                    }
+                  }}
+                  onLoadedMetadata={(e) => {
+                    const v = e.currentTarget;
+                    if (v.duration && !isNaN(v.duration) && isFinite(v.duration)) {
+                      setVideoDuration(v.duration);
+                    }
+                  }}
+                  onEnded={() => setIsPlaying(false)}
                   className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                {/* Filtre plus clair et lumineux sur l'image */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/35 pointer-events-none" />
 
-                {/* HAUT : Titre de la série à gauche en blanc dans capsule adaptable, Icône vidéo dorée à droite */}
-                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white tracking-wide shadow-md flex items-center shrink-0">
-                    {parsedSeries.hasSeparator ? (
-                      <span className="flex items-center gap-1.5 font-semibold text-white tracking-wide truncate">
-                        <span>{parsedSeries.partA}</span>
-                        <span className="text-white/70 font-mono text-[11px]">&lt; &gt;</span>
-                        <span>{parsedSeries.partB}</span>
-                      </span>
-                    ) : (
-                      <span className="tracking-wide text-white truncate">{currentProduction.seriesTitle}</span>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleVideoPlayback(e);
-                    }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isPlaying ? 'Mettre en pause' : `Teaser de coproduction`}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
-                  </button>
-                </div>
+                {/* HAUT : Titre à gauche & Bouton Partager à droite (Style Image 2) */}
+                <VideoTopHeader 
+                  title={currentProduction.seriesTitle}
+                  author={profileDisplayName}
+                  onShare={handleShareProfile}
+                />
 
                 <div className="my-auto" />
 
-                {/* BAS : Détail des parts - Propriétaire vs Visiteur */}
-                <div className="relative z-10 space-y-2.5">
-                  <div className="p-3.5 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20">
-                    <div className="flex items-center justify-between text-xs">
-                      {isOwner ? (
-                        <>
-                          <div>
-                            <span className="text-white/60 block text-[10px] tracking-wide">Prix de départ</span>
-                            <span className="font-mono font-bold text-white text-base">{currentProduction.startPrice || 35} €</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-white/60 block text-[10px] tracking-wide">Parts détenues</span>
-                            <span className="font-mono font-bold text-white text-base">{currentProduction.sharesCount} parts</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div>
-                            <span className="text-white/60 block text-[10px] tracking-wide">Prix de la part</span>
-                            <span className="font-mono font-bold text-[#C89B3C] text-base">{currentProduction.salePrice || currentProduction.startPrice || 55} €</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-white/60 block text-[10px] tracking-wide">Parts en vente</span>
-                            <span className="font-mono font-bold text-white text-base">{currentProduction.sharesOnSale || 2} disponibles</span>
-                          </div>
-                        </>
-                      )}
+                {/* BAS : Détails coproduction, actions & lecteur moderne (Style Image 2) */}
+                <div className="relative z-10 space-y-2.5 pr-14">
+                  <div>
+                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                      {currentProduction.seriesTitle}
+                    </h3>
+                    <div className="flex items-center gap-3 text-[11px] text-white/90 mt-1 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                      <span>{currentProduction.sharesCount} parts</span>
+                      <span>•</span>
+                      <span>Valeur : {currentProduction.currentValue}</span>
                     </div>
                   </div>
 
-                  {/* Actions Propriétaire vs Visiteur - Pas de mise en vente pour le visiteur */}
                   {isOwner ? (
-                    <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="grid grid-cols-2 gap-2 pt-0.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1405,7 +1581,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setProdFormSharesCount(currentProduction.sharesCount);
                           setProdFormSharesOnSale(currentProduction.sharesOnSale);
                         }}
-                        className="h-10 px-3.5 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                        className="h-8.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
                         id="btn-edit-production"
                       >
                         <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
@@ -1418,21 +1594,21 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setSellPriceInput(currentProduction.salePrice || currentProduction.recommendedPrice);
                           setIsSellingShares(true);
                         }}
-                        className="h-10 px-3.5 rounded-xl bg-[#C89B3C] hover:bg-[#B78A2E] text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+                        className="h-8.5 px-3 rounded-xl bg-black/65 hover:bg-stone-800 border border-white/20 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
                         id="btn-sell-production"
                       >
-                        <Coins className="w-3.5 h-3.5 text-[#1C1917]" />
+                        <Coins className="w-3.5 h-3.5 text-[#FACC15]" />
                         <span>Vendre</span>
                       </button>
                     </div>
                   ) : (
-                    <div className="pt-1">
+                    <div className="pt-0.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsBuyingSharesModalOpen(true);
                         }}
-                        className="w-full h-11 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#B78A2E] text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                        className="w-full h-9 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                         id="btn-buy-shares"
                       >
                         <Coins className="w-4 h-4 text-[#1C1917]" />
@@ -1440,14 +1616,25 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                       </button>
                     </div>
                   )}
+
+                  {/* Lecteur moderne Image 2 */}
+                  <VideoModernPlayerBar 
+                    videoCurrentTime={videoCurrentTime}
+                    activeDuration={activeDuration}
+                    progressPercent={progressPercent}
+                    isPlaying={isPlaying}
+                    onTogglePlayback={toggleVideoPlayback}
+                    onSeek={handleTimelineSeek}
+                    formatTime={formatVideoTime}
+                  />
                 </div>
               </div>
             )}
 
             {/* ================================================================= */}
-            {/* DIMENSION 4 : CRÉATIONS (Artisanat, Pièces, Ateliers)             */}
+            {/* CATÉGORIE 3 : OFFRE (Artisanat, Pièces, Ateliers)                 */}
             {/* ================================================================= */}
-            {activeTab === 'creations' && currentCreation && (
+            {activeCategory === 'offre' && currentCreation && (
               <div 
                 className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
                 id={`card-creation-${currentCreation.id}`}
@@ -1463,64 +1650,50 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   loop
                   muted
                   playsInline
+                  onTimeUpdate={(e) => {
+                    const v = e.currentTarget;
+                    if (!isScrubbing) {
+                      setVideoCurrentTime(v.currentTime);
+                    }
+                  }}
+                  onLoadedMetadata={(e) => {
+                    const v = e.currentTarget;
+                    if (v.duration && !isNaN(v.duration) && isFinite(v.duration)) {
+                      setVideoDuration(v.duration);
+                    }
+                  }}
+                  onEnded={() => setIsPlaying(false)}
                   className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                {/* Filtre plus clair et lumineux sur l'image */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/35 pointer-events-none" />
 
-                {/* HAUT : Titre court de série/atelier à gauche dans capsule adaptable, Icône vidéo dorée à droite */}
-                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div 
-                    className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white tracking-wide shadow-md flex items-center shrink-0" 
-                    title={currentCreation.seriesTitle || 'Créations d’atelier'}
-                  >
-                    <span className="truncate">{getShortTitle(currentCreation.seriesTitle) || 'Créations d’atelier'}</span>
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleVideoPlayback(e);
-                    }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isPlaying ? 'Mettre en pause' : `Découvrir la création`}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
-                  </button>
-                </div>
+                {/* HAUT : Titre à gauche & Bouton Partager à droite (Style Image 2) */}
+                <VideoTopHeader 
+                  title={currentCreation.title}
+                  author={profileDisplayName}
+                  onShare={handleShareProfile}
+                />
 
                 <div className="my-auto" />
 
-                {/* BAS : Titre court sur 1 ligne, catégorie juste en dessous, prix doré en dessous */}
-                <div className="relative z-10 space-y-2.5">
+                {/* BAS : Titre court, catégorie, prix, actions & lecteur moderne (Style Image 2) */}
+                <div className="relative z-10 space-y-2.5 pr-14">
                   <div>
-                    {/* Titre court sur 1 ligne */}
-                    <h3 className="font-editorial text-base sm:text-lg font-bold text-white leading-snug truncate" title={currentCreation.title}>
+                    <div className="text-[11px] font-medium text-[#FACC15] uppercase tracking-wider drop-shadow-sm">
+                      {currentCreation.categoryLabel || 'Offre & Savoir-faire'}
+                    </div>
+                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] mt-0.5" title={currentCreation.title}>
                       {currentCreation.title}
                     </h3>
-                    {/* Catégorie juste en dessous */}
-                    <p className="text-xs text-white/80 font-medium pt-0.5 truncate">
-                      {currentCreation.categoryLabel}
-                    </p>
-                    {/* Prix juste en dessous en doré */}
-                    <p className="font-mono text-base font-bold text-[#C89B3C] pt-1">
+                    <p className="font-mono text-base font-bold text-[#FACC15] pt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                       {currentCreation.price}
                     </p>
                   </div>
 
-                  {/* Actions Propriétaire vs Visiteur */}
                   {isOwner ? (
-                    <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="grid grid-cols-2 gap-2 pt-0.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1532,7 +1705,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setCreationFormPoster(currentCreation.posterUrl);
                           setCreationFormVideo(currentCreation.videoUrl);
                         }}
-                        className="h-10 px-3.5 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                        className="h-8.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
                         id="btn-edit-creation"
                       >
                         <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
@@ -1543,7 +1716,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           e.stopPropagation();
                           setIsDeletingCreation(true);
                         }}
-                        className="h-10 px-3.5 rounded-xl bg-black/60 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white/95 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                        className="h-8.5 px-3 rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
                         id="btn-delete-creation"
                       >
                         <Trash2 className="w-3.5 h-3.5 text-red-400" />
@@ -1551,14 +1724,14 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                       </button>
                     </div>
                   ) : (
-                    <div className="pt-1">
+                    <div className="pt-0.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setOrderActionType('commander');
                           setIsOrderingCreationModalOpen(true);
                         }}
-                        className="w-full h-11 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#B78A2E] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                        className="w-full h-9 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                         id="btn-order-creation"
                       >
                         <ShoppingBag className="w-4 h-4 text-[#1C1917]" />
@@ -1566,261 +1739,225 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                       </button>
                     </div>
                   )}
+
+                  {/* Lecteur moderne Image 2 */}
+                  <VideoModernPlayerBar 
+                    videoCurrentTime={videoCurrentTime}
+                    activeDuration={activeDuration}
+                    progressPercent={progressPercent}
+                    isPlaying={isPlaying}
+                    onTogglePlayback={toggleVideoPlayback}
+                    onSeek={handleTimelineSeek}
+                    formatTime={formatVideoTime}
+                  />
                 </div>
               </div>
             )}
 
             {/* ================================================================= */}
-            {/* DIMENSION 5 : INITIATIVES (Financement participatif / Projets)     */}
+            {/* CATÉGORIE 4 : APPEL (Initiatives & Appels réunis)                 */}
             {/* ================================================================= */}
-            {activeTab === 'initiatives' && currentInitiative && (
+            {activeCategory === 'appel' && currentAppelUnified && (
               <div 
                 className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
-                id={`card-initiative-${currentInitiative.id}`}
+                id={`card-appel-${currentAppelUnified.item.id}`}
               >
                 <img
-                  src={currentInitiative.posterUrl}
+                  src={currentAppelUnified.item.posterUrl}
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                 />
                 <video
                   ref={videoRef}
-                  src={currentInitiative.videoUrl}
+                  src={currentAppelUnified.item.videoUrl}
                   loop
                   muted
                   playsInline
+                  onTimeUpdate={(e) => {
+                    const v = e.currentTarget;
+                    if (!isScrubbing) {
+                      setVideoCurrentTime(v.currentTime);
+                    }
+                  }}
+                  onLoadedMetadata={(e) => {
+                    const v = e.currentTarget;
+                    if (v.duration && !isNaN(v.duration) && isFinite(v.duration)) {
+                      setVideoDuration(v.duration);
+                    }
+                  }}
+                  onEnded={() => setIsPlaying(false)}
                   className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
                     isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
-                {/* Filtre plus clair et lumineux sur l'image */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/35 pointer-events-none" />
 
-                {/* HAUT : % et jours restants en haut à gauche dans capsule adaptable, Icône vidéo dorée en haut à droite */}
-                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-semibold text-white shadow-md flex items-center gap-1.5 shrink-0">
-                    <span className="text-white font-mono font-bold">
-                      {Math.round((currentInitiative.collectedAmount / currentInitiative.targetAmount) * 100)}%
+                {/* HAUT : Badge & Titre à gauche, bouton Partager à droite (Style Image 2) */}
+                <div className="relative z-10 flex items-center justify-between gap-3 w-full pr-14">
+                  <div className="flex items-center gap-2 min-w-0 pr-1">
+                    <p className="font-editorial text-xs sm:text-sm font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] truncate tracking-wide">
+                      {currentAppelUnified.kind === 'initiative' ? 'Initiative' : 'Appel'} <span className="opacity-75 font-normal">— {profileDisplayName}</span>
+                    </p>
+                    <span className="px-2 py-0.5 rounded-md bg-[#FACC15]/20 border border-[#FACC15]/40 text-[#FACC15] font-mono text-[10px] font-bold shrink-0">
+                      {currentAppelUnified.kind === 'initiative' 
+                        ? `${Math.round((currentAppelUnified.item.collectedAmount / currentAppelUnified.item.targetAmount) * 100)}%`
+                        : (currentAppelUnified.item.urgency || 'Urgent')}
                     </span>
-                    <span className="text-white/40">•</span>
-                    <span>{currentInitiative.daysRemaining} j restants</span>
                   </div>
 
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleVideoPlayback(e);
+                      handleShareProfile();
                     }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isPlaying ? 'Mettre en pause' : `Pitch de l’initiative`}
+                    id="btn-video-top-share"
+                    className="w-8.5 h-8.5 rounded-xl bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md border border-white/25 text-white flex items-center justify-center shadow-md transition-all cursor-pointer shrink-0"
+                    title="Partager"
                   >
-                    {isPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
+                    <Share className="w-4 h-4 text-white drop-shadow-sm" />
                   </button>
                 </div>
 
                 <div className="my-auto" />
 
-                {/* BAS : Titre court sur 1 ligne, Jauge & Nombre de contributeurs */}
-                <div className="relative z-10 space-y-3">
-                  <div>
-                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug break-words" title={currentInitiative.title}>
-                      {currentInitiative.title}
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2 p-3 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-white/80 font-medium">Objectif : {currentInitiative.targetAmount.toLocaleString()} €</span>
-                      <span className="font-mono text-[#C89B3C] font-bold">{currentInitiative.collectedAmount.toLocaleString()} € récoltés</span>
-                    </div>
-                    
-                    <div className="w-full h-2 rounded-full bg-white/20 overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-[#C89B3C] to-emerald-400 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(100, (currentInitiative.collectedAmount / currentInitiative.targetAmount) * 100)}%` }}
-                      />
-                    </div>
-
-                    {/* Nombre de contributeurs écrit en gros */}
-                    <div className="pt-1 flex items-center justify-between">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-white font-mono leading-none tracking-tight">
-                          {currentInitiative.backersCount}
-                        </span>
-                        <span className="text-xs font-bold text-[#C89B3C] uppercase tracking-wider">
-                          contributeurs
-                        </span>
+                {/* BAS : Détails & Actions selon Initiative ou Appel */}
+                <div className="relative z-10 space-y-2.5 pr-14">
+                  {currentAppelUnified.kind === 'initiative' ? (
+                    <>
+                      <div>
+                        <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2" title={currentAppelUnified.item.title}>
+                          {currentAppelUnified.item.title}
+                        </h3>
                       </div>
-                      <span className="text-[11px] text-white/70">
-                        Campagne active
-                      </span>
-                    </div>
-                  </div>
 
-                  {isOwner ? (
-                    <div className="grid grid-cols-2 gap-2 pt-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingInitiative(currentInitiative);
-                          setInitiativeFormTitle(currentInitiative.title);
-                          setInitiativeFormTarget(currentInitiative.targetAmount);
-                          setInitiativeFormDescription(currentInitiative.description);
-                          setInitiativeFormPoster(currentInitiative.posterUrl);
-                          setInitiativeFormVideo(currentInitiative.videoUrl);
-                        }}
-                        className="h-10 px-3.5 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] border border-stone-200/50"
-                        id="btn-edit-initiative"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
-                        <span>Modifier</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsDeletingInitiative(true);
-                        }}
-                        className="h-10 px-3.5 rounded-xl bg-black/60 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white/95 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
-                        id="btn-delete-initiative"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                        <span>Supprimer</span>
-                      </button>
-                    </div>
+                      <div className="space-y-1.5 p-2.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/20">
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-white/80">Obj : {currentAppelUnified.item.targetAmount.toLocaleString()} €</span>
+                          <span className="font-mono text-[#FACC15] font-bold">{currentAppelUnified.item.collectedAmount.toLocaleString()} € récoltés</span>
+                        </div>
+                        <div className="w-full h-1.5 rounded-full bg-white/20 overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-[#FACC15] to-emerald-400 rounded-full"
+                            style={{ width: `${Math.min(100, (currentAppelUnified.item.collectedAmount / currentAppelUnified.item.targetAmount) * 100)}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {isOwner ? (
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingInitiative(currentAppelUnified.item);
+                              setInitiativeFormTitle(currentAppelUnified.item.title);
+                              setInitiativeFormTarget(currentAppelUnified.item.targetAmount);
+                              setInitiativeFormDescription(currentAppelUnified.item.description);
+                              setInitiativeFormPoster(currentAppelUnified.item.posterUrl);
+                              setInitiativeFormVideo(currentAppelUnified.item.videoUrl);
+                            }}
+                            className="h-9 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                            id="btn-edit-initiative"
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
+                            <span>Modifier</span>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingInitiative(currentAppelUnified.item);
+                              setIsDeletingInitiative(true);
+                            }}
+                            className="h-9 px-3 rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                            id="btn-delete-initiative"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                            <span>Supprimer</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="pt-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setInitiativeActionType('contribuer');
+                              setIsContributingModalOpen(true);
+                            }}
+                            className="w-full h-10 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                            id="btn-contribute-initiative"
+                          >
+                            <Users className="w-4 h-4 text-[#1C1917]" />
+                            <span>Contribuer</span>
+                          </button>
+                        </div>
+                      )}
+                    </>
                   ) : (
-                    <div className="pt-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setInitiativeActionType('contribuer');
-                          setIsContributingModalOpen(true);
-                        }}
-                        className="w-full h-11 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#B78A2E] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
-                        id="btn-contribute-initiative"
-                      >
-                        <Users className="w-4 h-4 text-[#1C1917]" />
-                        <span>Contribuer</span>
-                      </button>
-                    </div>
+                    <>
+                      <div>
+                        <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2" title={currentAppelUnified.item.title}>
+                          {currentAppelUnified.item.title}
+                        </h3>
+                      </div>
+
+                      {isOwner ? (
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingAppel(currentAppelUnified.item);
+                              setAppelFormTitle(currentAppelUnified.item.title);
+                              setAppelFormUrgency(currentAppelUnified.item.urgency);
+                              setAppelFormDescription(currentAppelUnified.item.description);
+                              setAppelFormImpact(currentAppelUnified.item.impact || '');
+                            }}
+                            className="h-9 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                            id="btn-edit-appel"
+                          >
+                            <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
+                            <span>Modifier</span>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingAppel(currentAppelUnified.item);
+                              setIsDeletingAppel(true);
+                            }}
+                            className="h-9 px-3 rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                            id="btn-delete-appel"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                            <span>Supprimer</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="pt-0.5">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsOfferingHelpModalOpen(true);
+                            }}
+                            className="w-full h-9 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                            id="btn-reply-appel"
+                          >
+                            <Megaphone className="w-4 h-4 text-[#1C1917]" />
+                            <span>Répondre à cet appel</span>
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
-                </div>
-              </div>
-            )}
 
-            {/* ================================================================= */}
-            {/* DIMENSION 6 : APPELS (Besoins, Collaborations, Compétences)       */}
-            {/* ================================================================= */}
-            {activeTab === 'appels' && currentAppel && (
-              <div 
-                className="group relative w-full h-full flex flex-col justify-between p-5 text-white"
-                id={`card-appel-${currentAppel.id}`}
-              >
-                <img
-                  src={currentAppel.posterUrl}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                />
-                <video
-                  ref={videoRef}
-                  src={currentAppel.videoUrl}
-                  loop
-                  muted
-                  playsInline
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none ${
-                    isPlaying ? 'opacity-100' : 'opacity-0'
-                  }`}
-                />
-                {/* Filtre plus clair et lumineux sur l'image */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/25 pointer-events-none" />
-
-                {/* HAUT : Urgence/Catégorie à gauche écrit en blanc dans capsule adaptable, Icône vidéo dorée à droite */}
-                <div className="relative z-10 flex items-center justify-between gap-3 w-full">
-                  <div className="w-fit max-w-[calc(100%-3.5rem)] px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/20 text-xs font-medium text-white shadow-md shrink-0">
-                    <span className="truncate">{currentAppel.urgency}</span>
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleVideoPlayback(e);
-                    }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isPlaying ? 'Mettre en pause' : `Pitch du besoin`}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
-                  </button>
-                </div>
-
-                <div className="my-auto" />
-
-                {/* BAS : Titre court sur 1 ou 2 lignes qui tient bien sans coupure & actions */}
-                <div className="relative z-10 space-y-2.5">
-                  <div>
-                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2" title={currentAppel.title}>
-                      {currentAppel.title}
-                    </h3>
-                  </div>
-
-                  {isOwner ? (
-                    <div className="grid grid-cols-2 gap-2 pt-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingAppel(currentAppel);
-                          setAppelFormTitle(currentAppel.title);
-                          setAppelFormUrgency(currentAppel.urgency);
-                          setAppelFormDescription(currentAppel.description);
-                          setAppelFormImpact(currentAppel.impact || '');
-                        }}
-                        className="h-10 px-3.5 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] border border-stone-200/50"
-                        id="btn-edit-appel"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
-                        <span>Modifier</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsDeletingAppel(true);
-                        }}
-                        className="h-10 px-3.5 rounded-xl bg-black/60 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white/95 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
-                        id="btn-delete-appel"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                        <span>Supprimer</span>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="pt-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsOfferingHelpModalOpen(true);
-                        }}
-                        className="w-full h-11 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#B78A2E] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
-                        id="btn-reply-appel"
-                      >
-                        <Send className="w-4 h-4 text-[#1C1917]" />
-                        <span>Répondre à cet appel</span>
-                      </button>
-                    </div>
-                  )}
+                  {/* Lecteur moderne Image 2 */}
+                  <VideoModernPlayerBar 
+                    videoCurrentTime={videoCurrentTime}
+                    activeDuration={activeDuration}
+                    progressPercent={progressPercent}
+                    isPlaying={isPlaying}
+                    onTogglePlayback={toggleVideoPlayback}
+                    onSeek={handleTimelineSeek}
+                    formatTime={formatVideoTime}
+                  />
                 </div>
               </div>
             )}
@@ -1839,52 +1976,63 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
         </div>
 
-        {/* Navigation Indicator & Mobile Controls (Harmonisé) */}
-        {totalDimensionItems > 1 && (
-          <div className="flex items-center justify-between max-w-[340px] mx-auto pt-1 pb-2 px-2">
-            <div className="flex items-center gap-1.5">
-              {Array.from({ length: totalDimensionItems }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    if (activeTab === 'recit') setRecitIndex(i);
-                    else if (activeTab === 'episodes') setEpisodeIndex(i);
-                    else if (activeTab === 'productions') setShareIndex(i);
-                    else if (activeTab === 'creations') setCreationIndex(i);
-                    else if (activeTab === 'initiatives') setInitiativeIndex(i);
-                    else setAppelIndex(i);
-                  }}
-                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    i === currentDimensionIndex
-                      ? 'w-6 bg-[#C89B3C]'
-                      : 'w-2 bg-stone-300 hover:bg-stone-400'
-                  }`}
-                  title={`Aller à l'élément ${i + 1}`}
-                />
-              ))}
-              <span className="text-[11px] font-bold text-stone-500 ml-2 font-mono">
-                {currentDimensionIndex + 1} / {totalDimensionItems}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-1.5 sm:hidden">
+        {/* Navigation Indicator (Points pour la catégorie active) & Boutons de navigation sous la vidéo */}
+        <div className="flex items-center justify-between max-w-[340px] mx-auto pt-2 pb-1 px-2">
+          <div className="flex items-center gap-1.5">
+            {totalItemsInActiveCategory > 1 && Array.from({ length: totalItemsInActiveCategory }).map((_, i) => (
               <button
-                onClick={handlePrev}
-                className="w-8 h-8 rounded-full bg-white border border-stone-200 text-stone-700 flex items-center justify-center shadow-xs cursor-pointer active:scale-95"
-                title="Précédent"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                onClick={handleNext}
-                className="w-8 h-8 rounded-full bg-white border border-stone-200 text-stone-700 flex items-center justify-center shadow-xs cursor-pointer active:scale-95"
-                title="Suivant"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+                key={i}
+                type="button"
+                onClick={() => {
+                  setCategoryIndices(prev => ({ ...prev, [activeCategory]: i }));
+                }}
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  i === currentCategorySafeIndex
+                    ? 'w-6 bg-[#E5855E]'
+                    : 'w-2 bg-stone-300 hover:bg-stone-400'
+                }`}
+                title={`Aller à la vidéo ${i + 1}`}
+              />
+            ))}
+            <span className="text-[11px] font-bold text-stone-500 ml-2 font-mono">
+              {currentCategorySafeIndex + 1} / {totalItemsInActiveCategory}
+            </span>
           </div>
-        )}
+
+          {/* Boutons Précédent / Suivant sous la vidéo (conservés et accessibles) */}
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handlePrevVideo}
+              disabled={totalItemsInActiveCategory <= 1}
+              className="h-7 px-2.5 rounded-lg bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 flex items-center gap-1 shadow-xs cursor-pointer active:scale-95 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              title="Vidéo précédente"
+              id="btn-nav-prev-under-video"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+              <span>Préc.</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleNextVideo}
+              disabled={totalItemsInActiveCategory <= 1}
+              className="h-7 px-2.5 rounded-lg bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 flex items-center gap-1 shadow-xs cursor-pointer active:scale-95 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              title="Vidéo suivante"
+              id="btn-nav-next-under-video"
+            >
+              <span>Suiv.</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Aide visuelle intuitive */}
+        <div className="flex items-center justify-center text-center px-4 pt-1">
+          <p className="text-[11px] text-stone-500 font-medium">
+            <span className="text-[#C89B3C] font-semibold">↕ Swipe vertical</span> : changer de catégorie •{' '}
+            <span className="text-[#C89B3C] font-semibold">↔ Swipe horizontal</span> : changer de vidéo
+          </p>
+        </div>
 
       </div>
 

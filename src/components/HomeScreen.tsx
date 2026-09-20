@@ -64,7 +64,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
               Explorer les duocumentaires
             </h1>
             <p className="text-sm sm:text-base text-[#57534E] font-light leading-relaxed">
-              Découvrez comment chaque duocumentaire s’est tissé de proche en proche. Parcourez l’arbre de filiation des 4 séries pour voir qui a fait entrer qui, ou écoutez directement les duos en vidéo.
+              Découvrez comment chaque duocumentaire s’est tissé de proche en proche. Parcourez l’arbre de filiation des séries pour voir qui a fait entrer qui, ou écoutez directement les duos en vidéo.
             </p>
           </div>
 
@@ -102,18 +102,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
       {exploreMode === 'tree' && (
         <section className="space-y-8">
           
-          {/* Series Tabs: Les 4 Séries */}
+          {/* Series Tabs: Les Séries */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs uppercase font-bold tracking-wider text-[#8B6845]">
                 1. Choisissez une série à explorer
               </span>
               <span className="text-xs text-[#78716C]">
-                4 duocumentaires fondateurs
+                {SERIES_AFFILIATION_TREES.length} duocumentaires
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               {SERIES_AFFILIATION_TREES.map((tree) => {
                 const isSelected = tree.seriesId === selectedSeriesId;
                 return (
@@ -478,7 +478,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
                 onChange={(e) => setDuoSeriesFilter(e.target.value)}
                 className="px-3 py-2 rounded-xl bg-[#FAF7EF] border border-[#E7E5E4] text-xs font-medium focus:outline-hidden focus:border-[#C89B3C]"
               >
-                <option value="all">Toutes les 4 séries ({DUOS.length} duos)</option>
+                <option value="all">Toutes les séries ({DUOS.length} duos)</option>
                 {DOCUMENTARIES.map(doc => (
                   <option key={doc.id} value={doc.id}>{doc.title}</option>
                 ))}

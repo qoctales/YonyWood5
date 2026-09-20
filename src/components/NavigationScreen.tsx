@@ -27,7 +27,7 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({ onNavigate }
     {
       id: '01',
       title: 'Accueil & Onboarding',
-      desc: "L'introduction pédagogique en 3 étapes, le mantra « Des histoires qui nous relient » et les 4 séries fondatrices.",
+      desc: "L'introduction pédagogique en 3 étapes, le mantra « Des histoires qui nous relient » et les séries fondatrices.",
       target: { type: 'home' } as ViewScreen,
       icon: TreePine,
       level: 'Niveau 1 (La Forêt)'
@@ -43,7 +43,7 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({ onNavigate }
     {
       id: '03',
       title: 'Les Séries Documentaires',
-      desc: 'Les 4 séries éditoriales : RÉVÉLATION × TRADITION, FINAGNON × QOSQORICO, BLACKS ONE × BEYOND EVE, DIXEAT × FIAT LUXE.',
+      desc: 'Les séries éditoriales : JÉSUS × ÈṢÙ, FINAGNON × QOSQORICO, BLACKS ONE × BEYOND EVE, DIXEAT × FIAT LUXE, INVESTORS × BUILDERS.',
       target: { type: 'documentaries' } as ViewScreen,
       icon: Film,
       level: 'Niveau 1 (La Forêt)'
