@@ -6,13 +6,15 @@ interface CentralAstrolabeJoystickProps {
   onSetRotationAngle: (angleDeg: number) => void;
   rotationAngle: number;
   onReset: () => void;
+  onCenterClick?: () => void;
 }
 
 export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> = ({
   onRotateDelta,
   onSetRotationAngle,
   rotationAngle,
-  onReset
+  onReset,
+  onCenterClick
 }) => {
   const [isInteracting, setIsInteracting] = useState<boolean>(false);
   const [knobOffset, setKnobOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -22,6 +24,11 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
   const startRotationAngleRef = useRef<number>(0);
   const animFrameRef = useRef<number | null>(null);
   const knobOffsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  // Detection of simple click vs drag/rotate
+  const pointerDownTimeRef = useRef<number>(0);
+  const pointerStartCoordsRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const hasMovedFarRef = useRef<boolean>(false);
 
   const MAX_KNOB_RADIUS = 18; // Maximum deflection radius of the central stick
 
@@ -61,6 +68,9 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
     e.stopPropagation();
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
     setIsInteracting(true);
+    pointerDownTimeRef.current = Date.now();
+    pointerStartCoordsRef.current = { x: e.clientX, y: e.clientY };
+    hasMovedFarRef.current = false;
 
     if (centerRef.current) {
       const rect = centerRef.current.getBoundingClientRect();
@@ -87,6 +97,15 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
     if (!isInteracting || !centerRef.current) return;
     e.preventDefault();
     e.stopPropagation();
+
+    // Check if movement is larger than threshold to distinguish click from rotation/drag
+    const moveDist = Math.hypot(
+      e.clientX - pointerStartCoordsRef.current.x,
+      e.clientY - pointerStartCoordsRef.current.y
+    );
+    if (moveDist > 6) {
+      hasMovedFarRef.current = true;
+    }
 
     const rect = centerRef.current.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
@@ -116,6 +135,14 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
     e.stopPropagation();
     setIsInteracting(false);
     setKnobOffset({ x: 0, y: 0 });
+
+    const elapsed = Date.now() - pointerDownTimeRef.current;
+    if (!hasMovedFarRef.current && elapsed < 400) {
+      // Pure click / tap on center astrolabe: open Explorer Hub!
+      if (onCenterClick) {
+        onCenterClick();
+      }
+    }
   };
 
   return (
@@ -128,7 +155,11 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
       onDoubleClick={onReset}
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-16 h-16 sm:w-20 sm:h-20 rounded-full cursor-grab active:cursor-grabbing touch-none select-none flex items-center justify-center pointer-events-auto group"
       id="central-astrolabe-joystick"
+      title="Cliquer pour changer de mode d'exploration"
     >
+      {/* Halo lumineux d'invitation au clic */}
+      <div className="absolute -inset-1.5 rounded-full bg-[#C89B3C]/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none animate-pulse" />
+
       {/* SOCLE CIRCULAIRE BRONZE / LIN DORE EN RELIEF */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#FFFFFF] via-[#EFE7D8] to-[#DFD3BE] border-2 border-[#C89B3C] shadow-[0_4px_18px_rgba(139,104,69,0.3)] transition-transform group-hover:scale-105 flex items-center justify-center">
         
@@ -154,6 +185,13 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
           </div>
         </div>
 
+      </div>
+
+      {/* Mini badge discret sous l'astrolabe invitant au clic */}
+      <div className="absolute -bottom-6 sm:-bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <span className="px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-xs text-[10px] text-[#F5D88C] font-medium shadow-md">
+          Cliquer pour explorer
+        </span>
       </div>
     </div>
   );

@@ -308,11 +308,11 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
         {/* Contrôles droits : commutateur mode desktop (Miroir / Deck) + Shuffle */}
         <div className="flex items-center gap-2 z-10">
           
-          {/* Commutateur mode sur tablette et desktop */}
-          <div className="hidden md:flex items-center bg-stone-100 p-0.5 rounded-full border border-stone-200">
+          {/* Commutateur mode : Miroir (les 2 vidéos face-à-face) / Deck (Carte immersive) */}
+          <div className="flex items-center bg-stone-100 p-0.5 rounded-full border border-stone-200">
             <button
               onClick={() => setDesktopViewMode('mirror')}
-              title="Vue Miroir (Duo Face-à-face)"
+              title="Vue Miroir (Duo Face-à-face, 2 vidéos)"
               className={`p-1.5 rounded-full transition-all cursor-pointer ${
                 desktopViewMode === 'mirror'
                   ? 'bg-white text-stone-900 shadow-xs'
@@ -323,7 +323,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
             </button>
             <button
               onClick={() => setDesktopViewMode('deck')}
-              title="Vue Deck Bumble (Carte immersive)"
+              title="Vue Deck (Carte unique)"
               className={`p-1.5 rounded-full transition-all cursor-pointer ${
                 desktopViewMode === 'deck'
                   ? 'bg-white text-stone-900 shadow-xs'
@@ -432,10 +432,10 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
 
               {/* ========================================================================= */}
-              {/* AFFICHAGE FORMAT MOBILE (< 768px) OU MODE DECK BUMBLE SOLO               */}
-              {/* Format carte unique 9:16 avec barres de stories & tap A/B intuitif        */}
+              {/* MODE DECK (CARTE UNIQUE FORMAT 9:16)                                      */}
               {/* ========================================================================= */}
-              <div className={`${desktopViewMode === 'mirror' ? 'block md:hidden' : 'block'} w-full max-w-sm sm:max-w-md mx-auto`}>
+              {desktopViewMode === 'deck' && (
+                <div className="w-full max-w-sm sm:max-w-md mx-auto">
                 
                 <div 
                   onClick={(e) => {
@@ -443,7 +443,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                     if (isDraggingRef.current) return;
                     toggleMobilePlay();
                   }}
-                  className="relative rounded-[32px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/60 aspect-[9/16] sm:aspect-[9/15] flex flex-col justify-between cursor-pointer"
+                  className="relative rounded-[32px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/60 aspect-[9/16] flex flex-col justify-between cursor-pointer"
                 >
                   
                   {/* Background Video (when playing) or Poster Image */}
@@ -635,6 +635,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                   </button>
                 </div>
               </div>
+            )}
 
 
               {/* ========================================================================= */}
@@ -642,8 +643,8 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
               {/* Les 2 protagonistes côte-à-côte avec le lien miroir au centre             */}
               {/* ========================================================================= */}
               {desktopViewMode === 'mirror' && (
-                <div className="hidden md:block w-full">
-                  <div className="grid grid-cols-2 gap-6 lg:gap-10 relative max-w-3xl mx-auto items-center">
+                <div className="w-full">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-10 relative max-w-xs sm:max-w-xl md:max-w-3xl mx-auto items-center">
                     
                     {/* CARTE PROTAGONISTE A */}
                     <div 
@@ -651,7 +652,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
                         togglePlayA();
                       }}
-                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/15] transition-all duration-300 cursor-pointer"
+                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/16] transition-all duration-300 cursor-pointer"
                     >
                       {/* Background Media: Video when isPlayingA, otherwise Poster Photo */}
                       {isPlayingA ? (
@@ -766,7 +767,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
                         togglePlayB();
                       }}
-                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/15] transition-all duration-300 cursor-pointer"
+                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/16] transition-all duration-300 cursor-pointer"
                     >
                       {/* Background Media: Video when isPlayingB, otherwise Poster Photo */}
                       {isPlayingB ? (

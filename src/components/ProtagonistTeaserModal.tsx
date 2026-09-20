@@ -192,12 +192,6 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
                 {protagonist.territory}
               </span>
             </p>
-
-            {protagonist.quote && (
-              <p className="text-xs text-white/85 italic leading-relaxed pt-1 line-clamp-2">
-                {protagonist.quote}
-              </p>
-            )}
           </div>
 
           {/* Action : Entrer dans son univers */}

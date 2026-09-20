@@ -64,12 +64,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => 
             onClick={() => onNavigate({ type: 'documentaries' })}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 ${
               currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail'
-                ? 'bg-stone-200 text-[#1C1917] font-semibold'
+                ? 'bg-[#1C1917] text-white font-semibold'
                 : 'text-stone-600 hover:text-[#1C1917] hover:bg-stone-100'
             }`}
             id="nav-link-documentaries"
           >
-            <Film className="w-3.5 h-3.5" />
+            <Film className={`w-3.5 h-3.5 ${
+              currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail'
+                ? 'text-[#C89B3C]'
+                : 'text-stone-500'
+            }`} />
             <span>Séries</span>
           </button>
 

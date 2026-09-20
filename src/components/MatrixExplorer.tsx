@@ -12,7 +12,11 @@ import {
   UserCheck,
   Award,
   User,
-  Gem
+  Gem,
+  ShoppingBag,
+  HeartHandshake,
+  RefreshCw,
+  ChevronDown
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
@@ -21,6 +25,13 @@ import { VerticalZoomSlider } from './VerticalZoomSlider';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 import { PROTAGONISTS } from '../data/mockData';
 import { ResonanceModal } from './ResonanceModal';
+import { 
+  ExplorerCategoryType, 
+  EXPLORER_TOPICS_DATA, 
+  EXPLORER_CATEGORIES, 
+  get16StoriesForTopic 
+} from '../data/explorerTopicsData';
+import { InSituAstrolabeSelector } from './InSituAstrolabeSelector';
 
 interface MatrixExplorerProps {
   onNavigate: (screen: ViewScreen | any) => void;
@@ -44,7 +55,13 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   onNavigate,
   onSelectDocumentary 
 }) => {
-  // 1. Filtrage par série : 'ALL' ou ID de la série
+  // 1. Mode d'exploration : Séries (arbres de cooptation) OU Thématiques/Sujets/Offres/Opportunités/Marques (16 récits)
+  const [activeCategory, setActiveCategory] = useState<ExplorerCategoryType>('series');
+  const [activeTopicId, setActiveTopicId] = useState<string>('michael-jackson');
+  const [isExplorerHubOpen, setIsExplorerHubOpen] = useState<boolean>(false);
+  const [shuffleSeed, setShuffleSeed] = useState<number>(0);
+
+  // Filtrage par série (lorsque activeCategory === 'series') : 'ALL' ou ID de la série
   const [selectedFilter, setSelectedFilter] = useState<string>('ALL');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState<boolean>(false);
   const [teaserProtagonist, setTeaserProtagonist] = useState<Protagonist | null>(null);
@@ -137,10 +154,22 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     setSelectedPath([]);
   };
 
-  // 16 Pionniers fondateurs (Génération 1)
+  // Sujet actif si dans une catégorie thématique / mots-clés / offres / opportunités / marques
+  const activeTopic = useMemo(() => {
+    if (activeCategory === 'series') return null;
+    return EXPLORER_TOPICS_DATA.find(t => t.id === activeTopicId) || EXPLORER_TOPICS_DATA[0];
+  }, [activeCategory, activeTopicId]);
+
+  // 16 Pionniers fondateurs (si Séries) OU 16 Récits humains (si Sujet/Thématique)
   const pioneers = useMemo<AffiliationPerson[]>(() => {
-    return activeSeries.pioneers.slice(0, 16);
-  }, [activeSeries]);
+    if (activeCategory === 'series') {
+      return activeSeries.pioneers.slice(0, 16);
+    }
+    if (activeTopic) {
+      return get16StoriesForTopic(activeTopic.id, shuffleSeed);
+    }
+    return [];
+  }, [activeCategory, activeSeries, activeTopic, shuffleSeed]);
 
   // Calcul dynamique des nœuds et des liens pour chaque orbite déployée
   const { nodesByGeneration, connectingLinks } = useMemo(() => {
@@ -166,7 +195,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     const genNodes: NodeItem[][] = [];
     const links: LinkItem[] = [];
 
-    // --- GÉNÉRATION 1 : 16 Pionniers sur l'orbite 1 (rayon R1) ---
+    // --- GÉNÉRATION 1 : 16 Pionniers ou Récits sur l'orbite 1 (rayon R1) ---
     const gen1Nodes: NodeItem[] = pioneers.map((p, idx) => {
       const angle = -90 + idx * (360 / 16);
       const rad = (angle * Math.PI) / 180;
@@ -178,72 +207,74 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         x: Math.cos(rad) * r,
         y: Math.sin(rad) * r,
         angle,
-        descendantCount: countDescendants(p),
+        descendantCount: activeCategory === 'series' ? countDescendants(p) : 0,
         isSelected: isSel,
         isInLineage: isSel
       };
     });
     genNodes.push(gen1Nodes);
 
-    // --- GÉNÉRATIONS SUCCESSIVES 2 À 5 : DÉPLOIEMENT CONCENTRIQUE ---
-    let currentParentGen = 1;
-    while (currentParentGen < selectedPath.length + 1 && currentParentGen < 5) {
-      const parentId = selectedPath[currentParentGen - 1];
-      const parentNode = genNodes[currentParentGen - 1]?.find(n => n.person.id === parentId);
-      
-      if (!parentNode || !parentNode.person.invitedPeople || parentNode.person.invitedPeople.length === 0) {
-        break;
-      }
-
-      const children = parentNode.person.invitedPeople;
-      const childCount = children.length;
-      const childGen = currentParentGen + 1;
-      const r = ORBIT_RADII[childGen - 1];
-
-      // Éventail angulaire centré sur l'angle du parent
-      const span = childCount === 1 
-        ? 0 
-        : Math.min(85, Math.max(38, (childCount - 1) * 32));
-
-      const childNodes: NodeItem[] = children.map((child, cIdx) => {
-        let childAngle = parentNode.angle;
-        if (childCount > 1) {
-          childAngle = parentNode.angle - span / 2 + cIdx * (span / (childCount - 1));
+    // --- GÉNÉRATIONS SUCCESSIVES 2 À 5 : DÉPLOIEMENT CONCENTRIQUE (Uniquement en mode Séries) ---
+    if (activeCategory === 'series') {
+      let currentParentGen = 1;
+      while (currentParentGen < selectedPath.length + 1 && currentParentGen < 5) {
+        const parentId = selectedPath[currentParentGen - 1];
+        const parentNode = genNodes[currentParentGen - 1]?.find(n => n.person.id === parentId);
+        
+        if (!parentNode || !parentNode.person.invitedPeople || parentNode.person.invitedPeople.length === 0) {
+          break;
         }
-        const childRad = (childAngle * Math.PI) / 180;
-        const x = Math.cos(childRad) * r;
-        const y = Math.sin(childRad) * r;
-        const isSel = selectedPath[childGen - 1] === child.id;
 
-        // Liaison parent -> enfant
-        const isLinkActive = selectedPath[currentParentGen - 1] === parentNode.person.id &&
-                             selectedPath[childGen - 1] === child.id;
-        links.push({
-          id: `${parentNode.person.id}->${child.id}`,
-          from: { x: parentNode.x, y: parentNode.y },
-          to: { x, y },
-          isActive: isLinkActive
+        const children = parentNode.person.invitedPeople;
+        const childCount = children.length;
+        const childGen = currentParentGen + 1;
+        const r = ORBIT_RADII[childGen - 1];
+
+        // Éventail angulaire centré sur l'angle du parent
+        const span = childCount === 1 
+          ? 0 
+          : Math.min(85, Math.max(38, (childCount - 1) * 32));
+
+        const childNodes: NodeItem[] = children.map((child, cIdx) => {
+          let childAngle = parentNode.angle;
+          if (childCount > 1) {
+            childAngle = parentNode.angle - span / 2 + cIdx * (span / (childCount - 1));
+          }
+          const childRad = (childAngle * Math.PI) / 180;
+          const x = Math.cos(childRad) * r;
+          const y = Math.sin(childRad) * r;
+          const isSel = selectedPath[childGen - 1] === child.id;
+
+          // Liaison parent -> enfant
+          const isLinkActive = selectedPath[currentParentGen - 1] === parentNode.person.id &&
+                               selectedPath[childGen - 1] === child.id;
+          links.push({
+            id: `${parentNode.person.id}->${child.id}`,
+            from: { x: parentNode.x, y: parentNode.y },
+            to: { x, y },
+            isActive: isLinkActive
+          });
+
+          return {
+            person: child,
+            gen: childGen,
+            x,
+            y,
+            angle: childAngle,
+            parentId: parentNode.person.id,
+            descendantCount: countDescendants(child),
+            isSelected: isSel,
+            isInLineage: isSel
+          };
         });
 
-        return {
-          person: child,
-          gen: childGen,
-          x,
-          y,
-          angle: childAngle,
-          parentId: parentNode.person.id,
-          descendantCount: countDescendants(child),
-          isSelected: isSel,
-          isInLineage: isSel
-        };
-      });
-
-      genNodes.push(childNodes);
-      currentParentGen++;
+        genNodes.push(childNodes);
+        currentParentGen++;
+      }
     }
 
     return { nodesByGeneration: genNodes, connectingLinks: links };
-  }, [pioneers, selectedPath]);
+  }, [pioneers, selectedPath, activeCategory]);
 
   // Calcul de l'angle du curseur par rapport au centre de l'astrolabe
   const getAngleFromCenter = useCallback((clientX: number, clientY: number) => {
@@ -295,15 +326,37 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   };
 
   // Clic sur une personne :
-  // Déploie immédiatement sa lignée ET ouvre directement sa vidéo de présentation
+  // - Le premier clic montre les liens qu'elle a avec les autres (apparition sur les autres cercles).
+  // - S'il n'y a pas de lien avec d'autres personnes, on arrive directement sur la carte de présentation.
+  // - S'il y a un lien, on voit d'abord le lien. Si on re-clique sur la personne, on voit sa carte de présentation.
   const handleNodeClick = (person: AffiliationPerson, gen: number) => {
-    setSelectedPath(prev => {
-      const next = prev.slice(0, gen - 1);
-      next.push(person.id);
-      return next;
-    });
-    setModalPerson(person);
-    setIsPlaying(true);
+    const hasLinks = Boolean(person.invitedPeople && person.invitedPeople.length > 0);
+    const isAlreadySelected = selectedPath[gen - 1] === person.id;
+
+    if (!hasLinks) {
+      // Aucun lien : on sélectionne la personne et on ouvre directement sa carte de présentation
+      setSelectedPath(prev => {
+        const next = prev.slice(0, gen - 1);
+        next.push(person.id);
+        return next;
+      });
+      setModalPerson(person);
+      setIsPlaying(true);
+    } else {
+      // La personne a des liens avec d'autres personnes :
+      if (isAlreadySelected) {
+        // Re-clic sur la personne déjà déployée : on affiche sa carte de présentation
+        setModalPerson(person);
+        setIsPlaying(true);
+      } else {
+        // Premier clic : on déploie ses liens vers les cercles suivants sans ouvrir la carte
+        setSelectedPath(prev => {
+          const next = prev.slice(0, gen - 1);
+          next.push(person.id);
+          return next;
+        });
+      }
+    }
   };
 
   // Zoom à la molette de souris
@@ -351,63 +404,52 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       style={{ cursor: isRotatingRef.current ? 'grabbing' : 'grab' }}
     >
 
-      {/* 1. SÉLECTEUR DE SÉRIE SUPÉRIEUR GAUCHE (PILULE "TOUS" / SÉRIES) */}
-      <div className="absolute top-6 left-6 z-40">
-        <div className="relative">
-          <button
-            id="series-filter-pill-button"
-            onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-            className="flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white/95 border border-[#E7E5E4] shadow-sm hover:border-[#C89B3C]/70 transition-all text-[#1C1917] font-medium text-xs sm:text-sm"
-          >
-            <Tv className="w-4 h-4 text-[#C89B3C]" />
-            <span className="font-semibold">
-              {selectedFilter === 'ALL' 
-                ? 'Tous' 
-                : MATRIX_SERIES_DATA.find(s => s.seriesId === selectedFilter)?.seriesTitle || 'Tous'}
+      {/* 1. SÉLECTEUR DE MODE D'EXPLORATION & SUJET (PILULE LUMINEUSE) */}
+      <div className="absolute top-6 left-6 z-40 flex items-center gap-2">
+        <button
+          id="btn-open-explorer-hub"
+          onClick={() => setIsExplorerHubOpen(true)}
+          className="group flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white/95 border border-[#E7E5E4] shadow-sm hover:border-[#C89B3C]/80 hover:shadow-md transition-all text-[#1C1917] font-medium text-xs sm:text-sm cursor-pointer"
+          title="Cliquez pour changer de mode d'exploration"
+        >
+          {activeCategory === 'series' && <Tv className="w-4 h-4 text-[#C89B3C]" />}
+          {activeCategory === 'thematics' && <Compass className="w-4 h-4 text-[#C89B3C]" />}
+          {activeCategory === 'topics' && <Sparkles className="w-4 h-4 text-[#C89B3C]" />}
+          {activeCategory === 'offers' && <ShoppingBag className="w-4 h-4 text-[#C89B3C]" />}
+          {activeCategory === 'opportunities' && <HeartHandshake className="w-4 h-4 text-[#C89B3C]" />}
+          {activeCategory === 'brands' && <Award className="w-4 h-4 text-[#C89B3C]" />}
+
+          <div className="flex items-center gap-1.5 text-left">
+            <span className="text-[11px] uppercase tracking-wider text-stone-600 font-semibold hidden sm:inline">
+              {EXPLORER_CATEGORIES.find(c => c.id === activeCategory)?.label} :
             </span>
-            <X 
-              className="w-3.5 h-3.5 text-stone-400 hover:text-[#1C1917] transition-colors ml-0.5" 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSelectFilter('ALL');
-              }}
-            />
+            <span className="font-semibold text-stone-900">
+              {activeCategory === 'series'
+                ? selectedFilter === 'ALL'
+                  ? 'Tous les pionniers'
+                  : MATRIX_SERIES_DATA.find(s => s.seriesId === selectedFilter)?.seriesTitle || 'Série'
+                : activeTopic?.title || 'Exploration'}
+            </span>
+          </div>
+
+          <ChevronDown className="w-3.5 h-3.5 text-stone-600 group-hover:text-[#C89B3C] transition-colors ml-0.5" />
+        </button>
+
+        {/* Bouton Actualiser / Découvrir 16 autres récits (uniquement pour les catégories non-séries) */}
+        {activeCategory !== 'series' && (
+          <button
+            id="btn-refresh-explorer-stories"
+            onClick={() => {
+              setShuffleSeed(prev => prev + 1);
+              setSelectedPath([]);
+            }}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-white/95 border border-[#E7E5E4] hover:border-[#C89B3C]/80 hover:shadow-sm text-stone-600 hover:text-[#8B6845] transition-all text-xs font-medium cursor-pointer shadow-xs"
+            title="Découvrir 16 autres récits sur ce sujet"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-[#C89B3C]" />
+            <span className="hidden md:inline">16 autres récits</span>
           </button>
-
-          {/* Menu déroulant de sélection */}
-          {isFilterDropdownOpen && (
-            <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl border border-[#E7E5E4] shadow-xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-              <button
-                onClick={() => handleSelectFilter('ALL')}
-                className={`w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between transition-colors ${
-                  selectedFilter === 'ALL'
-                    ? 'bg-[#C89B3C]/10 text-[#8B6845]'
-                    : 'text-[#1C1917] hover:bg-stone-50'
-                }`}
-              >
-                <span>Tous les pionniers</span>
-                {selectedFilter === 'ALL' && <div className="w-1.5 h-1.5 rounded-full bg-[#C89B3C]" />}
-              </button>
-
-              <div className="my-1 border-t border-stone-100" />
-
-              {MATRIX_SERIES_DATA.map((s) => (
-                <button
-                  key={s.seriesId}
-                  onClick={() => handleSelectFilter(s.seriesId)}
-                  className={`w-full text-left px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-between transition-colors ${
-                    selectedFilter === s.seriesId
-                      ? 'bg-[#C89B3C]/10 text-[#8B6845] font-semibold'
-                      : 'text-stone-700 hover:bg-stone-50'
-                  }`}
-                >
-                  <span className="truncate">{s.seriesTitle}</span>
-                  {selectedFilter === s.seriesId && <div className="w-1.5 h-1.5 rounded-full bg-[#C89B3C]" />}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
       {/* 2. SLIDER VERTICAL DE ZOOM FLOTTANT À DROITE */}
@@ -658,6 +700,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             onRotateDelta={(delta) => setRotationAngle(prev => (prev + delta + 360) % 360)}
             onSetRotationAngle={setRotationAngle}
             onReset={handleResetView}
+            onCenterClick={() => setIsExplorerHubOpen(true)}
           />
         </div>
       </div>
@@ -704,8 +747,17 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             {/* Voile lumineux équilibré pour sublimer la vidéo sans l'assombrir */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/30 pointer-events-none" />
 
-            {/* HAUT : [Bouton Son + Icône Vidéo Dorée + Bouton Fermer] en haut à droite */}
-            <div className="relative z-20 p-4 flex items-center justify-end pointer-events-auto">
+            {/* HAUT : Badge du sujet (si thématique/sujet) + [Bouton Son + Icône Vidéo Dorée + Bouton Fermer] */}
+            <div className="relative z-20 p-4 flex items-center justify-between pointer-events-auto">
+              {activeCategory !== 'series' && activeTopic ? (
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] text-[#F5D88C] font-medium shadow-md">
+                  <Sparkles className="w-3 h-3 text-[#C89B3C]" />
+                  <span className="truncate max-w-[130px] sm:max-w-[160px]">{activeTopic.title}</span>
+                </div>
+              ) : (
+                <div />
+              )}
+
               <div className="flex items-center gap-2">
                 {/* Bouton Muet / Son */}
                 <button
@@ -759,8 +811,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             <ResonanceModal
               isOpen={isResonanceModalOpen}
               onClose={() => setIsResonanceModalOpen(false)}
-              storyId={`story-${modalPerson.id}`}
-              topicId={modalPerson.universeTag || 'exploration'}
+              storyId={`story-${modalPerson.id}-${activeTopicId}`}
+              topicId={activeTopic?.title || modalPerson.universeTag || 'exploration'}
               personName={modalPerson.firstName || modalPerson.name.split(' ')[0]}
               initialPercentage={personResonancePct}
               onRatingSubmitted={(pct) => {
@@ -783,7 +835,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
 
               {/* Colonne latérale droite : Diamant (évaluation) relevé pour laisser plus d'air, Bonhomme (univers) en dessous */}
               <div className="flex flex-col items-center gap-3.5 shrink-0">
-                {/* Icône diamant pour évaluer la résonance (légèrement relevée pour laisser de l'air) */}
+                {/* Icône diamant pour évaluer la résonance */}
                 <button
                   id={`btn-eval-resonance-${modalPerson.id}`}
                   onClick={(e) => {
@@ -817,6 +869,24 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
           </div>
         </div>
       )}
+
+      {/* 5. SÉLECTEUR CIRCULAIRE IN-SITU DIRECTEMENT SUR L'ASTROLABE */}
+      <InSituAstrolabeSelector
+        isOpen={isExplorerHubOpen}
+        onClose={() => setIsExplorerHubOpen(false)}
+        activeCategory={activeCategory}
+        activeTopicId={activeTopicId}
+        activeSeriesId={selectedFilter}
+        onSelectSeries={(seriesId) => {
+          setActiveCategory('series');
+          handleSelectFilter(seriesId);
+        }}
+        onSelectTopic={(category, topicId) => {
+          setActiveCategory(category);
+          setActiveTopicId(topicId);
+          setSelectedPath([]);
+        }}
+      />
 
       {/* Modale Teaser Présentation Vidéo avant d'entrer dans l'univers */}
       <ProtagonistTeaserModal

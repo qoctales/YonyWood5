@@ -94,7 +94,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
               <div 
                 className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                   item.isActive 
-                    ? 'bg-[#1C1917] text-white shadow-md shadow-stone-900/25 ring-2 ring-stone-900/10 scale-105' 
+                    ? 'bg-[#1C1917] text-[#C89B3C] shadow-md shadow-stone-900/25 ring-2 ring-[#C89B3C]/30 scale-105' 
                     : 'bg-transparent text-current group-hover:bg-stone-100/80'
                 }`}
               >
@@ -105,7 +105,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
                     &lt; &gt;
                   </span>
                 ) : Icon ? (
-                  <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2]' : 'stroke-[1.8] group-hover:scale-105'}`} />
+                  <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2] text-[#C89B3C]' : 'stroke-[1.8] text-stone-600 group-hover:scale-105'}`} />
                 ) : null}
               </div>
 
