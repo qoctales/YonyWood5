@@ -22,7 +22,7 @@ export interface ExplorerCategoryConfig {
 export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
   {
     id: 'series',
-    label: 'Séries Documentaires',
+    label: 'Séries',
     shortLabel: 'Séries',
     tagline: 'Filiation & Arbres de Cooptation',
     description: 'Explorez les séries documentaires fondatrices et leurs 16 pionniers. Remontez le fil des transmissions de génération en génération où chacun coapte le suivant.',
@@ -31,11 +31,11 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     accentColor: '#C89B3C',
     glowColor: 'rgba(200, 155, 60, 0.65)',
     bgGradient: 'from-[#D97706] via-[#92400E] to-[#451A03]',
-    coverImage: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=400&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'countries',
-    label: 'Pays & Territoires',
+    label: 'Pays',
     shortLabel: 'Pays',
     tagline: '16 regards humains sur un pays',
     description: 'Choisissez un pays du monde : 16 personnes locales, créateurs, paysans ou bâtisseurs viennent vous raconter leur histoire vivante liée à cette terre.',
@@ -44,50 +44,50 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     accentColor: '#10B981',
     glowColor: 'rgba(16, 185, 129, 0.65)',
     bgGradient: 'from-[#10B981] via-[#047857] to-[#064E3B]',
-    coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'thematics',
     label: 'Thématiques',
-    shortLabel: 'Thèmes',
-    tagline: 'Massage, Quantique, Artisanat...',
+    shortLabel: 'Thématiques',
+    tagline: 'Savoirs, Matière, Fréquences...',
     description: 'Des grands thèmes universels explorés à travers 16 regards croisés sans dogme : le massage, la physique quantique, l’artisanat, la musique des fréquences...',
     badge: '16 sujets profonds',
     iconName: 'Compass',
     accentColor: '#0EA5E9',
     glowColor: 'rgba(14, 165, 233, 0.65)',
     bgGradient: 'from-[#0EA5E9] via-[#0369A1] to-[#082F49]',
-    coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'personalities',
     label: 'Personnalités',
-    shortLabel: 'Figures',
-    tagline: 'Michael Jackson, Jordan, Mbappé...',
+    shortLabel: 'Personnalités',
+    tagline: 'Grandes figures racontées par 16 regards',
     description: 'Une grande figure racontée par 16 personnes qui ont une histoire intime, sportive, artistique ou philosophique liée à son parcours.',
     badge: '16 figures phares',
     iconName: 'Sparkles',
     accentColor: '#F59E0B',
     glowColor: 'rgba(245, 158, 11, 0.65)',
     bgGradient: 'from-[#F59E0B] via-[#B45309] to-[#78350F]',
-    coverImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'brands',
-    label: 'Marques & Entreprises',
+    label: 'Marques',
     shortLabel: 'Marques',
-    tagline: 'Nike, Louis Vuitton, Patagonia...',
+    tagline: 'Artisans, Bâtisseurs & Maisons d’exception',
     description: 'Découvrez une marque ou une maison par ceux qui la font ou la vivent : artisans du cuir, athlètes de rue, réparateurs de l’extrême, pionniers.',
     badge: '16 marques iconiques',
     iconName: 'Award',
     accentColor: '#FB923C',
     glowColor: 'rgba(251, 146, 60, 0.65)',
     bgGradient: 'from-[#FB923C] via-[#C2410C] to-[#431407]',
-    coverImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=400&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'projects',
-    label: 'Projets & Causes',
+    label: 'Projets',
     shortLabel: 'Projets',
     tagline: 'Forêts sacrées, Écoles nomades...',
     description: 'Rencontrez 16 bâtisseurs de terrain engagés dans des causes vivantes : agroforesterie, écoles tissées, sauvegarde de semences anciennes, récifs.',
@@ -96,25 +96,25 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     accentColor: '#EC4899',
     glowColor: 'rgba(236, 72, 153, 0.65)',
     bgGradient: 'from-[#EC4899] via-[#BE185D] to-[#500724]',
-    coverImage: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=400&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1511497584788-87676104235f?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'offers',
-    label: 'Offres du moment',
+    label: 'Offres',
     shortLabel: 'Offres',
-    tagline: 'Masterclasses & Transmissions',
+    tagline: 'Masterclasses & Transmissions concrètes',
     description: 'Accédez à des transmissions concrètes : stages de tissage royal, ateliers de respiration, compagnonnages en forge ou résidences immersives.',
     badge: '16 transmissions',
     iconName: 'ShoppingBag',
     accentColor: '#6366F1',
     glowColor: 'rgba(99, 102, 241, 0.65)',
     bgGradient: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
-    coverImage: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'questions',
-    label: 'Sagesses Populaires',
-    shortLabel: 'Sagesses Populaires',
+    label: 'Sagesses',
+    shortLabel: 'Sagesses',
     tagline: 'Récits vrais et mémoire vive du peuple',
     description: 'Les grandes sagesses et interrogations du peuple, racontées à travers des moments vécus par 16 voix de tous horizons.',
     badge: '16 sagesses populaires',
@@ -122,7 +122,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     accentColor: '#A855F7',
     glowColor: 'rgba(168, 85, 247, 0.65)',
     bgGradient: 'from-[#A855F7] via-[#7E22CE] to-[#3B0764]',
-    coverImage: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=400&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80'
   }
 ];
 
@@ -149,6 +149,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'series',
       title: 'Jésus < > Èṣù',
       subtitle: 'Deux traditions. Une même question de foi.',
+      question: 'Qu’est-ce qui dans votre foi la plus intime vous relie à ce qui vous dépasse et vous rapproche des autres ?',
       photoUrl: '/assets/posters/jesus-esu.png',
       badge: '16 pionniers cooptés'
     },
@@ -157,22 +158,25 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'series',
       title: 'Finagnon < > Qosqorico',
       subtitle: 'Bénin < > Pérou. Deux territoires. Une même réflexion sur ce qui nous relie à un lieu.',
+      question: 'Quel est ce lien invisible et indestructible qui vous unit charnellement à la terre de vos ancêtres ?',
       photoUrl: '/assets/posters/finagnon-qosqorico.png',
       badge: '16 pionniers cooptés'
     },
     {
-      id: 'beyond-eve',
+      id: 'blacks-one-beyond-eve',
       category: 'series',
       title: 'Blacks One < > Beyond Eve',
       subtitle: 'La mémoire originelle, la sororité et la diaspora.',
+      question: 'Quelle blessure ou fierté héritée de vos mères portez-vous comme un flambeau dans votre existence ?',
       photoUrl: '/assets/posters/blacks-one-beyond-eve.png',
       badge: '16 pionniers cooptés'
     },
     {
-      id: 'dixeat-fiatluxe',
+      id: 'dixeat-fiat-luxe',
       category: 'series',
       title: 'Dixeat < > Fiat Luxe',
       subtitle: 'Quand la matière brute devient or, goût et lumière.',
+      question: 'À quel instant précis avez-vous compris que transformer la matière brute était un acte de pure alchimie spirituelle ?',
       photoUrl: '/assets/posters/dixeat-fiat-luxe.png',
       badge: '16 pionniers cooptés'
     },
@@ -181,6 +185,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'series',
       title: 'Investors < > Builders',
       subtitle: 'Bâtir pour mille ans sans détruire le vivant.',
+      question: 'Que bâtissez-vous aujourd’hui qui restera debout et fécondera la vie dans mille ans ?',
       photoUrl: '/assets/posters/investors-builders.png',
       badge: '16 pionniers cooptés'
     }
@@ -193,6 +198,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Bénin',
       subtitle: 'Berceau du Vodoun, cité lacustre & bronze royal',
+      question: 'Quel esprit ancestral ou quelle sagesse issue de la terre béninoise guide encore chacun de vos choix aujourd’hui ?',
       flag: '🇧🇯',
       photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix béninoises'
@@ -202,6 +208,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Pérou',
       subtitle: 'Vallée Sacrée des Incas & tissages des cimes',
+      question: 'Quelle prière murmurée à la Pachamama ou quel enseignement des cimes andines habite votre mémoire ?',
       flag: '🇵🇪',
       photoUrl: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix péruviennes'
@@ -211,6 +218,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Japon',
       subtitle: 'Maîtres du bois, temple de cyprès & thé vert',
+      question: 'Comment la patience millénaire et la recherche du geste pur se manifestent-elles dans votre rapport au monde ?',
       flag: '🇯🇵',
       photoUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix japonaises'
@@ -220,6 +228,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Sénégal',
       subtitle: 'Teranga, estuaires de pêcheurs & parole griot',
+      question: 'Comment l’hospitalité sacrée de la Teranga a-t-elle façonné votre façon d’accueillir l’inconnu ?',
       flag: '🇸🇳',
       photoUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix sénégalaises'
@@ -229,6 +238,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'France',
       subtitle: 'Compagnons de pierre, vignobles & verriers',
+      question: 'Quel héritage d’exigence artisanale ou de liberté de pensée cherchez-vous à transmettre intact ?',
       flag: '🇫🇷',
       photoUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix françaises'
@@ -238,6 +248,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Brésil',
       subtitle: 'Gardiens d’Amazonie, berimbau & terre rouge',
+      question: 'Quelle force d’espérance et de joie indomptable puisez-vous dans la terre rouge et les rythmes sacrés ?',
       flag: '🇧🇷',
       photoUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix brésiliennes'
@@ -247,6 +258,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Mali',
       subtitle: 'Falaises de Bandiagara, banco & cordes de kora',
+      question: 'Quelle parole ancestrale reçue au pied des falaises ou des baobabs vous garde humble et digne ?',
       flag: '🇲🇱',
       photoUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix maliennes'
@@ -256,6 +268,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Colombie',
       subtitle: 'Sierra Nevada des Kogis & café d’altitude',
+      question: 'Quel équilibre sacré appris du peuple de la montagne vous rappelle notre devoir envers la Terre Mère ?',
       flag: '🇨🇴',
       photoUrl: 'https://images.unsplash.com/photo-1583531352515-8884af319dc1?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix colombiennes'
@@ -265,6 +278,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Maroc',
       subtitle: 'Médinas d’argile, arganiers & zelliges bleus',
+      question: 'Quel trésor d’hospitalité et de patience dans l’art de vivre avez-vous reçu des cours d’argile et de zellige ?',
       flag: '🇲🇦',
       photoUrl: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix marocaines'
@@ -274,6 +288,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Inde',
       subtitle: 'Ghats de Bénarès, épices & soies tissées main',
+      question: 'Quelle prise de conscience de l’éternité et de la métamorphose avez-vous éprouvée face au fleuve sacré ?',
       flag: '🇮🇳',
       photoUrl: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix indiennes'
@@ -283,6 +298,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Islande',
       subtitle: 'Sources chaudes, lave noire & sagas nordiques',
+      question: 'Comment la solitude face au feu et à la glace a-t-elle forgé votre clarté intérieure ?',
       flag: '🇮🇸',
       photoUrl: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix islandaises'
@@ -292,6 +308,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Cuba',
       subtitle: 'Rumba de patio, herboristes & tabac roulé',
+      question: 'Quelle ingéniosité du cœur et quelle ferveur de vivre avez-vous apprise de ceux qui partagent tout ?',
       flag: '🇨🇺',
       photoUrl: 'https://images.unsplash.com/photo-1500759285222-a95626b934cb?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix cubaines'
@@ -301,6 +318,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Canada',
       subtitle: 'Forêts boréales, canoë d’écorce & Inuits',
+      question: 'Quelle leçon d’humilité et de silence la grande forêt boréale vous a-t-elle murmurée ?',
       flag: '🇨🇦',
       photoUrl: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix canadiennes'
@@ -310,6 +328,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Mexique',
       subtitle: 'Maïs sacré d’Oaxaca, copal & céramique noire',
+      question: 'Quelle célébration intime de la mémoire de ceux qui sont partis éclaire votre présent ?',
       flag: '🇲🇽',
       photoUrl: 'https://images.unsplash.com/photo-1518638150340-f706e86654de?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix mexicaines'
@@ -319,6 +338,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Côte d’Ivoire',
       subtitle: 'Masques sacrés Dan, cacao paysan & lagunes',
+      question: 'Quel pacte d’union et d’élévation collective puisez-vous dans la fraternité des terroirs ivoiriens ?',
       flag: '🇨🇮',
       photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix ivoiriennes'
@@ -328,6 +348,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'countries',
       title: 'Portugal',
       subtitle: 'Chênes-lièges d’Alentejo, azulejos & pêcheurs',
+      question: 'Quelle saudade féconde et quel regard tourné vers le grand large nourrissent votre âme ?',
       flag: '🇵🇹',
       photoUrl: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=400&q=80',
       badge: '16 voix portugaises'
@@ -473,6 +494,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Michael Jackson',
       subtitle: 'Le Roi de la Pop, la danse universelle & la grâce',
+      question: 'Quel sacrifice secret de l’enfance ou quelle quête d’amour universel résonne dans votre propre trajectoire ?',
       photoUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -481,6 +503,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Michael Jordan',
       subtitle: 'Le vol suspendu, l’obsession de vaincre & le mental',
+      question: 'Comment avez-vous transformé un échec cuisant ou un rejet initial en carburant inépuisable pour triompher ?',
       photoUrl: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -489,6 +512,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Kylian Mbappé',
       subtitle: 'L’accélération pure, Bondy & la nouvelle jeunesse',
+      question: 'Quelle promesse faite à vous-même dans votre jeunesse continue de guider vos foulées et votre audace ?',
       photoUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -497,6 +521,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Wangari Maathai',
       subtitle: 'La femme qui plantait des millions d’arbres',
+      question: 'Quel arbre d’espérance et de justice avez-vous planté contre vents et marées quand personne n’y croyait ?',
       photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -505,6 +530,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Miles Davis',
       subtitle: 'La trompette feutrée et le refus de se répéter',
+      question: 'À quel moment avez-vous eu le courage de rompre avec vos succès passés pour réinventer totalement votre son ?',
       photoUrl: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -513,6 +539,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Frida Kahlo',
       subtitle: 'La douleur transcendée par les couleurs de la terre',
+      question: 'Comment avez-vous sublimé une blessure intime pour en faire une œuvre de vie lumineuse et insoumise ?',
       photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -521,6 +548,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Nelson Mandela',
       subtitle: '27 ans de geôle pour apprendre la réconciliation',
+      question: 'Comment parvient-on à pardonner à ses geôliers pour libérer son propre cœur et réconcilier un peuple ?',
       photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -529,6 +557,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Bob Marley',
       subtitle: 'One Love : la prophétie universelle du reggae',
+      question: 'Quelle parole de paix et d’unité avez-vous portée au cœur de la tourmente quand tout incitait à la haine ?',
       photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -537,6 +566,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Léonard de Vinci',
       subtitle: 'L’art d’observer l’eau, les oiseaux et le divin',
+      question: 'Quelle curiosité insatiable pour les mystères du vivant nourrit quotidiennement votre soif d’apprendre ?',
       photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -545,6 +575,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Marie Curie',
       subtitle: 'Le rayonnement dans la nuit et la rigueur scientifique',
+      question: 'À quelle passion obstinée pour la vérité avez-vous dévoué votre énergie sans jamais courir après les honneurs ?',
       photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -553,6 +584,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Ayrton Senna',
       subtitle: 'La vitesse sous la pluie et la quête mystique',
+      question: 'Dans quelle zone limite ou face à quel péril avez-vous touché une dimension spirituelle qui vous dépasse ?',
       photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -561,6 +593,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Nina Simone',
       subtitle: 'La voix grave qui refusa de se taire face à l’injustice',
+      question: 'Quelle vérité brûlante avez-vous osé proclamer tout haut quand le silence ou le compromis était la facilité ?',
       photoUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -569,6 +602,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Steve Jobs',
       subtitle: 'Le minimalisme zen et la typographie dans la machine',
+      question: 'À quel dépouillement essentiel avez-vous consenti pour donner naissance à une création d’une pureté absolue ?',
       photoUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -577,6 +611,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Serena Williams',
       subtitle: 'La frappe royale et la grandeur d’une reine du court',
+      question: 'Comment puise-t-on la force de rester reine et pionnière quand les regards cherchent sans cesse à vous réduire ?',
       photoUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -585,6 +620,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Aimé Césaire',
       subtitle: 'La parole volcanique pour réveiller la négritude',
+      question: 'Quel cri de dignité et de fierté originelle avez-vous réveillé en vous face à la tentation de l’oubli ?',
       photoUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     },
@@ -593,6 +629,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       category: 'personalities',
       title: 'Hayao Miyazaki',
       subtitle: 'L’âme des vents, des dieux-arbres et de l’enfance',
+      question: 'Quel regard d’émerveillement et de respect pour les forces invisibles de la nature refusez-vous d’abandonner ?',
       photoUrl: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=400&q=80',
       badge: '16 récits vécus'
     }
@@ -1506,9 +1543,9 @@ const BENIN_STORIES: AffiliationPerson[] = [
 // FONCTION UNIVERSELLE : RÉCUPÉRER 16 HISTOIRES POUR N'IMPORTE QUEL SUJET
 // =========================================================================
 export function get16StoriesForTopic(topicId: string, shuffleSeed: number = 0): AffiliationPerson[] {
-  // 1. Vérifier si un pool sur-mesure existe pour ce sujet précis
-  if (topicId === 'benin') {
-    return rotatePool(BENIN_STORIES, shuffleSeed);
+  // Si le sujet est le Bénin et qu'on est sur le seed initial
+  if (topicId === 'benin' && shuffleSeed === 0) {
+    return BENIN_STORIES.slice(0, 16);
   }
 
   // Chercher dans le catalogue global le sujet
@@ -1524,27 +1561,48 @@ export function get16StoriesForTopic(topicId: string, shuffleSeed: number = 0): 
     }
   }
 
-  // 2. Génération contextuelle riche de 16 récits cohérents avec le sujet
+  // 2. Génération contextuelle riche et différenciée selon chaque sujet
   const title = targetItem?.title || topicId.replace(/-/g, ' ');
-  const subtitle = targetItem?.subtitle || 'Témoignage vivant';
   const flag = targetItem?.flag || '🌍';
+
+  // Calcul d'une empreinte déterministe unique pour chaque sujet (topicId)
+  let topicHash = 0;
+  for (let c = 0; c < topicId.length; c++) {
+    topicHash = ((topicHash << 5) - topicHash + topicId.charCodeAt(c)) | 0;
+  }
+  const positiveHash = Math.abs(topicHash);
+
+  // Combinaison robuste de l'empreinte du sujet et de l'offset d'actualisation
+  const combinedSeed = positiveHash + shuffleSeed * 13;
+  const seedOffset = (combinedSeed * 7) % FIRST_NAMES.length;
+  const photoOffset = (positiveHash * 3 + shuffleSeed * 11) % PEOPLE_PHOTOS.length;
+  const lastOffset = (positiveHash * 5 + shuffleSeed * 7 + 2) % LAST_NAMES.length;
 
   const generatedStories: AffiliationPerson[] = [];
 
-  // Variateur selon le shuffleSeed pour produire 16 nouvelles voix à chaque actualisation !
-  const seedOffset = (shuffleSeed * 7) % FIRST_NAMES.length;
-
   for (let i = 0; i < 16; i++) {
     const nameIdx = (seedOffset + i * 3) % FIRST_NAMES.length;
-    const lastIdx = (seedOffset + i * 5 + 2) % LAST_NAMES.length;
+    const lastIdx = (lastOffset + i * 5) % LAST_NAMES.length;
     const firstName = FIRST_NAMES[nameIdx];
     const lastName = LAST_NAMES[lastIdx];
-    const age = 24 + ((seedOffset * 3 + i * 7) % 46);
-    const photo = PEOPLE_PHOTOS[(nameIdx + i + seedOffset) % PEOPLE_PHOTOS.length];
-    const video = STOCK_VIDEOS[(i + seedOffset) % STOCK_VIDEOS.length];
+    const age = 22 + ((positiveHash + i * 7 + shuffleSeed * 5) % 48);
+    const photo = PEOPLE_PHOTOS[(photoOffset + i * 3) % PEOPLE_PHOTOS.length];
+    const video = STOCK_VIDEOS[(positiveHash + i + shuffleSeed) % STOCK_VIDEOS.length];
 
-    // Rôles et citations adaptés à la catégorie
-    const { role, story, pitch } = generateRoleAndPitch(targetCategory, title, i, shuffleSeed);
+    // Rôles et citations adaptés à la catégorie et au sujet précis
+    const { role, story, pitch } = generateRoleAndPitch(targetCategory, title, i, shuffleSeed + (positiveHash % 17));
+
+    const territory = targetCategory === 'countries'
+      ? getTerritoryForCountryAndSeed(topicId, i + shuffleSeed)
+      : getTerritoryForSeed(i + seedOffset + (positiveHash % 11));
+
+    const country = targetCategory === 'countries'
+      ? title
+      : getCountryForSeed(i + seedOffset + (positiveHash % 7));
+
+    const itemFlag = targetCategory === 'countries'
+      ? flag
+      : getFlagForSeed(i + seedOffset + (positiveHash % 7));
 
     generatedStories.push({
       id: `story-${topicId}-${shuffleSeed}-${i + 1}`,
@@ -1552,9 +1610,9 @@ export function get16StoriesForTopic(topicId: string, shuffleSeed: number = 0): 
       firstName,
       age,
       role,
-      territory: getTerritoryForSeed(i + seedOffset),
-      country: targetCategory === 'countries' ? title : getCountryForSeed(i + seedOffset),
-      flag: targetCategory === 'countries' ? flag : getFlagForSeed(i + seedOffset),
+      territory,
+      country,
+      flag: itemFlag,
       universeTag: title,
       photoUrl: photo,
       badge: i === 0 ? 'Témoin d’honneur' : 'Récit vivant',
@@ -1714,6 +1772,34 @@ function generateRoleAndPitch(
     story: `Partage son cheminement et ses découvertes autour de ${title} (perspective n°${batchNum}).`,
     pitch: quotes[(index + seed) % quotes.length]
   };
+}
+
+function getTerritoryForCountryAndSeed(countryId: string, idx: number): string {
+  const countryCities: Record<string, string[]> = {
+    benin: ['Ouidah', 'Cotonou', 'Porto-Novo', 'Abomey', 'Parakou', 'Natitingou', 'Bohicon', 'Grand-Popo'],
+    perou: ['Urubamba', 'Cuzco', 'Lima', 'Arequipa', 'Pisac', 'Ollantaytambo', 'Trujillo', 'Puno'],
+    japon: ['Kyoto', 'Tokyo', 'Osaka', 'Nara', 'Kamakura', 'Kanazawa', 'Hakone', 'Fukuoka'],
+    senegal: ['Saint-Louis', 'Dakar', 'Gorée', 'Touba', 'Ziguinchor', 'Rufisque', 'Thiès', 'Mbour'],
+    france: ['Paris', 'Lyon', 'Marseille', 'Bordeaux', 'Toulouse', 'Nantes', 'Lille', 'Strasbourg'],
+    bresil: ['Salvador de Bahia', 'Rio de Janeiro', 'São Paulo', 'Recife', 'Manaus', 'Belo Horizonte', 'Olinda', 'Brasília'],
+    mali: ['Bandiagara', 'Bamako', 'Djenné', 'Tombouctou', 'Mopti', 'Ségou', 'Kayes', 'Koulikoro'],
+    colombie: ['Sierra Nevada', 'Bogota', 'Medellín', 'Carthagène', 'Santa Marta', 'Cali', 'Villa de Leyva', 'Barichara'],
+    maroc: ['Fès', 'Marrakech', 'Essaouira', 'Chefchaouen', 'Tanger', 'Casablanca', 'Rabat', 'Ouarzazate'],
+    inde: ['Varanasi', 'Rishikesh', 'Jaipur', 'Udaipur', 'Kerala', 'Mumbai', 'Delhi', 'Hampi'],
+    islande: ['Reykjavik', 'Akureyri', 'Vik', 'Husavik', 'Seyðisfjörður', 'Isafjörður', 'Hofn', 'Selfoss'],
+    cuba: ['La Havane', 'Trinidad', 'Santiago de Cuba', 'Viñales', 'Cienfuegos', 'Camagüey', 'Santa Clara', 'Baracoa'],
+    canada: ['Montréal', 'Québec', 'Vancouver', 'Toronto', 'Victoria', 'Tofino', 'Halifax', 'Ottawa'],
+    mexique: ['Oaxaca', 'Mexico', 'San Cristóbal', 'Mérida', 'Guadalajara', 'Tulum', 'Puebla', 'Guanajuato'],
+    cotedivoire: ['Abidjan', 'Yamoussoukro', 'Grand-Bassam', 'Korhogo', 'Bouaké', 'Man', 'San Pedro', 'Assinie'],
+    cote_divoire: ['Abidjan', 'Yamoussoukro', 'Grand-Bassam', 'Korhogo', 'Bouaké', 'Man', 'San Pedro', 'Assinie'],
+    portugal: ['Évora', 'Lisbonne', 'Porto', 'Sintra', 'Coimbra', 'Braga', 'Faro', 'Tavira']
+  };
+
+  const normalized = countryId.toLowerCase().replace(/[^a-z]/g, '');
+  const cities = countryCities[normalized] || countryCities[countryId] || [
+    'Ouidah', 'Urubamba', 'Kyoto', 'Saint-Louis', 'Paris', 'Salvador de Bahia', 'Fès', 'Varanasi'
+  ];
+  return cities[idx % cities.length];
 }
 
 function getTerritoryForSeed(idx: number): string {

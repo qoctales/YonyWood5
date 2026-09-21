@@ -91,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => 
         <div className="flex items-center gap-2">
           <button
             onClick={() => onNavigate({ type: 'submit_story' })}
-            className="px-3 py-1.5 rounded-xl bg-[#1C1917] hover:bg-stone-800 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs"
+            className="px-3.5 py-1.5 rounded-xl bg-[#A2482B] hover:bg-[#8B3B20] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs"
             id="nav-proposer-btn"
           >
             <PlusCircle className="w-3.5 h-3.5" />

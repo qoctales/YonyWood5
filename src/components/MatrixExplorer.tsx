@@ -185,7 +185,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   };
 
   const handleOpenUniverse = (person: AffiliationPerson) => {
-    celestialAudio.playOrbSelect();
+    celestialAudio.playRevealDeep();
     try {
       localStorage.setItem(`yonywood_person_${person.id}`, JSON.stringify(person));
     } catch {
@@ -255,8 +255,13 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     }
     setShuffleSeed(0);
     setSelectedPath([]);
+    setIsQuestionModalOpen(false);
     // Entrer directement en mode concentrique double lecture
     setExplorerLevel('stories');
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 300);
   };
 
   // Sélection d'un sujet sur l'anneau intérieur (change instantanément les 16 voix sur l'anneau extérieur)
@@ -268,7 +273,12 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     }
     setShuffleSeed(0);
     setSelectedPath([]);
+    setIsQuestionModalOpen(false);
     setExplorerLevel('stories');
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 300);
   };
 
   // Coordonnées du sujet actif sur l'anneau intérieur (pour relier aux 16 voix de l'anneau extérieur)
@@ -471,12 +481,12 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         }}
       />
 
-      {/* 1. BARRE SUPÉRIEURE : FIL D'ARIANE CONCENTRIQUE & BOUTON ACTUALISER */}
+      {/* 1. BARRE SUPÉRIEURE : FIL D'ARIANE ÉPURÉ SANS DOUBLON */}
       <header className="absolute top-4 left-4 right-4 z-40 flex items-center justify-between pointer-events-none">
         
-        {/* FIL D'ARIANE INTERACTIF : [8 Portes] > [Porte active] > [Sujet actif] */}
-        <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#E7E5E4] shadow-sm pointer-events-auto">
-          {/* Niveau 0 : 8 Portes */}
+        {/* FIL D'ARIANE INTERACTIF : [Porte] > [Catégorie] > [Sujet actif] */}
+        <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 backdrop-blur-md border border-[#E7E5E4] shadow-sm pointer-events-auto">
+          {/* Niveau 0 : Porte */}
           <button
             id="breadcrumb-dimensions-btn"
             onClick={() => {
@@ -484,22 +494,22 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
               setExplorerLevel('dimensions');
               setIsQuestionModalOpen(false);
             }}
-            className={`text-xs sm:text-sm font-medium px-2.5 py-0.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`text-xs sm:text-sm font-medium px-2.5 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
               explorerLevel === 'dimensions'
                 ? 'bg-[#1C1917] text-[#FDFBF7] shadow-xs'
-                : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+                : 'text-stone-600 hover:text-stone-950 hover:bg-stone-100'
             }`}
-            title="Revenir aux 8 Portes de la roue"
+            title="Revenir au choix de la Porte"
           >
             <Layers className="w-3.5 h-3.5 text-[#C89B3C]" />
-            <span>8 Portes</span>
+            <span>Porte</span>
           </button>
 
           {explorerLevel !== 'dimensions' && (
             <>
               <span className="text-stone-300 text-xs">/</span>
 
-              {/* Porte active / Retour aux 8 Portes */}
+              {/* Catégorie active (Séries, Thématiques, Pays, Marques...) sans répéter Porte */}
               <button
                 id="breadcrumb-category-btn"
                 onClick={() => {
@@ -507,30 +517,31 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   setExplorerLevel('dimensions');
                   setIsQuestionModalOpen(false);
                 }}
-                className="text-xs sm:text-sm font-medium px-2.5 py-1 rounded-full text-stone-700 hover:text-stone-950 bg-white/70 hover:bg-white border border-[#DFCDB2] transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
-                title="Revenir aux 8 Portes de l'Astrolabe"
+                className="text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-full text-[#8B6845] hover:text-[#5C4028] bg-stone-100/80 hover:bg-stone-100 border border-stone-200 transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                title={`${activeCategoryConfig.label} (cliquer pour changer de Porte)`}
               >
-                <ChevronLeft className="w-3.5 h-3.5 text-[#C89B3C]" />
-                <span>Les 8 Portes</span>
+                <span>{activeCategoryConfig.label}</span>
               </button>
 
               <span className="text-stone-300 text-xs">/</span>
 
-              {/* Sujet actif sélectionné */}
+              {/* Sujet actif sélectionné (ex: Nike, Bénin, Fiat Luxe...) */}
               <div className="flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-full bg-[#F4EFE6] border border-[#DFCDB2]">
                 <button
                   id="breadcrumb-topic-title-btn"
                   onClick={() => {
-                    if (activeTopicItem?.question || activeTopicItem?.subtitle) {
+                    if (activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle)) {
                       setIsQuestionModalOpen(prev => !prev);
                     }
                   }}
-                  className="text-xs sm:text-sm font-semibold text-[#8B6845] hover:text-[#5C4028] flex items-center gap-1.5 cursor-pointer transition-colors"
-                  title="Cliquer pour afficher la question associée"
+                  className={`text-xs sm:text-sm font-semibold text-[#8B6845] flex items-center gap-1.5 transition-colors ${
+                    activeCategory === 'questions' ? 'cursor-pointer hover:text-[#5C4028]' : 'cursor-default'
+                  }`}
+                  title={activeCategory === 'questions' ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
                 >
                   {activeTopicItem?.flag ? `${activeTopicItem.flag} ` : ''}
                   <span>{activeTopicItem?.title}</span>
-                  {(activeTopicItem?.question || activeTopicItem?.subtitle) && (
+                  {activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#8B6845]/15 text-[#78593A] font-medium">
                       Question
                     </span>
@@ -542,7 +553,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   id="btn-symbol-16-autres-voix"
                   onClick={handleActualiser}
                   className="w-6 h-6 rounded-full bg-white hover:bg-[#8B6845] text-[#8B6845] hover:text-white border border-[#C89B3C]/40 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group ml-0.5"
-                  title="Actualiser : choisir 16 autres voix"
+                  title="Actualiser : 16 autres voix"
                 >
                   <RefreshCw className={`w-3 h-3 transition-transform ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 duration-500'}`} />
                 </button>
@@ -550,38 +561,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             </>
           )}
         </div>
-
-        {/* CONTROLES DROITE : COMMANDE ORBITALE SHUFFLE & RESET VUE */}
-        <div className="flex items-center gap-2 pointer-events-auto">
-          {/* BOUTON FLOTTANT RAFFINÉ ALÉATOIRE / SHUFFLE */}
-          <button
-            id="btn-orbital-shuffle"
-            onClick={handleShuffleOrbital}
-            className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-900/90 hover:bg-stone-900 text-[#FDFBF7] border border-[#C89B3C]/70 shadow-[0_3px_12px_rgba(200,155,60,0.3)] backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer select-none"
-            title="Actualiser les 16 du premier cercle (Aléatoire)"
-          >
-            <div className="w-5 h-5 rounded-full bg-[#C89B3C]/25 border border-[#C89B3C]/70 flex items-center justify-center text-[#FCE7A6]">
-              <Shuffle className={`w-3 h-3 text-[#FCE7A6] transition-transform duration-700 ${isShuffling ? 'rotate-360 scale-125' : 'group-hover:rotate-180'}`} />
-            </div>
-            <span className="text-xs font-semibold text-[#FDFBF7] tracking-wide hidden sm:inline">
-              Aléatoire
-            </span>
-          </button>
-
-          {/* Bouton Reset vue */}
-          <button
-            id="btn-reset-view"
-            onClick={handleResetView}
-            className="w-9 h-9 rounded-full bg-white/90 hover:bg-white text-stone-700 border border-[#E7E5E4] shadow-sm flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
-            title="Recentrer et réinitialiser l'angle"
-          >
-            <Compass className="w-4 h-4 text-[#8B6845]" />
-          </button>
-        </div>
       </header>
 
-      {/* POP-OVER AÉRÉ DE LA QUESTION (S'affiche uniquement au clic sur le titre / badge Question) */}
-      {isQuestionModalOpen && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
+      {/* POP-OVER AÉRÉ DE LA QUESTION (S'affiche uniquement au clic sur la Question pour la catégorie Sagesses) */}
+      {isQuestionModalOpen && activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
         <div 
           id="topic-question-popover"
           className="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-40 max-w-[92vw] sm:max-w-xl p-4 sm:p-5 rounded-2xl bg-stone-900/95 backdrop-blur-md border border-[#C89B3C]/70 shadow-2xl text-center pointer-events-auto animate-in fade-in duration-200"
@@ -836,32 +819,37 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                         </foreignObject>
                       </g>
 
-                      {/* Cartouche éditorial complet de la Porte */}
+                      {/* Cartouche nominal de la Porte : TOUJOURS visible, horizontal face à l'utilisateur */}
                       <g 
                         transform={`translate(${x}, ${y + 44})`} 
-                        className={`transition-all duration-200 pointer-events-none ${
-                          isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0'
+                        className={`transition-all duration-300 pointer-events-none ${
+                          isHovered ? 'scale-105' : 'scale-100'
                         }`}
+                        style={{ transformOrigin: `${x}px ${y + 44}px` }}
                       >
+                        {/* Fond du cartouche pilule */}
                         <rect 
-                          x="-58" 
+                          x="-46" 
                           y="-11" 
-                          width="116" 
+                          width="92" 
                           height="22" 
                           rx="11" 
-                          fill="#1C1917" 
-                          stroke="#C89B3C"
-                          strokeWidth="1.2"
-                          filter="drop-shadow(0 4px 14px rgba(0,0,0,0.5))"
+                          fill={isHovered ? "#292524" : "#1C1917"} 
+                          stroke={isHovered ? "#FCE7A6" : "#C89B3C"}
+                          strokeWidth={isHovered ? "1.6" : "1.2"}
+                          filter="drop-shadow(0 3px 8px rgba(0,0,0,0.45))"
+                          className="transition-colors duration-200"
                         />
+                        {/* Libellé unique en 1 mot */}
                         <text 
                           x="0" 
-                          y="4" 
+                          y="3.5" 
                           textAnchor="middle" 
-                          fill="#FDFBF7" 
-                          fontSize="10" 
-                          fontWeight="700"
-                          fontFamily="sans-serif"
+                          fill={isHovered ? "#FFF8E7" : "#FDFBF7"} 
+                          fontSize="10.5" 
+                          fontWeight={isHovered ? "700" : "600"}
+                          letterSpacing="0.02em"
+                          className="select-none transition-colors duration-200"
                         >
                           {cat.label}
                         </text>
@@ -1190,7 +1178,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             {/* NIVEAU 2 : AFFICHAGE DES 16 VOIX / HISTOIRES SUR LA ROUE                 */}
             {/* ========================================================================= */}
             {explorerLevel === 'stories' && (
-              <g id="wheel-level-stories">
+              <g id="wheel-level-stories" key={`wheel-level-stories-${activeCategory}-${activeTopicId}-${shuffleSeed}`}>
                 {/* Rayons vers les 16 personnes */}
                 {nodesByGeneration[0]?.map((pNode) => (
                   <line 
@@ -1430,25 +1418,20 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             {/* Gradient pour lisibilité */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 pointer-events-none" />
 
-            {/* HAUT : Titre épuré (avec question révélable au clic ou à la pause) + Commandes */}
+            {/* HAUT : Titre du sujet + Commandes */}
             <div className="relative z-20 p-4 flex items-center justify-between pointer-events-auto">
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowQuestionInVideo(prev => !prev);
-                }}
-                className="px-3.5 py-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-xs text-[#F5D88C] font-medium shadow-md tracking-wide max-w-[65%] sm:max-w-[75%] cursor-pointer flex items-center gap-1.5 transition-colors"
-                title="Cliquer pour afficher la question"
+              <div 
+                className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs text-[#F5D88C] font-medium shadow-md tracking-wide max-w-[65%] sm:max-w-[75%] flex items-center gap-1.5"
               >
                 <span className="truncate block font-semibold">
                   {activeTopicItem?.title || modalPerson.universeTag}
                 </span>
-                {(activeTopicItem?.question || activeTopicItem?.subtitle) && (
+                {activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
                   <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#C89B3C]/25 text-[#F5D88C] font-normal shrink-0">
                     Question
                   </span>
                 )}
-              </button>
+              </div>
 
               <div className="flex items-center gap-2">
                 {/* Muet / Son */}
@@ -1499,28 +1482,6 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 </button>
               </div>
             </div>
-
-            {/* CARTE QUESTION EN PAUSE OU AU CLIC : S'affiche au milieu de la vidéo, disparaît au redémarrage */}
-            {(!isPlaying || showQuestionInVideo) && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
-              <div 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowQuestionInVideo(false);
-                  if (!isPlaying) toggleVideoPlayback();
-                }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-[88%] p-5 rounded-2xl bg-black/80 backdrop-blur-lg border border-[#C89B3C]/70 shadow-2xl text-center pointer-events-auto cursor-pointer animate-in fade-in zoom-in-95 duration-200"
-              >
-                <span className="text-[11px] uppercase tracking-wider text-[#F5D88C] font-semibold block mb-2">
-                  Question posée
-                </span>
-                <p className="text-sm sm:text-base italic font-serif text-stone-100 leading-relaxed">
-                  « {activeTopicItem?.question || activeTopicItem?.subtitle} »
-                </p>
-                <span className="inline-flex items-center gap-1.5 mt-3 text-[11px] text-[#C89B3C] font-sans">
-                  <Play className="w-3 h-3 fill-current" /> Relancer la vidéo
-                </span>
-              </div>
-            )}
 
             {/* BAS : Prénom + Âge en dessous uniquement + Bouton Diamant & Bonhomme */}
             <div className="relative z-20 p-5 sm:p-6 flex items-end justify-between pointer-events-auto mt-auto">

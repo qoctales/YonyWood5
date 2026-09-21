@@ -255,12 +255,17 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
         </div>
       )}
 
-      {/* Cartouche d'indication sous le centre en mode concentrique */}
-      {explorerLevel !== 'dimensions' && topicName && (
-        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-stone-900/90 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-[#C89B3C]/60 shadow-lg">
+      {/* Cartouche d'indication sous le centre */}
+      {explorerLevel !== 'dimensions' && topicName ? (
+        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-[#FCE7A6]/50 shadow-lg shadow-[#A2482B]/20">
           {topicName}
         </div>
-      )}
+      ) : explorerLevel === 'dimensions' ? (
+        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-[#FCE7A6]/50 shadow-lg shadow-[#A2482B]/20 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FCE7A6] animate-pulse" />
+          <span>{hoveredCategory ? `Entrer : ${hoveredCategory.label}` : 'Choisissez une porte'}</span>
+        </div>
+      ) : null}
     </div>
   );
 };

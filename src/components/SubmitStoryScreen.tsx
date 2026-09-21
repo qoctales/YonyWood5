@@ -377,9 +377,9 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               key={s}
               className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                 step === s
-                  ? 'bg-[#1C1917] text-[#FFFFFF] shadow-xs'
+                  ? 'bg-[#A2482B] text-[#FFFFFF] shadow-xs'
                   : step > s
-                  ? 'bg-[#1C1917] text-[#FFFFFF]'
+                  ? 'bg-[#8B3B20] text-[#FFFFFF]'
                   : 'bg-[#E7E5E4] text-[#7A756B]'
               }`}
             >

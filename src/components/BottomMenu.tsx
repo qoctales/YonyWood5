@@ -94,7 +94,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
               <div 
                 className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                   item.isActive 
-                    ? 'bg-[#1C1917] text-[#C89B3C] shadow-md shadow-stone-900/25 ring-2 ring-[#C89B3C]/30 scale-105' 
+                    ? 'bg-[#A2482B] text-white shadow-md shadow-[#A2482B]/30 ring-2 ring-[#C89B3C]/40 scale-105' 
                     : 'bg-transparent text-current group-hover:bg-stone-100/80'
                 }`}
               >
