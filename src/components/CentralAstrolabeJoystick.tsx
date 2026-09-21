@@ -260,10 +260,10 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
         <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-[#FCE7A6]/50 shadow-lg shadow-[#A2482B]/20">
           {topicName}
         </div>
-      ) : explorerLevel === 'dimensions' ? (
-        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-[#FCE7A6]/50 shadow-lg shadow-[#A2482B]/20 flex items-center gap-1.5">
+      ) : explorerLevel === 'dimensions' && hoveredCategory ? (
+        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-[#FCE7A6]/50 shadow-lg shadow-[#A2482B]/20 flex items-center gap-1.5 animate-in fade-in duration-200">
           <span className="w-1.5 h-1.5 rounded-full bg-[#FCE7A6] animate-pulse" />
-          <span>{hoveredCategory ? `Entrer : ${hoveredCategory.label}` : 'Choisissez une porte'}</span>
+          <span>{hoveredCategory.label}</span>
         </div>
       ) : null}
     </div>

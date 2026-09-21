@@ -18,12 +18,32 @@
     --color-surface-dark: #1B1916;
     --color-text-dark: #F5F1E8;
     --color-text-dark-secondary: #A8A399;
+
+    --color-terracotta: #A2482B;
+    --color-terracotta-hover: #8A3B22;
   }
 
   body {
     font-family: var(--font-ui);
     background-color: var(--color-bg);
     color: var(--color-text);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Safe Area Support for Notch and Dynamic Island / Home Indicator */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pl-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+  .pr-safe {
+    padding-right: env(safe-area-inset-right, 0px);
   }
 
   h1, h2, h3, .font-editorial {

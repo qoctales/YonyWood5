@@ -13,7 +13,6 @@ import {
   Pause,
   ChevronLeft,
   ChevronRight,
-  Share2, 
   Sparkles, 
   MapPin, 
   CreditCard, 
@@ -24,6 +23,7 @@ import {
   Coins,
   CheckCircle2
 } from 'lucide-react';
+import { ShareIcon } from './ShareIcon';
 import { ViewScreen } from '../types';
 import { DUOS, DOCUMENTARIES, PROTAGONISTS } from '../data/mockData';
 
@@ -511,7 +511,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
               title="Partager cet univers"
               className="p-2 rounded-full border border-[#E7E5E4] bg-white hover:bg-[#FAFAF9] text-[#68655D] transition-colors"
             >
-              <Share2 className="w-3.5 h-3.5" />
+              <ShareIcon className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

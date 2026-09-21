@@ -16,10 +16,34 @@ import {
   Tv,
   ChevronLeft,
   ChevronRight,
-  FileText
+  FileText,
+  Mountain,
+  Atom,
+  Fingerprint,
+  Gem,
+  Sprout,
+  GraduationCap,
+  Flame,
+  Compass
 } from 'lucide-react';
 import { DOCUMENTARIES } from '../data/mockData';
 import { ViewScreen, Documentary } from '../types';
+import { 
+  EXPLORER_CATEGORIES, 
+  EXPLORER_CATALOG, 
+  ExplorerCategoryType 
+} from '../data/explorerTopicsData';
+
+const EXPLORER_DOOR_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  series: Film,
+  countries: Mountain,
+  thematics: Atom,
+  personalities: Fingerprint,
+  brands: Gem,
+  projects: Sprout,
+  offers: GraduationCap,
+  questions: Flame
+};
 
 const SERIES_PRESENTATIONS: Record<string, { synopsis: string; whyParticipate: string; videoUrl: string; duration: string }> = {
   'jesus-legba': {
@@ -110,6 +134,27 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const [isEpisodeVideoPlaying, setIsEpisodeVideoPlaying] = useState(false);
   const [isEpisodeMuted, setIsEpisodeMuted] = useState(false);
   const [showTranscription, setShowTranscription] = useState(false);
+
+  // Choix du canal : Séries (Face-à-Face) ou Thématiques de l'Explorer
+  const [contributionMode, setContributionMode] = useState<'series' | 'explorer'>('series');
+  const [explorerDoor, setExplorerDoor] = useState<ExplorerCategoryType>('countries');
+  const [selectedTopicId, setSelectedTopicId] = useState<string>('benin');
+  const [explorerStoryTitle, setExplorerStoryTitle] = useState('');
+  const [explorerStorySummary, setExplorerStorySummary] = useState('');
+  const [explorerSpeakerName, setExplorerSpeakerName] = useState('');
+
+  const explorerDoorsList = EXPLORER_CATEGORIES.filter(c => c.id !== 'series');
+  const activeDoorTopics = EXPLORER_CATALOG[explorerDoor] || [];
+  const selectedTopic = activeDoorTopics.find(t => t.id === selectedTopicId) || activeDoorTopics[0];
+  const selectedDoorConfig = EXPLORER_CATEGORIES.find(c => c.id === explorerDoor);
+
+  const handleSelectDoor = (doorId: ExplorerCategoryType) => {
+    setExplorerDoor(doorId);
+    const topics = EXPLORER_CATALOG[doorId] || [];
+    if (topics.length > 0) {
+      setSelectedTopicId(topics[0].id);
+    }
+  };
 
   // Vidéos explicatives 9:16 pour l'Étape 3
   const [isPlayingGuideHaveVideo, setIsPlayingGuideHaveVideo] = useState(false);
@@ -327,32 +372,91 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   if (submittedSuccess) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-[#C89B3C]/15 border border-[#C89B3C] text-[#8B6845] mx-auto flex items-center justify-center">
-          <Check className="w-8 h-8" />
+        <div className="w-16 h-16 rounded-full bg-[#0D9488]/15 border border-[#0D9488] text-[#0D9488] mx-auto flex items-center justify-center">
+          <Check className="w-8 h-8 stroke-[2.5]" />
         </div>
         <h2 className="font-editorial text-3xl font-bold text-[#1C1917]">
-          Votre histoire est transmise.
+          Votre proposition a été transmise.
         </h2>
-        <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E7E5E4] text-left space-y-2 max-w-md mx-auto">
-          <p className="text-xs text-[#8B6845] font-bold uppercase tracking-wider">
-            {selectedDoc.title}
-          </p>
-          <p className="font-editorial text-sm font-semibold text-[#1C1917]">
-            Épisode {selectedQuestion.number} — {selectedQuestion.title}
-          </p>
-          <p className="text-xs text-[#68655D] italic">
-            « {selectedQuestion.prompt} »
-          </p>
-          <p className="text-xs text-[#C89B3C] pt-2 font-medium">
-            Format : {videoOption === 'HAVE_VIDEO' ? 'Vidéo personnelle fournie' : 'Demande d’accompagnement par un cadreur'}
-          </p>
+        <div className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#E7E5E4] text-left space-y-3 max-w-md mx-auto shadow-xs">
+          {contributionMode === 'explorer' ? (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#0D9488] font-bold uppercase tracking-wider">
+                  Porte {selectedDoorConfig?.label}
+                </span>
+                <span className="text-stone-300">•</span>
+                <span className="text-xs text-[#A2482B] font-semibold">
+                  {selectedTopic?.title}
+                </span>
+              </div>
+              <p className="font-editorial text-base font-semibold text-[#1C1917]">
+                {explorerStoryTitle || "Récit pour l'Explorer"}
+              </p>
+              {explorerStorySummary && (
+                <p className="text-xs text-[#68655D] italic line-clamp-2">
+                  « {explorerStorySummary} »
+                </p>
+              )}
+              {explorerSpeakerName && (
+                <p className="text-xs text-stone-500 font-medium">
+                  Intervenant : <strong className="text-stone-700">{explorerSpeakerName}</strong>
+                </p>
+              )}
+              <div className="pt-1 border-t border-stone-100">
+                <p className="text-xs text-[#0D9488] font-medium">
+                  Format : {videoOption === 'HAVE_VIDEO' ? 'Vidéo personnelle fournie' : 'Demande d’accompagnement par un cadreur'}
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-xs text-[#A2482B] font-bold uppercase tracking-wider">
+                {selectedDoc.title}
+              </p>
+              <p className="font-editorial text-base font-semibold text-[#1C1917]">
+                Épisode {selectedQuestion.number} — {selectedQuestion.title}
+              </p>
+              <p className="text-xs text-[#68655D] italic">
+                « {selectedQuestion.prompt} »
+              </p>
+              <div className="pt-1 border-t border-stone-100">
+                <p className="text-xs text-[#0D9488] font-medium">
+                  Format : {videoOption === 'HAVE_VIDEO' ? 'Vidéo personnelle fournie' : 'Demande d’accompagnement par un cadreur'}
+                </p>
+              </div>
+            </>
+          )}
         </div>
-        <div className="pt-4 flex justify-center gap-3">
+
+        <div className="pt-4 flex flex-wrap justify-center gap-3">
+          {contributionMode === 'explorer' ? (
+            <button
+              onClick={() => onNavigate({ type: 'matrix_view' })}
+              className="px-6 py-2.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            >
+              Découvrir dans l'Explorer
+            </button>
+          ) : (
+            <button
+              onClick={() => onNavigate({ type: 'duo_feed' })}
+              className="px-6 py-2.5 rounded-full bg-[#A2482B] hover:bg-[#8B3B20] text-[#FFFFFF] text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            >
+              Retourner aux duos
+            </button>
+          )}
           <button
-            onClick={() => onNavigate({ type: 'duo_feed' })}
-            className="px-6 py-2.5 rounded-full bg-[#C89B3C] hover:bg-[#B78A2E] text-[#FFFFFF] text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            onClick={() => {
+              setSubmittedSuccess(false);
+              setStep(1);
+              setExplorerStoryTitle('');
+              setExplorerStorySummary('');
+              setExplorerSpeakerName('');
+              setVideoOption(null);
+            }}
+            className="px-6 py-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold transition-colors cursor-pointer border border-stone-200"
           >
-            Retourner aux duos
+            Proposer une autre histoire
           </button>
         </div>
       </div>
@@ -368,6 +472,9 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
           <h1 className="font-editorial text-xl sm:text-2xl font-bold text-[#1C1917]">
             Proposer une histoire
           </h1>
+          <p className="text-xs text-stone-500 mt-0.5">
+            Partagez votre voix dans nos séries ou dans l'une des thématiques de l'Explorer.
+          </p>
         </div>
 
         {/* Step indicator pills */}
@@ -379,7 +486,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 step === s
                   ? 'bg-[#A2482B] text-[#FFFFFF] shadow-xs'
                   : step > s
-                  ? 'bg-[#8B3B20] text-[#FFFFFF]'
+                  ? 'bg-[#0D9488] text-[#FFFFFF]'
                   : 'bg-[#E7E5E4] text-[#7A756B]'
               }`}
             >
@@ -389,12 +496,49 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
         </div>
       </div>
 
+      {/* Sélecteur de canal de contribution : Séries (Face-à-Face) ou Explorer (7 Portes) */}
+      <div className="flex p-1 bg-stone-100/90 rounded-2xl border border-stone-200/80 max-w-md mx-auto">
+        <button
+          type="button"
+          onClick={() => {
+            setContributionMode('series');
+            setStep(1);
+          }}
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+            contributionMode === 'series'
+              ? 'bg-white text-[#1C1917] shadow-xs'
+              : 'text-stone-600 hover:text-[#1C1917]'
+          }`}
+          id="tab-contrib-series"
+        >
+          <Film className={`w-3.5 h-3.5 ${contributionMode === 'series' ? 'text-[#A2482B]' : 'text-stone-400'}`} />
+          <span>Séries (Face-à-Face)</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setContributionMode('explorer');
+            setStep(1);
+          }}
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+            contributionMode === 'explorer'
+              ? 'bg-white text-[#1C1917] shadow-xs'
+              : 'text-stone-600 hover:text-[#1C1917]'
+          }`}
+          id="tab-contrib-explorer"
+        >
+          <Compass className={`w-3.5 h-3.5 ${contributionMode === 'explorer' ? 'text-[#0D9488]' : 'text-stone-400'}`} />
+          <span>Explorer (7 Portes)</span>
+        </button>
+      </div>
+
       {/* PANNEAU 1 : UN SEUL ÉCRAN QUI APPARAÎT AVEC SWIPE (EXACTEMENT COMME LA CAPTURE D'ÉCRAN FOURNIE) */}
       {step === 1 && (
         <div className="space-y-4 animate-in fade-in duration-200">
           
-          {/* Conteneur de l'écran unique avec swipe et navigation fléchée */}
-          <div className="relative flex items-center justify-center py-2">
+          {contributionMode === 'series' ? (
+            /* Conteneur de l'écran unique avec swipe et navigation fléchée */
+            <div className="relative flex items-center justify-center py-2">
             
             {/* Flèche Gauche (Navigation rapide) */}
             <button
@@ -604,6 +748,119 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
             </button>
 
           </div>
+          ) : (
+            /* EXPLORER : SÉLECTION DE LA PORTE ET DU SUJET */
+            <div className="space-y-6 pt-1">
+              {/* 1. Sélection de la porte parmi les 7 */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-stone-700">
+                    1. Choisissez une porte de l'Astrolabe
+                  </label>
+                  <span className="text-[11px] text-[#0D9488] font-bold">
+                    Porte : {selectedDoorConfig?.label}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+                  {explorerDoorsList.map((door) => {
+                    const DoorIcon = EXPLORER_DOOR_ICONS[door.id] || Compass;
+                    const isSelected = explorerDoor === door.id;
+                    return (
+                      <button
+                        key={door.id}
+                        type="button"
+                        onClick={() => handleSelectDoor(door.id)}
+                        className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 active:scale-95 ${
+                          isSelected
+                            ? 'bg-[#0D9488]/10 border-[#0D9488] shadow-xs text-[#0D9488]'
+                            : 'bg-white hover:bg-stone-50 border-stone-200 text-stone-700 hover:text-stone-900'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                          isSelected ? 'bg-[#0D9488] text-white' : 'bg-stone-100 text-stone-600'
+                        }`}>
+                          <DoorIcon className="w-4 h-4" />
+                        </div>
+                        <span className="text-[11px] font-semibold leading-tight line-clamp-1">
+                          {door.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Sélection du sujet spécifique sous cette porte */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider text-stone-700">
+                    2. Choisissez votre sujet
+                  </label>
+                  <span className="text-[11px] text-stone-500">
+                    {activeDoorTopics.length} sujets disponibles
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[380px] overflow-y-auto pr-1">
+                  {activeDoorTopics.map((topic) => {
+                    const isTopicSelected = selectedTopicId === topic.id;
+                    return (
+                      <div
+                        key={topic.id}
+                        onClick={() => setSelectedTopicId(topic.id)}
+                        className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-start justify-between gap-3 ${
+                          isTopicSelected
+                            ? 'bg-white border-[#0D9488] ring-2 ring-[#0D9488]/20 shadow-xs'
+                            : 'bg-white hover:bg-stone-50/80 border-stone-200/90'
+                        }`}
+                      >
+                        <div className="space-y-1 flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#A2482B] bg-[#A2482B]/10 px-2 py-0.5 rounded-md">
+                              {topic.badge || topic.category}
+                            </span>
+                            {topic.flag && (
+                              <span className="text-xs">{topic.flag}</span>
+                            )}
+                          </div>
+                          <h4 className="text-xs font-bold text-[#1C1917] line-clamp-1">
+                            {topic.title}
+                          </h4>
+                          <p className="text-[11px] text-stone-500 line-clamp-2 leading-relaxed">
+                            {topic.subtitle || topic.question}
+                          </p>
+                        </div>
+                        <div className={`w-5 h-5 rounded-full shrink-0 border flex items-center justify-center transition-all mt-0.5 ${
+                          isTopicSelected
+                            ? 'bg-[#0D9488] border-[#0D9488] text-white'
+                            : 'border-stone-300 bg-stone-50'
+                        }`}>
+                          {isTopicSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bouton de confirmation d'étape pour l'Explorer */}
+              <div className="flex items-center justify-between pt-2 border-t border-stone-200">
+                <div className="text-xs text-stone-600">
+                  Sujet sélectionné : <strong className="text-[#1C1917]">{selectedTopic?.title}</strong>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="h-10 px-5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 active:scale-95"
+                  id="btn-confirm-explorer-topic"
+                >
+                  <span>Continuer : Mon récit</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
 
         </div>
       )}
@@ -612,7 +869,9 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {step === 2 && (
         <div className="space-y-4 animate-in fade-in duration-200">
           
-          {/* En-tête discret : Rappel de la série et changement rapide */}
+          {contributionMode === 'series' ? (
+            <>
+              {/* En-tête discret : Rappel de la série et changement rapide */}
           <div className="flex items-center justify-between px-1">
             <p className="text-xs text-[#68655D]">
               Série choisie : <strong className="text-[#1C1917]">{selectedDoc.title}</strong>
@@ -834,6 +1093,102 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
             </button>
 
           </div>
+          </>
+          ) : (
+            /* FORMULAIRE RÉCIT EXPLORER */
+            <div className="space-y-5 pt-1">
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-stone-50 border border-stone-200">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#0D9488] block">
+                    Porte {selectedDoorConfig?.label}
+                  </span>
+                  <p className="text-xs font-bold text-[#1C1917]">
+                    {selectedTopic?.title}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="text-xs text-[#A2482B] hover:text-[#8B3B20] font-semibold cursor-pointer underline"
+                >
+                  Changer de sujet
+                </button>
+              </div>
+
+              <div className="space-y-4 bg-white p-5 rounded-3xl border border-stone-200 shadow-xs">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-[#1C1917] flex items-center justify-between">
+                    <span>Titre de votre récit ou intervention *</span>
+                    <span className="text-[11px] text-stone-400 font-normal">Obligatoire</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: La mémoire des masques et la transmission aux initiés"
+                    value={explorerStoryTitle}
+                    onChange={(e) => setExplorerStoryTitle(e.target.value)}
+                    className="w-full px-4 py-2.5 text-xs bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488] focus:bg-white transition-all"
+                    id="input-explorer-story-title"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-[#1C1917] flex items-center justify-between">
+                    <span>Ce que vous transmettez (résumé / question clé)</span>
+                    <span className="text-[11px] text-stone-400 font-normal">Recommandé</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder="Résumez en quelques lignes votre expérience, l'héritage partagé ou la question essentielle abordée..."
+                    value={explorerStorySummary}
+                    onChange={(e) => setExplorerStorySummary(e.target.value)}
+                    className="w-full px-4 py-2.5 text-xs bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488] focus:bg-white transition-all resize-none"
+                    id="textarea-explorer-story-summary"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-[#1C1917] flex items-center justify-between">
+                    <span>Votre nom ou identité publique</span>
+                    <span className="text-[11px] text-stone-400 font-normal">Optionnel</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Kofi Mensah — Gardien de mémoire"
+                    value={explorerSpeakerName}
+                    onChange={(e) => setExplorerSpeakerName(e.target.value)}
+                    className="w-full px-4 py-2.5 text-xs bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488] focus:bg-white transition-all"
+                    id="input-explorer-speaker-name"
+                  />
+                </div>
+              </div>
+
+              {/* Boutons d'action étape 2 */}
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="h-10 px-4 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Retour aux sujets</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(3)}
+                  disabled={!explorerStoryTitle.trim()}
+                  className={`h-10 px-5 rounded-full text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 ${
+                    explorerStoryTitle.trim()
+                      ? 'bg-[#0D9488] hover:bg-[#0F766E] text-white cursor-pointer active:scale-95'
+                      : 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                  }`}
+                  id="btn-confirm-explorer-story"
+                >
+                  <span>Passer au format vidéo</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
 
         </div>
       )}
@@ -842,12 +1197,25 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {step === 3 && (
         <div className="space-y-4 animate-in fade-in duration-200">
           <div className="p-3.5 rounded-2xl bg-[#FFFFFF] border border-[#E7E5E4] text-xs space-y-1">
-            <span className="text-[#8B6845] font-bold uppercase tracking-wider block text-[10px]">
-              Votre choix
+            <span className="text-[#0D9488] font-bold uppercase tracking-wider block text-[10px]">
+              Votre choix de publication
             </span>
-            <p className="text-[#1C1917] font-medium">
-              {selectedDoc.title} • Épisode {selectedQuestion.number} ({selectedQuestion.title})
-            </p>
+            {contributionMode === 'explorer' ? (
+              <div>
+                <p className="text-[#1C1917] font-bold">
+                  Porte {selectedDoorConfig?.label} • {selectedTopic?.title}
+                </p>
+                {explorerStoryTitle && (
+                  <p className="text-stone-600 italic mt-0.5">
+                    « {explorerStoryTitle} »
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-[#1C1917] font-medium">
+                {selectedDoc.title} • Épisode {selectedQuestion.number} ({selectedQuestion.title})
+              </p>
+            )}
           </div>
 
           <p className="text-xs text-[#1C1917] font-medium">
@@ -1106,9 +1474,12 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               onClick={handleFinishSubmission}
               className={`px-7 py-2.5 rounded-full text-xs font-semibold transition-all flex items-center gap-2 shadow-sm ${
                 videoOption && (videoOption === 'NEED_VIDEOGRAPHER' || uploadedFileName)
-                  ? 'bg-[#C89B3C] hover:bg-[#B78A2E] text-[#FFFFFF] cursor-pointer'
+                  ? contributionMode === 'explorer'
+                    ? 'bg-[#0D9488] hover:bg-[#0F766E] text-[#FFFFFF] cursor-pointer'
+                    : 'bg-[#A2482B] hover:bg-[#8B3B20] text-[#FFFFFF] cursor-pointer'
                   : 'bg-[#E7E5E4] text-[#7A756B] opacity-60 cursor-not-allowed'
               }`}
+              id="btn-final-submit"
             >
               <span>{videoOption === 'NEED_VIDEOGRAPHER' ? 'Confirmer ma demande' : 'Transmettre mon récit'}</span>
               <Check className="w-4 h-4" />

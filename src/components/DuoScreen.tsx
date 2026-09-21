@@ -6,7 +6,6 @@ import {
   MapPin, 
   Compass, 
   TreePine, 
-  Share2, 
   Quote,
   Clock,
   ArrowRight

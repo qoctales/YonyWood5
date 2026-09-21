@@ -35,12 +35,12 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
   },
   {
     id: 'countries',
-    label: 'Pays',
-    shortLabel: 'Pays',
-    tagline: '16 regards humains sur un pays',
-    description: 'Choisissez un pays du monde : 16 personnes locales, créateurs, paysans ou bâtisseurs viennent vous raconter leur histoire vivante liée à cette terre.',
-    badge: '16 pays du monde',
-    iconName: 'Globe',
+    label: 'Territoires',
+    shortLabel: 'Territoires',
+    tagline: '16 regards humains enracinés dans leur terre',
+    description: 'Explorez un terroir du monde : 16 bâtisseurs, paysans, créateurs et pêcheurs racontent leur mémoire vivante liée à leur terre et à leur matière brute.',
+    badge: '16 terroirs du monde',
+    iconName: 'Compass',
     accentColor: '#10B981',
     glowColor: 'rgba(16, 185, 129, 0.65)',
     bgGradient: 'from-[#10B981] via-[#047857] to-[#064E3B]',
@@ -53,7 +53,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Savoirs, Matière, Fréquences...',
     description: 'Des grands thèmes universels explorés à travers 16 regards croisés sans dogme : le massage, la physique quantique, l’artisanat, la musique des fréquences...',
     badge: '16 sujets profonds',
-    iconName: 'Compass',
+    iconName: 'Layers',
     accentColor: '#0EA5E9',
     glowColor: 'rgba(14, 165, 233, 0.65)',
     bgGradient: 'from-[#0EA5E9] via-[#0369A1] to-[#082F49]',
@@ -66,7 +66,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Grandes figures racontées par 16 regards',
     description: 'Une grande figure racontée par 16 personnes qui ont une histoire intime, sportive, artistique ou philosophique liée à son parcours.',
     badge: '16 figures phares',
-    iconName: 'Sparkles',
+    iconName: 'Users',
     accentColor: '#F59E0B',
     glowColor: 'rgba(245, 158, 11, 0.65)',
     bgGradient: 'from-[#F59E0B] via-[#B45309] to-[#78350F]',
@@ -79,7 +79,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Artisans, Bâtisseurs & Maisons d’exception',
     description: 'Découvrez une marque ou une maison par ceux qui la font ou la vivent : artisans du cuir, athlètes de rue, réparateurs de l’extrême, pionniers.',
     badge: '16 marques iconiques',
-    iconName: 'Award',
+    iconName: 'Crown',
     accentColor: '#FB923C',
     glowColor: 'rgba(251, 146, 60, 0.65)',
     bgGradient: 'from-[#FB923C] via-[#C2410C] to-[#431407]',
@@ -92,7 +92,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Forêts sacrées, Écoles nomades...',
     description: 'Rencontrez 16 bâtisseurs de terrain engagés dans des causes vivantes : agroforesterie, écoles tissées, sauvegarde de semences anciennes, récifs.',
     badge: '16 chantiers vivants',
-    iconName: 'HeartHandshake',
+    iconName: 'Trees',
     accentColor: '#EC4899',
     glowColor: 'rgba(236, 72, 153, 0.65)',
     bgGradient: 'from-[#EC4899] via-[#BE185D] to-[#500724]',
@@ -104,8 +104,8 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     shortLabel: 'Offres',
     tagline: 'Masterclasses & Transmissions concrètes',
     description: 'Accédez à des transmissions concrètes : stages de tissage royal, ateliers de respiration, compagnonnages en forge ou résidences immersives.',
-    badge: '16 transmissions',
-    iconName: 'ShoppingBag',
+    badge: '16 offres concrètes',
+    iconName: 'GraduationCap',
     accentColor: '#6366F1',
     glowColor: 'rgba(99, 102, 241, 0.65)',
     bgGradient: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
@@ -118,7 +118,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Récits vrais et mémoire vive du peuple',
     description: 'Les grandes sagesses et interrogations du peuple, racontées à travers des moments vécus par 16 voix de tous horizons.',
     badge: '16 sagesses populaires',
-    iconName: 'HelpCircle',
+    iconName: 'Flame',
     accentColor: '#A855F7',
     glowColor: 'rgba(168, 85, 247, 0.65)',
     bgGradient: 'from-[#A855F7] via-[#7E22CE] to-[#3B0764]',
@@ -1829,29 +1829,31 @@ function getFlagForSeed(idx: number): string {
   return flags[idx % flags.length];
 }
 
-export function getCountryFlagUrl(countryId: string): string {
+export function getTerritoryVisualUrl(countryId: string): string {
   const map: Record<string, string> = {
-    benin: 'https://flagcdn.com/w160/bj.png',
-    perou: 'https://flagcdn.com/w160/pe.png',
-    japon: 'https://flagcdn.com/w160/jp.png',
-    senegal: 'https://flagcdn.com/w160/sn.png',
-    france: 'https://flagcdn.com/w160/fr.png',
-    bresil: 'https://flagcdn.com/w160/br.png',
-    mali: 'https://flagcdn.com/w160/ml.png',
-    colombie: 'https://flagcdn.com/w160/co.png',
-    maroc: 'https://flagcdn.com/w160/ma.png',
-    inde: 'https://flagcdn.com/w160/in.png',
-    islande: 'https://flagcdn.com/w160/is.png',
-    cuba: 'https://flagcdn.com/w160/cu.png',
-    canada: 'https://flagcdn.com/w160/ca.png',
-    mexique: 'https://flagcdn.com/w160/mx.png',
-    'cote-divoire': 'https://flagcdn.com/w160/ci.png',
-    portugal: 'https://flagcdn.com/w160/pt.png',
-    grece: 'https://flagcdn.com/w160/gr.png',
-    norvege: 'https://flagcdn.com/w160/no.png',
-    italie: 'https://flagcdn.com/w160/it.png',
-    'afrique-du-sud': 'https://flagcdn.com/w160/za.png'
+    benin: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80', // Ganvié / Cité lacustre & terre Vodoun
+    perou: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=300&q=80', // Cusco / Terres sacrées des Andes
+    japon: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=300&q=80', // Forêt sacrée de cyprès & bois sculpté
+    senegal: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=300&q=80', // Terres du Sine Saloum & baobabs
+    france: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=300&q=80', // Pierre de taille & vignes
+    bresil: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=300&q=80', // Terre rouge & canopée
+    mali: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=300&q=80', // Falaises de Bandiagara & terre cuite de banco
+    colombie: 'https://images.unsplash.com/photo-1583531352515-8884af319dc1?auto=format&fit=crop&w=300&q=80', // Sierra Nevada & café des brumes
+    maroc: 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=300&q=80', // Argile des kasbahs & zellige
+    inde: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=300&q=80', // Pierre sculptée & fleuve sacré
+    islande: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=300&q=80', // Basalte noir, mousse et glaciers
+    cuba: 'https://images.unsplash.com/photo-1500759285222-a95626b934cb?auto=format&fit=crop&w=300&q=80', // Terre ocre, tabac & mer des Caraïbes
+    canada: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=300&q=80', // Grands cèdres & roches boréales
+    mexique: 'https://images.unsplash.com/photo-1512813389649-acb9131ced20?auto=format&fit=crop&w=300&q=80', // Terre d'argile, agave & pyramides
+    'cote-divoire': 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=300&q=80', // Forêt dense & terres de cacao
+    portugal: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=300&q=80', // Azulejos & côtes océaniques
+    grece: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=300&q=80', // Marbre blanc & oliveraies
+    norvege: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=300&q=80', // Fjords & bois d'épicéa
+    italie: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=300&q=80', // Terres toscanes & cyprès
+    'afrique-du-sud': 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=300&q=80' // Terres du Cap & savane
   };
-  return map[countryId] || 'https://flagcdn.com/w160/bj.png';
+  return map[countryId] || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80';
 }
+
+export const getCountryFlagUrl = getTerritoryVisualUrl;
 

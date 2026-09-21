@@ -1,10 +1,9 @@
 import React from 'react';
 import { 
   Compass, 
-  Video, 
+  Clapperboard, 
   Coins, 
-  User,
-  Film
+  User
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 
@@ -38,7 +37,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     {
       id: 'proposer',
       label: 'Proposer',
-      icon: Video,
+      icon: Clapperboard,
       isActive: isProposeActive,
       onClick: () => onNavigate({ type: 'submit_story' }),
       screenId: 'menu-item-propose'
@@ -54,7 +53,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     {
       id: 'productions',
       label: 'Productions',
-      icon: Film,
+      icon: Coins,
       isActive: isMarketActive,
       onClick: () => onNavigate({ type: 'marketplace' }),
       screenId: 'menu-item-productions'
@@ -90,22 +89,22 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
                   : 'translate-y-0 text-stone-400 hover:text-stone-800'
               }`}
             >
-              {/* Active illuminated pill background */}
+              {/* Active illuminated pill background with pure white icon for crisp contrast */}
               <div 
                 className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                   item.isActive 
-                    ? 'bg-[#A2482B] text-white shadow-md shadow-[#A2482B]/30 ring-2 ring-[#C89B3C]/40 scale-105' 
+                    ? 'bg-[#A2482B] text-white shadow-md shadow-[#A2482B]/30 ring-1.5 ring-[#C89B3C]/50 scale-105' 
                     : 'bg-transparent text-current group-hover:bg-stone-100/80'
                 }`}
               >
                 {item.id === 'duos' ? (
                   <span className={`font-mono font-black text-[13px] tracking-wider select-none leading-none transition-transform duration-200 ${
-                    item.isActive ? 'text-[#C89B3C] scale-105' : 'text-stone-600 group-hover:scale-105'
+                    item.isActive ? 'text-white scale-105' : 'text-stone-600 group-hover:scale-105'
                   }`}>
                     &lt; &gt;
                   </span>
                 ) : Icon ? (
-                  <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2] text-[#C89B3C]' : 'stroke-[1.8] text-stone-600 group-hover:scale-105'}`} />
+                  <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2] text-white' : 'stroke-[1.8] text-stone-600 group-hover:scale-105'}`} />
                 ) : null}
               </div>
 
@@ -120,7 +119,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
 
               {/* Small subtle active dot indicator */}
               {item.isActive && (
-                <span className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-[#C89B3C]" />
+                <span className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-[#A2482B]" />
               )}
             </button>
           );

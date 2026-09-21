@@ -262,7 +262,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-28 space-y-6 text-[#1C1917]">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-28 pt-safe pb-safe min-h-[100dvh] space-y-6 text-[#1C1917]">
       
       {/* ========================================================================= */}
       {/* HEADER DISCRET & SÉLECTEUR AU MÊME ENDROIT QUE 1 2 3 DE PROPOSER         */}
@@ -274,14 +274,14 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
           </h1>
         </div>
 
-        {/* Boutons d'onglets Coproduire / Marché exactement positionnés comme les pilules 1 2 3 */}
+        {/* Boutons d'onglets Coproduire / Marché avec fond terre cuite signature */}
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setActiveTab('coproduire')}
             id="tab-coproduire"
             className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'coproduire'
-                ? 'bg-[#1C1917] text-[#FFFFFF] shadow-xs'
+                ? 'bg-[#A2482B] text-white shadow-sm shadow-[#A2482B]/30 ring-1 ring-[#C89B3C]/40'
                 : 'bg-[#E7E5E4] text-[#7A756B] hover:text-[#1C1917]'
             }`}
           >
@@ -293,7 +293,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
             id="tab-marche"
             className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'marche'
-                ? 'bg-[#1C1917] text-[#FFFFFF] shadow-xs'
+                ? 'bg-[#A2482B] text-white shadow-sm shadow-[#A2482B]/30 ring-1 ring-[#C89B3C]/40'
                 : 'bg-[#E7E5E4] text-[#7A756B] hover:text-[#1C1917]'
             }`}
           >
@@ -377,33 +377,21 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                 {/* Voile cinématographique clair pour préserver l'éclat de l'affiche */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
-                {/* HAUT : Badge du titre de la série à gauche & Contrôle vidéo hybride doré en face en haut à droite */}
+                {/* HAUT : Badge du titre de la série à gauche */}
                 <div className="relative z-10 flex items-center justify-between gap-2">
                   <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-semibold tracking-widest text-white shadow-sm max-w-full leading-relaxed">
                     {currentProd.title}
                   </span>
-
-                  {/* Bouton hybride interactif en face en haut à droite */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleVideoPlayback();
-                    }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isPlaying ? 'Mettre en pause' : `Visionner ${currentProd.title}`}
-                    id={`play-pause-btn-${currentProd.id}`}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
-                  </button>
                 </div>
+
+                {/* CENTRE : Icône vidéo de lecture centrée quand la vidéo est en pause */}
+                {!isPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-110 transition-transform">
+                      <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-90" />
+                    </div>
+                  </div>
+                )}
 
                 {/* CENTRE LIBÉRÉ : Affiche visible et sans encombrement */}
                 <div className="my-auto" />
@@ -417,7 +405,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                     <span className="text-[10px] text-white/70">/ part</span>
                   </div>
 
-                  {/* Bouton Coproduire la série équivalent au bouton Choisir cette série */}
+                  {/* Bouton Coproduire la série : gris clair au repos, marron terre cuite au survol */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -425,11 +413,11 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                       setPurchaseQuantity(1);
                     }}
                     id={`btn-coproduire-${currentProd.id}`}
-                    className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#C89B3C] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-lg border border-white/20 hover:border-transparent cursor-pointer shrink-0"
+                    className="px-4 py-2 rounded-full bg-stone-100/95 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-stone-200/80 hover:border-[#A2482B] cursor-pointer shrink-0 active:scale-95 group/coprod"
                     title="Coproduire cette série"
                   >
                     <span>Coproduire</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 text-stone-600 group-hover/coprod:text-white transition-colors" />
                   </button>
                 </div>
 
@@ -473,39 +461,27 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                 {/* Voile cinématographique clair pour préserver l'éclat de l'affiche */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
-                {/* HAUT : Badge du titre de la série à gauche & Contrôle vidéo hybride doré en face en haut à droite */}
+                {/* HAUT : Badge du titre de la série à gauche */}
                 <div className="relative z-10 flex items-center justify-between gap-2">
                   <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-semibold tracking-widest text-white shadow-sm max-w-full leading-relaxed">
                     {currentOffer.seriesTitle}
                   </span>
-
-                  {/* Bouton hybride interactif en face en haut à droite */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleVideoPlayback();
-                    }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isPlaying ? 'Mettre en pause' : `Visionner ${currentOffer.seriesTitle}`}
-                    id={`play-pause-marche-btn-${currentOffer.id}`}
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
-                  </button>
                 </div>
+
+                {/* CENTRE : Icône vidéo de lecture centrée quand la vidéo est en pause */}
+                {!isPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-110 transition-transform">
+                      <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-90" />
+                    </div>
+                  </div>
+                )}
 
                 {/* CENTRE LIBÉRÉ : Affiche visible et sans encombrement */}
                 <div className="my-auto" />
 
                 {/* BAS : À gauche (au-dessus : nb de parts et prix au même format / en dessous : vignette photo + prénom) */}
-                {/* Et à droite : bouton d'action Racheter */}
+                {/* Et à droite : bouton d'action Racheter avec fond Terre Cuite */}
                 <div className="relative z-10 flex items-end justify-between gap-2">
                   
                   {/* BLOC GAUCHE : parts + prix, puis vignette photo et prénom */}
@@ -541,18 +517,18 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
 
                   </div>
 
-                  {/* Bouton Racheter ces parts (Même format de pilule que Choisir cette série) */}
+                  {/* Bouton Racheter ces parts : même format que coproduire (gris clair au repos, marron terre cuite au survol) */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleBuyPeerOffer(currentOffer);
                     }}
                     id={`btn-buy-peer-${currentOffer.id}`}
-                    className="px-4 py-2 rounded-full bg-[#C89B3C] hover:bg-[#B78A2E] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-lg border border-transparent cursor-pointer shrink-0"
+                    className="px-4 py-2 rounded-full bg-stone-100/95 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-stone-200/80 hover:border-[#A2482B] cursor-pointer shrink-0 active:scale-95 group/racheter"
                     title="Racheter ces parts"
                   >
                     <span>Racheter</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 text-stone-600 group-hover/racheter:text-white transition-colors" />
                   </button>
 
                 </div>

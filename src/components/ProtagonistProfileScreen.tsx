@@ -3,7 +3,6 @@ import {
   ArrowLeft, 
   X, 
   Play, 
-  Share2, 
   Check, 
   FolderKanban, 
   BookOpen, 
@@ -15,6 +14,7 @@ import {
   ChevronRight, 
   Film 
 } from 'lucide-react';
+import { ShareIcon } from './ShareIcon';
 import { PROTAGONISTS, DUOS, DOCUMENTARIES } from '../data/mockData';
 import { ViewScreen } from '../types';
 import { UniverseDimensionPage, DimensionKey } from './UniverseDimensionPage';
@@ -169,7 +169,7 @@ export const ProtagonistProfileScreen: React.FC<ProtagonistProfileScreenProps> =
               title="Partager le profil"
               className="p-1.5 rounded-full border border-[#E7E5E4] bg-[#FFFFFF] hover:bg-[#FAFAF9] text-[#68655D] transition-colors cursor-pointer"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Share2 className="w-4 h-4" />}
+              {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <ShareIcon className="w-4 h-4" />}
             </button>
           </div>
         </div>

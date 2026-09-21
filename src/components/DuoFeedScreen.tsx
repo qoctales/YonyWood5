@@ -241,7 +241,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const isMobileMuted = activeProtagonist === 'A' ? isMutedA : isMutedB;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] pb-28 pt-2 px-3 sm:px-6 max-w-6xl mx-auto flex flex-col justify-between select-none">
+    <div className="min-h-[100dvh] pb-28 pt-2 pt-safe pb-safe px-3 sm:px-6 max-w-6xl mx-auto flex flex-col justify-between select-none">
       
       {/* ========================================================================= */}
       {/* 1. BARRE SUPÉRIEURE ÉPURÉE (SÉLECTEUR TÉLÉCOMMANDE + TITRE SÉRIE + SHUFFLE) */}
@@ -282,24 +282,24 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
           )}
         </div>
 
-        {/* Titre Face-à-Face centré */}
-        <div className="hidden sm:flex absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 items-center justify-center pointer-events-none z-10">
+        {/* Titre Face-à-Face centré : Pilule Terre Cuite avec typographie et symboles blancs */}
+        <div className="flex absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 items-center justify-center pointer-events-none z-10 max-w-[55%] sm:max-w-none">
           {(() => {
             const title = currentDuo.documentaryTitle || '';
             const parts = title.includes('< >') ? title.split('< >') : title.includes('<>') ? title.split('<>') : null;
             return parts ? (
               <div 
                 key={`duo-series-${currentDuo.id}-${title}`}
-                className="pointer-events-auto inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-stone-200 shadow-xs text-xs sm:text-sm animate-in fade-in zoom-in-95 duration-200"
+                className="pointer-events-auto inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-sm shadow-[#A2482B]/25 text-xs sm:text-sm animate-in fade-in zoom-in-95 duration-200 text-white truncate"
               >
-                <span className="font-sans font-bold text-[#1C1917] tracking-tight">{parts[0].trim()}</span>
+                <span className="font-sans font-bold text-white tracking-tight truncate">{parts[0].trim()}</span>
                 <span 
-                  className="inline-flex items-center gap-0.5 font-mono text-xs font-black text-[#C89B3C] px-1 select-none tracking-wider"
+                  className="inline-flex items-center gap-0.5 font-mono text-xs font-black text-white px-0.5 sm:px-1 select-none tracking-wider shrink-0"
                   title="Symbole face à face"
                 >
                   &lt; &gt;
                 </span>
-                <span className="font-sans font-bold text-[#1C1917] tracking-tight">{parts[1].trim()}</span>
+                <span className="font-sans font-bold text-white tracking-tight truncate">{parts[1].trim()}</span>
               </div>
             ) : null;
           })()}
@@ -520,7 +520,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                           className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
                           title="Basculer vers l'autre univers du duo"
                         >
-                          <span className="font-mono font-black text-[10px] text-[#C89B3C] tracking-wider select-none">&lt; &gt;</span>
+                          <span className="font-mono font-black text-[10px] text-white tracking-wider select-none">&lt; &gt;</span>
                           <span>{activeProtagonist === 'A' ? pB.name.split(' ')[0] : pA.name.split(' ')[0]}</span>
                         </button>
 
@@ -543,28 +543,20 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                           </button>
                         )}
 
-                        {/* Symbole vidéo hybride doré - Lecture / Pause in-place */}
-                        <button
-                          onClick={(e) => toggleMobilePlay(e)}
-                          className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                            isMobilePlaying
-                              ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                              : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                          }`}
-                          title={isMobilePlaying ? `Mettre en pause ${currentP.name}` : `Visionner l'histoire de ${currentP.name}`}
-                          id={`play-mobile-story-${currentP.id}`}
-                        >
-                          {isMobilePlaying ? (
-                            <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                          ) : (
-                            <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                          )}
-                        </button>
                       </div>
                     </div>
                   </div>
 
-                  {/* CENTRE LIBÉRÉ : Affiche et protagoniste 100% visibles sans obstacle */}
+                  {/* Bouton de lecture vidéo CENTRÉ : visible au centre quand la vidéo est en pause */}
+                  {!isMobilePlaying && (
+                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-105 transition-transform">
+                        <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white translate-x-0.5 opacity-95" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Espace central */}
                   <div className="my-auto" />
 
                   {/* BOTTOM IDENTITY & DETAILS */}
@@ -673,26 +665,17 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                               )}
                             </button>
                           )}
-
-                          {/* Symbole vidéo hybride doré en face en haut à droite - In-place Play/Pause */}
-                          <button
-                            onClick={(e) => togglePlayA(e)}
-                            className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                              isPlayingA
-                                ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                                : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                            }`}
-                            title={isPlayingA ? `Mettre en pause ${pA.name}` : `Visionner l'histoire de ${pA.name}`}
-                            id={`play-story-${pA.id}`}
-                          >
-                            {isPlayingA ? (
-                              <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                            ) : (
-                              <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                            )}
-                          </button>
                         </div>
                       </div>
+
+                      {/* Centre : Bouton Play central quand en pause */}
+                      {!isPlayingA && (
+                        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                          <div className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-105 transition-transform">
+                            <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-95" />
+                          </div>
+                        </div>
+                      )}
 
                       {/* Centre libéré */}
                       <div className="my-auto" />
@@ -730,10 +713,10 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       </div>
                     </div>
 
-                    {/* SYMBOLE CENTRAL DUO FACE-À-FACE : < > */}
+                    {/* SYMBOLE CENTRAL DUO FACE-À-FACE : < > avec fond Terre Cuite signature */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center pointer-events-none">
                       <div 
-                        className="w-12 h-12 rounded-full bg-[#1C1917] text-[#C89B3C] border-2 border-white shadow-2xl flex items-center justify-center pointer-events-auto transition-transform hover:scale-110 select-none font-mono font-black text-sm tracking-wider"
+                        className="w-12 h-12 rounded-full bg-[#A2482B] text-white border-2 border-white shadow-2xl shadow-[#A2482B]/40 ring-1 ring-[#C89B3C]/50 flex items-center justify-center pointer-events-auto transition-transform hover:scale-110 select-none font-mono font-black text-sm tracking-wider"
                         title="Duo face-à-face < >"
                       >
                         &lt; &gt;
@@ -794,26 +777,17 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                               )}
                             </button>
                           )}
-
-                          {/* Symbole vidéo hybride doré en face en haut à droite - In-place Play/Pause */}
-                          <button
-                            onClick={(e) => togglePlayB(e)}
-                            className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                              isPlayingB
-                                ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                                : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                            }`}
-                            title={isPlayingB ? `Mettre en pause ${pB.name}` : `Visionner l'histoire de ${pB.name}`}
-                            id={`play-story-${pB.id}`}
-                          >
-                            {isPlayingB ? (
-                              <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                            ) : (
-                              <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                            )}
-                          </button>
                         </div>
                       </div>
+
+                      {/* Centre : Bouton Play central quand en pause */}
+                      {!isPlayingB && (
+                        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                          <div className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-105 transition-transform">
+                            <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-95" />
+                          </div>
+                        </div>
+                      )}
 
                       {/* Centre libéré */}
                       <div className="my-auto" />

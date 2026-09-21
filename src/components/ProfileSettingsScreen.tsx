@@ -10,8 +10,6 @@ import {
   Coins,
   HeartHandshake,
   X,
-  Share2,
-  Share,
   Camera,
   MapPin,
   MessageSquare,
@@ -32,6 +30,7 @@ import {
   LogOut,
   Check,
   BookOpen,
+  Clapperboard,
   Megaphone,
   Volume2,
   VolumeX,
@@ -44,6 +43,7 @@ import {
   Users,
   User
 } from 'lucide-react';
+import { ShareIcon } from './ShareIcon';
 import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
 import { PROTAGONISTS, DOCUMENTARIES } from '../data/mockData';
 import { MATRIX_SERIES_DATA } from '../data/matrixData';
@@ -231,7 +231,7 @@ const VideoTopHeader: React.FC<VideoTopHeaderProps> = ({
         className="w-9 h-9 rounded-xl bg-black/50 hover:bg-black/70 active:scale-95 backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
         title="Partager"
       >
-        <Share2 className="w-4 h-4 text-white" />
+        <ShareIcon className="w-4 h-4 text-white" />
       </button>
     </div>
   </div>
@@ -992,7 +992,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const CATEGORY_KEYS: ProfileCategory[] = ['recit', 'production', 'offre', 'appel'];
 
   const CATEGORIES: { key: ProfileCategory; label: string; icon: React.FC<{ className?: string }> }[] = [
-    { key: 'recit', label: 'Récits & Épisodes', icon: BookOpen },
+    { key: 'recit', label: 'Récits & Épisodes', icon: Clapperboard },
     { key: 'production', label: 'Productions', icon: Coins },
     { key: 'offre', label: 'Offre', icon: ShoppingBag },
     { key: 'appel', label: 'Appels & Initiatives', icon: Megaphone },
@@ -1414,6 +1414,17 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
             {isOwner ? (
               <>
+                {/* Propriétaire : Bouton Modifier profil */}
+                <button
+                  onClick={() => setIsEditingProfile(true)}
+                  id="btn-profile-edit-header"
+                  className="h-9 px-3.5 rounded-full bg-stone-100 hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-stone-800 hover:text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 group/editbtn"
+                  title="Modifier mon profil"
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editbtn:text-white transition-colors" />
+                  <span>Modifier</span>
+                </button>
+
                 {/* Propriétaire : Bouton Messagerie */}
                 <button
                   onClick={() => onNavigate({ type: 'messaging' })}
@@ -1423,19 +1434,19 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-stone-700" />
                   <span>Messages</span>
-                  <span className="w-4 h-4 rounded-full bg-[#C89B3C] text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="w-4 h-4 rounded-full bg-[#0D9488] text-white text-[9px] font-bold flex items-center justify-center">
                     2
                   </span>
                 </button>
 
-                {/* Propriétaire : Bouton Partager */}
+                {/* Propriétaire : Bouton Partager (Icône Turquoise #0D9488) */}
                 <button
                   onClick={handleShareProfile}
                   id="btn-share-profile"
-                  className="w-9 h-9 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 hover:text-[#1C1917] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="w-9 h-9 rounded-full bg-white hover:bg-teal-50/50 border border-stone-200 hover:border-[#0D9488] text-[#0D9488] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                   title="Partager mon profil"
                 >
-                  <Share2 className="w-4 h-4 text-[#C89B3C]" />
+                  <ShareIcon className="w-4 h-4 text-[#0D9488]" />
                 </button>
 
                 {/* Propriétaire : Icône discrète PARAMÈTRES dans l'en-tête */}
@@ -1457,18 +1468,18 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   className="h-9 px-4 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-semibold text-white flex items-center gap-2 transition-all shadow-xs cursor-pointer whitespace-nowrap"
                   title={`Envoyer un message à ${userName}`}
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-[#C89B3C]" />
+                  <MessageSquare className="w-3.5 h-3.5 text-[#0D9488]" />
                   <span>Envoyer un message</span>
                 </button>
 
-                {/* Visiteur : Bouton Partager */}
+                {/* Visiteur : Bouton Partager (Icône Turquoise) */}
                 <button
                   onClick={handleShareProfile}
                   id="btn-share-visitor-profile"
-                  className="w-9 h-9 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 hover:text-[#1C1917] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="w-9 h-9 rounded-full bg-white hover:bg-teal-50/50 border border-stone-200 hover:border-[#0D9488] text-[#0D9488] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                   title={`Partager le profil de ${userName}`}
                 >
-                  <Share2 className="w-4 h-4 text-[#C89B3C]" />
+                  <ShareIcon className="w-4 h-4 text-[#0D9488]" />
                 </button>
               </>
             )}
@@ -1638,10 +1649,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                             setEpisodeFormViews(currentRecitUnified.item.viewsCount);
                           }
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                        className="h-8.5 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                         id="btn-edit-recit-unified"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
+                        <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                         <span>Modifier</span>
                       </button>
                       <button
@@ -1749,10 +1760,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setProdFormSharesCount(currentProduction.sharesCount);
                           setProdFormSharesOnSale(currentProduction.sharesOnSale);
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                        className="h-8.5 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                         id="btn-edit-production"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
+                        <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                         <span>Modifier</span>
                       </button>
                       <button
@@ -1872,10 +1883,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setCreationFormPoster(currentCreation.posterUrl);
                           setCreationFormVideo(currentCreation.videoUrl);
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                        className="h-8.5 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                         id="btn-edit-creation"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
+                        <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                         <span>Modifier</span>
                       </button>
                       <button
@@ -2005,10 +2016,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               setInitiativeFormPoster(currentAppelUnified.item.posterUrl);
                               setInitiativeFormVideo(currentAppelUnified.item.videoUrl);
                             }}
-                            className="h-9 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                            className="h-9 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                             id="btn-edit-initiative"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
+                            <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                             <span>Modifier</span>
                           </button>
                           <button
@@ -2060,10 +2071,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               setAppelFormDescription(currentAppelUnified.item.description);
                               setAppelFormImpact(currentAppelUnified.item.impact || '');
                             }}
-                            className="h-9 px-3 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/50"
+                            className="h-9 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                             id="btn-edit-appel"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-[#C89B3C]" />
+                            <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                             <span>Modifier</span>
                           </button>
                           <button
@@ -2113,20 +2124,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
         </div>
 
-        {/* Bouton d'ajout pour le propriétaire */}
-        {isOwner && (
-          <div className="flex items-center justify-center max-w-[340px] mx-auto pt-1.5 px-2">
+        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Lancer un appel seulement) */}
+        {isOwner && (activeCategory === 'offre' || activeCategory === 'appel') && (
+          <div className="flex items-center justify-center max-w-[340px] mx-auto pt-1 pb-3 px-2">
             <button
               type="button"
               onClick={() => {
-                if (activeCategory === 'recit') {
-                  setAddFormKind('recit');
-                  setAddFormTitle('');
-                  setAddFormSubtitle('');
-                } else if (activeCategory === 'production') {
-                  setAddFormKind('production');
-                  setAddFormTitle('');
-                } else if (activeCategory === 'offre') {
+                if (activeCategory === 'offre') {
                   setAddFormKind('offre');
                   setAddFormTitle('');
                   setAddFormPrice('45 €');
@@ -2138,14 +2142,12 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 setIsAddingModalOpen(true);
               }}
               id="btn-add-new-publication"
-              className="w-full h-10 px-4 rounded-2xl bg-[#1C1917] hover:bg-[#C89B3C] text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+              className="h-9 px-4 rounded-full bg-stone-100 hover:bg-[#A2482B] text-stone-700 hover:text-white text-xs font-semibold transition-all shadow-xs border border-stone-200/90 hover:border-[#A2482B] flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 group/addaction"
             >
-              <Plus className="w-4 h-4 text-[#FACC15]" />
+              <Plus className="w-3.5 h-3.5 text-stone-500 group-hover/addaction:text-white transition-colors" />
               <span>
-                {activeCategory === 'recit' && 'Ajouter un récit ou un épisode'}
-                {activeCategory === 'production' && 'Créer une coproduction'}
-                {activeCategory === 'offre' && 'Ajouter une création ou un atelier'}
-                {activeCategory === 'appel' && 'Lancer une initiative ou un appel'}
+                {activeCategory === 'offre' && 'Ajouter une offre'}
+                {activeCategory === 'appel' && 'Lancer un appel'}
               </span>
             </button>
           </div>
@@ -2201,14 +2203,14 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   type="email"
                   value={userEmail}
                   onChange={(e) => setUserEmail(e.target.value)}
-                  className="flex-1 px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#C89B3C]"
+                  className="flex-1 px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488]"
                 />
                 <button
                   onClick={() => {
                     setShareToast("Adresse email enregistrée.");
                     setTimeout(() => setShareToast(null), 2500);
                   }}
-                  className="h-10 px-4 bg-[#1C1917] hover:bg-stone-800 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer active:scale-[0.98]"
+                  className="h-10 px-4 bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer active:scale-[0.98]"
                 >
                   Valider
                 </button>
@@ -2233,7 +2235,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 placeholder="Nouveau mot de passe"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#C89B3C]"
+                className="w-full px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488]"
               />
               <button
                 type="submit"
@@ -2272,12 +2274,26 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   <p className="text-xs font-semibold text-[#1C1917]">Masquer la question par défaut</p>
                   <p className="text-[11px] text-stone-500">Privilégie une immersion totale</p>
                 </div>
-                <input
-                  type="checkbox"
-                  checked={hideQuestionByDefault}
-                  onChange={(e) => onToggleHideQuestion(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#C89B3C] accent-[#C89B3C]"
-                />
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={hideQuestionByDefault}
+                  onClick={() => onToggleHideQuestion(!hideQuestionByDefault)}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    hideQuestionByDefault ? 'bg-[#0D9488]' : 'bg-stone-200'
+                  }`}
+                  id="toggle-hide-question-default"
+                >
+                  <span
+                    className={`pointer-events-none inline-flex h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out items-center justify-center ${
+                      hideQuestionByDefault ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  >
+                    {hideQuestionByDefault && (
+                      <Check className="w-3 h-3 text-[#0D9488] stroke-[3]" />
+                    )}
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -3321,7 +3337,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
           <div className="bg-white max-w-sm w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5">
             <div className="flex items-center justify-between pb-2 border-b border-stone-200">
               <div className="flex items-center gap-2">
-                <Share2 className="w-5 h-5 text-[#C89B3C]" />
+                <ShareIcon className="w-5 h-5 text-[#C89B3C]" />
                 <h3 className="font-editorial text-base font-bold text-[#1C1917]">Partager le profil</h3>
               </div>
               <button onClick={() => setIsShareModalOpen(false)} className="p-1 text-stone-400 hover:text-stone-700">

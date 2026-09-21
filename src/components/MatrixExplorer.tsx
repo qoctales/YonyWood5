@@ -5,9 +5,14 @@ import {
   Compass, 
   Sparkles,
   Award,
+  Crown,
   HeartHandshake,
+  Trees,
   ShoppingBag,
+  GraduationCap,
   HelpCircle,
+  Flame,
+  Users,
   X, 
   Play, 
   Pause,
@@ -20,7 +25,12 @@ import {
   ChevronRight,
   Layers,
   ChevronDown,
-  Shuffle
+  Shuffle,
+  Film,
+  Mountain,
+  Atom,
+  Fingerprint,
+  Sprout
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
@@ -59,16 +69,16 @@ const R_INNER = 145; // Anneau 1 : Sujets de la Porte active (5 séries, 16 drap
 const R_OUTER = 280; // Anneau 2 : 16 Voix / Histoires humaines associées
 const ORBIT_RADII = [145, 280, 385, 490, 595];
 
-// Map d'icônes par catégorie
+// Map d'icônes adaptées et lisibles par catégorie
 const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string }>> = {
-  series: Tv,
-  countries: Globe,
-  thematics: Compass,
-  personalities: Sparkles,
-  brands: Award,
-  projects: HeartHandshake,
-  offers: ShoppingBag,
-  questions: HelpCircle
+  series: Film,
+  countries: Mountain,
+  thematics: Atom,
+  personalities: Fingerprint,
+  brands: Gem,
+  projects: Sprout,
+  offers: GraduationCap,
+  questions: Flame
 };
 
 export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ 
@@ -466,26 +476,26 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     <div 
       ref={containerRef}
       id="matrix-explorer-container"
-      className="relative w-full h-full min-h-screen bg-[#FDFBF7] text-[#1C1917] overflow-hidden select-none touch-none"
+      className="relative w-full h-full min-h-[100dvh] bg-white text-[#1C1917] overflow-hidden select-none touch-none pt-safe pb-safe"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
     >
-      {/* Texture subtile de fond céleste & géométrie sacrée */}
+      {/* Texture subtile de fond céleste & géométrie sacrée discrète */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.045]"
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #8B6845 1px, transparent 0)`,
-          backgroundSize: '36px 36px'
+          backgroundImage: `radial-gradient(circle at 1px 1px, #A2482B 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
         }}
       />
 
-      {/* 1. BARRE SUPÉRIEURE : FIL D'ARIANE ÉPURÉ SANS DOUBLON */}
-      <header className="absolute top-4 left-4 right-4 z-40 flex items-center justify-between pointer-events-none">
+      {/* 1. BARRE SUPÉRIEURE : FIL D'ARIANE ÉPURÉ TERRE CUITE */}
+      <header className="absolute top-3 sm:top-4 left-3 sm:left-4 right-3 sm:right-4 z-40 flex items-center justify-between pointer-events-none">
         
         {/* FIL D'ARIANE INTERACTIF : [Porte] > [Catégorie] > [Sujet actif] */}
-        <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 backdrop-blur-md border border-[#E7E5E4] shadow-sm pointer-events-auto">
+        <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 backdrop-blur-md border border-stone-200 shadow-sm pointer-events-auto max-w-full overflow-x-auto no-scrollbar">
           {/* Niveau 0 : Porte */}
           <button
             id="breadcrumb-dimensions-btn"
@@ -494,22 +504,22 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
               setExplorerLevel('dimensions');
               setIsQuestionModalOpen(false);
             }}
-            className={`text-xs sm:text-sm font-medium px-2.5 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`text-xs sm:text-sm font-medium px-2.5 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               explorerLevel === 'dimensions'
-                ? 'bg-[#1C1917] text-[#FDFBF7] shadow-xs'
-                : 'text-stone-600 hover:text-stone-950 hover:bg-stone-100'
+                ? 'bg-[#A2482B] text-white shadow-xs'
+                : 'text-stone-700 hover:text-[#A2482B] hover:bg-[#A2482B]/10'
             }`}
             title="Revenir au choix de la Porte"
           >
-            <Layers className="w-3.5 h-3.5 text-[#C89B3C]" />
+            <Layers className="w-3.5 h-3.5" />
             <span>Porte</span>
           </button>
 
           {explorerLevel !== 'dimensions' && (
             <>
-              <span className="text-stone-300 text-xs">/</span>
+              <span className="text-stone-300 text-xs shrink-0">/</span>
 
-              {/* Catégorie active (Séries, Thématiques, Pays, Marques...) sans répéter Porte */}
+              {/* Catégorie active (Séries, Territoires, Thématiques, etc.) */}
               <button
                 id="breadcrumb-category-btn"
                 onClick={() => {
@@ -517,16 +527,16 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   setExplorerLevel('dimensions');
                   setIsQuestionModalOpen(false);
                 }}
-                className="text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-full text-[#8B6845] hover:text-[#5C4028] bg-stone-100/80 hover:bg-stone-100 border border-stone-200 transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                className="text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-full text-[#A2482B] hover:text-[#8A3B22] bg-[#A2482B]/10 hover:bg-[#A2482B]/20 border border-[#A2482B]/25 transition-all cursor-pointer flex items-center gap-1 shadow-xs shrink-0"
                 title={`${activeCategoryConfig.label} (cliquer pour changer de Porte)`}
               >
                 <span>{activeCategoryConfig.label}</span>
               </button>
 
-              <span className="text-stone-300 text-xs">/</span>
+              <span className="text-stone-300 text-xs shrink-0">/</span>
 
-              {/* Sujet actif sélectionné (ex: Nike, Bénin, Fiat Luxe...) */}
-              <div className="flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-full bg-[#F4EFE6] border border-[#DFCDB2]">
+              {/* Sujet actif sélectionné */}
+              <div className="flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-full bg-[#A2482B]/10 border border-[#A2482B]/20 shrink-0">
                 <button
                   id="breadcrumb-topic-title-btn"
                   onClick={() => {
@@ -534,15 +544,14 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                       setIsQuestionModalOpen(prev => !prev);
                     }
                   }}
-                  className={`text-xs sm:text-sm font-semibold text-[#8B6845] flex items-center gap-1.5 transition-colors ${
-                    activeCategory === 'questions' ? 'cursor-pointer hover:text-[#5C4028]' : 'cursor-default'
+                  className={`text-xs sm:text-sm font-semibold text-[#A2482B] flex items-center gap-1.5 transition-colors ${
+                    activeCategory === 'questions' ? 'cursor-pointer hover:text-[#8A3B22]' : 'cursor-default'
                   }`}
                   title={activeCategory === 'questions' ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
                 >
-                  {activeTopicItem?.flag ? `${activeTopicItem.flag} ` : ''}
-                  <span>{activeTopicItem?.title}</span>
+                  <span className="truncate max-w-[120px] sm:max-w-[180px]">{activeTopicItem?.title}</span>
                   {activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#8B6845]/15 text-[#78593A] font-medium">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#A2482B]/20 text-[#A2482B] font-medium">
                       Question
                     </span>
                   )}
@@ -552,7 +561,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 <button
                   id="btn-symbol-16-autres-voix"
                   onClick={handleActualiser}
-                  className="w-6 h-6 rounded-full bg-white hover:bg-[#8B6845] text-[#8B6845] hover:text-white border border-[#C89B3C]/40 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group ml-0.5"
+                  className="w-6 h-6 rounded-full bg-white hover:bg-[#A2482B] text-[#A2482B] hover:text-white border border-[#A2482B]/30 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group ml-0.5"
                   title="Actualiser : 16 autres voix"
                 >
                   <RefreshCw className={`w-3 h-3 transition-transform ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 duration-500'}`} />
@@ -762,93 +771,77 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                       <circle 
                         cx={x} 
                         cy={y} 
-                        r={isHovered ? "38" : "33"} 
+                        r={isHovered ? "40" : "33"} 
                         fill={cat.accentColor} 
-                        opacity={isHovered ? "0.45" : "0.18"} 
+                        opacity={isHovered ? "0.45" : "0.15"} 
                         className="transition-all duration-300 pointer-events-none" 
-                        filter="drop-shadow(0 0 16px rgba(200, 155, 60, 0.45))"
+                        filter="drop-shadow(0 0 16px rgba(162, 72, 43, 0.35))"
                       />
 
-                      {/* Disque d'or brossé arrière (cadre de l'astrolabe) */}
+                      {/* Vignette circulaire de la Porte (Pas de photo, fond noble et bague dorée) */}
                       <circle 
                         cx={x} 
                         cy={y} 
-                        r="33" 
-                        fill="#1C1917" 
-                        stroke="#C89B3C" 
-                        strokeWidth={isHovered ? "3" : "1.8"} 
-                        filter="drop-shadow(0 4px 14px rgba(0,0,0,0.38))" 
+                        r="32" 
+                        fill={isHovered ? "#292524" : "#1C1917"} 
+                        stroke={isHovered ? "#FFE7A3" : "#C89B3C"} 
+                        strokeWidth={isHovered ? "2.5" : "1.8"} 
+                        filter="drop-shadow(0 4px 14px rgba(0,0,0,0.32))" 
+                        className="transition-all duration-300"
                       />
 
-                      {/* Image photographique immersive pleine dans le hublot */}
-                      <image 
-                        href={cat.coverImage} 
-                        x={x - 30} 
-                        y={y - 30} 
-                        width="60" 
-                        height="60" 
-                        clipPath={`url(#clip-hublot-${cat.id})`}
-                        preserveAspectRatio="xMidYMid slice" 
-                        className="transition-transform duration-300"
-                        style={{
-                          transformOrigin: `${x}px ${y}px`,
-                          transform: isHovered ? 'scale(1.08)' : 'scale(1)'
-                        }}
-                      />
-
-                      {/* Anneau de sertissage en or / verre optique teinté */}
+                      {/* Filet intérieur discret d'orfèvrerie */}
                       <circle 
                         cx={x} 
                         cy={y} 
-                        r="30" 
+                        r="27" 
                         fill="none" 
-                        stroke={isHovered ? "#FCE7A6" : "#DFCDB2"} 
-                        strokeWidth="1.2" 
-                        className="pointer-events-none"
+                        stroke={isHovered ? "rgba(255,231,163,0.4)" : "rgba(200,155,60,0.22)"} 
+                        strokeWidth="1" 
+                        className="pointer-events-none transition-colors duration-300"
                       />
 
-                      {/* Pastille bijou miniature avec l'icône de la porte incrustée */}
-                      <g transform={`translate(${x + 18}, ${y + 18})`}>
-                        <circle cx="0" cy="0" r="10" fill="#1C1917" stroke="#C89B3C" strokeWidth="1.2" filter="drop-shadow(0 1px 4px rgba(0,0,0,0.4))" />
-                        <foreignObject x="-7" y="-7" width="14" height="14" className="pointer-events-none">
-                          <div className="w-full h-full flex items-center justify-center text-[#FCE7A6]">
-                            {React.createElement(CATEGORY_ICONS[cat.id] || Sparkles, {
-                              className: 'w-3 h-3 text-[#FCE7A6]'
-                            })}
-                          </div>
-                        </foreignObject>
-                      </g>
+                      {/* Grande Icône innovante & dédiée occupant toute la vignette */}
+                      <foreignObject x={x - 20} y={y - 20} width="40" height="40" className="pointer-events-none">
+                        <div className={`w-full h-full flex items-center justify-center transition-transform duration-300 ${
+                          isHovered ? 'scale-110 text-[#FFE7A3]' : 'scale-100 text-[#FCE7A6]'
+                        }`}>
+                          {React.createElement(CATEGORY_ICONS[cat.id] || Sparkles, {
+                            className: 'w-7 h-7 stroke-[1.8] drop-shadow-sm'
+                          })}
+                        </div>
+                      </foreignObject>
 
-                      {/* Cartouche nominal de la Porte : TOUJOURS visible, horizontal face à l'utilisateur */}
+                      {/* Cartouche nominal de la Porte : Fond Terre Cuite signature, texte blanc ultra-lisible */}
                       <g 
-                        transform={`translate(${x}, ${y + 44})`} 
+                        transform={`translate(${x}, ${y + 46})`} 
                         className={`transition-all duration-300 pointer-events-none ${
-                          isHovered ? 'scale-105' : 'scale-100'
+                          isHovered ? 'scale-110' : 'scale-100'
                         }`}
-                        style={{ transformOrigin: `${x}px ${y + 44}px` }}
+                        style={{ transformOrigin: `${x}px ${y + 46}px` }}
                       >
-                        {/* Fond du cartouche pilule */}
+                        {/* Fond du cartouche pilule en Terre Cuite (#A2482B) */}
                         <rect 
-                          x="-46" 
-                          y="-11" 
-                          width="92" 
-                          height="22" 
-                          rx="11" 
-                          fill={isHovered ? "#292524" : "#1C1917"} 
-                          stroke={isHovered ? "#FCE7A6" : "#C89B3C"}
-                          strokeWidth={isHovered ? "1.6" : "1.2"}
-                          filter="drop-shadow(0 3px 8px rgba(0,0,0,0.45))"
+                          x="-52" 
+                          y="-13" 
+                          width="104" 
+                          height="26" 
+                          rx="13" 
+                          fill={isHovered ? "#8A3B22" : "#A2482B"} 
+                          stroke={isHovered ? "#FFE7A3" : "rgba(255,255,255,0.45)"}
+                          strokeWidth={isHovered ? "1.8" : "1.2"}
+                          filter="drop-shadow(0 4px 12px rgba(162,72,43,0.38))"
                           className="transition-colors duration-200"
                         />
-                        {/* Libellé unique en 1 mot */}
+                        {/* Libellé unique en blanc éclatant */}
                         <text 
                           x="0" 
-                          y="3.5" 
+                          y="4" 
                           textAnchor="middle" 
-                          fill={isHovered ? "#FFF8E7" : "#FDFBF7"} 
-                          fontSize="10.5" 
-                          fontWeight={isHovered ? "700" : "600"}
-                          letterSpacing="0.02em"
+                          fill="#FFFFFF" 
+                          fontSize="11.5" 
+                          fontWeight="700"
+                          letterSpacing="0.03em"
                           className="select-none transition-colors duration-200"
                         >
                           {cat.label}
@@ -957,10 +950,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                               strokeWidth="1.2" 
                             />
 
-                            {/* Titre de la série sous l'affiche */}
+                            {/* Titre de la série sous l'affiche (uniquement au survol des non-sélectionnés, pas de doublon si déjà sélectionné au centre) */}
                             <g 
                               transform={`translate(${x}, ${y + 40})`} 
-                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}`}
                             >
                               <rect 
                                 x="-42" 
@@ -1035,10 +1028,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                               className="pointer-events-none"
                             />
 
-                            {/* Nom du pays révélé au survol ou si sélectionné */}
+                            {/* Nom du pays révélé uniquement au survol si non sélectionné (évite le doublon avec le centre) */}
                             <g 
                               transform={`translate(${x}, ${y + 29})`} 
-                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}`}
                             >
                               <rect 
                                 x="-36" 
@@ -1137,10 +1130,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                               stroke={isSelected ? '#C89B3C' : '#FFFFFF'} 
                               strokeWidth="1.2" 
                             />
-                            {/* Nom du sujet au survol */}
+                            {/* Nom du sujet au survol si non sélectionné (évite le doublon avec le centre) */}
                             <g 
                               transform={`translate(${x}, ${y + 28})`} 
-                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}`}
                             >
                               <rect 
                                 x="-36" 
