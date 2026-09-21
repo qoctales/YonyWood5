@@ -25,19 +25,19 @@ export const EXPLORER_TOPICS: ExplorerTopicItem[] = [
   {
     id: 'topic-michael-jackson',
     title: 'Michael Jackson',
-    category: 'topics',
+    category: 'personalities',
     tagline: '16 récits personnels sur l’éveil artistique et l’influence'
   },
   {
     id: 'topic-jazz-spiritualite',
     title: 'Jazz & Transe',
-    category: 'topics',
+    category: 'thematics',
     tagline: '16 improvisations et correspondances mystiques'
   },
   {
     id: 'topic-architecture-terre',
     title: 'Architecture de terre',
-    category: 'topics',
+    category: 'thematics',
     tagline: '16 bâtisseurs du vivant et matières vernaculaires'
   },
 
@@ -61,23 +61,23 @@ export const EXPLORER_TOPICS: ExplorerTopicItem[] = [
     tagline: '16 potières et sculpteurs du feu'
   },
 
-  // Opportunités
+  // Projets & Opportunités
   {
     id: 'opp-mentorat-transmission',
     title: 'Mentorat & Apprentissage',
-    category: 'opportunities',
+    category: 'projects',
     tagline: '16 opportunités d’immersion auprès d’anciens'
   },
   {
     id: 'opp-financement-solidaire',
     title: 'Financement solidaire',
-    category: 'opportunities',
+    category: 'projects',
     tagline: '16 initiatives collectives en quête de soutiens'
   },
   {
     id: 'opp-residence-creation',
     title: 'Résidence de création',
-    category: 'opportunities',
+    category: 'projects',
     tagline: '16 ateliers ouverts aux artistes et chercheurs'
   },
 

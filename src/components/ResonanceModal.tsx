@@ -219,7 +219,7 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
               {/* 3. Impact émotionnel */}
               <div className="space-y-1 bg-white p-2.5 rounded-xl border border-[#EAE6DE] shadow-2xs">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold text-[#1C1917] text-[11px]">Impact émotionnel</span>
+                  <span className="font-semibold text-[#1C1917] text-[11px]">Impact</span>
                   <span className="font-mono text-[#8B6845] font-bold bg-[#F5F2EB] border border-[#E7E2D6] px-1.5 py-0.5 rounded text-[10px]">
                     {impact}%
                   </span>

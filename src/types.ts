@@ -274,7 +274,7 @@ export interface AffiliationPerson {
   universeTag: string;
   photoUrl: string;
   isPioneer?: boolean;
-  badge: 'Première effigie' | 'Invité(e)';
+  badge: string;
   invitationStory: string;
   invitedById?: string;
   invitedByName?: string;
@@ -314,17 +314,22 @@ export interface StoryResonanceRating {
 
 export type ExplorerCategory = 
   | 'series' 
+  | 'countries' 
   | 'thematics' 
-  | 'topics' 
+  | 'personalities' 
+  | 'brands' 
+  | 'projects' 
   | 'offers' 
-  | 'opportunities' 
-  | 'brands';
+  | 'questions';
 
 export interface ExplorerTopicItem {
   id: string;
   title: string;
   category: ExplorerCategory;
   tagline?: string;
+  flag?: string;
+  photoUrl?: string;
+  badge?: string;
 }
 
 export interface ExplorerStoryItem {

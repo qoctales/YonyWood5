@@ -339,6 +339,35 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     const found = PROTAGONISTS.find(p => p.id === protagonistId || p.slug === protagonistId);
     if (found) return found;
 
+    // 2b. Chercher si la personne a été mise en cache lors de l'exploration
+    try {
+      if (protagonistId) {
+        const storedPerson = localStorage.getItem(`yonywood_person_${protagonistId}`);
+        if (storedPerson) {
+          const p = JSON.parse(storedPerson) as AffiliationPerson;
+          return {
+            id: p.id,
+            slug: p.id,
+            name: p.name,
+            role: p.role,
+            age: p.age,
+            territory: p.territory || 'Ganvié',
+            country: p.country || 'Bénin',
+            flag: p.flag || '🇧🇯',
+            photoUrl: p.photoUrl,
+            teaserVideoUrl: p.teaserVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+            quote: p.teaserPitch,
+            bio: p.teaserPitch ? p.teaserPitch.replace(/«|»/g, '').trim() : `Passeur de savoirs et créateur dans la transmission ${p.universeTag || 'YonyWood'}.`,
+            universeTag: p.universeTag,
+            documentaryId: 'yonywood-explorer',
+            stories: []
+          } as unknown as Protagonist;
+        }
+      }
+    } catch {
+      // noop
+    }
+
     // 3. Fallback de secours
     return {
       id: protagonistId,
