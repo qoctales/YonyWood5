@@ -353,10 +353,10 @@ export type ViewScreen =
   | { type: 'documentary_detail'; documentaryId: string }
   | { type: 'duo_detail'; duoId: string }
   | { type: 'video_player'; story: ProtagonistStory; protagonist: Protagonist; duoId?: string; documentaryTitle: string }
-  | { type: 'protagonist_profile'; protagonistId: string }
+  | { type: 'protagonist_profile'; protagonistId: string; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
   | { type: 'transmission_detail'; protagonistId: string; transmissionId: string }
   | { type: 'my_forest' }
-  | { type: 'profile' }
+  | { type: 'profile'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
   | { type: 'messaging' }
   | { type: 'submit_story'; preselectedDocumentaryId?: string }
   | { type: 'request_videographer' }

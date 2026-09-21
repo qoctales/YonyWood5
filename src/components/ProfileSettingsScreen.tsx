@@ -33,6 +33,8 @@ import {
   Check,
   BookOpen,
   Megaphone,
+  Volume2,
+  VolumeX,
   ArrowLeft,
   DollarSign,
   Send,
@@ -59,6 +61,9 @@ export interface ProfileSettingsScreenProps {
   onToggleHideQuestion?: (val: boolean) => void;
   protagonistId?: string; // Si fourni = mode Visiteur
   initialTab?: DimensionTab;
+  returnToDuoId?: string;
+  returnToDuoIndex?: number;
+  returnToDocId?: string;
 }
 
 // 1. Récit : Vidéo personnelle / histoire personnelle
@@ -166,43 +171,77 @@ const MEDIA_VIDEO_PRESETS = [
   { name: 'Court Documentaire', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
 ];
 
-// Sous-composant : En-tête épuré haut de vidéo (Titre à gauche, bouton Partager à droite - Image 2)
+// Sous-composant : En-tête haut de vidéo avec capsule opaque à gauche & Partager à droite (Style Image 2)
 interface VideoTopHeaderProps {
-  title: string;
-  author: string;
+  seriesOrTitle: string;
+  badge?: string;
   onShare: () => void;
+  isMuted?: boolean;
+  onToggleMute?: () => void;
 }
 
-const VideoTopHeader: React.FC<VideoTopHeaderProps> = ({ title, author, onShare }) => (
-  <div className="relative z-10 flex items-center justify-between gap-3 w-full pr-14">
-    <div className="flex items-center min-w-0 pr-1">
-      <p className="font-editorial text-xs sm:text-sm font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] truncate tracking-wide">
-        {title} <span className="opacity-75 font-normal">— {author}</span>
-      </p>
+const VideoTopHeader: React.FC<VideoTopHeaderProps> = ({ 
+  seriesOrTitle, 
+  badge,
+  onShare, 
+  isMuted = true, 
+  onToggleMute,
+}) => (
+  <div className="relative z-20 flex items-center justify-between gap-2 w-full">
+    {/* HAUT GAUCHE : Titre court et précis dans une capsule semi-opaque dont le fond s'adapte sans jamais tronquer */}
+    <div className="inline-flex w-fit items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/65 backdrop-blur-md border border-white/20 shadow-md">
+      <span className="font-editorial text-xs font-semibold text-white whitespace-nowrap tracking-wide select-none">
+        {seriesOrTitle}
+      </span>
+      {badge && (
+        <span className="ml-1 px-1.5 py-0.5 rounded-md bg-[#FACC15]/20 border border-[#FACC15]/40 text-[#FACC15] font-mono text-[10px] font-bold shrink-0 whitespace-nowrap">
+          {badge}
+        </span>
+      )}
     </div>
 
-    <button
-      type="button"
-      onClick={(e) => {
-        e.stopPropagation();
-        onShare();
-      }}
-      id="btn-video-top-share"
-      className="w-8.5 h-8.5 rounded-xl bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md border border-white/25 text-white flex items-center justify-center shadow-md transition-all cursor-pointer shrink-0"
-      title="Partager"
-    >
-      <Share className="w-4 h-4 text-white drop-shadow-sm" />
-    </button>
+    {/* HAUT DROITE : Harmonisé avec le gabarit et l'alignement en colonne des 4 icônes du flanc droit */}
+    <div className="flex items-center gap-2 shrink-0">
+      {onToggleMute && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleMute();
+          }}
+          id="btn-video-top-mute"
+          className="w-9 h-9 rounded-xl bg-black/50 hover:bg-black/70 active:scale-95 backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+          title={isMuted ? "Activer le son" : "Couper le son"}
+        >
+          {isMuted ? (
+            <VolumeX className="w-4 h-4 text-white/90" />
+          ) : (
+            <Volume2 className="w-4 h-4 text-[#FACC15]" />
+          )}
+        </button>
+      )}
+
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onShare();
+        }}
+        id="btn-video-top-share"
+        className="w-9 h-9 rounded-xl bg-black/50 hover:bg-black/70 active:scale-95 backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+        title="Partager"
+      >
+        <Share2 className="w-4 h-4 text-white" />
+      </button>
+    </div>
   </div>
 );
 
-// Sous-composant : Lecteur Timeline moderne (Timestamps + Scrubber corail + Bouton Soundwave - Image 2)
+// Sous-composant : Lecteur Timeline moderne épuré (Timestamps + Scrubber corail, sans onde sonore encombrante)
 interface VideoModernPlayerBarProps {
   videoCurrentTime: number;
   activeDuration: number;
   progressPercent: number;
-  isPlaying: boolean;
-  onTogglePlayback: (e: React.MouseEvent) => void;
   onSeek: (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => void;
   formatTime: (sec: number) => string;
 }
@@ -211,12 +250,10 @@ const VideoModernPlayerBar: React.FC<VideoModernPlayerBarProps> = ({
   videoCurrentTime,
   activeDuration,
   progressPercent,
-  isPlaying,
-  onTogglePlayback,
   onSeek,
   formatTime,
 }) => (
-  <div className="pt-1.5 space-y-1.5">
+  <div className="pt-2 space-y-1.5">
     {/* Timestamps */}
     <div className="flex items-center justify-between text-[11px] font-mono font-medium text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] px-0.5">
       <span>{formatTime(videoCurrentTime)}</span>
@@ -240,28 +277,6 @@ const VideoModernPlayerBar: React.FC<VideoModernPlayerBarProps> = ({
         style={{ left: `${progressPercent}%` }}
       />
     </div>
-
-    {/* Bouton Waveform Audio/Vidéo centré (Style Image 2) */}
-    <div className="flex items-center justify-center pt-0.5">
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          onTogglePlayback(e);
-        }}
-        id="btn-player-soundwave"
-        className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#E5855E] hover:bg-[#DC724B] text-[#1C1917] flex items-center justify-center shadow-[0_6px_20px_rgba(229,133,94,0.55)] cursor-pointer transition-all hover:scale-105 active:scale-95 z-20 shrink-0 border border-white/20"
-        title={isPlaying ? 'Mettre en pause' : 'Lancer la lecture'}
-      >
-        <div className="flex items-center justify-center gap-1">
-          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-5 animate-[pulse_0.6s_ease-in-out_infinite]' : 'h-3'}`} />
-          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-7 animate-[pulse_0.8s_ease-in-out_infinite_0.2s]' : 'h-6'}`} />
-          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-4 animate-[pulse_0.5s_ease-in-out_infinite_0.4s]' : 'h-4'}`} />
-          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-6 animate-[pulse_0.7s_ease-in-out_infinite_0.1s]' : 'h-5'}`} />
-          <span className={`w-1 bg-[#1C1917] rounded-full transition-all duration-300 ${isPlaying ? 'h-3 animate-[pulse_0.6s_ease-in-out_infinite_0.3s]' : 'h-2'}`} />
-        </div>
-      </button>
-    </div>
   </div>
 );
 
@@ -274,7 +289,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   hideQuestionByDefault = false,
   onToggleHideQuestion = (_val: boolean) => {},
   protagonistId,
-  initialTab = 'recit'
+  initialTab = 'recit',
+  returnToDuoId,
+  returnToDuoIndex,
+  returnToDocId
 }) => {
   // Déterminer le mode : Propriétaire ou Visiteur
   const isOwner = !protagonistId || protagonistId === 'me';
@@ -454,10 +472,29 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   // Video playback & scrubber (Style Image 2)
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
   const [videoCurrentTime, setVideoCurrentTime] = useState<number>(0);
   const [videoDuration, setVideoDuration] = useState<number>(0);
   const [isScrubbing, setIsScrubbing] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // État d'ajout d'une nouvelle publication pour le propriétaire
+  const [isAddingModalOpen, setIsAddingModalOpen] = useState<boolean>(false);
+  const [addFormKind, setAddFormKind] = useState<'recit' | 'episode' | 'production' | 'offre' | 'initiative' | 'appel'>('recit');
+  const [addFormTitle, setAddFormTitle] = useState<string>('');
+  const [addFormSubtitle, setAddFormSubtitle] = useState<string>('');
+  const [addFormDescription, setAddFormDescription] = useState<string>('');
+  const [addFormDuration, setAddFormDuration] = useState<string>('03:45');
+  const [addFormPrice, setAddFormPrice] = useState<string>('45 €');
+  const [addFormPriceNumeric, setAddFormPriceNumeric] = useState<number>(45);
+  const [addFormSharesCount, setAddFormSharesCount] = useState<number>(10);
+  const [addFormSharesOnSale, setAddFormSharesOnSale] = useState<number>(3);
+  const [addFormTargetAmount, setAddFormTargetAmount] = useState<number>(3000);
+  const [addFormCategoryLabel, setAddFormCategoryLabel] = useState<string>('Artisanat & Transmission');
+  const [addFormUrgency, setAddFormUrgency] = useState<string>('Prioritaire');
+  const [addFormImpact, setAddFormImpact] = useState<string>('Permettra de former 10 nouveaux apprentis');
+  const [addFormVideoUrl, setAddFormVideoUrl] = useState<string>('https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4');
+  const [addFormPosterUrl, setAddFormPosterUrl] = useState<string>('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80');
 
   // =========================================================================
   // 1. DATA DIMENSION 1 : RÉCIT (Histoires personnelles de vie, études, etc.)
@@ -633,6 +670,40 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       status: 'En diffusion',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
+    },
+    {
+      id: 'prod-4',
+      seriesId: 'dixeat-fiat-luxe',
+      seriesTitle: 'Dixeat < > Fiat Luxe',
+      sharesCount: 6,
+      sharesOnSale: 2,
+      startPrice: 45,
+      salePrice: 58,
+      purchasePrice: 270,
+      recommendedPrice: 56,
+      rsiPercent: 28.8,
+      returnForecastPercent: 14.0,
+      returnForecastAmount: 38.00,
+      status: 'En tournage',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      posterUrl: '/assets/posters/dixeat-fiat-luxe.png'
+    },
+    {
+      id: 'prod-5',
+      seriesId: 'investors-builders',
+      seriesTitle: 'Investors Builders',
+      sharesCount: 12,
+      sharesOnSale: isOwner ? 4 : 4,
+      startPrice: 50,
+      salePrice: 65,
+      purchasePrice: 600,
+      recommendedPrice: 62,
+      rsiPercent: 30.0,
+      returnForecastPercent: 16.5,
+      returnForecastAmount: 97.50,
+      status: 'En production',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      posterUrl: '/assets/posters/investors-builders.png'
     }
   ]);
 
@@ -932,6 +1003,17 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     }
   };
 
+  // Basculer l'état du son (Mute / Unmute)
+  const toggleMute = () => {
+    setIsMuted((prev) => {
+      const next = !prev;
+      if (videoRef.current) {
+        videoRef.current.muted = next;
+      }
+      return next;
+    });
+  };
+
   // SWIPE VERTICAL : Passer d'une catégorie à l'autre
   const handleNextCategory = () => {
     setActiveCategory((prev) => {
@@ -1114,6 +1196,46 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     return clean;
   };
 
+  // Titre court et net pour la capsule en haut à gauche (ne doit JAMAIS être coupé)
+  const getSeriesBadgeTitle = () => {
+    const formatSeriesName = (name?: string) => {
+      if (!name) return 'Série';
+      const lower = name.toLowerCase();
+      if (lower.includes('investor')) return 'Investors Builders';
+      if (lower.includes('finagnon')) return 'Finagnon';
+      if (lower.includes('jesus') || lower.includes('jésus') || lower.includes('legba') || lower.includes('èṣù')) return 'Jésus < > Èṣù';
+      if (lower.includes('blacks')) return 'Blacks One';
+      if (lower.includes('dixeat')) return 'Dixeat';
+      const clean = name.split(/[:–—<]/)[0].trim();
+      return clean.length > 18 ? clean.split(' ')[0] : clean;
+    };
+
+    if (activeCategory === 'recit') {
+      if (!currentRecitUnified) return 'Récit personnel';
+      if (currentRecitUnified.kind === 'recit') {
+        return 'Mon récit';
+      } else {
+        return formatSeriesName(currentRecitUnified.item.seriesTitle);
+      }
+    }
+    if (activeCategory === 'production') {
+      return formatSeriesName(currentProduction?.seriesTitle);
+    }
+    if (activeCategory === 'offre') {
+      const cat = currentCreation?.categoryLabel || currentCreation?.title || 'Artisanat';
+      const lower = cat.toLowerCase();
+      if (lower.includes('artisanat')) return 'Artisanat d’art';
+      if (lower.includes('atelier')) return 'Atelier';
+      if (lower.includes('consultation')) return 'Consultation';
+      if (lower.includes('service')) return 'Service';
+      return 'Création';
+    }
+    if (currentAppelUnified?.kind === 'initiative') {
+      return 'Initiative solidaire';
+    }
+    return 'Appel solidaire';
+  };
+
   // Résolution du média actif pour le lecteur moderne style Image 2
   const currentMedia = useMemo(() => {
     if (activeCategory === 'recit') {
@@ -1200,8 +1322,8 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
         
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3.5">
-            {/* Bouton retour si visiteur */}
-            {!isOwner && (
+            {/* Bouton retour vers l'accueil si ce n'est pas un visiteur venant d'un duo */}
+            {!returnToDuoId && !isOwner && (
               <button
                 onClick={() => onNavigate({ type: 'home' })}
                 className="p-2 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 transition-colors shadow-xs cursor-pointer mr-1"
@@ -1243,6 +1365,24 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Bouton Revenir au Duo placé à côté des actions */}
+            {returnToDuoId && (
+              <button
+                type="button"
+                onClick={() => onNavigate({
+                  type: 'duo_feed',
+                  currentDuoIndex: returnToDuoIndex ?? 0,
+                  selectedDocId: returnToDocId
+                })}
+                className="h-9 px-3.5 rounded-full bg-white hover:bg-stone-50 border border-[#C89B3C] text-[#C89B3C] hover:text-[#B78A2E] text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                title="Revenir au Duo"
+                id="btn-return-to-duo-actions"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Revenir au Duo</span>
+              </button>
+            )}
+
             {isOwner ? (
               <>
                 {/* Propriétaire : Bouton Messagerie */}
@@ -1320,19 +1460,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       {/* ========================================================================= */}
       <div className="space-y-4 animate-in fade-in duration-200">
 
-        {/* Conteneur principal avec flèches latérales */}
-        <div className="relative flex items-center justify-center gap-3 sm:gap-6 py-2">
+        {/* Conteneur principal avec vidéo 9:16 épurée */}
+        <div className="relative flex items-center justify-center py-2">
           
-          {/* Flèche Gauche */}
-          <button
-            onClick={handlePrev}
-            className="hidden sm:flex p-3.5 rounded-full bg-white hover:bg-[#FAFAF9] border border-[#E7E5E4] text-[#8B6845] hover:text-[#1C1917] transition-all shadow-sm cursor-pointer hover:scale-105 outline-none focus:outline-none ring-0"
-            title="Précédent"
-            id="prev-studio-card-btn"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-
           {/* CARTE FORMAT 9:16 VERTICAL AVEC GESTION DU SWIPE 2D */}
           <div
             onTouchStart={onTouchStart}
@@ -1350,35 +1480,44 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             style={{ transform: `translate(${swipeOffsetX}px, ${swipeOffsetY}px)` }}
           >
             {/* ================================================================= */}
-            {/* 4 ICÔNES FLOTTANTES SUR LE CÔTÉ DROIT DE LA VIDÉO (STYLE IMAGE 1) */}
-            {/* Sans capsule ni barre de fond noire, flottant directement sur     */}
-            {/* l'image avec ombre portée. Active en jaune avec repère vertical.  */}
+            {/* 4 ICÔNES SUR LE CÔTÉ DROIT DE LA VIDÉO                            */}
+            {/* Même gabarit que le bouton Partager en haut (w-9 h-9, icône w-4)   */}
+            {/* Même axe vertical exact : right-5                                 */}
+            {/* Disparaissent en cours de lecture pour ne pas gêner le visionnage  */}
             {/* ================================================================= */}
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-5 pointer-events-auto">
+            <div 
+              className={`absolute right-5 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3 transition-all duration-300 pointer-events-auto ${
+                isPlaying 
+                  ? 'opacity-0 pointer-events-none scale-90 -translate-x-1' 
+                  : 'opacity-100 pointer-events-auto scale-100 translate-x-0'
+              }`}
+            >
               {CATEGORIES.map(({ key, label, icon: IconComponent }) => {
                 const isActive = activeCategory === key;
                 return (
-                  <div key={key} className="relative flex items-center justify-center">
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        switchCategory(key);
-                      }}
-                      id={`btn-profile-cat-${key}`}
-                      title={label}
-                      className="p-1 flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-90 group"
-                    >
-                      <IconComponent
-                        className={`w-6 h-6 transition-all duration-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] ${
-                          isActive
-                            ? 'text-[#FACC15] scale-110 stroke-[2.3]'
-                            : 'text-white/80 hover:text-white hover:scale-110 stroke-[1.8]'
-                        }`}
-                      />
-                    </button>
-                  </div>
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      switchCategory(key);
+                    }}
+                    id={`btn-profile-cat-${key}`}
+                    title={label}
+                    className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md active:scale-90 ${
+                      isActive
+                        ? 'bg-black/75 border border-[#FACC15] text-[#FACC15] scale-105 shadow-[0_2px_12px_rgba(250,204,21,0.3)]'
+                        : 'bg-black/50 hover:bg-black/70 border border-white/20 text-white/85 hover:text-white hover:border-white/40'
+                    }`}
+                  >
+                    <IconComponent
+                      className={`w-4 h-4 transition-all duration-200 ${
+                        isActive
+                          ? 'text-[#FACC15] stroke-[2.2]'
+                          : 'text-white/90 stroke-[1.8]'
+                      }`}
+                    />
+                  </button>
                 );
               })}
             </div>
@@ -1409,7 +1548,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   ref={videoRef}
                   src={currentRecitUnified.item.videoUrl}
                   loop
-                  muted
+                  muted={isMuted}
                   playsInline
                   onTimeUpdate={(e) => {
                     const v = e.currentTarget;
@@ -1430,11 +1569,12 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/35 pointer-events-none" />
 
-                {/* HAUT : Titre à gauche (sans capsule) & Bouton Partager à droite (Style Image 2) */}
+                {/* HAUT : Nom de la série ou titre court dans une capsule opaque & Bouton Partager bien calé en haut à droite */}
                 <VideoTopHeader 
-                  title={getShortTitle(currentRecitUnified.kind === 'recit' ? currentRecitUnified.item.title : currentRecitUnified.item.seriesTitle) || 'Récit personnel'}
-                  author={profileDisplayName}
+                  seriesOrTitle={getSeriesBadgeTitle()}
                   onShare={handleShareProfile}
+                  isMuted={isMuted}
+                  onToggleMute={toggleMute}
                 />
 
                 <div className="my-auto" />
@@ -1495,13 +1635,11 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     </div>
                   )}
 
-                  {/* Lecteur moderne Image 2 */}
+                  {/* Lecteur moderne épuré sans onde sonore */}
                   <VideoModernPlayerBar 
                     videoCurrentTime={videoCurrentTime}
                     activeDuration={activeDuration}
                     progressPercent={progressPercent}
-                    isPlaying={isPlaying}
-                    onTogglePlayback={toggleVideoPlayback}
                     onSeek={handleTimelineSeek}
                     formatTime={formatVideoTime}
                   />
@@ -1526,7 +1664,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   ref={videoRef}
                   src={currentProduction.videoUrl}
                   loop
-                  muted
+                  muted={isMuted}
                   playsInline
                   onTimeUpdate={(e) => {
                     const v = e.currentTarget;
@@ -1547,11 +1685,12 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/35 pointer-events-none" />
 
-                {/* HAUT : Titre à gauche & Bouton Partager à droite (Style Image 2) */}
+                {/* HAUT : Nom de la série dans une capsule opaque & Bouton Partager bien calé en haut à droite */}
                 <VideoTopHeader 
-                  title={currentProduction.seriesTitle}
-                  author={profileDisplayName}
+                  seriesOrTitle={getSeriesBadgeTitle()}
                   onShare={handleShareProfile}
+                  isMuted={isMuted}
+                  onToggleMute={toggleMute}
                 />
 
                 <div className="my-auto" />
@@ -1617,13 +1756,11 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     </div>
                   )}
 
-                  {/* Lecteur moderne Image 2 */}
+                  {/* Lecteur moderne épuré sans onde sonore */}
                   <VideoModernPlayerBar 
                     videoCurrentTime={videoCurrentTime}
                     activeDuration={activeDuration}
                     progressPercent={progressPercent}
-                    isPlaying={isPlaying}
-                    onTogglePlayback={toggleVideoPlayback}
                     onSeek={handleTimelineSeek}
                     formatTime={formatVideoTime}
                   />
@@ -1648,7 +1785,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   ref={videoRef}
                   src={currentCreation.videoUrl}
                   loop
-                  muted
+                  muted={isMuted}
                   playsInline
                   onTimeUpdate={(e) => {
                     const v = e.currentTarget;
@@ -1669,11 +1806,12 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/35 pointer-events-none" />
 
-                {/* HAUT : Titre à gauche & Bouton Partager à droite (Style Image 2) */}
+                {/* HAUT : Catégorie ou titre court dans une capsule opaque & Bouton Partager bien calé en haut à droite */}
                 <VideoTopHeader 
-                  title={currentCreation.title}
-                  author={profileDisplayName}
+                  seriesOrTitle={getSeriesBadgeTitle()}
                   onShare={handleShareProfile}
+                  isMuted={isMuted}
+                  onToggleMute={toggleMute}
                 />
 
                 <div className="my-auto" />
@@ -1740,13 +1878,11 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     </div>
                   )}
 
-                  {/* Lecteur moderne Image 2 */}
+                  {/* Lecteur moderne épuré sans onde sonore */}
                   <VideoModernPlayerBar 
                     videoCurrentTime={videoCurrentTime}
                     activeDuration={activeDuration}
                     progressPercent={progressPercent}
-                    isPlaying={isPlaying}
-                    onTogglePlayback={toggleVideoPlayback}
                     onSeek={handleTimelineSeek}
                     formatTime={formatVideoTime}
                   />
@@ -1771,7 +1907,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   ref={videoRef}
                   src={currentAppelUnified.item.videoUrl}
                   loop
-                  muted
+                  muted={isMuted}
                   playsInline
                   onTimeUpdate={(e) => {
                     const v = e.currentTarget;
@@ -1792,32 +1928,16 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/35 pointer-events-none" />
 
-                {/* HAUT : Badge & Titre à gauche, bouton Partager à droite (Style Image 2) */}
-                <div className="relative z-10 flex items-center justify-between gap-3 w-full pr-14">
-                  <div className="flex items-center gap-2 min-w-0 pr-1">
-                    <p className="font-editorial text-xs sm:text-sm font-semibold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] truncate tracking-wide">
-                      {currentAppelUnified.kind === 'initiative' ? 'Initiative' : 'Appel'} <span className="opacity-75 font-normal">— {profileDisplayName}</span>
-                    </p>
-                    <span className="px-2 py-0.5 rounded-md bg-[#FACC15]/20 border border-[#FACC15]/40 text-[#FACC15] font-mono text-[10px] font-bold shrink-0">
-                      {currentAppelUnified.kind === 'initiative' 
-                        ? `${Math.round((currentAppelUnified.item.collectedAmount / currentAppelUnified.item.targetAmount) * 100)}%`
-                        : (currentAppelUnified.item.urgency || 'Urgent')}
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleShareProfile();
-                    }}
-                    id="btn-video-top-share"
-                    className="w-8.5 h-8.5 rounded-xl bg-white/20 hover:bg-white/35 active:scale-95 backdrop-blur-md border border-white/25 text-white flex items-center justify-center shadow-md transition-all cursor-pointer shrink-0"
-                    title="Partager"
-                  >
-                    <Share className="w-4 h-4 text-white drop-shadow-sm" />
-                  </button>
-                </div>
+                {/* HAUT : Titre ou type dans une capsule opaque avec badge & Bouton Partager bien calé en haut à droite */}
+                <VideoTopHeader
+                  seriesOrTitle={getSeriesBadgeTitle()}
+                  badge={currentAppelUnified.kind === 'initiative' 
+                    ? `${Math.round((currentAppelUnified.item.collectedAmount / currentAppelUnified.item.targetAmount) * 100)}%`
+                    : (currentAppelUnified.item.urgency || 'Urgent')}
+                  onShare={handleShareProfile}
+                  isMuted={isMuted}
+                  onToggleMute={toggleMute}
+                />
 
                 <div className="my-auto" />
 
@@ -1948,13 +2068,11 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     </>
                   )}
 
-                  {/* Lecteur moderne Image 2 */}
+                  {/* Lecteur moderne épuré sans onde sonore */}
                   <VideoModernPlayerBar 
                     videoCurrentTime={videoCurrentTime}
                     activeDuration={activeDuration}
                     progressPercent={progressPercent}
-                    isPlaying={isPlaying}
-                    onTogglePlayback={toggleVideoPlayback}
                     onSeek={handleTimelineSeek}
                     formatTime={formatVideoTime}
                   />
@@ -1964,67 +2082,45 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
           </div>
 
-          {/* Flèche Droite */}
-          <button
-            onClick={handleNext}
-            className="hidden sm:flex p-3.5 rounded-full bg-white hover:bg-[#FAFAF9] border border-[#E7E5E4] text-[#8B6845] hover:text-[#1C1917] transition-all shadow-sm cursor-pointer hover:scale-105 outline-none focus:outline-none ring-0"
-            title="Suivant"
-            id="next-studio-card-btn"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-
         </div>
 
-        {/* Navigation Indicator (Points pour la catégorie active) & Boutons de navigation sous la vidéo */}
-        <div className="flex items-center justify-between max-w-[340px] mx-auto pt-2 pb-1 px-2">
-          <div className="flex items-center gap-1.5">
-            {totalItemsInActiveCategory > 1 && Array.from({ length: totalItemsInActiveCategory }).map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => {
-                  setCategoryIndices(prev => ({ ...prev, [activeCategory]: i }));
-                }}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  i === currentCategorySafeIndex
-                    ? 'w-6 bg-[#E5855E]'
-                    : 'w-2 bg-stone-300 hover:bg-stone-400'
-                }`}
-                title={`Aller à la vidéo ${i + 1}`}
-              />
-            ))}
-            <span className="text-[11px] font-bold text-stone-500 ml-2 font-mono">
-              {currentCategorySafeIndex + 1} / {totalItemsInActiveCategory}
-            </span>
-          </div>
-
-          {/* Boutons Précédent / Suivant sous la vidéo (conservés et accessibles) */}
-          <div className="flex items-center gap-1.5">
+        {/* Bouton d'ajout pour le propriétaire */}
+        {isOwner && (
+          <div className="flex items-center justify-center max-w-[340px] mx-auto pt-1.5 px-2">
             <button
               type="button"
-              onClick={handlePrevVideo}
-              disabled={totalItemsInActiveCategory <= 1}
-              className="h-7 px-2.5 rounded-lg bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 flex items-center gap-1 shadow-xs cursor-pointer active:scale-95 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              title="Vidéo précédente"
-              id="btn-nav-prev-under-video"
+              onClick={() => {
+                if (activeCategory === 'recit') {
+                  setAddFormKind('recit');
+                  setAddFormTitle('');
+                  setAddFormSubtitle('');
+                } else if (activeCategory === 'production') {
+                  setAddFormKind('production');
+                  setAddFormTitle('');
+                } else if (activeCategory === 'offre') {
+                  setAddFormKind('offre');
+                  setAddFormTitle('');
+                  setAddFormPrice('45 €');
+                } else {
+                  setAddFormKind('initiative');
+                  setAddFormTitle('');
+                  setAddFormTargetAmount(3000);
+                }
+                setIsAddingModalOpen(true);
+              }}
+              id="btn-add-new-publication"
+              className="w-full h-10 px-4 rounded-2xl bg-[#1C1917] hover:bg-[#C89B3C] text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
-              <span>Préc.</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleNextVideo}
-              disabled={totalItemsInActiveCategory <= 1}
-              className="h-7 px-2.5 rounded-lg bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 flex items-center gap-1 shadow-xs cursor-pointer active:scale-95 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              title="Vidéo suivante"
-              id="btn-nav-next-under-video"
-            >
-              <span>Suiv.</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              <Plus className="w-4 h-4 text-[#FACC15]" />
+              <span>
+                {activeCategory === 'recit' && 'Ajouter un récit ou un épisode'}
+                {activeCategory === 'production' && 'Créer une coproduction'}
+                {activeCategory === 'offre' && 'Ajouter une création ou un atelier'}
+                {activeCategory === 'appel' && 'Lancer une initiative ou un appel'}
+              </span>
             </button>
           </div>
-        </div>
+        )}
 
         {/* Aide visuelle intuitive */}
         <div className="flex items-center justify-center text-center px-4 pt-1">
@@ -3371,6 +3467,469 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 Annuler
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 9. MODALE DE NOUVELLE PUBLICATION (Pour le Propriétaire)                  */}
+      {/* ========================================================================= */}
+      {isOwner && isAddingModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-lg w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5 max-h-[90vh] overflow-y-auto">
+            
+            <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-[#FACC15]/20 border border-[#FACC15]/50 text-[#8B6845] flex items-center justify-center">
+                  <Plus className="w-5 h-5 text-[#1C1917]" />
+                </div>
+                <div>
+                  <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917]">
+                    Nouvelle publication
+                  </h3>
+                  <p className="text-xs text-[#8B6845]">
+                    {activeCategory === 'recit' && 'Récit personnel ou épisode documentaire'}
+                    {activeCategory === 'production' && 'Série ouverte en coproduction'}
+                    {activeCategory === 'offre' && 'Œuvre d’artisanat, objet ou atelier'}
+                    {activeCategory === 'appel' && 'Projet participatif ou appel à compétences'}
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsAddingModalOpen(false)} 
+                className="p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Sélecteur de type selon la catégorie */}
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-stone-700 font-semibold block mb-1">Type de contenu :</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {activeCategory === 'recit' && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setAddFormKind('recit')}
+                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
+                          addFormKind === 'recit'
+                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                        }`}
+                      >
+                        <span className="block font-bold">Récit personnel</span>
+                        <span className="text-[10px] opacity-80">Histoire, cheminement, vision</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAddFormKind('episode')}
+                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
+                          addFormKind === 'episode'
+                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                        }`}
+                      >
+                        <span className="block font-bold">Épisode de série</span>
+                        <span className="text-[10px] opacity-80">Extrait vidéo documentaire</span>
+                      </button>
+                    </>
+                  )}
+
+                  {activeCategory === 'production' && (
+                    <div className="col-span-2 p-2.5 rounded-xl bg-stone-50 border border-stone-200">
+                      <span className="font-bold text-[#1C1917] block">Parts de coproduction</span>
+                      <span className="text-[11px] text-stone-500">Ouverture de parts participatives pour les spectateurs</span>
+                    </div>
+                  )}
+
+                  {activeCategory === 'offre' && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setAddFormCategoryLabel('Artisanat & Pièces d’art')}
+                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
+                          addFormCategoryLabel.includes('Artisanat')
+                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                        }`}
+                      >
+                        <span className="block font-bold">Artisanat / Objet</span>
+                        <span className="text-[10px] opacity-80">Création originale, textile, sculpture</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAddFormCategoryLabel('Atelier & Expérience')}
+                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
+                          addFormCategoryLabel.includes('Atelier')
+                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                        }`}
+                      >
+                        <span className="block font-bold">Atelier d’initiation</span>
+                        <span className="text-[10px] opacity-80">Transmission en présentiel ou vidéo</span>
+                      </button>
+                    </>
+                  )}
+
+                  {activeCategory === 'appel' && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setAddFormKind('initiative')}
+                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
+                          addFormKind === 'initiative'
+                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                        }`}
+                      >
+                        <span className="block font-bold">Initiative solidaire</span>
+                        <span className="text-[10px] opacity-80">Financement participatif & projet</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAddFormKind('appel')}
+                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
+                          addFormKind === 'appel'
+                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                        }`}
+                      >
+                        <span className="block font-bold">Appel à compétences</span>
+                        <span className="text-[10px] opacity-80">Besoin matériel ou humain</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Titre */}
+              <div>
+                <label className="text-stone-700 font-semibold block">Titre :</label>
+                <input
+                  type="text"
+                  placeholder="Donnez un titre clair et percutant..."
+                  value={addFormTitle}
+                  onChange={(e) => setAddFormTitle(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 focus:outline-none focus:border-[#C89B3C]"
+                />
+              </div>
+
+              {/* Sous-titre ou chapitrage si récit */}
+              {activeCategory === 'recit' && addFormKind === 'recit' && (
+                <div>
+                  <label className="text-stone-700 font-semibold block">Sous-titre / Chapitre :</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Chapitre II : Les fils du destin"
+                    value={addFormSubtitle}
+                    onChange={(e) => setAddFormSubtitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 focus:outline-none focus:border-[#C89B3C]"
+                  />
+                </div>
+              )}
+
+              {/* Description */}
+              <div>
+                <label className="text-stone-700 font-semibold block">Description :</label>
+                <textarea
+                  rows={2}
+                  placeholder="Décrivez la démarche, l'esprit ou le contexte..."
+                  value={addFormDescription}
+                  onChange={(e) => setAddFormDescription(e.target.value)}
+                  className="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 focus:outline-none focus:border-[#C89B3C] resize-none"
+                />
+              </div>
+
+              {/* Paramètres financiers ou spécifiques selon catégorie */}
+              {activeCategory === 'production' && (
+                <div className="grid grid-cols-3 gap-2 bg-stone-50 p-3 rounded-2xl border border-stone-200">
+                  <div>
+                    <label className="text-stone-700 font-semibold block text-[11px]">Prix de la part :</label>
+                    <input
+                      type="number"
+                      value={addFormPriceNumeric}
+                      onChange={(e) => setAddFormPriceNumeric(Number(e.target.value))}
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 text-xs bg-white mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-stone-700 font-semibold block text-[11px]">Parts totales :</label>
+                    <input
+                      type="number"
+                      value={addFormSharesCount}
+                      onChange={(e) => setAddFormSharesCount(Number(e.target.value))}
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 text-xs bg-white mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-stone-700 font-semibold block text-[11px]">En vente :</label>
+                    <input
+                      type="number"
+                      value={addFormSharesOnSale}
+                      onChange={(e) => setAddFormSharesOnSale(Number(e.target.value))}
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 text-xs bg-white mt-1"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeCategory === 'offre' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-stone-700 font-semibold block">Prix affiché :</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: 85 €"
+                      value={addFormPrice}
+                      onChange={(e) => setAddFormPrice(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-stone-700 font-semibold block">Durée ou format :</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: 03:45 ou 2h30"
+                      value={addFormDuration}
+                      onChange={(e) => setAddFormDuration(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeCategory === 'appel' && addFormKind === 'initiative' && (
+                <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 space-y-2">
+                  <div>
+                    <label className="text-stone-700 font-semibold block">Objectif financier (€) :</label>
+                    <input
+                      type="number"
+                      value={addFormTargetAmount}
+                      onChange={(e) => setAddFormTargetAmount(Number(e.target.value))}
+                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-white mt-1"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {activeCategory === 'appel' && addFormKind === 'appel' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-stone-700 font-semibold block">Urgence :</label>
+                    <select
+                      value={addFormUrgency}
+                      onChange={(e) => setAddFormUrgency(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                    >
+                      <option value="Prioritaire">Prioritaire</option>
+                      <option value="D’ici fin de semaine">D’ici fin de semaine</option>
+                      <option value="Pour le prochain mois">Pour le prochain mois</option>
+                      <option value="Continu">Continu</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-stone-700 font-semibold block">Impact visé :</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: 10 apprentis formés"
+                      value={addFormImpact}
+                      onChange={(e) => setAddFormImpact(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Sélection visuelle du média (Poster & Vidéo) */}
+              <div className="space-y-2 pt-2 border-t border-stone-200">
+                <label className="text-stone-700 font-semibold block flex items-center justify-between">
+                  <span>Image de fond / Affiche :</span>
+                  <span className="text-[10px] text-stone-500 font-normal">Presets ou lien</span>
+                </label>
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {MEDIA_POSTER_PRESETS.map((p, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setAddFormPosterUrl(p.url)}
+                      className={`relative w-16 h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                        addFormPosterUrl === p.url ? 'border-[#C89B3C] scale-95 shadow-md' : 'border-stone-200 opacity-75 hover:opacity-100'
+                      }`}
+                      title={p.name}
+                    >
+                      <img src={p.url} alt={p.name} className="w-full h-full object-cover" />
+                      <div className="absolute inset-x-0 bottom-0 bg-black/60 text-[9px] text-white text-center py-0.5 truncate px-1">
+                        {p.name}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  placeholder="Ou URL de l'image (https://...)"
+                  value={addFormPosterUrl}
+                  onChange={(e) => setAddFormPosterUrl(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-[11px] bg-stone-50"
+                />
+              </div>
+
+              {/* Sélection de la vidéo */}
+              <div className="space-y-2">
+                <label className="text-stone-700 font-semibold block flex items-center justify-between">
+                  <span>Vidéo d'illustration :</span>
+                  <span className="text-[10px] text-stone-500 font-normal">Presets vidéo</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {MEDIA_VIDEO_PRESETS.map((v, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setAddFormVideoUrl(v.url)}
+                      className={`p-2 rounded-xl border text-left text-[11px] transition-all cursor-pointer flex items-center gap-2 ${
+                        addFormVideoUrl === v.url
+                          ? 'bg-[#1C1917] text-white border-[#1C1917]'
+                          : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                      }`}
+                    >
+                      <Film className="w-3.5 h-3.5 shrink-0 text-[#FACC15]" />
+                      <span className="truncate font-semibold">{v.name}</span>
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  placeholder="Ou URL de la vidéo .mp4 (https://...)"
+                  value={addFormVideoUrl}
+                  onChange={(e) => setAddFormVideoUrl(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-[11px] bg-stone-50"
+                />
+              </div>
+
+            </div>
+
+            {/* Boutons d'action */}
+            <div className="flex gap-2 pt-2 border-t border-stone-200">
+              <button
+                onClick={() => {
+                  const finalTitle = addFormTitle.trim() || (
+                    activeCategory === 'recit' ? 'Récit personnel' :
+                    activeCategory === 'production' ? 'Nouvelle série' :
+                    activeCategory === 'offre' ? 'Création d’art' : 'Nouvel appel'
+                  );
+
+                  if (activeCategory === 'recit') {
+                    if (addFormKind === 'recit') {
+                      const newRecit: UserRecitItem = {
+                        id: `recit-${Date.now()}`,
+                        title: finalTitle,
+                        subtitle: addFormSubtitle.trim() || 'Chapitre inédit',
+                        description: addFormDescription.trim() || 'Récit personnel de transmission et d’expérience.',
+                        duration: addFormDuration || '03:45',
+                        viewsCount: 1,
+                        videoUrl: addFormVideoUrl || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                        posterUrl: addFormPosterUrl || '/assets/protagonists/amara-tisserande.jpg'
+                      };
+                      setRecits(prev => [newRecit, ...prev]);
+                    } else {
+                      const newEpisode: UserEpisodeVideo = {
+                        id: `ep-${Date.now()}`,
+                        seriesId: 'series-custom',
+                        seriesTitle: finalTitle,
+                        title: addFormSubtitle.trim() || 'Épisode inédit',
+                        duration: addFormDuration || '03:45',
+                        viewsCount: 1,
+                        videoUrl: addFormVideoUrl || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                        posterUrl: addFormPosterUrl || '/assets/protagonists/amara-tisserande.jpg'
+                      };
+                      setEpisodes(prev => [newEpisode, ...prev]);
+                    }
+                  } else if (activeCategory === 'production') {
+                    const newProd: UserProductionShare = {
+                      id: `prod-${Date.now()}`,
+                      seriesId: 'series-custom',
+                      seriesTitle: finalTitle,
+                      sharesCount: addFormSharesCount,
+                      sharesOnSale: addFormSharesOnSale,
+                      startPrice: addFormPriceNumeric,
+                      salePrice: addFormPriceNumeric,
+                      purchasePrice: addFormPriceNumeric,
+                      recommendedPrice: Math.round(addFormPriceNumeric * 1.3),
+                      rsiPercent: 50,
+                      returnForecastPercent: 50,
+                      returnForecastAmount: Math.round(addFormPriceNumeric * 0.5),
+                      videoUrl: addFormVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                      posterUrl: addFormPosterUrl || '/assets/protagonists/koffi-tisserand.jpg',
+                      status: 'Actif'
+                    };
+                    setProductions(prev => [newProd, ...prev]);
+                  } else if (activeCategory === 'offre') {
+                    const newCreation: UserCreationItem = {
+                      id: `cr-${Date.now()}`,
+                      title: finalTitle,
+                      seriesTitle: 'Collection personnelle',
+                      categoryLabel: addFormCategoryLabel,
+                      type: 'produit',
+                      price: addFormPrice || '45 €',
+                      priceNumeric: parseFloat(addFormPrice) || 45,
+                      stock: 'Disponible',
+                      description: addFormDescription || 'Création originale d’artisanat.',
+                      specs: 'Fait main • Pièce unique',
+                      videoUrl: addFormVideoUrl || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                      posterUrl: addFormPosterUrl || '/assets/protagonists/fatou-restauratrice.jpg'
+                    };
+                    setCreations(prev => [newCreation, ...prev]);
+                  } else {
+                    if (addFormKind === 'initiative') {
+                      const newInit: UserInitiativeItem = {
+                        id: `init-${Date.now()}`,
+                        title: finalTitle,
+                        seriesTitle: 'Initiative communautaire',
+                        category: 'Préservation & Soutien',
+                        collectedAmount: 0,
+                        targetAmount: addFormTargetAmount || 3000,
+                        backersCount: 0,
+                        daysRemaining: 30,
+                        description: addFormDescription || 'Projet solidaire et participatif.',
+                        videoUrl: addFormVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+                        posterUrl: addFormPosterUrl || '/assets/posters/finagnon-qosqorico.png'
+                      };
+                      setInitiatives(prev => [newInit, ...prev]);
+                    } else {
+                      const newAppel: UserAppelItem = {
+                        id: `app-${Date.now()}`,
+                        title: finalTitle,
+                        category: 'Collaborations & Compétences',
+                        urgency: addFormUrgency || 'Prioritaire',
+                        description: addFormDescription || 'Recherche de collaboration.',
+                        impact: addFormImpact || 'Impact communautaire immédiat',
+                        videoUrl: addFormVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                        posterUrl: addFormPosterUrl || '/assets/protagonists/amara-tisserande.jpg'
+                      };
+                      setAppels(prev => [newAppel, ...prev]);
+                    }
+                  }
+
+                  // Réinitialisation de l'index sur la nouvelle vidéo ajoutée
+                  setCategoryIndices(prev => ({ ...prev, [activeCategory]: 0 }));
+                  setIsAddingModalOpen(false);
+                  setShareToast("Publication ajoutée avec succès !");
+                  setTimeout(() => setShareToast(null), 3000);
+                }}
+                className="flex-1 h-11 bg-[#1C1917] hover:bg-[#C89B3C] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <Check className="w-4 h-4" />
+                <span>Publier</span>
+              </button>
+              <button 
+                onClick={() => setIsAddingModalOpen(false)} 
+                className="flex-1 h-11 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs rounded-xl border border-stone-200/60 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center"
+              >
+                Annuler
+              </button>
+            </div>
+
           </div>
         </div>
       )}

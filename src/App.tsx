@@ -72,6 +72,9 @@ export default function App() {
             onUpdateLanguage={setLanguage}
             hideQuestionByDefault={hideQuestionByDefault}
             onToggleHideQuestion={setHideQuestionByDefault}
+            returnToDuoId={currentScreen.returnToDuoId}
+            returnToDuoIndex={currentScreen.returnToDuoIndex}
+            returnToDocId={currentScreen.returnToDocId}
           />
         )}
 
@@ -119,6 +122,9 @@ export default function App() {
             onUpdateLanguage={setLanguage}
             hideQuestionByDefault={hideQuestionByDefault}
             onToggleHideQuestion={setHideQuestionByDefault}
+            returnToDuoId={currentScreen.returnToDuoId}
+            returnToDuoIndex={currentScreen.returnToDuoIndex}
+            returnToDocId={currentScreen.returnToDocId}
           />
         )}
 

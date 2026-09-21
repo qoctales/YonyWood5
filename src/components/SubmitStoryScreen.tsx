@@ -111,6 +111,11 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const [isEpisodeMuted, setIsEpisodeMuted] = useState(false);
   const [showTranscription, setShowTranscription] = useState(false);
 
+  // Vidéos explicatives 9:16 pour l'Étape 3
+  const [isPlayingGuideHaveVideo, setIsPlayingGuideHaveVideo] = useState(false);
+  const [isPlayingGuideVideographer, setIsPlayingGuideVideographer] = useState(false);
+  const [isGuideMuted, setIsGuideMuted] = useState(true);
+
   // Gesture / Swipe state pour l'étape 1
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
@@ -503,10 +508,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       setShowSeriesSynopsis(true);
                     }}
                     className="px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 cursor-pointer shadow-sm"
-                    title="Afficher la transcription et le synopsis"
+                    title="Afficher le synopsis de la série"
                   >
                     <FileText className="w-3.5 h-3.5 text-[#C89B3C]" />
-                    <span>Transcription</span>
+                    <span>Synopsis</span>
                   </button>
 
                   <button
@@ -525,7 +530,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   </button>
                 </div>
 
-                {/* OVERLAY DE TRANSCRIPTION / SYNOPSIS POUR LA SÉRIE */}
+                {/* OVERLAY DU SYNOPSIS POUR LA SÉRIE */}
                 {showSeriesSynopsis && (
                   <div 
                     onClick={(e) => e.stopPropagation()}
@@ -534,7 +539,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     <div className="space-y-3 overflow-y-auto max-h-[82%] pr-1">
                       <div className="flex items-center justify-between pb-2 border-b border-white/15">
                         <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
-                          Synopsis • Transcription
+                          Synopsis
                         </span>
                         <button
                           onClick={() => setShowSeriesSynopsis(false)}
@@ -735,7 +740,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   </h3>
                 </div>
 
-                {/* Actions inférieures : Lire la transcription à gauche & Continuer à droite */}
+                {/* Actions inférieures : Découvrir la question à gauche & Continuer à droite */}
                 <div className="flex items-center justify-between gap-2 pt-1">
                   <button
                     onClick={(e) => {
@@ -743,10 +748,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       setShowTranscription(true);
                     }}
                     className="px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 cursor-pointer shadow-sm"
-                    title="Afficher la transcription"
+                    title="Afficher la question"
                   >
                     <FileText className="w-3.5 h-3.5 text-[#C89B3C]" />
-                    <span>Transcription</span>
+                    <span>Question</span>
                   </button>
 
                   <button
@@ -764,7 +769,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 </div>
               </div>
 
-              {/* OVERLAY DE TRANSCRIPTION (lisible et soigné sur fond flouté) */}
+              {/* OVERLAY DE LA QUESTION (lisible et soigné sur fond flouté) */}
               {showTranscription && (
                 <div 
                   onClick={(e) => e.stopPropagation()}
@@ -773,7 +778,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   <div className="space-y-3">
                     <div className="flex items-center justify-between pb-2 border-b border-white/15">
                       <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
-                        Transcription • Épisode {currentEpisode.number}
+                        Question • Épisode {currentEpisode.number}
                       </span>
                       <button
                         onClick={() => setShowTranscription(false)}
@@ -849,12 +854,12 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
             Comment souhaitez-vous transmettre votre vidéo ?
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             
-            {/* OPTION A : J'ai ma vidéo */}
+            {/* OPTION A : J'ai ma vidéo avec vraie capsule vidéo 9:16 interactive */}
             <div
               onClick={() => setVideoOption('HAVE_VIDEO')}
-              className={`p-5 rounded-3xl border cursor-pointer transition-all space-y-3 ${
+              className={`p-5 rounded-3xl border cursor-pointer transition-all space-y-4 ${
                 videoOption === 'HAVE_VIDEO'
                   ? 'bg-[#FFFFFF] border-[#C89B3C] shadow-md ring-2 ring-[#C89B3C]/30'
                   : 'bg-[#FFFFFF] hover:bg-[#F9F6EE] border-[#E7E5E4]'
@@ -869,13 +874,79 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     J'ai ma vidéo
                   </h3>
                   <p className="text-[11px] text-[#8B6845]">
-                    Enregistrée sur téléphone ou caméra
+                    Enregistrée sur smartphone ou caméra
                   </p>
                 </div>
               </div>
 
-              <p className="text-xs text-[#68655D] leading-relaxed">
-                Téléversez directement votre fichier vidéo ou partagez un lien sécurisé.
+              {/* VRAIE CAPSULE VIDÉO EXPLICATIVE FORMAT 9:16 */}
+              <div className="relative w-full max-w-[200px] mx-auto aspect-[9/16] rounded-2xl overflow-hidden bg-stone-900 border border-stone-300 shadow-inner group">
+                {isPlayingGuideHaveVideo ? (
+                  <video
+                    src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                    autoPlay
+                    loop
+                    playsInline
+                    muted={isGuideMuted}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80"
+                    alt="Guide de cadrage"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                )}
+                
+                {/* Repères optiques de cadrage 9:16 */}
+                <div className="absolute inset-2 border border-white/40 rounded-xl pointer-events-none flex flex-col justify-between p-2">
+                  <div className="flex justify-between text-[9px] font-mono text-[#FACC15] drop-shadow">
+                    <span>┌</span>
+                    <span>┐</span>
+                  </div>
+                  <div className="self-center px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[10px] font-mono text-white border border-white/20">
+                    Cadrage portrait 9:16
+                  </div>
+                  <div className="flex justify-between text-[9px] font-mono text-[#FACC15] drop-shadow">
+                    <span>└</span>
+                    <span>┘</span>
+                  </div>
+                </div>
+
+                {/* Bouton Play/Pause interactif */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPlayingGuideHaveVideo(!isPlayingGuideHaveVideo);
+                  }}
+                  className="absolute inset-0 m-auto w-11 h-11 rounded-full bg-black/60 hover:bg-[#C89B3C] text-white backdrop-blur-md flex items-center justify-center shadow-lg transition-all cursor-pointer z-10 hover:scale-110 active:scale-95"
+                  title={isPlayingGuideHaveVideo ? "Pause" : "Lire la capsule explicative"}
+                >
+                  {isPlayingGuideHaveVideo ? (
+                    <Pause className="w-4 h-4 fill-white" />
+                  ) : (
+                    <Play className="w-4 h-4 fill-white translate-x-0.5" />
+                  )}
+                </button>
+
+                {/* Mute toggle discret */}
+                {isPlayingGuideHaveVideo && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsGuideMuted(!isGuideMuted);
+                    }}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors z-20 cursor-pointer"
+                  >
+                    {isGuideMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-[#FACC15]" />}
+                  </button>
+                )}
+              </div>
+
+              <p className="text-xs text-[#68655D] leading-relaxed text-center">
+                Vérifiez que votre plan est vertical (1080×1920) avec un éclairage soigné et un son clair.
               </p>
 
               {videoOption === 'HAVE_VIDEO' && (
@@ -904,10 +975,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               )}
             </div>
 
-            {/* OPTION B : Être filmé(e) */}
+            {/* OPTION B : Être filmé(e) avec vraie capsule vidéo 9:16 interactive */}
             <div
               onClick={() => setVideoOption('NEED_VIDEOGRAPHER')}
-              className={`p-5 rounded-3xl border cursor-pointer transition-all space-y-3 ${
+              className={`p-5 rounded-3xl border cursor-pointer transition-all space-y-4 ${
                 videoOption === 'NEED_VIDEOGRAPHER'
                   ? 'bg-[#FFFFFF] border-[#C89B3C] shadow-md ring-2 ring-[#C89B3C]/30'
                   : 'bg-[#FFFFFF] hover:bg-[#F9F6EE] border-[#E7E5E4]'
@@ -927,8 +998,76 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 </div>
               </div>
 
-              <p className="text-xs text-[#68655D] leading-relaxed">
-                Un cadreur de notre réseau documentaire vient vous rencontrer dans votre environnement.
+              {/* VRAIE CAPSULE VIDÉO DE TOURNAGE EN CONDITION FORMAT 9:16 */}
+              <div className="relative w-full max-w-[200px] mx-auto aspect-[9/16] rounded-2xl overflow-hidden bg-stone-900 border border-stone-300 shadow-inner group">
+                {isPlayingGuideVideographer ? (
+                  <video
+                    src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+                    autoPlay
+                    loop
+                    playsInline
+                    muted={isGuideMuted}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80"
+                    alt="Tournage documentaire"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                )}
+                
+                {/* Repères tournage cinéma REC */}
+                <div className="absolute inset-2 border border-white/40 rounded-xl pointer-events-none flex flex-col justify-between p-2">
+                  <div className="flex items-center justify-between text-[9px] font-mono text-white drop-shadow">
+                    <span className="inline-flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                      <span>REC</span>
+                    </span>
+                    <span className="text-[#FACC15]">4K 9:16</span>
+                  </div>
+                  <div className="self-center px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[10px] font-mono text-white border border-white/20">
+                    Tournage encadré
+                  </div>
+                  <div className="text-[8px] font-mono text-stone-300 text-right drop-shadow">
+                    Réseau Artisans
+                  </div>
+                </div>
+
+                {/* Bouton Play/Pause interactif */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPlayingGuideVideographer(!isPlayingGuideVideographer);
+                  }}
+                  className="absolute inset-0 m-auto w-11 h-11 rounded-full bg-black/60 hover:bg-[#C89B3C] text-white backdrop-blur-md flex items-center justify-center shadow-lg transition-all cursor-pointer z-10 hover:scale-110 active:scale-95"
+                  title={isPlayingGuideVideographer ? "Pause" : "Voir le tournage encadré"}
+                >
+                  {isPlayingGuideVideographer ? (
+                    <Pause className="w-4 h-4 fill-white" />
+                  ) : (
+                    <Play className="w-4 h-4 fill-white translate-x-0.5" />
+                  )}
+                </button>
+
+                {/* Mute toggle discret */}
+                {isPlayingGuideVideographer && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsGuideMuted(!isGuideMuted);
+                    }}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors z-20 cursor-pointer"
+                  >
+                    {isGuideMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-[#FACC15]" />}
+                  </button>
+                )}
+              </div>
+
+              <p className="text-xs text-[#68655D] leading-relaxed text-center">
+                Un documentariste de notre réseau se déplace pour réaliser l'entretien dans les règles de l'art.
               </p>
 
               {videoOption === 'NEED_VIDEOGRAPHER' && (

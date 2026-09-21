@@ -432,40 +432,40 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
 
               {/* ========================================================================= */}
-              {/* MODE DECK (CARTE UNIQUE FORMAT 9:16)                                      */}
+              {/* MODE DECK (CARTE UNIQUE FORMAT 9:16 RIGISIEUSEMENT IDENTIQUE AU MIROIR)  */}
               {/* ========================================================================= */}
               {desktopViewMode === 'deck' && (
-                <div className="w-full max-w-sm sm:max-w-md mx-auto">
-                
-                <div 
-                  onClick={(e) => {
-                    if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
-                    if (isDraggingRef.current) return;
-                    toggleMobilePlay();
-                  }}
-                  className="relative rounded-[32px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/60 aspect-[9/16] flex flex-col justify-between cursor-pointer"
-                >
-                  
-                  {/* Background Video (when playing) or Poster Image */}
-                  {isMobilePlaying ? (
-                    <video
-                      ref={mobileVideoRef}
-                      key={`mobile-video-${activeProtagonist}-${currentDuo.id}`}
-                      src={currentVideoUrl}
-                      autoPlay
-                      loop
-                      playsInline
-                      muted={isMobileMuted}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  ) : (
-                    <img
-                      src={currentP.photoUrl}
-                      alt={currentP.name}
-                      referrerPolicy="no-referrer"
-                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none"
-                    />
-                  )}
+                <div className="w-full flex flex-col items-center justify-center">
+                  <div className="w-full max-w-xs sm:max-w-sm md:max-w-[364px] flex justify-center">
+                    <div 
+                      onClick={(e) => {
+                        if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
+                        if (isDraggingRef.current) return;
+                        toggleMobilePlay();
+                      }}
+                      className="relative w-full rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 aspect-[9/16] flex flex-col justify-between cursor-pointer"
+                    >
+                      
+                      {/* Background Video (when playing) or Poster Image */}
+                      {isMobilePlaying ? (
+                        <video
+                          ref={mobileVideoRef}
+                          key={`mobile-video-${activeProtagonist}-${currentDuo.id}`}
+                          src={currentVideoUrl}
+                          autoPlay
+                          loop
+                          playsInline
+                          muted={isMobileMuted}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={currentP.photoUrl}
+                          alt={currentP.name}
+                          referrerPolicy="no-referrer"
+                          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 pointer-events-none"
+                        />
+                      )}
                   
                   {/* Cinematic gradient overlay - plus clair et lumineux */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/25 pointer-events-none" />
@@ -585,14 +585,20 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         </div>
                       </div>
 
-                      {/* Son univers button (icône bonhomme seule -> Teaser d'abord) */}
+                      {/* Son univers button (icône bonhomme -> Aller directement sur son profil avec retour au Duo) */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setTeaserProtagonist(currentP);
+                          onNavigate({
+                            type: 'protagonist_profile',
+                            protagonistId: currentP.id,
+                            returnToDuoId: currentDuo.id,
+                            returnToDuoIndex: safeIndex,
+                            returnToDocId: selectedDocId || currentDuo.documentaryId
+                          });
                         }}
                         className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
-                        title="Découvrir son univers (Teaser)"
+                        title={`Consulter le profil de ${currentP.name}`}
                         id={`open-universe-${currentP.id}`}
                       >
                         <User className="w-4 h-4" />
@@ -600,42 +606,9 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                     </div>
                   </div>
                 </div>
-
-                {/* Mobile Bumble-style Bottom Action Buttons (Rewind, Play, Next) */}
-                <div className="flex items-center justify-center gap-4 mt-4 px-2">
-                  
-                  {/* Rewind / Précédent */}
-                  <button
-                    onClick={handlePrev}
-                    id="mobile-btn-rewind"
-                    title="Revenir au duo précédent"
-                    className="w-12 h-12 rounded-full bg-white hover:bg-stone-100 text-stone-700 border border-stone-200 shadow-lg flex items-center justify-center transition-all transform active:scale-90 cursor-pointer"
-                  >
-                    <RotateCcw className="w-5 h-5" />
-                  </button>
-
-                  {/* Basculer Univers A / B */}
-                  <button
-                    onClick={() => setActiveProtagonist(prev => prev === 'A' ? 'B' : 'A')}
-                    id="mobile-btn-toggle-protagonist"
-                    title="Basculer vers l'autre protagoniste"
-                    className="w-11 h-11 rounded-full bg-white hover:bg-stone-100 text-[#C89B3C] border border-stone-200 shadow-md flex items-center justify-center transition-all transform active:scale-90 cursor-pointer font-mono font-black text-xs tracking-wider select-none"
-                  >
-                    &lt; &gt;
-                  </button>
-
-                  {/* Suivant */}
-                  <button
-                    onClick={handleNext}
-                    id="mobile-btn-next"
-                    title="Duo suivant"
-                    className="w-12 h-12 rounded-full bg-[#1C1917] hover:bg-stone-800 text-white shadow-lg flex items-center justify-center transition-all transform active:scale-90 cursor-pointer"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-                </div>
               </div>
-            )}
+            </div>
+          )}
 
 
               {/* ========================================================================= */}
@@ -740,10 +713,16 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setTeaserProtagonist(pA);
+                            onNavigate({
+                              type: 'protagonist_profile',
+                              protagonistId: pA.id,
+                              returnToDuoId: currentDuo.id,
+                              returnToDuoIndex: safeIndex,
+                              returnToDocId: selectedDocId || currentDuo.documentaryId
+                            });
                           }}
                           className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
-                          title="Son univers (Teaser)"
+                          title={`Consulter le profil de ${pA.name}`}
                           id={`open-universe-${pA.id}`}
                         >
                           <User className="w-4 h-4" />
@@ -855,10 +834,16 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setTeaserProtagonist(pB);
+                            onNavigate({
+                              type: 'protagonist_profile',
+                              protagonistId: pB.id,
+                              returnToDuoId: currentDuo.id,
+                              returnToDuoIndex: safeIndex,
+                              returnToDocId: selectedDocId || currentDuo.documentaryId
+                            });
                           }}
                           className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:scale-105 active:scale-95"
-                          title="Son univers (Teaser)"
+                          title={`Consulter le profil de ${pB.name}`}
                           id={`open-universe-${pB.id}`}
                         >
                           <User className="w-4 h-4" />
