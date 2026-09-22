@@ -32,6 +32,7 @@ import {
   BookOpen,
   Clapperboard,
   Megaphone,
+  Sprout,
   Volume2,
   VolumeX,
   ArrowLeft,
@@ -992,10 +993,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const CATEGORY_KEYS: ProfileCategory[] = ['recit', 'production', 'offre', 'appel'];
 
   const CATEGORIES: { key: ProfileCategory; label: string; icon: React.FC<{ className?: string }> }[] = [
-    { key: 'recit', label: 'Récits & Épisodes', icon: Clapperboard },
+    { key: 'recit', label: 'Récits & Épisodes', icon: Film },
     { key: 'production', label: 'Productions', icon: Coins },
     { key: 'offre', label: 'Offre', icon: ShoppingBag },
-    { key: 'appel', label: 'Appels & Initiatives', icon: Megaphone },
+    { key: 'appel', label: 'Projet', icon: Sprout },
   ];
 
   // Calcul du nombre de vidéos de la catégorie active
@@ -1434,19 +1435,19 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-stone-700" />
                   <span>Messages</span>
-                  <span className="w-4 h-4 rounded-full bg-[#0D9488] text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="w-4 h-4 rounded-full bg-[#A2482B] text-white text-[9px] font-bold flex items-center justify-center">
                     2
                   </span>
                 </button>
 
-                {/* Propriétaire : Bouton Partager (Icône Turquoise #0D9488) */}
+                {/* Propriétaire : Bouton Partager (Icône Terre Cuite #A2482B) */}
                 <button
                   onClick={handleShareProfile}
                   id="btn-share-profile"
-                  className="w-9 h-9 rounded-full bg-white hover:bg-teal-50/50 border border-stone-200 hover:border-[#0D9488] text-[#0D9488] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="w-9 h-9 rounded-full bg-white hover:bg-[#A2482B]/10 border border-stone-200 hover:border-[#A2482B] text-[#A2482B] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                   title="Partager mon profil"
                 >
-                  <ShareIcon className="w-4 h-4 text-[#0D9488]" />
+                  <ShareIcon className="w-4 h-4 text-[#A2482B]" />
                 </button>
 
                 {/* Propriétaire : Icône discrète PARAMÈTRES dans l'en-tête */}
@@ -1468,18 +1469,18 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   className="h-9 px-4 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-semibold text-white flex items-center gap-2 transition-all shadow-xs cursor-pointer whitespace-nowrap"
                   title={`Envoyer un message à ${userName}`}
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-[#0D9488]" />
+                  <MessageSquare className="w-3.5 h-3.5 text-[#A2482B]" />
                   <span>Envoyer un message</span>
                 </button>
 
-                {/* Visiteur : Bouton Partager (Icône Turquoise) */}
+                {/* Visiteur : Bouton Partager (Icône Terre Cuite #A2482B) */}
                 <button
                   onClick={handleShareProfile}
                   id="btn-share-visitor-profile"
-                  className="w-9 h-9 rounded-full bg-white hover:bg-teal-50/50 border border-stone-200 hover:border-[#0D9488] text-[#0D9488] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="w-9 h-9 rounded-full bg-white hover:bg-[#A2482B]/10 border border-stone-200 hover:border-[#A2482B] text-[#A2482B] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                   title={`Partager le profil de ${userName}`}
                 >
-                  <ShareIcon className="w-4 h-4 text-[#0D9488]" />
+                  <ShareIcon className="w-4 h-4 text-[#A2482B]" />
                 </button>
               </>
             )}
@@ -2100,8 +2101,8 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                             className="w-full h-9 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                             id="btn-reply-appel"
                           >
-                            <Megaphone className="w-4 h-4 text-[#1C1917]" />
-                            <span>Répondre à cet appel</span>
+                            <Sprout className="w-4 h-4 text-[#1C1917]" />
+                            <span>Soutenir ce projet</span>
                           </button>
                         </div>
                       )}
@@ -2124,7 +2125,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
         </div>
 
-        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Lancer un appel seulement) */}
+        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Lancer un projet seulement) */}
         {isOwner && (activeCategory === 'offre' || activeCategory === 'appel') && (
           <div className="flex items-center justify-center max-w-[340px] mx-auto pt-1 pb-3 px-2">
             <button
@@ -2147,7 +2148,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               <Plus className="w-3.5 h-3.5 text-stone-500 group-hover/addaction:text-white transition-colors" />
               <span>
                 {activeCategory === 'offre' && 'Ajouter une offre'}
-                {activeCategory === 'appel' && 'Lancer un appel'}
+                {activeCategory === 'appel' && 'Créer un projet'}
               </span>
             </button>
           </div>
@@ -2203,14 +2204,14 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   type="email"
                   value={userEmail}
                   onChange={(e) => setUserEmail(e.target.value)}
-                  className="flex-1 px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488]"
+                  className="flex-1 px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#A2482B]"
                 />
                 <button
                   onClick={() => {
                     setShareToast("Adresse email enregistrée.");
                     setTimeout(() => setShareToast(null), 2500);
                   }}
-                  className="h-10 px-4 bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer active:scale-[0.98]"
+                  className="h-10 px-4 bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer active:scale-[0.98]"
                 >
                   Valider
                 </button>
@@ -2235,7 +2236,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 placeholder="Nouveau mot de passe"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488]"
+                className="w-full px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#A2482B]"
               />
               <button
                 type="submit"
@@ -2280,7 +2281,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   aria-checked={hideQuestionByDefault}
                   onClick={() => onToggleHideQuestion(!hideQuestionByDefault)}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    hideQuestionByDefault ? 'bg-[#0D9488]' : 'bg-stone-200'
+                    hideQuestionByDefault ? 'bg-[#A2482B]' : 'bg-stone-200'
                   }`}
                   id="toggle-hide-question-default"
                 >
@@ -2290,7 +2291,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     }`}
                   >
                     {hideQuestionByDefault && (
-                      <Check className="w-3 h-3 text-[#0D9488] stroke-[3]" />
+                      <Check className="w-3 h-3 text-[#A2482B] stroke-[3]" />
                     )}
                   </span>
                 </button>

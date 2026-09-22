@@ -20,6 +20,7 @@ import { DUOS, DOCUMENTARIES } from '../data/mockData';
 import { ViewScreen, Duo, Protagonist } from '../types';
 import { RemoteControlModal } from './RemoteControlModal';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
+import { ExplorerEggIcon } from './YonywoodBrandIcons';
 
 interface DuoFeedScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -305,8 +306,8 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
           })()}
         </div>
 
-        {/* Contrôles droits : commutateur mode desktop (Miroir / Deck) + Shuffle */}
-        <div className="flex items-center gap-2 z-10">
+        {/* Contrôles droits : commutateur mode desktop (Miroir / Deck) + Shuffle (avec espace pour le bouton Profil fixe en haut à droite) */}
+        <div className="flex items-center gap-2 z-10 sm:pr-24 pr-14">
           
           {/* Commutateur mode : Miroir (les 2 vidéos face-à-face) / Deck (Carte immersive) */}
           <div className="flex items-center bg-stone-100 p-0.5 rounded-full border border-stone-200">
@@ -520,7 +521,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                           className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
                           title="Basculer vers l'autre univers du duo"
                         >
-                          <span className="font-mono font-black text-[10px] text-white tracking-wider select-none">&lt; &gt;</span>
+                          <ExplorerEggIcon className="w-3.5 h-3.5 text-white" />
                           <span>{activeProtagonist === 'A' ? pB.name.split(' ')[0] : pA.name.split(' ')[0]}</span>
                         </button>
 
@@ -713,13 +714,13 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       </div>
                     </div>
 
-                    {/* SYMBOLE CENTRAL DUO FACE-À-FACE : < > avec fond Terre Cuite signature */}
+                    {/* SYMBOLE CENTRAL DUO FACE-À-FACE : Icône des deux parenthèses galbées face à face avec fond Terre Cuite signature */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center pointer-events-none">
                       <div 
-                        className="w-12 h-12 rounded-full bg-[#A2482B] text-white border-2 border-white shadow-2xl shadow-[#A2482B]/40 ring-1 ring-[#C89B3C]/50 flex items-center justify-center pointer-events-auto transition-transform hover:scale-110 select-none font-mono font-black text-sm tracking-wider"
-                        title="Duo face-à-face < >"
+                        className="w-12 h-12 rounded-full bg-[#A2482B] text-white border-2 border-white shadow-2xl shadow-[#A2482B]/40 ring-1 ring-[#C89B3C]/50 flex items-center justify-center pointer-events-auto transition-transform hover:scale-110 select-none"
+                        title="Duo Miroir face-à-face"
                       >
-                        &lt; &gt;
+                        <ExplorerEggIcon className="w-6 h-6 stroke-[2.4] text-white" />
                       </div>
                     </div>
 

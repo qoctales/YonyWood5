@@ -1,107 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, 
-  ArrowRight,
+  ArrowRight, 
   Check, 
   UploadCloud, 
-  Camera,
-  CheckCircle2,
-  Film,
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  X,
-  Sparkles,
-  Tv,
-  ChevronLeft,
-  ChevronRight,
-  FileText,
-  Mountain,
-  Atom,
-  Fingerprint,
-  Gem,
-  Sprout,
-  GraduationCap,
-  Flame,
-  Compass
+  Camera, 
+  Play, 
+  Pause, 
+  Volume2, 
+  VolumeX, 
+  X, 
+  Sparkles, 
+  ChevronLeft, 
+  ChevronRight, 
+  HelpCircle,
+  FileText
 } from 'lucide-react';
-import { DOCUMENTARIES } from '../data/mockData';
-import { ViewScreen, Documentary } from '../types';
-import { 
-  EXPLORER_CATEGORIES, 
-  EXPLORER_CATALOG, 
-  ExplorerCategoryType 
-} from '../data/explorerTopicsData';
-
-const EXPLORER_DOOR_ICONS: Record<string, React.FC<{ className?: string }>> = {
-  series: Film,
-  countries: Mountain,
-  thematics: Atom,
-  personalities: Fingerprint,
-  brands: Gem,
-  projects: Sprout,
-  offers: GraduationCap,
-  questions: Flame
-};
-
-const SERIES_PRESENTATIONS: Record<string, { synopsis: string; whyParticipate: string; videoUrl: string; duration: string }> = {
-  'jesus-legba': {
-    synopsis: "Deux univers spirituels se côtoient sans jamais s’affronter : la foi chrétienne en Jésus et le respect d’Èṣù dans la tradition ancestrale, gardien des seuils et de la mémoire. Face aux grands mystères humains — l'épreuve, le pardon, le deuil —, leurs rituels et prières dialoguent d'égal à égal.",
-    whyParticipate: "Votre histoire a été marquée par une épreuve, une conversion, un doute ou une grâce inattendue ? Racontez comment votre foi vous porte au quotidien. Votre témoignage permettra de créer un pont unique et vivant entre deux traditions.",
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    duration: '1:15'
-  },
-  'finagnon-qosqorico': {
-    synopsis: "Des cités lacustres de Ganvié sur pilotis aux terrasses andines de Cusco et Pisac à 3 400 m d'altitude. Un dialogue intime entre pêcheurs toffinou et paysans quechuas gardiens de la Pachamama sur l'attachement viscéral à une terre nourricière.",
-    whyParticipate: "Vous vivez ou avez vécu un lien profond avec un territoire sacré, un fleuve ou une montagne ? Témoignez de ce que signifie habiter un lieu, partir, revenir, et transmettre l'amour de la terre.",
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    duration: '1:45'
-  },
-  'blacks-one-beyond-eve': {
-    synopsis: "Quand la nuit tombe sur la métropole, créateurs urbains, gardiennes de mémoires et poètes s'emparent des carrefours. Entre l'effervescence de la rue et le recueillement intime, deux générations explorent ce qui fait la beauté et la survie de leur communauté.",
-    whyParticipate: "Artiste, militant ou témoin des mutations urbaines, partagez le moment charnière où votre voix s'est affirmée et la trace indélébile que vous souhaitez transmettre à ceux qui viendront après vous.",
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    duration: '1:30'
-  },
-  'dixeat-fiat-luxe': {
-    synopsis: "Le geste des bâtisseurs silencieux face à l'urgence de notre siècle. Entre ouvriers du quotidien, artisans d'art et pionniers de l'éveil écologique, une réflexion fraternelle sur la valeur du labeur et la lumière cachée dans chaque métier.",
-    whyParticipate: "Vous exercez un métier de passion, de sueur ou de patience ? Racontez la dignité de votre geste, la transmission de votre savoir-faire et ce que le travail vous a appris sur les êtres humains.",
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    duration: '1:20'
-  }
-};
-
-const EPISODE_PORTRAITS: Record<string, string[]> = {
-  'jesus-legba': [
-    '/assets/protagonists/pere-matthieu.jpg',
-    '/assets/protagonists/dah-zounon.jpg',
-    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-  ],
-  'finagnon-qosqorico': [
-    '/assets/protagonists/koffi-tisserand.jpg',
-    '/assets/protagonists/amara-tisserande.jpg',
-    '/assets/protagonists/tobi-houndegla.jpg',
-    '/assets/protagonists/sayri-quispe.jpg',
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
-  ],
-  'blacks-one-beyond-eve': [
-    '/assets/protagonists/malik-diop.jpg',
-    '/assets/protagonists/eleonore-vance.jpg',
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
-  ],
-  'dixeat-fiat-luxe': [
-    '/assets/protagonists/chef-koffi.jpg',
-    '/assets/protagonists/helene-saint-amand.jpg',
-    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-  ]
-};
+import { ViewScreen } from '../types';
+import { PROPOSE_DOORS, ProposeDoor, ProposeSubject } from '../data/proposeDoorsData';
 
 interface SubmitStoryScreenProps {
   preselectedDocumentaryId?: string;
@@ -112,128 +28,162 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   preselectedDocumentaryId,
   onNavigate
 }) => {
-  // Step: 1 = Choisir la série, 2 = Choisir la question & épisode, 3 = Format vidéo
+  // Step: 1 = Choisir la Porte, 2 = Choisir le Sujet, 3 = Format vidéo (Swipe entre les 2 options)
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [selectedDocId, setSelectedDocId] = useState<string>(preselectedDocumentaryId || DOCUMENTARIES[0].id);
-  const [selectedQuestionNumber, setSelectedQuestionNumber] = useState<string>('01');
-  const [videoOption, setVideoOption] = useState<'HAVE_VIDEO' | 'NEED_VIDEOGRAPHER' | null>(null);
+
+  // Door selection (Étape 1)
+  const initialDoorIndex = preselectedDocumentaryId ? 0 : 0;
+  const [doorIndex, setDoorIndex] = useState(initialDoorIndex);
+  const [isDoorVideoPlaying, setIsDoorVideoPlaying] = useState(false);
+  const [isDoorMuted, setIsDoorMuted] = useState(true);
+  const [showDoorAdvantages, setShowDoorAdvantages] = useState(false);
+
+  // Subject selection (Étape 2)
+  const [subjectIndex, setSubjectIndex] = useState(0);
+  const [isSubjectVideoPlaying, setIsSubjectVideoPlaying] = useState(false);
+  const [isSubjectMuted, setIsSubjectMuted] = useState(true);
+  const [showSubjectQuestion, setShowSubjectQuestion] = useState(false);
+
+  // Form submission (Étape 3)
+  // formatCardIndex: 0 = "J'ai ma vidéo", 1 = "Être filmé"
+  const [formatCardIndex, setFormatCardIndex] = useState<0 | 1>(0);
+  const [isFormatVideoPlaying, setIsFormatVideoPlaying] = useState(false);
+  const [isFormatMuted, setIsFormatMuted] = useState(true);
+  const [chosenFlow, setChosenFlow] = useState<'UPLOAD_DIRECT' | 'REQUEST_CREW' | null>(null);
+
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [videographerName, setVideographerName] = useState('');
   const [videographerCity, setVideographerCity] = useState('');
   const [videographerContact, setVideographerContact] = useState('');
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
 
-  // Index de la série affichée en plein écran (étape 1 swipeable)
-  const initialIndex = Math.max(0, DOCUMENTARIES.findIndex(d => d.id === (preselectedDocumentaryId || DOCUMENTARIES[0].id)));
-  const [docIndex, setDocIndex] = useState(initialIndex >= 0 ? initialIndex : 0);
-  const [isCardVideoPlaying, setIsCardVideoPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [showSeriesSynopsis, setShowSeriesSynopsis] = useState(false);
+  // Données courantes
+  const currentDoor: ProposeDoor = PROPOSE_DOORS[doorIndex] || PROPOSE_DOORS[0];
+  const currentSubject: ProposeSubject = currentDoor.subjects[subjectIndex] || currentDoor.subjects[0];
+  const isSeries = currentDoor.id === 'series';
 
-  // Index de l'épisode affiché en plein écran (étape 2 swipeable)
-  const [episodeIndex, setEpisodeIndex] = useState(0);
-  const [isEpisodeVideoPlaying, setIsEpisodeVideoPlaying] = useState(false);
-  const [isEpisodeMuted, setIsEpisodeMuted] = useState(false);
-  const [showTranscription, setShowTranscription] = useState(false);
+  // Gestures pour l'Étape 3 (Swipe Format : J'ai ma vidéo vs Être filmé)
+  const [fmtTouchStartX, setFmtTouchStartX] = useState<number | null>(null);
+  const [fmtTouchEndX, setFmtTouchEndX] = useState<number | null>(null);
+  const [fmtMouseStartX, setFmtMouseStartX] = useState<number | null>(null);
+  const [isFmtMouseDown, setIsFmtMouseDown] = useState(false);
+  const [fmtSwipeOffset, setFmtSwipeOffset] = useState(0);
+  const fmtHasDraggedRef = useRef(false);
 
-  // Choix du canal : Séries (Face-à-Face) ou Thématiques de l'Explorer
-  const [contributionMode, setContributionMode] = useState<'series' | 'explorer'>('series');
-  const [explorerDoor, setExplorerDoor] = useState<ExplorerCategoryType>('countries');
-  const [selectedTopicId, setSelectedTopicId] = useState<string>('benin');
-  const [explorerStoryTitle, setExplorerStoryTitle] = useState('');
-  const [explorerStorySummary, setExplorerStorySummary] = useState('');
-  const [explorerSpeakerName, setExplorerSpeakerName] = useState('');
+  const minSwipeDistance = 45;
+  const hasDraggedRef = useRef(false);
 
-  const explorerDoorsList = EXPLORER_CATEGORIES.filter(c => c.id !== 'series');
-  const activeDoorTopics = EXPLORER_CATALOG[explorerDoor] || [];
-  const selectedTopic = activeDoorTopics.find(t => t.id === selectedTopicId) || activeDoorTopics[0];
-  const selectedDoorConfig = EXPLORER_CATEGORIES.find(c => c.id === explorerDoor);
-
-  const handleSelectDoor = (doorId: ExplorerCategoryType) => {
-    setExplorerDoor(doorId);
-    const topics = EXPLORER_CATALOG[doorId] || [];
-    if (topics.length > 0) {
-      setSelectedTopicId(topics[0].id);
-    }
-  };
-
-  // Vidéos explicatives 9:16 pour l'Étape 3
-  const [isPlayingGuideHaveVideo, setIsPlayingGuideHaveVideo] = useState(false);
-  const [isPlayingGuideVideographer, setIsPlayingGuideVideographer] = useState(false);
-  const [isGuideMuted, setIsGuideMuted] = useState(true);
-
-  // Gesture / Swipe state pour l'étape 1
+  // Gestures pour l'Étape 1 (Swipe Portes)
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
   const [mouseStartX, setMouseStartX] = useState<number | null>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [swipeOffset, setSwipeOffset] = useState(0);
 
-  // Gesture / Swipe state pour l'étape 2 (épisodes)
-  const [epTouchStartX, setEpTouchStartX] = useState<number | null>(null);
-  const [epTouchEndX, setEpTouchEndX] = useState<number | null>(null);
-  const [epMouseStartX, setEpMouseStartX] = useState<number | null>(null);
-  const [isEpMouseDown, setIsEpMouseDown] = useState(false);
-  const [epSwipeOffset, setEpSwipeOffset] = useState(0);
+  // Gestures pour l'Étape 2 (Swipe Sujets)
+  const [subTouchStartX, setSubTouchStartX] = useState<number | null>(null);
+  const [subTouchEndX, setSubTouchEndX] = useState<number | null>(null);
+  const [subMouseStartX, setSubMouseStartX] = useState<number | null>(null);
+  const [isSubMouseDown, setIsSubMouseDown] = useState(false);
+  const [subSwipeOffset, setSubSwipeOffset] = useState(0);
+  const subHasDraggedRef = useRef(false);
 
-  const currentDoc = DOCUMENTARIES[docIndex] || DOCUMENTARIES[0];
-  const selectedDoc = DOCUMENTARIES.find(d => d.id === selectedDocId) || DOCUMENTARIES[0];
-  const currentQuestions = selectedDoc.questions || [];
-  const currentEpisode = currentQuestions[episodeIndex] || currentQuestions[0];
-  const selectedQuestion = currentQuestions.find(q => q.number === selectedQuestionNumber) || currentQuestions[0];
-
-  const goToDoc = (idx: number) => {
-    const safe = (idx + DOCUMENTARIES.length) % DOCUMENTARIES.length;
-    setDocIndex(safe);
-    setSelectedDocId(DOCUMENTARIES[safe].id);
-    setSelectedQuestionNumber(DOCUMENTARIES[safe].questions[0]?.number || '01');
-    setEpisodeIndex(0);
-    setIsCardVideoPlaying(false);
-    setShowSeriesSynopsis(false);
+  // Navigation entre Portes (Étape 1)
+  const goToDoor = (idx: number) => {
+    const total = PROPOSE_DOORS.length;
+    const safe = (idx + total) % total;
+    setDoorIndex(safe);
+    setSubjectIndex(0);
+    setIsDoorVideoPlaying(false);
+    setShowDoorAdvantages(false);
   };
+  const handleNextDoor = () => goToDoor(doorIndex + 1);
+  const handlePrevDoor = () => goToDoor(doorIndex - 1);
 
-  const handleNextDoc = () => goToDoc(docIndex + 1);
-  const handlePrevDoc = () => goToDoc(docIndex - 1);
-
-  // Navigation entre épisodes (Étape 2)
-  const goToEpisode = (idx: number) => {
-    const total = currentQuestions.length;
+  // Navigation entre Sujets (Étape 2)
+  const goToSubject = (idx: number) => {
+    const total = currentDoor.subjects.length;
     if (total === 0) return;
     const safe = (idx + total) % total;
-    setEpisodeIndex(safe);
-    setSelectedQuestionNumber(currentQuestions[safe].number);
-    setIsEpisodeVideoPlaying(false);
-    setShowTranscription(false);
+    setSubjectIndex(safe);
+    setIsSubjectVideoPlaying(false);
+    setShowSubjectQuestion(false);
+  };
+  const handleNextSubject = () => goToSubject(subjectIndex + 1);
+  const handlePrevSubject = () => goToSubject(subjectIndex - 1);
+
+  // Navigation entre les 2 formats de l'Étape 3
+  const handleToggleFormat = () => {
+    setFormatCardIndex(prev => (prev === 0 ? 1 : 0));
+    setIsFormatVideoPlaying(false);
   };
 
-  const handleNextEpisode = () => goToEpisode(episodeIndex + 1);
-  const handlePrevEpisode = () => goToEpisode(episodeIndex - 1);
-
-  // Synchronisation de l'épisode au changement de série sélectionnée
-  useEffect(() => {
-    const idx = selectedDoc.questions.findIndex(q => q.number === selectedQuestionNumber);
-    if (idx >= 0) {
-      setEpisodeIndex(idx);
-    } else {
-      setEpisodeIndex(0);
-      if (selectedDoc.questions[0]) {
-        setSelectedQuestionNumber(selectedDoc.questions[0].number);
-      }
+  // Swipe Étape 3 (Formats)
+  const onFmtTouchStart = (e: React.TouchEvent) => {
+    fmtHasDraggedRef.current = false;
+    setFmtTouchEndX(null);
+    setFmtTouchStartX(e.targetTouches[0].clientX);
+  };
+  const onFmtTouchMove = (e: React.TouchEvent) => {
+    setFmtTouchEndX(e.targetTouches[0].clientX);
+    if (fmtTouchStartX !== null) {
+      const diff = e.targetTouches[0].clientX - fmtTouchStartX;
+      if (Math.abs(diff) > 8) fmtHasDraggedRef.current = true;
+      setFmtSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
     }
-    setIsEpisodeVideoPlaying(false);
-    setShowTranscription(false);
-  }, [selectedDocId]);
+  };
+  const onFmtTouchEnd = () => {
+    setFmtSwipeOffset(0);
+    if (!fmtTouchStartX || !fmtTouchEndX) return;
+    const distance = fmtTouchStartX - fmtTouchEndX;
+    if (Math.abs(distance) > minSwipeDistance) handleToggleFormat();
+  };
 
-  // Touch handlers for mobile swipe (Étape 1)
-  const minSwipeDistance = 45;
-  const hasDraggedRef = useRef(false);
-  const epHasDraggedRef = useRef(false);
+  const onFmtMouseDown = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button, a, video, input, label')) return;
+    fmtHasDraggedRef.current = false;
+    setIsFmtMouseDown(true);
+    setFmtMouseStartX(e.clientX);
+  };
+  const onFmtMouseMove = (e: React.MouseEvent) => {
+    if (!isFmtMouseDown || fmtMouseStartX === null) return;
+    const diff = e.clientX - fmtMouseStartX;
+    if (Math.abs(diff) > 8) fmtHasDraggedRef.current = true;
+    setFmtSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
+  };
+  const onFmtMouseUp = (e: React.MouseEvent) => {
+    if (!isFmtMouseDown) return;
+    setIsFmtMouseDown(false);
+    setFmtSwipeOffset(0);
+    if (fmtMouseStartX === null) return;
+    const distance = fmtMouseStartX - e.clientX;
+    if (Math.abs(distance) > minSwipeDistance) handleToggleFormat();
+    setFmtMouseStartX(null);
+  };
 
+  // Clavier (Flèches gauche/droite)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (step === 1) {
+        if (e.key === 'ArrowRight') handleNextDoor();
+        else if (e.key === 'ArrowLeft') handlePrevDoor();
+      } else if (step === 2) {
+        if (e.key === 'ArrowRight') handleNextSubject();
+        else if (e.key === 'ArrowLeft') handlePrevSubject();
+      } else if (step === 3 && !chosenFlow) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') handleToggleFormat();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [step, doorIndex, subjectIndex, currentDoor, chosenFlow]);
+
+  // Swipe Étape 1
   const onTouchStart = (e: React.TouchEvent) => {
     hasDraggedRef.current = false;
     setTouchEndX(null);
     setTouchStartX(e.targetTouches[0].clientX);
   };
-
   const onTouchMove = (e: React.TouchEvent) => {
     setTouchEndX(e.targetTouches[0].clientX);
     if (touchStartX !== null) {
@@ -242,221 +192,126 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       setSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
     }
   };
-
   const onTouchEnd = () => {
     setSwipeOffset(0);
     if (!touchStartX || !touchEndX) return;
     const distance = touchStartX - touchEndX;
-    if (distance > minSwipeDistance) {
-      handleNextDoc();
-    } else if (distance < -minSwipeDistance) {
-      handlePrevDoc();
-    }
+    if (distance > minSwipeDistance) handleNextDoor();
+    else if (distance < -minSwipeDistance) handlePrevDoor();
   };
 
-  // Mouse handlers for desktop swipe (Étape 1)
   const onMouseDown = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('button, a, video, .synopsis-box')) return;
+    if ((e.target as HTMLElement).closest('button, a, video, .details-overlay')) return;
     hasDraggedRef.current = false;
     setIsMouseDown(true);
     setMouseStartX(e.clientX);
   };
-
   const onMouseMove = (e: React.MouseEvent) => {
     if (!isMouseDown || mouseStartX === null) return;
     const diff = e.clientX - mouseStartX;
     if (Math.abs(diff) > 8) hasDraggedRef.current = true;
     setSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
   };
-
   const onMouseUp = (e: React.MouseEvent) => {
     if (!isMouseDown) return;
     setIsMouseDown(false);
     setSwipeOffset(0);
     if (mouseStartX === null) return;
     const distance = mouseStartX - e.clientX;
-    if (distance > minSwipeDistance) {
-      handleNextDoc();
-    } else if (distance < -minSwipeDistance) {
-      handlePrevDoc();
-    }
+    if (distance > minSwipeDistance) handleNextDoor();
+    else if (distance < -minSwipeDistance) handlePrevDoor();
     setMouseStartX(null);
   };
 
-  // Touch handlers for mobile swipe (Étape 2 - Épisodes)
-  const onEpTouchStart = (e: React.TouchEvent) => {
-    epHasDraggedRef.current = false;
-    setEpTouchEndX(null);
-    setEpTouchStartX(e.targetTouches[0].clientX);
+  // Swipe Étape 2 (Sujets)
+  const onSubTouchStart = (e: React.TouchEvent) => {
+    subHasDraggedRef.current = false;
+    setSubTouchEndX(null);
+    setSubTouchStartX(e.targetTouches[0].clientX);
   };
-
-  const onEpTouchMove = (e: React.TouchEvent) => {
-    setEpTouchEndX(e.targetTouches[0].clientX);
-    if (epTouchStartX !== null) {
-      const diff = e.targetTouches[0].clientX - epTouchStartX;
-      if (Math.abs(diff) > 8) epHasDraggedRef.current = true;
-      setEpSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
+  const onSubTouchMove = (e: React.TouchEvent) => {
+    setSubTouchEndX(e.targetTouches[0].clientX);
+    if (subTouchStartX !== null) {
+      const diff = e.targetTouches[0].clientX - subTouchStartX;
+      if (Math.abs(diff) > 8) subHasDraggedRef.current = true;
+      setSubSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
     }
   };
-
-  const onEpTouchEnd = () => {
-    setEpSwipeOffset(0);
-    if (!epTouchStartX || !epTouchEndX) return;
-    const distance = epTouchStartX - epTouchEndX;
-    if (distance > minSwipeDistance) {
-      handleNextEpisode();
-    } else if (distance < -minSwipeDistance) {
-      handlePrevEpisode();
-    }
+  const onSubTouchEnd = () => {
+    setSubSwipeOffset(0);
+    if (!subTouchStartX || !subTouchEndX) return;
+    const distance = subTouchStartX - subTouchEndX;
+    if (distance > minSwipeDistance) handleNextSubject();
+    else if (distance < -minSwipeDistance) handlePrevSubject();
   };
 
-  // Mouse handlers for desktop swipe (Étape 2 - Épisodes)
-  const onEpMouseDown = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('button, a, video, .transcription-box')) return;
-    epHasDraggedRef.current = false;
-    setIsEpMouseDown(true);
-    setEpMouseStartX(e.clientX);
+  const onSubMouseDown = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button, a, video, .details-overlay')) return;
+    subHasDraggedRef.current = false;
+    setIsSubMouseDown(true);
+    setSubMouseStartX(e.clientX);
+  };
+  const onSubMouseMove = (e: React.MouseEvent) => {
+    if (!isSubMouseDown || subMouseStartX === null) return;
+    const diff = e.clientX - subMouseStartX;
+    if (Math.abs(diff) > 8) subHasDraggedRef.current = true;
+    setSubSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
+  };
+  const onSubMouseUp = (e: React.MouseEvent) => {
+    if (!isSubMouseDown) return;
+    setIsSubMouseDown(false);
+    setSubSwipeOffset(0);
+    if (subMouseStartX === null) return;
+    const distance = subMouseStartX - e.clientX;
+    if (distance > minSwipeDistance) handleNextSubject();
+    else if (distance < -minSwipeDistance) handlePrevSubject();
+    setSubMouseStartX(null);
   };
 
-  const onEpMouseMove = (e: React.MouseEvent) => {
-    if (!isEpMouseDown || epMouseStartX === null) return;
-    const diff = e.clientX - epMouseStartX;
-    if (Math.abs(diff) > 8) epHasDraggedRef.current = true;
-    setEpSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
-  };
-
-  const onEpMouseUp = (e: React.MouseEvent) => {
-    if (!isEpMouseDown) return;
-    setIsEpMouseDown(false);
-    setEpSwipeOffset(0);
-    if (epMouseStartX === null) return;
-    const distance = epMouseStartX - e.clientX;
-    if (distance > minSwipeDistance) {
-      handleNextEpisode();
-    } else if (distance < -minSwipeDistance) {
-      handlePrevEpisode();
-    }
-    setEpMouseStartX(null);
-  };
-
-  // Keyboard navigation for step 1 and step 2
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (step === 1) {
-        if (e.key === 'ArrowRight') {
-          handleNextDoc();
-        } else if (e.key === 'ArrowLeft') {
-          handlePrevDoc();
-        }
-      } else if (step === 2) {
-        if (e.key === 'ArrowRight') {
-          handleNextEpisode();
-        } else if (e.key === 'ArrowLeft') {
-          handlePrevEpisode();
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [step, docIndex, episodeIndex, currentQuestions.length]);
-
-  // Video presentation modal state (optionnel si ouvert en grand)
-  const [previewDoc, setPreviewDoc] = useState<Documentary | null>(null);
-  const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(true);
-  const [isVideoMuted, setIsVideoMuted] = useState<boolean>(false);
-
-  const handleFinishSubmission = () => {
-    setSubmittedSuccess(true);
-  };
+  const CurrentDoorIcon = currentDoor.icon;
 
   if (submittedSuccess) {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-[#0D9488]/15 border border-[#0D9488] text-[#0D9488] mx-auto flex items-center justify-center">
+        <div className="w-16 h-16 rounded-full bg-[#A2482B]/15 border border-[#A2482B] text-[#A2482B] mx-auto flex items-center justify-center">
           <Check className="w-8 h-8 stroke-[2.5]" />
         </div>
         <h2 className="font-editorial text-3xl font-bold text-[#1C1917]">
           Votre proposition a été transmise.
         </h2>
         <div className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#E7E5E4] text-left space-y-3 max-w-md mx-auto shadow-xs">
-          {contributionMode === 'explorer' ? (
-            <>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-[#0D9488] font-bold uppercase tracking-wider">
-                  Porte {selectedDoorConfig?.label}
-                </span>
-                <span className="text-stone-300">•</span>
-                <span className="text-xs text-[#A2482B] font-semibold">
-                  {selectedTopic?.title}
-                </span>
-              </div>
-              <p className="font-editorial text-base font-semibold text-[#1C1917]">
-                {explorerStoryTitle || "Récit pour l'Explorer"}
-              </p>
-              {explorerStorySummary && (
-                <p className="text-xs text-[#68655D] italic line-clamp-2">
-                  « {explorerStorySummary} »
-                </p>
-              )}
-              {explorerSpeakerName && (
-                <p className="text-xs text-stone-500 font-medium">
-                  Intervenant : <strong className="text-stone-700">{explorerSpeakerName}</strong>
-                </p>
-              )}
-              <div className="pt-1 border-t border-stone-100">
-                <p className="text-xs text-[#0D9488] font-medium">
-                  Format : {videoOption === 'HAVE_VIDEO' ? 'Vidéo personnelle fournie' : 'Demande d’accompagnement par un cadreur'}
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="text-xs text-[#A2482B] font-bold uppercase tracking-wider">
-                {selectedDoc.title}
-              </p>
-              <p className="font-editorial text-base font-semibold text-[#1C1917]">
-                Épisode {selectedQuestion.number} — {selectedQuestion.title}
-              </p>
-              <p className="text-xs text-[#68655D] italic">
-                « {selectedQuestion.prompt} »
-              </p>
-              <div className="pt-1 border-t border-stone-100">
-                <p className="text-xs text-[#0D9488] font-medium">
-                  Format : {videoOption === 'HAVE_VIDEO' ? 'Vidéo personnelle fournie' : 'Demande d’accompagnement par un cadreur'}
-                </p>
-              </div>
-            </>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#A2482B] font-bold uppercase tracking-wider">
+              {currentDoor.label}
+            </span>
+            <span className="text-stone-300">•</span>
+            <span className="text-xs text-[#1C1917] font-semibold">
+              {currentSubject.title}
+            </span>
+          </div>
+          <p className="text-xs text-[#68655D] italic">
+            {isSeries ? (currentSubject.synopsis || currentSubject.subtitle) : `« ${currentSubject.question} »`}
+          </p>
+          <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
+            <span className="text-stone-500">Format retenu :</span>
+            <span className="font-medium text-[#A2482B]">
+              {chosenFlow === 'UPLOAD_DIRECT' ? `Vidéo transmise (${uploadedFileName})` : `Tournage par cadreur (${videographerCity || 'Sur site'})`}
+            </span>
+          </div>
         </div>
 
         <div className="pt-4 flex flex-wrap justify-center gap-3">
-          {contributionMode === 'explorer' ? (
-            <button
-              onClick={() => onNavigate({ type: 'matrix_view' })}
-              className="px-6 py-2.5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
-            >
-              Découvrir dans l'Explorer
-            </button>
-          ) : (
-            <button
-              onClick={() => onNavigate({ type: 'duo_feed' })}
-              className="px-6 py-2.5 rounded-full bg-[#A2482B] hover:bg-[#8B3B20] text-[#FFFFFF] text-xs font-semibold shadow-sm transition-colors cursor-pointer"
-            >
-              Retourner aux duos
-            </button>
-          )}
           <button
-            onClick={() => {
-              setSubmittedSuccess(false);
-              setStep(1);
-              setExplorerStoryTitle('');
-              setExplorerStorySummary('');
-              setExplorerSpeakerName('');
-              setVideoOption(null);
-            }}
+            onClick={() => onNavigate({ type: 'matrix_view' })}
+            className="px-6 py-2.5 rounded-full bg-[#A2482B] hover:bg-[#8B3B20] text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+          >
+            Explorer l'Astrolabe
+          </button>
+          <button
+            onClick={() => onNavigate({ type: 'duo_feed' })}
             className="px-6 py-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold transition-colors cursor-pointer border border-stone-200"
           >
-            Proposer une autre histoire
+            Retourner aux duos
           </button>
         </div>
       </div>
@@ -466,28 +321,30 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-28 space-y-6 text-[#1C1917]">
       
-      {/* Header discret & Step progress */}
-      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-3">
+      {/* En-tête de la page & Indicateur d'étapes */}
+      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-3.5 pr-14 sm:pr-24">
         <div>
           <h1 className="font-editorial text-xl sm:text-2xl font-bold text-[#1C1917]">
-            Proposer une histoire
+            Tournage d'un récit
           </h1>
           <p className="text-xs text-stone-500 mt-0.5">
-            Partagez votre voix dans nos séries ou dans l'une des thématiques de l'Explorer.
+            {step === 1 && "Étape 1 sur 3 • Choisissez la Porte de votre tournage"}
+            {step === 2 && `Étape 2 sur 3 • Choisissez votre sujet dans la Porte ${currentDoor.label}`}
+            {step === 3 && "Étape 3 sur 3 • Format de votre vidéo et transmission"}
           </p>
         </div>
 
-        {/* Step indicator pills */}
+        {/* Pastilles d'étapes */}
         <div className="flex items-center gap-1.5">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
               className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                 step === s
-                  ? 'bg-[#A2482B] text-[#FFFFFF] shadow-xs'
+                  ? 'bg-[#A2482B] text-white shadow-xs ring-2 ring-[#A2482B]/30'
                   : step > s
-                  ? 'bg-[#0D9488] text-[#FFFFFF]'
-                  : 'bg-[#E7E5E4] text-[#7A756B]'
+                  ? 'bg-[#A2482B] text-white'
+                  : 'bg-stone-200 text-stone-500'
               }`}
             >
               {step > s ? '✓' : s}
@@ -496,61 +353,26 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
         </div>
       </div>
 
-      {/* Sélecteur de canal de contribution : Séries (Face-à-Face) ou Explorer (7 Portes) */}
-      <div className="flex p-1 bg-stone-100/90 rounded-2xl border border-stone-200/80 max-w-md mx-auto">
-        <button
-          type="button"
-          onClick={() => {
-            setContributionMode('series');
-            setStep(1);
-          }}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            contributionMode === 'series'
-              ? 'bg-white text-[#1C1917] shadow-xs'
-              : 'text-stone-600 hover:text-[#1C1917]'
-          }`}
-          id="tab-contrib-series"
-        >
-          <Film className={`w-3.5 h-3.5 ${contributionMode === 'series' ? 'text-[#A2482B]' : 'text-stone-400'}`} />
-          <span>Séries (Face-à-Face)</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setContributionMode('explorer');
-            setStep(1);
-          }}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-            contributionMode === 'explorer'
-              ? 'bg-white text-[#1C1917] shadow-xs'
-              : 'text-stone-600 hover:text-[#1C1917]'
-          }`}
-          id="tab-contrib-explorer"
-        >
-          <Compass className={`w-3.5 h-3.5 ${contributionMode === 'explorer' ? 'text-[#0D9488]' : 'text-stone-400'}`} />
-          <span>Explorer (7 Portes)</span>
-        </button>
-      </div>
-
-      {/* PANNEAU 1 : UN SEUL ÉCRAN QUI APPARAÎT AVEC SWIPE (EXACTEMENT COMME LA CAPTURE D'ÉCRAN FOURNIE) */}
+      {/* ========================================================================= */}
+      {/* ÉTAPE 1 : CHOISIR PARMI LES 8 PORTES D'ENTRÉE                             */}
+      {/* ========================================================================= */}
       {step === 1 && (
         <div className="space-y-4 animate-in fade-in duration-200">
           
-          {contributionMode === 'series' ? (
-            /* Conteneur de l'écran unique avec swipe et navigation fléchée */
-            <div className="relative flex items-center justify-center py-2">
+          {/* Conteneur de l'écran 9:16 avec swipe et flèches (sans menu supérieur) */}
+          <div className="relative flex items-center justify-center py-2">
             
-            {/* Flèche Gauche (Navigation rapide) */}
+            {/* Flèche Gauche */}
             <button
-              onClick={handlePrevDoc}
-              className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
-              title="Série précédente"
-              id="prev-series-btn"
+              onClick={handlePrevDoor}
+              className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#8B4513] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
+              title="Porte précédente"
+              id="prev-door-btn"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
 
-            {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL 9:16 AVEC SUPPORT DU SWIPE */}
+            {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL 9:16 */}
             <div
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
@@ -567,167 +389,172 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     hasDraggedRef.current = false;
                     return;
                   }
-                  if ((e.target as HTMLElement).closest('button, a, input, textarea, .synopsis-box')) {
+                  if ((e.target as HTMLElement).closest('button, a, input, textarea, .details-overlay')) {
                     return;
                   }
-                  setIsCardVideoPlaying(prev => !prev);
+                  setIsDoorVideoPlaying(prev => !prev);
                 }}
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 cursor-pointer"
-                id={`current-series-card-${currentDoc.id}`}
+                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-stone-700/50 flex flex-col justify-between p-5 sm:p-6 cursor-pointer"
+                id={`current-door-card-${currentDoor.id}`}
               >
-                {/* 1. Média de fond : Vidéo en lecture OU affiche de film */}
-                {isCardVideoPlaying ? (
+                {/* 1. Média de fond : Vidéo OU Poster officiel */}
+                {isDoorVideoPlaying ? (
                   <video
-                    src={SERIES_PRESENTATIONS[currentDoc.id]?.videoUrl || currentDoc.teaserVideoUrl}
-                    poster={currentDoc.posterUrl || currentDoc.coverImage}
+                    src={currentDoor.videoUrl}
+                    poster={currentDoor.posterUrl}
                     autoPlay
                     loop
-                    muted={isMuted}
+                    muted={isDoorMuted}
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 ) : (
                   <img 
-                    src={currentDoc.posterUrl || currentDoc.coverImage} 
-                    alt={currentDoc.title} 
+                    src={currentDoor.posterUrl} 
+                    alt={currentDoor.label} 
                     referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 pointer-events-none"
+                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                   />
                 )}
 
-                {/* Voile cinématographique clair pour préserver l'éclat de l'affiche de la série */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/25 pointer-events-none" />
+                {/* Voile cinématographique */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/50 pointer-events-none" />
 
-                {/* HAUT : Badge du titre de la série à gauche & Contrôle vidéo hybride doré en face en haut à droite */}
+                {/* HAUT : Cartouche sobre avec l'icône et le nom de la catégorie */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-semibold tracking-widest text-white shadow-sm">
-                    {currentDoc.title}
-                  </span>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
+                    <CurrentDoorIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
+                    <span>{currentDoor.label}</span>
+                  </div>
 
-                  {/* En face en haut à droite : Option 3 Hybride interactif (triangle doré pur + anneau au survol/lecture) */}
-                  <div className="flex items-center gap-2">
-                    {isCardVideoPlaying && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsMuted(!isMuted);
-                        }}
-                        className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
-                        title={isMuted ? 'Activer le son' : 'Couper le son'}
-                      >
-                        {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                      </button>
-                    )}
-
+                  {/* Contrôle son discret en haut à droite uniquement quand la vidéo tourne */}
+                  {isDoorVideoPlaying && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setIsCardVideoPlaying(!isCardVideoPlaying);
+                        setIsDoorMuted(!isDoorMuted);
                       }}
-                      className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                        isCardVideoPlaying
-                          ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                          : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                      }`}
-                      title={isCardVideoPlaying ? 'Mettre en pause' : `Visionner la bande-annonce de ${currentDoc.title}`}
-                      id={`play-pause-btn-${currentDoc.id}`}
+                      className="p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                      title={isDoorMuted ? 'Activer le son' : 'Couper le son'}
                     >
-                      {isCardVideoPlaying ? (
-                        <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                      ) : (
-                        <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                      )}
+                      {isDoorMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                     </button>
-                  </div>
+                  )}
                 </div>
 
-                {/* CENTRE LIBÉRÉ : Pas d'obstacle visuel, toute l'affiche est visible et cliquable */}
-                <div className="my-auto" />
-
-                {/* BAS : Transcription (Synopsis) à gauche et action Choisir cette série à droite */}
-                <div className="relative z-10 flex items-center justify-between gap-2">
+                {/* CENTRE : BOUTON PLAY/PAUSE CENTRALISÉ SUR TOUTES LES VIDÉOS */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setShowSeriesSynopsis(true);
+                      setIsDoorVideoPlaying(!isDoorVideoPlaying);
                     }}
-                    className="px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 cursor-pointer shadow-sm"
-                    title="Afficher le synopsis de la série"
+                    className={`pointer-events-auto group/btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
+                      isDoorVideoPlaying
+                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 shadow-[0_0_20px_rgba(200,155,60,0.6)]'
+                        : 'border border-white/25 hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/40 bg-black/45 hover:bg-black/65'
+                    }`}
+                    title={isDoorVideoPlaying ? 'Pause' : `Visionner la présentation ${currentDoor.label}`}
+                    id={`play-door-btn-${currentDoor.id}`}
                   >
-                    <FileText className="w-3.5 h-3.5 text-[#C89B3C]" />
-                    <span>Synopsis</span>
+                    {isDoorVideoPlaying ? (
+                      <Pause className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] transition-transform group-hover/btn:scale-110" />
+                    ) : (
+                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                    )}
+                  </button>
+                </div>
+
+                {/* BAS : UNIQUEMENT LES DEUX BOUTONS (SANS TEXTE SUPERFLU AU-DESSUS) */}
+                <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
+                  {/* Bouton Avantages pour toutes les 8 portes : fond gris translucide -> marron au survol */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowDoorAdvantages(true);
+                    }}
+                    className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                    title="Découvrir les 5 avantages"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-[#C89B3C]" />
+                    <span>Avantages</span>
                   </button>
 
+                  {/* Bouton Choisir cette porte : fond gris translucide -> marron au survol */}
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSelectedDocId(currentDoc.id);
-                      setSelectedQuestionNumber(currentDoc.questions[0].number);
+                      setSubjectIndex(0);
                       setStep(2);
                     }}
-                    className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#C89B3C] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-lg border border-white/20 hover:border-transparent cursor-pointer shrink-0"
-                    title="Choisir cette série"
-                    id={`continue-pill-btn-${currentDoc.id}`}
+                    className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
+                    title={currentDoor.actionDoorLabel}
+                    id={`choose-door-btn-${currentDoor.id}`}
                   >
-                    <span>Choisir cette série</span>
+                    <span>{currentDoor.actionDoorLabel}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                {/* OVERLAY DU SYNOPSIS POUR LA SÉRIE */}
-                {showSeriesSynopsis && (
+                {/* OVERLAY DES 5 AVANTAGES ESSENTIELS */}
+                {showDoorAdvantages && (
                   <div 
                     onClick={(e) => e.stopPropagation()}
-                    className="synopsis-box absolute inset-0 bg-black/90 backdrop-blur-md z-20 flex flex-col justify-between p-6 text-[#FFFFFF] animate-in fade-in duration-200"
+                    className="details-overlay absolute inset-0 bg-black/92 backdrop-blur-md z-20 flex flex-col justify-between p-6 text-white animate-in fade-in duration-200"
                   >
-                    <div className="space-y-3 overflow-y-auto max-h-[82%] pr-1">
+                    <div className="space-y-4 overflow-y-auto max-h-[82%] pr-1">
                       <div className="flex items-center justify-between pb-2 border-b border-white/15">
                         <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
-                          Synopsis
+                          5 Avantages essentiels
                         </span>
                         <button
-                          onClick={() => setShowSeriesSynopsis(false)}
+                          onClick={() => setShowDoorAdvantages(false)}
                           className="p-1.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer"
-                          title="Fermer le synopsis"
+                          title="Fermer"
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
 
-                      <h4 className="font-editorial text-lg sm:text-xl font-bold text-white">
-                        {currentDoc.title}
+                      <h4 className="font-editorial text-lg font-bold text-white flex items-center gap-2">
+                        <CurrentDoorIcon className="w-4 h-4 text-[#C89B3C]" />
+                        <span>{currentDoor.label}</span>
                       </h4>
 
-                      {currentDoc.subtitle && (
-                        <p className="text-xs text-[#C89B3C] font-medium tracking-wide">
-                          {currentDoc.subtitle}
-                        </p>
-                      )}
-
-                      <div className="pt-1">
-                        <p className="font-editorial text-sm sm:text-base italic font-light text-white/95 leading-relaxed bg-white/5 p-4 rounded-2xl border border-white/10">
-                          « {currentDoc.shortSynopsis || currentDoc.description} »
-                        </p>
+                      {/* 5 Avantages ultra-courts (1 ligne chacun) */}
+                      <div className="space-y-2.5 pt-1">
+                        {currentDoor.advantages.map((adv, aIdx) => (
+                          <div key={aIdx} className="flex items-start gap-2.5 text-xs text-white/95">
+                            <span className="w-4 h-4 rounded-full bg-white/20 border border-white/30 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                              {aIdx + 1}
+                            </span>
+                            <p className="leading-snug">{adv}</p>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
-                    <div className="pt-4 flex items-center justify-between gap-3 border-t border-white/15">
+                    <div className="pt-3 border-t border-white/15 flex items-center justify-between gap-2">
                       <button
-                        onClick={() => setShowSeriesSynopsis(false)}
+                        type="button"
+                        onClick={() => setShowDoorAdvantages(false)}
                         className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition-colors cursor-pointer"
                       >
-                        Masquer
+                        Fermer
                       </button>
-
                       <button
+                        type="button"
                         onClick={() => {
-                          setSelectedDocId(currentDoc.id);
-                          setSelectedQuestionNumber(currentDoc.questions[0].number);
+                          setShowDoorAdvantages(false);
+                          setSubjectIndex(0);
                           setStep(2);
                         }}
-                        className="px-5 py-2 rounded-full bg-[#C89B3C] hover:bg-[#B78A2E] text-white text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
+                        className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
                       >
-                        <span>Choisir cette série</span>
+                        <span>{currentDoor.actionDoorLabel}</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -737,344 +564,229 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               </div>
             </div>
 
-            {/* Flèche Droite (Navigation rapide) */}
+            {/* Flèche Droite */}
             <button
-              onClick={handleNextDoc}
-              className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
-              title="Série suivante"
-              id="next-series-btn"
+              onClick={handleNextDoor}
+              className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#8B4513] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
+              title="Porte suivante"
+              id="next-door-btn"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
-
           </div>
-          ) : (
-            /* EXPLORER : SÉLECTION DE LA PORTE ET DU SUJET */
-            <div className="space-y-6 pt-1">
-              {/* 1. Sélection de la porte parmi les 7 */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-stone-700">
-                    1. Choisissez une porte de l'Astrolabe
-                  </label>
-                  <span className="text-[11px] text-[#0D9488] font-bold">
-                    Porte : {selectedDoorConfig?.label}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
-                  {explorerDoorsList.map((door) => {
-                    const DoorIcon = EXPLORER_DOOR_ICONS[door.id] || Compass;
-                    const isSelected = explorerDoor === door.id;
-                    return (
-                      <button
-                        key={door.id}
-                        type="button"
-                        onClick={() => handleSelectDoor(door.id)}
-                        className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 active:scale-95 ${
-                          isSelected
-                            ? 'bg-[#0D9488]/10 border-[#0D9488] shadow-xs text-[#0D9488]'
-                            : 'bg-white hover:bg-stone-50 border-stone-200 text-stone-700 hover:text-stone-900'
-                        }`}
-                      >
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                          isSelected ? 'bg-[#0D9488] text-white' : 'bg-stone-100 text-stone-600'
-                        }`}>
-                          <DoorIcon className="w-4 h-4" />
-                        </div>
-                        <span className="text-[11px] font-semibold leading-tight line-clamp-1">
-                          {door.label}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 2. Sélection du sujet spécifique sous cette porte */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-stone-700">
-                    2. Choisissez votre sujet
-                  </label>
-                  <span className="text-[11px] text-stone-500">
-                    {activeDoorTopics.length} sujets disponibles
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[380px] overflow-y-auto pr-1">
-                  {activeDoorTopics.map((topic) => {
-                    const isTopicSelected = selectedTopicId === topic.id;
-                    return (
-                      <div
-                        key={topic.id}
-                        onClick={() => setSelectedTopicId(topic.id)}
-                        className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-start justify-between gap-3 ${
-                          isTopicSelected
-                            ? 'bg-white border-[#0D9488] ring-2 ring-[#0D9488]/20 shadow-xs'
-                            : 'bg-white hover:bg-stone-50/80 border-stone-200/90'
-                        }`}
-                      >
-                        <div className="space-y-1 flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#A2482B] bg-[#A2482B]/10 px-2 py-0.5 rounded-md">
-                              {topic.badge || topic.category}
-                            </span>
-                            {topic.flag && (
-                              <span className="text-xs">{topic.flag}</span>
-                            )}
-                          </div>
-                          <h4 className="text-xs font-bold text-[#1C1917] line-clamp-1">
-                            {topic.title}
-                          </h4>
-                          <p className="text-[11px] text-stone-500 line-clamp-2 leading-relaxed">
-                            {topic.subtitle || topic.question}
-                          </p>
-                        </div>
-                        <div className={`w-5 h-5 rounded-full shrink-0 border flex items-center justify-center transition-all mt-0.5 ${
-                          isTopicSelected
-                            ? 'bg-[#0D9488] border-[#0D9488] text-white'
-                            : 'border-stone-300 bg-stone-50'
-                        }`}>
-                          {isTopicSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Bouton de confirmation d'étape pour l'Explorer */}
-              <div className="flex items-center justify-between pt-2 border-t border-stone-200">
-                <div className="text-xs text-stone-600">
-                  Sujet sélectionné : <strong className="text-[#1C1917]">{selectedTopic?.title}</strong>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="h-10 px-5 rounded-full bg-[#0D9488] hover:bg-[#0F766E] text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 active:scale-95"
-                  id="btn-confirm-explorer-topic"
-                >
-                  <span>Continuer : Mon récit</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          )}
 
         </div>
       )}
 
-      {/* PANNEAU 2 : CHOISIR L'ÉPISODE AU FORMAT VIDÉO VERTICAL AVEC ÉCOUTE & TRANSCRIPTION */}
+      {/* ========================================================================= */}
+      {/* ÉTAPE 2 : CHOISIR LE SUJET / SOUS-CATÉGORIE DANS LA PORTE SÉLECTIONNÉE     */}
+      {/* ========================================================================= */}
       {step === 2 && (
         <div className="space-y-4 animate-in fade-in duration-200">
           
-          {contributionMode === 'series' ? (
-            <>
-              {/* En-tête discret : Rappel de la série et changement rapide */}
+          {/* Rappel sobre de la Porte choisie & action changer de porte (sans menu de sous-catégories) */}
           <div className="flex items-center justify-between px-1">
-            <p className="text-xs text-[#68655D]">
-              Série choisie : <strong className="text-[#1C1917]">{selectedDoc.title}</strong>
-            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-stone-500">Porte choisie :</span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#A2482B]/10 text-[#A2482B] text-xs font-bold border border-[#A2482B]/20">
+                <CurrentDoorIcon className="w-3 h-3" />
+                {currentDoor.label}
+              </span>
+            </div>
             <button
               onClick={() => {
-                const idx = DOCUMENTARIES.findIndex(d => d.id === selectedDocId);
-                if (idx >= 0) setDocIndex(idx);
                 setStep(1);
+                setIsSubjectVideoPlaying(false);
+                setShowSubjectQuestion(false);
               }}
-              className="text-xs text-[#8B6845] hover:text-[#1C1917] underline font-medium cursor-pointer"
+              className="text-xs text-[#A2482B] hover:text-[#8B3B20] font-semibold cursor-pointer underline"
             >
-              Changer de série
+              Changer de porte
             </button>
           </div>
 
-          {/* CONTENEUR DU SWIPE ÉPISODE AVEC FLÈCHES LATÉRALES */}
+          {/* CONTENEUR DU SWIPE SUJET AVEC FLÈCHES LATÉRALES (sans chips/menu) */}
           <div className="relative flex items-center justify-center py-2">
             
-            {/* Flèche précédente (desktop & tablettes) */}
+            {/* Flèche précédente */}
             <button
-              onClick={handlePrevEpisode}
-              aria-label="Épisode précédent"
-              className="hidden sm:flex absolute -left-4 md:-left-8 z-20 w-11 h-11 rounded-full bg-[#FFFFFF] border border-[#E7E5E4] text-[#1C1917] hover:bg-[#C89B3C] hover:text-white hover:border-transparent items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+              onClick={handlePrevSubject}
+              aria-label="Sujet précédent"
+              className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] text-[#1C1917] hover:bg-[#8B4513] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
 
             {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL AVEC SUPPORT DU SWIPE */}
             <div
-              style={{
-                transform: `translateX(${epSwipeOffset}px)`
-              }}
-              onTouchStart={onEpTouchStart}
-              onTouchMove={onEpTouchMove}
-              onTouchEnd={onEpTouchEnd}
-              onMouseDown={onEpMouseDown}
-              onMouseMove={onEpMouseMove}
-              onMouseUp={onEpMouseUp}
-              onClick={(e) => {
-                if (epHasDraggedRef.current) {
-                  epHasDraggedRef.current = false;
-                  return;
-                }
-                if ((e.target as HTMLElement).closest('button, a, input, textarea, .transcription-box')) {
-                  return;
-                }
-                setIsEpisodeVideoPlaying(prev => !prev);
-              }}
-              className="relative w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 transition-transform duration-150 ease-out select-none cursor-pointer"
+              style={{ transform: `translateX(${subSwipeOffset}px)` }}
+              onTouchStart={onSubTouchStart}
+              onTouchMove={onSubTouchMove}
+              onTouchEnd={onSubTouchEnd}
+              onMouseDown={onSubMouseDown}
+              onMouseMove={onSubMouseMove}
+              onMouseUp={onSubMouseUp}
+              className="relative w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white shadow-2xl border border-stone-700/50 flex flex-col justify-between p-5 sm:p-6 transition-transform duration-150 ease-out select-none cursor-pointer"
+              id={`current-subject-card-${currentSubject.id}`}
             >
-              {/* Vidéo de l'épisode ou image de portrait de l'interlocuteur */}
-              {isEpisodeVideoPlaying ? (
+              {/* Vidéo ou affiche officielle de fond */}
+              {isSubjectVideoPlaying ? (
                 <video
-                  src={currentEpisode.videoAvatarUrl || selectedDoc.teaserVideoUrl}
-                  poster={EPISODE_PORTRAITS[selectedDoc.id]?.[episodeIndex] || selectedDoc.posterUrl || selectedDoc.coverImage}
+                  src={currentSubject.videoUrl}
+                  poster={currentSubject.posterUrl}
                   autoPlay
                   loop
-                  muted={isEpisodeMuted}
+                  muted={isSubjectMuted}
                   playsInline
                   className="absolute inset-0 w-full h-full object-cover"
                 />
               ) : (
                 <img
-                  src={EPISODE_PORTRAITS[selectedDoc.id]?.[episodeIndex] || selectedDoc.posterUrl || selectedDoc.coverImage}
-                  alt={currentEpisode.title}
+                  src={currentSubject.posterUrl}
+                  alt={currentSubject.title}
                   className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                 />
               )}
 
-              {/* Voile cinématographique clair pour préserver la clarté de l'image */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/25 pointer-events-none" />
+              {/* Voile cinématographique */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/50 pointer-events-none" />
 
-              {/* HAUT : Badge du numéro de l'épisode & Contrôle vidéo hybride doré en face en haut à droite */}
+              {/* HAUT : Cartouche sobre du sujet & Son discret */}
               <div className="relative z-10 flex items-center justify-between">
-                <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-bold tracking-widest uppercase text-white/95 shadow-sm">
-                  ÉPISODE {currentEpisode.number}
-                </span>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
+                  <CurrentDoorIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
+                  <span>{currentSubject.title}</span>
+                </div>
 
-                <div className="flex items-center gap-2">
-                  {isEpisodeVideoPlaying && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsEpisodeMuted(!isEpisodeMuted);
-                      }}
-                      className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
-                      title={isEpisodeMuted ? 'Activer le son' : 'Couper le son'}
-                    >
-                      {isEpisodeMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                    </button>
+                {isSubjectVideoPlaying && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsSubjectMuted(!isSubjectMuted);
+                    }}
+                    className="p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                    title={isSubjectMuted ? 'Activer le son' : 'Couper le son'}
+                  >
+                    {isSubjectMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  </button>
+                )}
+              </div>
+
+              {/* CENTRE : BOUTON PLAY/PAUSE CENTRALISÉ */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsSubjectVideoPlaying(!isSubjectVideoPlaying);
+                  }}
+                  className={`pointer-events-auto group/btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
+                    isSubjectVideoPlaying
+                      ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 shadow-[0_0_20px_rgba(200,155,60,0.6)]'
+                      : 'border border-white/25 hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/40 bg-black/45 hover:bg-black/65'
+                  }`}
+                  title={isSubjectVideoPlaying ? 'Pause' : `Visionner ${currentSubject.title}`}
+                  id={`play-subject-btn-${currentSubject.id}`}
+                >
+                  {isSubjectVideoPlaying ? (
+                    <Pause className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] transition-transform group-hover/btn:scale-110" />
+                  ) : (
+                    <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 transition-transform group-hover/btn:scale-115" />
                   )}
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsEpisodeVideoPlaying(!isEpisodeVideoPlaying);
-                    }}
-                    className={`group/btn relative w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0 shadow-lg ${
-                      isEpisodeVideoPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                        : 'border border-transparent hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/30 bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                    }`}
-                    title={isEpisodeVideoPlaying ? "Mettre en pause" : `Écouter l'épisode ${currentEpisode.number}`}
-                  >
-                    {isEpisodeVideoPlaying ? (
-                      <Pause className="w-5.5 h-5.5 text-[#C89B3C] fill-[#C89B3C] drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-110" />
-                    ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] drop-shadow-[0_0_10px_rgba(200,155,60,0.7)] transition-transform group-hover/btn:scale-115" />
-                    )}
-                  </button>
-                </div>
+                </button>
               </div>
 
-              {/* CENTRE LIBÉRÉ : Visuel dégagé */}
-              <div className="my-auto" />
-
-              {/* BAS : Titre de l'épisode, bouton transcription & bouton pour continuer */}
-              <div className="relative z-10 space-y-3">
-                
-                {/* Titre de l'épisode en typographie éditoriale */}
-                <div>
-                  <h3 className="font-editorial text-xl sm:text-2xl font-bold text-white leading-tight drop-shadow-md">
-                    {currentEpisode.title}
-                  </h3>
-                </div>
-
-                {/* Actions inférieures : Découvrir la question à gauche & Continuer à droite */}
-                <div className="flex items-center justify-between gap-2 pt-1">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowTranscription(true);
-                    }}
-                    className="px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 cursor-pointer shadow-sm"
-                    title="Afficher la question"
-                  >
+              {/* BAS : UNIQUEMENT LES DEUX BOUTONS (SYNOPSIS OU QUESTION + CHOISIR CE SUJET) SANS TEXTE FLOTTANT */}
+              <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
+                {/* Cartouche SYNOPSIS (pour les Séries) ou QUESTION (pour les autres portes) */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowSubjectQuestion(true);
+                  }}
+                  className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                  title={isSeries ? "Découvrir le synopsis de la série" : "Découvrir la question à laquelle répondre"}
+                >
+                  {isSeries ? (
                     <FileText className="w-3.5 h-3.5 text-[#C89B3C]" />
-                    <span>Question</span>
-                  </button>
+                  ) : (
+                    <HelpCircle className="w-3.5 h-3.5 text-[#C89B3C]" />
+                  )}
+                  <span>{isSeries ? 'Synopsis' : 'Question'}</span>
+                </button>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedQuestionNumber(currentEpisode.number);
-                      setStep(3);
-                    }}
-                    className="px-4 py-1.5 rounded-full bg-white/20 hover:bg-[#C89B3C] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-lg border border-white/20 hover:border-transparent cursor-pointer shrink-0"
-                    title="Choisir cet épisode"
-                  >
-                    <span>Choisir cet épisode</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                {/* Bouton de choix contextualisé à fond gris translucide -> marron au survol */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setStep(3);
+                  }}
+                  className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
+                  title={currentSubject.actionLabel}
+                  id={`choose-subject-btn-${currentSubject.id}`}
+                >
+                  <span>{currentSubject.actionLabel}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
 
-              {/* OVERLAY DE LA QUESTION (lisible et soigné sur fond flouté) */}
-              {showTranscription && (
+              {/* OVERLAY DU SYNOPSIS DE LA SÉRIE OU DE LA QUESTION DU SUJET */}
+              {showSubjectQuestion && (
                 <div 
                   onClick={(e) => e.stopPropagation()}
-                  className="transcription-box absolute inset-0 bg-black/90 backdrop-blur-md z-20 flex flex-col justify-between p-6 text-[#FFFFFF] animate-in fade-in duration-200"
+                  className="details-overlay absolute inset-0 bg-black/92 backdrop-blur-md z-20 flex flex-col justify-between p-6 text-white animate-in fade-in duration-200"
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-4 overflow-y-auto max-h-[82%] pr-1">
                     <div className="flex items-center justify-between pb-2 border-b border-white/15">
                       <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
-                        Question • Épisode {currentEpisode.number}
+                        {isSeries ? 'Synopsis' : 'Question de témoignage'}
                       </span>
                       <button
-                        onClick={() => setShowTranscription(false)}
+                        onClick={() => setShowSubjectQuestion(false)}
                         className="p-1.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer"
-                        title="Fermer la transcription"
+                        title="Fermer"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
 
-                    <h4 className="font-editorial text-lg font-bold text-white">
-                      {currentEpisode.title}
-                    </h4>
-
-                    <div className="pt-2">
-                      <p className="font-editorial text-base sm:text-lg italic font-light text-white/95 leading-relaxed bg-white/5 p-4 rounded-2xl border border-white/10">
-                        « {currentEpisode.prompt} »
+                    <div className="space-y-2 pt-1">
+                      <span className="text-xs text-stone-400 font-medium">
+                        {isSeries 
+                          ? `Synopsis de ${currentSubject.title} :`
+                          : `Pour votre contribution sur ${currentSubject.title} :`}
+                      </span>
+                      <p className={`font-editorial text-white leading-relaxed pt-1 ${
+                        isSeries 
+                          ? 'text-sm sm:text-base font-normal text-stone-200 not-italic' 
+                          : 'text-lg font-medium italic'
+                      }`}>
+                        {isSeries 
+                          ? (currentSubject.synopsis || currentSubject.subtitle) 
+                          : `« ${currentSubject.question} »`}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-4 flex items-center justify-between gap-3 border-t border-white/15">
+                  <div className="pt-3 border-t border-white/15 flex items-center justify-between gap-2">
                     <button
-                      onClick={() => setShowTranscription(false)}
+                      type="button"
+                      onClick={() => setShowSubjectQuestion(false)}
                       className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition-colors cursor-pointer"
                     >
-                      Masquer
+                      Fermer
                     </button>
-
                     <button
+                      type="button"
                       onClick={() => {
-                        setSelectedQuestionNumber(currentEpisode.number);
+                        setShowSubjectQuestion(false);
                         setStep(3);
                       }}
-                      className="px-5 py-2 rounded-full bg-[#C89B3C] hover:bg-[#B78A2E] text-white text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
+                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
                     >
-                      <span>Choisir cet épisode</span>
+                      <span>{currentSubject.actionLabel}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -1083,492 +795,433 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
 
             </div>
 
-            {/* Flèche suivante (desktop & tablettes) */}
+            {/* Flèche suivante */}
             <button
-              onClick={handleNextEpisode}
-              aria-label="Épisode suivant"
-              className="hidden sm:flex absolute -right-4 md:-right-8 z-20 w-11 h-11 rounded-full bg-[#FFFFFF] border border-[#E7E5E4] text-[#1C1917] hover:bg-[#C89B3C] hover:text-white hover:border-transparent items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+              onClick={handleNextSubject}
+              aria-label="Sujet suivant"
+              className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] text-[#1C1917] hover:bg-[#8B4513] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
 
           </div>
-          </>
-          ) : (
-            /* FORMULAIRE RÉCIT EXPLORER */
-            <div className="space-y-5 pt-1">
-              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-stone-50 border border-stone-200">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#0D9488] block">
-                    Porte {selectedDoorConfig?.label}
-                  </span>
-                  <p className="text-xs font-bold text-[#1C1917]">
-                    {selectedTopic?.title}
-                  </p>
+
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* ÉTAPE 3 : CHOISIR LE FORMAT VIDÉO PAR SWIPE & FORMULAIRE ÉPURÉ DÉDIÉ     */}
+      {/* ========================================================================= */}
+      {step === 3 && (
+        <div className="space-y-4 animate-in fade-in duration-200">
+          
+          {/* Récapitulatif discret du choix de la Porte et du Sujet */}
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E7E5E4] flex items-center justify-between gap-3 shadow-xs">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold text-[#A2482B] uppercase tracking-wider">
+                  {currentDoor.label}
+                </span>
+                <span className="text-stone-300">•</span>
+                <span className="text-xs font-bold text-[#1C1917]">
+                  {currentSubject.title}
+                </span>
+              </div>
+              <p className="text-xs text-stone-500 italic line-clamp-1">
+                {isSeries ? (currentSubject.synopsis || currentSubject.subtitle) : `« ${currentSubject.question} »`}
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setChosenFlow(null);
+                setStep(2);
+              }}
+              className="text-xs text-[#A2482B] hover:text-[#8B3B20] font-semibold underline cursor-pointer shrink-0"
+            >
+              Modifier
+            </button>
+          </div>
+
+          {/* SOUS-ÉCRAN 1 : LE SWIPE VIDÉO ENTRE "J'AI MA VIDÉO" ET "ÊTRE FILMÉ" */}
+          {!chosenFlow && (
+            <div className="space-y-4">
+              {/* Pagination discrète (1/2 J'ai ma vidéo • 2/2 Être filmé) */}
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs text-stone-500 font-medium">
+                  {formatCardIndex === 0 ? "1/2 • Dépôt autonome de votre film" : "2/2 • Accompagnement par un cadreur"}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className={`w-2.5 h-1.5 rounded-full transition-all ${formatCardIndex === 0 ? 'bg-[#A2482B] w-6' : 'bg-stone-300'}`} />
+                  <span className={`w-2.5 h-1.5 rounded-full transition-all ${formatCardIndex === 1 ? 'bg-[#A2482B] w-6' : 'bg-stone-300'}`} />
                 </div>
+              </div>
+
+              {/* CONTENEUR DU SWIPE FORMAT AVEC FLÈCHES LATÉRALES */}
+              <div className="relative flex items-center justify-center py-1">
+                
+                {/* Flèche précédente */}
                 <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="text-xs text-[#A2482B] hover:text-[#8B3B20] font-semibold cursor-pointer underline"
+                  onClick={handleToggleFormat}
+                  aria-label="Format précédent"
+                  className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] text-[#1C1917] hover:bg-[#8B4513] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
                 >
-                  Changer de sujet
+                  <ChevronLeft className="w-5 h-5" />
                 </button>
-              </div>
 
-              <div className="space-y-4 bg-white p-5 rounded-3xl border border-stone-200 shadow-xs">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#1C1917] flex items-center justify-between">
-                    <span>Titre de votre récit ou intervention *</span>
-                    <span className="text-[11px] text-stone-400 font-normal">Obligatoire</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ex: La mémoire des masques et la transmission aux initiés"
-                    value={explorerStoryTitle}
-                    onChange={(e) => setExplorerStoryTitle(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488] focus:bg-white transition-all"
-                    id="input-explorer-story-title"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#1C1917] flex items-center justify-between">
-                    <span>Ce que vous transmettez (résumé / question clé)</span>
-                    <span className="text-[11px] text-stone-400 font-normal">Recommandé</span>
-                  </label>
-                  <textarea
-                    rows={4}
-                    placeholder="Résumez en quelques lignes votre expérience, l'héritage partagé ou la question essentielle abordée..."
-                    value={explorerStorySummary}
-                    onChange={(e) => setExplorerStorySummary(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488] focus:bg-white transition-all resize-none"
-                    id="textarea-explorer-story-summary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-[#1C1917] flex items-center justify-between">
-                    <span>Votre nom ou identité publique</span>
-                    <span className="text-[11px] text-stone-400 font-normal">Optionnel</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Kofi Mensah — Gardien de mémoire"
-                    value={explorerSpeakerName}
-                    onChange={(e) => setExplorerSpeakerName(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:border-[#0D9488] focus:bg-white transition-all"
-                    id="input-explorer-speaker-name"
-                  />
-                </div>
-              </div>
-
-              {/* Boutons d'action étape 2 */}
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="h-10 px-4 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
+                {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL AVEC SUPPORT DU SWIPE */}
+                <div
+                  style={{ transform: `translateX(${fmtSwipeOffset}px)` }}
+                  onTouchStart={onFmtTouchStart}
+                  onTouchMove={onFmtTouchMove}
+                  onTouchEnd={onFmtTouchEnd}
+                  onMouseDown={onFmtMouseDown}
+                  onMouseMove={onFmtMouseMove}
+                  onMouseUp={onFmtMouseUp}
+                  className="relative w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white shadow-2xl border border-stone-700/50 flex flex-col justify-between p-5 sm:p-6 transition-transform duration-150 ease-out select-none cursor-pointer"
+                  id={`current-format-card-${formatCardIndex}`}
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  {/* Vidéo ou affiche officielle de fond selon le format */}
+                  {isFormatVideoPlaying ? (
+                    <video
+                      src={formatCardIndex === 0 
+                        ? "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" 
+                        : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"}
+                      poster={formatCardIndex === 0 
+                        ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" 
+                        : "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80"}
+                      autoPlay
+                      loop
+                      muted={isFormatMuted}
+                      playsInline
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={formatCardIndex === 0 
+                        ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" 
+                        : "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80"}
+                      alt={formatCardIndex === 0 ? "J'ai ma vidéo" : "Être filmé"}
+                      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    />
+                  )}
+
+                  {/* Voile cinématographique */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/50 pointer-events-none" />
+
+                  {/* Repères optiques de cadrage 9:16 subtils */}
+                  <div className="absolute inset-3 border border-white/20 rounded-2xl pointer-events-none flex flex-col justify-between p-2">
+                    <div className="flex justify-between text-[9px] font-mono text-[#C89B3C]/80">
+                      <span>┌</span>
+                      <span>┐</span>
+                    </div>
+                    <div className="flex justify-between text-[9px] font-mono text-[#C89B3C]/80">
+                      <span>└</span>
+                      <span>┘</span>
+                    </div>
+                  </div>
+
+                  {/* HAUT : Badge du format & Bouton Son */}
+                  <div className="relative z-10 flex items-center justify-between">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
+                      {formatCardIndex === 0 ? (
+                        <>
+                          <UploadCloud className="w-3.5 h-3.5 text-[#C89B3C]" />
+                          <span>J'ai ma vidéo</span>
+                        </>
+                      ) : (
+                        <>
+                          <Camera className="w-3.5 h-3.5 text-[#C89B3C]" />
+                          <span>Être filmé</span>
+                        </>
+                      )}
+                    </div>
+
+                    {isFormatVideoPlaying && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsFormatMuted(!isFormatMuted);
+                        }}
+                        className="p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                        title={isFormatMuted ? 'Activer le son' : 'Couper le son'}
+                      >
+                        {isFormatMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* CENTRE : BOUTON PLAY/PAUSE CENTRALISÉ */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFormatVideoPlaying(!isFormatVideoPlaying);
+                      }}
+                      className={`pointer-events-auto group/btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
+                        isFormatVideoPlaying
+                          ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 shadow-[0_0_20px_rgba(200,155,60,0.6)]'
+                          : 'border border-white/25 hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/40 bg-black/45 hover:bg-black/65'
+                      }`}
+                      title={isFormatVideoPlaying ? 'Pause' : 'Lire la vidéo explicative'}
+                      id={`play-format-video-${formatCardIndex}`}
+                    >
+                      {isFormatVideoPlaying ? (
+                        <Pause className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] transition-transform group-hover/btn:scale-110" />
+                      ) : (
+                        <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* BAS : BOUTON D'ACTION IMMÉDIAT (J'AI MA VIDÉO ou ÊTRE FILMÉ) */}
+                  <div className="relative z-10 pt-2 flex flex-col gap-2">
+                    <div className="text-center px-1">
+                      <p className="text-[11px] text-stone-300/90 leading-snug">
+                        {formatCardIndex === 0 
+                          ? "Votre vidéo 9:16 déjà enregistrée, prête à être transmise."
+                          : "Un cadreur partenaire se déplace pour enregistrer votre récit."}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (formatCardIndex === 0) {
+                          setChosenFlow('UPLOAD_DIRECT');
+                        } else {
+                          setChosenFlow('REQUEST_CREW');
+                        }
+                      }}
+                      className="w-full py-3 px-5 rounded-2xl bg-[#A2482B] hover:bg-[#8B3B20] text-white font-bold text-xs sm:text-sm tracking-wide shadow-xl shadow-black/40 border border-white/20 transition-all transform hover:scale-[1.02] cursor-pointer flex items-center justify-center gap-2"
+                      id={`btn-select-format-${formatCardIndex}`}
+                    >
+                      <span>{formatCardIndex === 0 ? "J'ai ma vidéo" : "Être filmé"}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                </div>
+
+                {/* Flèche suivante */}
+                <button
+                  onClick={handleToggleFormat}
+                  aria-label="Format suivant"
+                  className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] text-[#1C1917] hover:bg-[#8B4513] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+
+              </div>
+
+              {/* Bouton de retour vers l'étape 2 (Choix du sujet) */}
+              <div className="pt-2 flex items-center justify-between">
+                <button
+                  onClick={() => setStep(2)}
+                  className="px-5 py-2.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-medium text-[#1C1917] flex items-center gap-2 cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
                   <span>Retour aux sujets</span>
                 </button>
+
                 <button
-                  type="button"
-                  onClick={() => setStep(3)}
-                  disabled={!explorerStoryTitle.trim()}
-                  className={`h-10 px-5 rounded-full text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 ${
-                    explorerStoryTitle.trim()
-                      ? 'bg-[#0D9488] hover:bg-[#0F766E] text-white cursor-pointer active:scale-95'
-                      : 'bg-stone-200 text-stone-400 cursor-not-allowed'
-                  }`}
-                  id="btn-confirm-explorer-story"
+                  onClick={handleToggleFormat}
+                  className="text-xs text-stone-500 hover:text-stone-800 underline cursor-pointer"
                 >
-                  <span>Passer au format vidéo</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  {formatCardIndex === 0 ? "Voir l'option « Être filmé »" : "Voir l'option « J'ai ma vidéo »"}
                 </button>
               </div>
             </div>
           )}
 
-        </div>
-      )}
-
-      {/* PANNEAU 3 : CHOISIR LE FORMAT : J'AI MA VIDÉO OU ÊTRE FILMÉ(E) */}
-      {step === 3 && (
-        <div className="space-y-4 animate-in fade-in duration-200">
-          <div className="p-3.5 rounded-2xl bg-[#FFFFFF] border border-[#E7E5E4] text-xs space-y-1">
-            <span className="text-[#0D9488] font-bold uppercase tracking-wider block text-[10px]">
-              Votre choix de publication
-            </span>
-            {contributionMode === 'explorer' ? (
-              <div>
-                <p className="text-[#1C1917] font-bold">
-                  Porte {selectedDoorConfig?.label} • {selectedTopic?.title}
-                </p>
-                {explorerStoryTitle && (
-                  <p className="text-stone-600 italic mt-0.5">
-                    « {explorerStoryTitle} »
-                  </p>
-                )}
-              </div>
-            ) : (
-              <p className="text-[#1C1917] font-medium">
-                {selectedDoc.title} • Épisode {selectedQuestion.number} ({selectedQuestion.title})
-              </p>
-            )}
-          </div>
-
-          <p className="text-xs text-[#1C1917] font-medium">
-            Comment souhaitez-vous transmettre votre vidéo ?
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            
-            {/* OPTION A : J'ai ma vidéo avec vraie capsule vidéo 9:16 interactive */}
-            <div
-              onClick={() => setVideoOption('HAVE_VIDEO')}
-              className={`p-5 rounded-3xl border cursor-pointer transition-all space-y-4 ${
-                videoOption === 'HAVE_VIDEO'
-                  ? 'bg-[#FFFFFF] border-[#C89B3C] shadow-md ring-2 ring-[#C89B3C]/30'
-                  : 'bg-[#FFFFFF] hover:bg-[#F9F6EE] border-[#E7E5E4]'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-[#C89B3C]/15 text-[#8B6845]">
-                  <UploadCloud className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-editorial text-base font-bold text-[#1C1917]">
-                    J'ai ma vidéo
-                  </h3>
-                  <p className="text-[11px] text-[#8B6845]">
-                    Enregistrée sur smartphone ou caméra
-                  </p>
-                </div>
-              </div>
-
-              {/* VRAIE CAPSULE VIDÉO EXPLICATIVE FORMAT 9:16 */}
-              <div className="relative w-full max-w-[200px] mx-auto aspect-[9/16] rounded-2xl overflow-hidden bg-stone-900 border border-stone-300 shadow-inner group">
-                {isPlayingGuideHaveVideo ? (
-                  <video
-                    src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                    autoPlay
-                    loop
-                    playsInline
-                    muted={isGuideMuted}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <img
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80"
-                    alt="Guide de cadrage"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                )}
-                
-                {/* Repères optiques de cadrage 9:16 */}
-                <div className="absolute inset-2 border border-white/40 rounded-xl pointer-events-none flex flex-col justify-between p-2">
-                  <div className="flex justify-between text-[9px] font-mono text-[#FACC15] drop-shadow">
-                    <span>┌</span>
-                    <span>┐</span>
+          {/* SOUS-ÉCRAN 2A : J'AI MA VIDÉO -> TÉLÉCHARGER LA VIDÉO ET TRANSMETTRE (SIMPLE ET DIRECT) */}
+          {chosenFlow === 'UPLOAD_DIRECT' && (
+            <div className="space-y-5 bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-[#A2482B]/10 text-[#A2482B]">
+                    <UploadCloud className="w-5 h-5" />
                   </div>
-                  <div className="self-center px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[10px] font-mono text-white border border-white/20">
-                    Cadrage portrait 9:16
-                  </div>
-                  <div className="flex justify-between text-[9px] font-mono text-[#FACC15] drop-shadow">
-                    <span>└</span>
-                    <span>┘</span>
+                  <div>
+                    <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
+                      Téléverser votre vidéo
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Format vertical 9:16 recommandé
+                    </p>
                   </div>
                 </div>
 
-                {/* Bouton Play/Pause interactif */}
                 <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsPlayingGuideHaveVideo(!isPlayingGuideHaveVideo);
-                  }}
-                  className="absolute inset-0 m-auto w-11 h-11 rounded-full bg-black/60 hover:bg-[#C89B3C] text-white backdrop-blur-md flex items-center justify-center shadow-lg transition-all cursor-pointer z-10 hover:scale-110 active:scale-95"
-                  title={isPlayingGuideHaveVideo ? "Pause" : "Lire la capsule explicative"}
+                  onClick={() => setChosenFlow(null)}
+                  className="p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors"
+                  title="Changer de choix"
                 >
-                  {isPlayingGuideHaveVideo ? (
-                    <Pause className="w-4 h-4 fill-white" />
-                  ) : (
-                    <Play className="w-4 h-4 fill-white translate-x-0.5" />
-                  )}
+                  <X className="w-5 h-5" />
                 </button>
-
-                {/* Mute toggle discret */}
-                {isPlayingGuideHaveVideo && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsGuideMuted(!isGuideMuted);
-                    }}
-                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors z-20 cursor-pointer"
-                  >
-                    {isGuideMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-[#FACC15]" />}
-                  </button>
-                )}
               </div>
 
-              <p className="text-xs text-[#68655D] leading-relaxed text-center">
-                Vérifiez que votre plan est vertical (1080×1920) avec un éclairage soigné et un son clair.
-              </p>
-
-              {videoOption === 'HAVE_VIDEO' && (
-                <div className="pt-2 border-t border-[#E7E5E4]/80 space-y-2">
-                  <input
-                    type="file"
-                    id="direct-video-input"
-                    className="hidden"
-                    accept="video/*"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setUploadedFileName(e.target.files[0].name);
-                      }
-                    }}
-                  />
-                  <label
-                    htmlFor="direct-video-input"
-                    className="block w-full text-center px-4 py-2 rounded-xl bg-[#C89B3C]/15 hover:bg-[#C89B3C]/25 text-xs font-semibold text-[#8B6845] cursor-pointer transition-colors"
-                  >
-                    {uploadedFileName ? `✓ ${uploadedFileName}` : 'Choisir le fichier vidéo'}
-                  </label>
-                  <p className="text-[10px] text-[#8B6845] text-center">
-                    Formats MP4, MOV, WebM acceptés
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* OPTION B : Être filmé(e) avec vraie capsule vidéo 9:16 interactive */}
-            <div
-              onClick={() => setVideoOption('NEED_VIDEOGRAPHER')}
-              className={`p-5 rounded-3xl border cursor-pointer transition-all space-y-4 ${
-                videoOption === 'NEED_VIDEOGRAPHER'
-                  ? 'bg-[#FFFFFF] border-[#C89B3C] shadow-md ring-2 ring-[#C89B3C]/30'
-                  : 'bg-[#FFFFFF] hover:bg-[#F9F6EE] border-[#E7E5E4]'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-[#C89B3C]/15 text-[#8B6845]">
-                  <Camera className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-editorial text-base font-bold text-[#1C1917]">
-                    Être filmé(e)
-                  </h3>
-                  <p className="text-[11px] text-[#8B6845]">
-                    Accompagnement par notre réseau
-                  </p>
-                </div>
-              </div>
-
-              {/* VRAIE CAPSULE VIDÉO DE TOURNAGE EN CONDITION FORMAT 9:16 */}
-              <div className="relative w-full max-w-[200px] mx-auto aspect-[9/16] rounded-2xl overflow-hidden bg-stone-900 border border-stone-300 shadow-inner group">
-                {isPlayingGuideVideographer ? (
-                  <video
-                    src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-                    autoPlay
-                    loop
-                    playsInline
-                    muted={isGuideMuted}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80"
-                    alt="Tournage documentaire"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                )}
-                
-                {/* Repères tournage cinéma REC */}
-                <div className="absolute inset-2 border border-white/40 rounded-xl pointer-events-none flex flex-col justify-between p-2">
-                  <div className="flex items-center justify-between text-[9px] font-mono text-white drop-shadow">
-                    <span className="inline-flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                      <span>REC</span>
+              {/* Zone Drag & Drop ou Clic */}
+              <div className="border-2 border-dashed border-stone-300 hover:border-[#A2482B] rounded-2xl p-8 text-center transition-all bg-stone-50/50 hover:bg-stone-50 group">
+                <input
+                  type="file"
+                  id="direct-video-upload"
+                  className="hidden"
+                  accept="video/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setUploadedFileName(e.target.files[0].name);
+                    }
+                  }}
+                />
+                <label htmlFor="direct-video-upload" className="cursor-pointer block space-y-3">
+                  <div className="w-14 h-14 mx-auto rounded-full bg-[#A2482B]/10 text-[#A2482B] group-hover:scale-110 flex items-center justify-center transition-transform">
+                    <UploadCloud className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-semibold text-[#1C1917] block">
+                      {uploadedFileName ? uploadedFileName : "Glissez-déposez votre vidéo ici, ou parcourez vos fichiers"}
                     </span>
-                    <span className="text-[#FACC15]">4K 9:16</span>
+                    <span className="text-xs text-stone-500 block mt-1">
+                      MP4, MOV ou WebM jusqu'à 2 Go
+                    </span>
                   </div>
-                  <div className="self-center px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[10px] font-mono text-white border border-white/20">
-                    Tournage encadré
+                  {uploadedFileName && (
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Fichier prêt à être transmis</span>
+                    </div>
+                  )}
+                </label>
+              </div>
+
+              {/* Actions : Retour / Transmettre */}
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  onClick={() => setChosenFlow(null)}
+                  className="px-5 py-2.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-medium text-[#1C1917] flex items-center gap-2 cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Retour</span>
+                </button>
+
+                <button
+                  disabled={!uploadedFileName}
+                  onClick={() => setSubmittedSuccess(true)}
+                  className={`px-7 py-2.5 rounded-full text-xs font-semibold transition-all flex items-center gap-2 shadow-sm ${
+                    uploadedFileName
+                      ? 'bg-[#A2482B] hover:bg-[#8B3B20] text-white cursor-pointer transform hover:scale-105'
+                      : 'bg-stone-200 text-stone-400 opacity-60 cursor-not-allowed'
+                  }`}
+                  id="btn-upload-direct-submit"
+                >
+                  <span>Transmettre</span>
+                  <Check className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* SOUS-ÉCRAN 2B : ÊTRE FILMÉ -> FORMULAIRE SIMPLE POUR COORDONNÉES */}
+          {chosenFlow === 'REQUEST_CREW' && (
+            <div className="space-y-5 bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-[#A2482B]/10 text-[#A2482B]">
+                    <Camera className="w-5 h-5" />
                   </div>
-                  <div className="text-[8px] font-mono text-stone-300 text-right drop-shadow">
-                    Réseau Artisans
+                  <div>
+                    <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
+                      Être filmé(e) par un cadreur
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Nous vous mettons en relation avec un cinéaste partenaire
+                    </p>
                   </div>
                 </div>
 
-                {/* Bouton Play/Pause interactif */}
                 <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsPlayingGuideVideographer(!isPlayingGuideVideographer);
-                  }}
-                  className="absolute inset-0 m-auto w-11 h-11 rounded-full bg-black/60 hover:bg-[#C89B3C] text-white backdrop-blur-md flex items-center justify-center shadow-lg transition-all cursor-pointer z-10 hover:scale-110 active:scale-95"
-                  title={isPlayingGuideVideographer ? "Pause" : "Voir le tournage encadré"}
+                  onClick={() => setChosenFlow(null)}
+                  className="p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors"
+                  title="Changer de choix"
                 >
-                  {isPlayingGuideVideographer ? (
-                    <Pause className="w-4 h-4 fill-white" />
-                  ) : (
-                    <Play className="w-4 h-4 fill-white translate-x-0.5" />
-                  )}
+                  <X className="w-5 h-5" />
                 </button>
-
-                {/* Mute toggle discret */}
-                {isPlayingGuideVideographer && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsGuideMuted(!isGuideMuted);
-                    }}
-                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors z-20 cursor-pointer"
-                  >
-                    {isGuideMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-[#FACC15]" />}
-                  </button>
-                )}
               </div>
 
-              <p className="text-xs text-[#68655D] leading-relaxed text-center">
-                Un documentariste de notre réseau se déplace pour réaliser l'entretien dans les règles de l'art.
-              </p>
-
-              {videoOption === 'NEED_VIDEOGRAPHER' && (
-                <div className="pt-2 border-t border-[#E7E5E4]/80 space-y-2">
+              {/* Formulaire simple de mise en relation */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
+                    Votre prénom & nom :
+                  </label>
                   <input
                     type="text"
-                    placeholder="Votre ville / pays"
+                    required
+                    placeholder="Ex: Aïcha Diop"
+                    value={videographerName}
+                    onChange={(e) => setVideographerName(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-xs bg-white text-[#1C1917] outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
+                    Ville ou région où vous êtes basé(e) :
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Cotonou, Dakar, Abidjan, Bamako, Paris..."
                     value={videographerCity}
                     onChange={(e) => setVideographerCity(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-xl border border-[#E7E5E4] text-xs bg-[#FFFFFF] text-[#1C1917] outline-none focus:border-[#C89B3C]"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Téléphone ou e-mail"
-                    value={videographerContact}
-                    onChange={(e) => setVideographerContact(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-xl border border-[#E7E5E4] text-xs bg-[#FFFFFF] text-[#1C1917] outline-none focus:border-[#C89B3C]"
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-xs bg-white text-[#1C1917] outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B]"
                   />
                 </div>
-              )}
-            </div>
 
-          </div>
-
-          <div className="pt-4 flex items-center justify-between">
-            <button
-              onClick={() => setStep(2)}
-              className="px-5 py-2.5 rounded-full bg-[#FFFFFF] hover:bg-[#FAFAF9] border border-[#E7E5E4] text-xs font-medium text-[#1C1917] flex items-center gap-2 cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Retour</span>
-            </button>
-
-            <button
-              disabled={!videoOption || (videoOption === 'HAVE_VIDEO' && !uploadedFileName)}
-              onClick={handleFinishSubmission}
-              className={`px-7 py-2.5 rounded-full text-xs font-semibold transition-all flex items-center gap-2 shadow-sm ${
-                videoOption && (videoOption === 'NEED_VIDEOGRAPHER' || uploadedFileName)
-                  ? contributionMode === 'explorer'
-                    ? 'bg-[#0D9488] hover:bg-[#0F766E] text-[#FFFFFF] cursor-pointer'
-                    : 'bg-[#A2482B] hover:bg-[#8B3B20] text-[#FFFFFF] cursor-pointer'
-                  : 'bg-[#E7E5E4] text-[#7A756B] opacity-60 cursor-not-allowed'
-              }`}
-              id="btn-final-submit"
-            >
-              <span>{videoOption === 'NEED_VIDEOGRAPHER' ? 'Confirmer ma demande' : 'Transmettre mon récit'}</span>
-              <Check className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL VIDÉO DE PRÉSENTATION (FORMAT VERTICAL 9:16 ÉPURÉ & LISIBLE) */}
-      {previewDoc && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
-          onClick={() => setPreviewDoc(null)}
-        >
-          <div 
-            className="relative w-full max-w-[340px] sm:max-w-[380px] bg-[#151513] text-[#FFFFFF] rounded-3xl border border-white/15 shadow-2xl overflow-hidden flex flex-col items-center"
-            onClick={(e) => e.stopPropagation()}
-            id={`modal-video-${previewDoc.id}`}
-          >
-            {/* Barre d'en-tête épurée */}
-            <div className="w-full px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-black/50">
-              <h3 className="font-editorial text-base sm:text-lg font-bold text-white tracking-wide">
-                {previewDoc.title}
-              </h3>
-
-              <button
-                onClick={() => setPreviewDoc(null)}
-                className="p-1.5 rounded-full bg-white/10 hover:bg-white/25 text-white/90 hover:text-white transition-colors cursor-pointer"
-                title="Fermer"
-                id="close-preview-video-btn"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Lecteur Vidéo au format vertical 9:16 (identique aux duos) */}
-            <div className="relative w-full aspect-[9/16] bg-black overflow-hidden flex items-center justify-center">
-              <video
-                src={SERIES_PRESENTATIONS[previewDoc.id]?.videoUrl || previewDoc.teaserVideoUrl}
-                poster={previewDoc.posterUrl || previewDoc.coverImage}
-                autoPlay
-                loop
-                muted={isVideoMuted}
-                playsInline
-                className="w-full h-full object-cover"
-              />
-
-              {/* Voile cinématographique pour les contrôles */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
-
-              {/* Contrôles overlay sobres */}
-              <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-                <button
-                  onClick={() => setIsVideoMuted(!isVideoMuted)}
-                  className="p-2 rounded-full bg-black/60 hover:bg-white/25 text-white backdrop-blur-md transition-colors cursor-pointer"
-                  title={isVideoMuted ? 'Activer le son' : 'Couper le son'}
-                >
-                  {isVideoMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </button>
+                <div>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
+                    Téléphone (WhatsApp) ou adresse e-mail :
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: +221 77 000 00 00 ou contact@exemple.org"
+                    value={videographerContact}
+                    onChange={(e) => setVideographerContact(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-xs bg-white text-[#1C1917] outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B]"
+                  />
+                </div>
               </div>
 
-              {/* Contrôle central play/pause */}
-              <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-auto">
+              {/* Actions : Retour / Valider la demande */}
+              <div className="flex items-center justify-between pt-2">
                 <button
-                  onClick={() => setIsVideoPlaying(!isVideoPlaying)}
-                  className="w-14 h-14 rounded-full bg-black/60 hover:bg-[#C89B3C] text-white backdrop-blur-xs flex items-center justify-center transition-transform hover:scale-110 shadow-2xl cursor-pointer"
-                  title={isVideoPlaying ? 'Pause' : 'Lecture'}
+                  onClick={() => setChosenFlow(null)}
+                  className="px-5 py-2.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-medium text-[#1C1917] flex items-center gap-2 cursor-pointer"
                 >
-                  {isVideoPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Retour</span>
                 </button>
-              </div>
 
-              {/* Bouton unique pour sceller le choix directement depuis la vidéo */}
-              <div className="absolute bottom-4 inset-x-4 z-10">
                 <button
-                  onClick={() => {
-                    setSelectedDocId(previewDoc.id);
-                    setSelectedQuestionNumber(previewDoc.questions[0].number);
-                    setPreviewDoc(null);
-                  }}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#C89B3C] hover:bg-[#B78A2E] text-white font-bold text-xs sm:text-sm tracking-wide shadow-2xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] cursor-pointer"
-                  id={`confirm-select-doc-${previewDoc.id}`}
+                  disabled={!videographerName.trim() || !videographerCity.trim() || !videographerContact.trim()}
+                  onClick={() => setSubmittedSuccess(true)}
+                  className={`px-7 py-2.5 rounded-full text-xs font-semibold transition-all flex items-center gap-2 shadow-sm ${
+                    videographerName.trim() && videographerCity.trim() && videographerContact.trim()
+                      ? 'bg-[#A2482B] hover:bg-[#8B3B20] text-white cursor-pointer transform hover:scale-105'
+                      : 'bg-stone-200 text-stone-400 opacity-60 cursor-not-allowed'
+                  }`}
+                  id="btn-request-crew-submit"
                 >
-                  <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
-                  <span>Sceller ce choix</span>
+                  <span>Demander un tournage</span>
+                  <Check className="w-4 h-4" />
                 </button>
               </div>
             </div>
-          </div>
+          )}
+
         </div>
       )}
 

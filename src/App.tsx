@@ -20,6 +20,7 @@ import { ReviewSystemScreen } from './components/ReviewSystemScreen';
 import { EditorialBackOfficeScreen } from './components/EditorialBackOfficeScreen';
 import { NavigationScreen } from './components/NavigationScreen';
 import { BottomMenu } from './components/BottomMenu';
+import { TopProfileButton } from './components/TopProfileButton';
 
 export default function App() {
   // Arrive directly on the Explorer Astrolabe screen
@@ -164,13 +165,19 @@ export default function App() {
         )}
       </main>
 
-      {/* Modern 5-Item Navigation Menu */}
+      {/* Modern 4-Item Navigation Menu: Tournage, Cercle, Miroir, Productions */}
       {!isVideoPlayer && (
         <BottomMenu 
           currentScreen={currentScreen} 
           onNavigate={setCurrentScreen} 
         />
       )}
+
+      {/* Top Right Profile Button */}
+      <TopProfileButton 
+        currentScreen={currentScreen} 
+        onNavigate={setCurrentScreen} 
+      />
 
     </div>
   );

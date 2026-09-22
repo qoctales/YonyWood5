@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, X, ArrowRight, Sparkles, MapPin, Gem } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, X, ArrowRight, Sparkles, MapPin, Award } from 'lucide-react';
 import { Protagonist } from '../types';
 import { ResonanceModal } from './ResonanceModal';
 
@@ -103,7 +103,7 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
         {/* Voile d'ambiance cinématographique */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/50 pointer-events-none" />
 
-        {/* HAUT : Bouton Évaluer (Diamant) & Contrôles */}
+        {/* HAUT : Bouton Évaluer (Award en Terre Cuite) & Contrôles */}
         <div className="relative z-10 flex items-center justify-between gap-2 w-full">
           <button
             onClick={(e) => {
@@ -112,12 +112,12 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
             }}
             className={`w-9 h-9 rounded-full backdrop-blur-md border flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-105 active:scale-95 ${
               resonancePct !== null
-                ? 'bg-black/80 border-[#C89B3C]/80 text-[#E5C16C] shadow-[0_0_12px_rgba(200,155,60,0.35)]'
-                : 'bg-black/60 hover:bg-black/80 border-white/20 hover:border-[#C89B3C]/50 text-white'
+                ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_12px_rgba(162,72,43,0.45)]'
+                : 'bg-black/60 hover:bg-[#A2482B]/80 border-white/20 hover:border-[#A2482B] text-white'
             }`}
             title={resonancePct !== null ? `Résonance : ${resonancePct}%` : "Évaluer la résonance"}
           >
-            <Gem className="w-4 h-4" />
+            <Award className="w-4 h-4" />
           </button>
 
           <div className="flex items-center gap-1.5">

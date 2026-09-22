@@ -27,7 +27,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Filiation & Arbres de Cooptation',
     description: 'Explorez les séries documentaires fondatrices et leurs 16 pionniers. Remontez le fil des transmissions de génération en génération où chacun coapte le suivant.',
     badge: 'Cooptation vivante',
-    iconName: 'Tv',
+    iconName: 'Film',
     accentColor: '#C89B3C',
     glowColor: 'rgba(200, 155, 60, 0.65)',
     bgGradient: 'from-[#D97706] via-[#92400E] to-[#451A03]',
@@ -40,24 +40,37 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: '16 regards humains enracinés dans leur terre',
     description: 'Explorez un terroir du monde : 16 bâtisseurs, paysans, créateurs et pêcheurs racontent leur mémoire vivante liée à leur terre et à leur matière brute.',
     badge: '16 terroirs du monde',
-    iconName: 'Compass',
+    iconName: 'Mountain',
     accentColor: '#10B981',
     glowColor: 'rgba(16, 185, 129, 0.65)',
     bgGradient: 'from-[#10B981] via-[#047857] to-[#064E3B]',
     coverImage: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80'
   },
   {
+    id: 'questions',
+    label: 'Sagesses',
+    shortLabel: 'Sagesses',
+    tagline: 'Récits vrais, philosophie et mémoire vive',
+    description: 'Les grandes sagesses et interrogations universelles, racontées à travers des moments vécus par 16 voix de tous horizons.',
+    badge: '16 sagesses universelles',
+    iconName: 'Atom',
+    accentColor: '#A855F7',
+    glowColor: 'rgba(168, 85, 247, 0.65)',
+    bgGradient: 'from-[#A855F7] via-[#7E22CE] to-[#3B0764]',
+    coverImage: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80'
+  },
+  {
     id: 'thematics',
-    label: 'Thématiques',
-    shortLabel: 'Thématiques',
-    tagline: 'Savoirs, Matière, Fréquences...',
-    description: 'Des grands thèmes universels explorés à travers 16 regards croisés sans dogme : le massage, la physique quantique, l’artisanat, la musique des fréquences...',
-    badge: '16 sujets profonds',
-    iconName: 'Layers',
+    label: 'Emplois',
+    shortLabel: 'Emplois',
+    tagline: 'Talents, savoir-faire & recherche d’opportunités',
+    description: 'Des profils, artisans, diplômés et créateurs en quête d’opportunités et de collaborations pour déployer leurs compétences.',
+    badge: 'Talents & Opportunités',
+    iconName: 'GraduationCap',
     accentColor: '#0EA5E9',
     glowColor: 'rgba(14, 165, 233, 0.65)',
     bgGradient: 'from-[#0EA5E9] via-[#0369A1] to-[#082F49]',
-    coverImage: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=600&q=80'
+    coverImage: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80'
   },
   {
     id: 'personalities',
@@ -66,7 +79,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Grandes figures racontées par 16 regards',
     description: 'Une grande figure racontée par 16 personnes qui ont une histoire intime, sportive, artistique ou philosophique liée à son parcours.',
     badge: '16 figures phares',
-    iconName: 'Users',
+    iconName: 'Star',
     accentColor: '#F59E0B',
     glowColor: 'rgba(245, 158, 11, 0.65)',
     bgGradient: 'from-[#F59E0B] via-[#B45309] to-[#78350F]',
@@ -79,7 +92,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Artisans, Bâtisseurs & Maisons d’exception',
     description: 'Découvrez une marque ou une maison par ceux qui la font ou la vivent : artisans du cuir, athlètes de rue, réparateurs de l’extrême, pionniers.',
     badge: '16 marques iconiques',
-    iconName: 'Crown',
+    iconName: 'Gem',
     accentColor: '#FB923C',
     glowColor: 'rgba(251, 146, 60, 0.65)',
     bgGradient: 'from-[#FB923C] via-[#C2410C] to-[#431407]',
@@ -92,7 +105,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     tagline: 'Forêts sacrées, Écoles nomades...',
     description: 'Rencontrez 16 bâtisseurs de terrain engagés dans des causes vivantes : agroforesterie, écoles tissées, sauvegarde de semences anciennes, récifs.',
     badge: '16 chantiers vivants',
-    iconName: 'Trees',
+    iconName: 'Sprout',
     accentColor: '#EC4899',
     glowColor: 'rgba(236, 72, 153, 0.65)',
     bgGradient: 'from-[#EC4899] via-[#BE185D] to-[#500724]',
@@ -102,27 +115,14 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     id: 'offers',
     label: 'Offres',
     shortLabel: 'Offres',
-    tagline: 'Masterclasses & Transmissions concrètes',
+    tagline: 'Masterclasses, Ateliers & Transmissions concrètes',
     description: 'Accédez à des transmissions concrètes : stages de tissage royal, ateliers de respiration, compagnonnages en forge ou résidences immersives.',
     badge: '16 offres concrètes',
-    iconName: 'GraduationCap',
+    iconName: 'ShoppingBag',
     accentColor: '#6366F1',
     glowColor: 'rgba(99, 102, 241, 0.65)',
     bgGradient: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
     coverImage: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80'
-  },
-  {
-    id: 'questions',
-    label: 'Sagesses',
-    shortLabel: 'Sagesses',
-    tagline: 'Récits vrais et mémoire vive du peuple',
-    description: 'Les grandes sagesses et interrogations du peuple, racontées à travers des moments vécus par 16 voix de tous horizons.',
-    badge: '16 sagesses populaires',
-    iconName: 'Flame',
-    accentColor: '#A855F7',
-    glowColor: 'rgba(168, 85, 247, 0.65)',
-    bgGradient: 'from-[#A855F7] via-[#7E22CE] to-[#3B0764]',
-    coverImage: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80'
   }
 ];
 
@@ -355,135 +355,135 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
     }
   ],
 
-  // 3. THÉMATIQUES (16 grands thèmes)
+  // 4. EMPLOI & TALENTS (16 filières de recherche d'emploi et compagnonnage)
   thematics: [
     {
-      id: 'massage',
+      id: 'ebenisterie-bois',
       category: 'thematics',
-      title: 'Le Massage & le Corps',
-      subtitle: 'L’écoute sous la paume et la mémoire des tissus',
-      photoUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=400&q=80',
-      badge: '16 praticiens & patients'
-    },
-    {
-      id: 'physique-quantique',
-      category: 'thematics',
-      title: 'Physique Quantique & Conscience',
-      subtitle: 'Le rôle de l’observateur et l’intrication universelle',
-      photoUrl: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=400&q=80',
-      badge: '16 chercheurs & penseurs'
-    },
-    {
-      id: 'transmission',
-      category: 'thematics',
-      title: 'Transmission & Filiation',
-      subtitle: 'Ce qu’on donne sans rien demander en retour',
-      photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-      badge: '16 témoins de lignée'
-    },
-    {
-      id: 'artisanat',
-      category: 'thematics',
-      title: 'L’Artisanat d’Art',
-      subtitle: 'La perfection du geste qui fait chanter la matière',
+      title: 'Ébénisterie & Travail du Bois',
+      subtitle: 'Artisans et compagnons en quête d’ateliers ou de chantiers d’exception',
       photoUrl: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=400&q=80',
-      badge: '16 artisans maîtres'
+      badge: '16 talents en recherche'
     },
     {
-      id: 'agroforesterie',
+      id: 'agroecologie-sol',
       category: 'thematics',
-      title: 'Agroforesterie & Forêts',
-      subtitle: 'Faire alliance avec l’arbre pour nourrir la terre',
+      title: 'Agroécologie & Maraîchage Vivant',
+      subtitle: 'Praticiens des sols vivants en recherche de terres ou d’exploitations partenaires',
       photoUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=400&q=80',
-      badge: '16 gardiens du sol'
+      badge: '16 talents en recherche'
     },
     {
-      id: 'chamanisme',
+      id: 'tissage-couture',
       category: 'thematics',
-      title: 'Chamanisme & Rituels',
-      subtitle: 'Le passage entre les mondes et la transe sacrée',
-      photoUrl: 'https://images.unsplash.com/photo-1518834107812-67b0b7c58434?auto=format&fit=crop&w=400&q=80',
-      badge: '16 initiés du vivant'
-    },
-    {
-      id: 'musique-frequences',
-      category: 'thematics',
-      title: 'Musique & Fréquences',
-      subtitle: 'La vibration qui traverse et répare les êtres',
-      photoUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80',
-      badge: '16 musiciens & sonothérapeutes'
-    },
-    {
-      id: 'education-nomade',
-      category: 'thematics',
-      title: 'Éducation Vivante & Nomade',
-      subtitle: 'Apprendre avec le ciel, les aînés et le fleuve',
-      photoUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=400&q=80',
-      badge: '16 éducateurs libres'
-    },
-    {
-      id: 'architecture-terre',
-      category: 'thematics',
-      title: 'Architecture en Terre Crue',
-      subtitle: 'Bâtir avec la boue, la paille et l’intelligence locale',
-      photoUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80',
-      badge: '16 maçons de terre'
-    },
-    {
-      id: 'apiculture-sacree',
-      category: 'thematics',
-      title: 'Apiculture Sacrée',
-      subtitle: 'L’abeille sauvage et le secret de la ruche ancestrale',
-      photoUrl: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=400&q=80',
-      badge: '16 bergers d’abeilles'
-    },
-    {
-      id: 'fermentation',
-      category: 'thematics',
-      title: 'Fermentation Ancestrale',
-      subtitle: 'La vie invisible qui transforme le grain et le lait',
-      photoUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80',
-      badge: '16 fermenteurs du goût'
-    },
-    {
-      id: 'calligraphie',
-      category: 'thematics',
-      title: 'Calligraphie & Souffle du Trait',
-      subtitle: 'Le pinceau qui ne revient jamais en arrière',
-      photoUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80',
-      badge: '16 maîtres du tracé'
-    },
-    {
-      id: 'navigation-etoiles',
-      category: 'thematics',
-      title: 'Navigation aux Étoiles',
-      subtitle: 'Savoir où l’on va en écoutant la houle et la constellation',
-      photoUrl: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=400&q=80',
-      badge: '16 marins du ciel'
-    },
-    {
-      id: 'teinture-vegetale',
-      category: 'thematics',
-      title: 'Teinture Végétale & Indigo',
-      subtitle: 'La couleur extraite des racines, de l’écorce et du soleil',
+      title: 'Tissage d’Art & Stylisme Végétal',
+      subtitle: 'Créatrices textiles cherchant des résidences, ateliers ou collaborations couture',
       photoUrl: 'https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=400&q=80',
-      badge: '16 alchimistes de cuve'
+      badge: '16 talents en recherche'
     },
     {
-      id: 'medecine-plantes',
+      id: 'ferronnerie-forge',
       category: 'thematics',
-      title: 'Médecine des Plantes',
-      subtitle: 'La pharmacopée traditionnelle et l’esprit des simples',
+      title: 'Ferronnerie & Forge Ancestrale',
+      subtitle: 'Forgerons et maîtres du métal en quête de compagnonnage et grands chantiers',
+      photoUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'charpente-marine',
+      category: 'thematics',
+      title: 'Piroguerie & Pêche Durable',
+      subtitle: 'Marins et charpentiers navals cherchant équipages, cales et coopératives',
+      photoUrl: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'maconnerie-terre',
+      category: 'thematics',
+      title: 'Éco-construction en Terre Crue',
+      subtitle: 'Bâtisseurs en terre, chaux et paille cherchant projets d’habitats écologiques',
+      photoUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'audiovisuel-image',
+      category: 'thematics',
+      title: 'Audiovisuel & Documentaire',
+      subtitle: 'Cadreurs, monteurs et preneurs de son cherchant productions indépendantes',
+      photoUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'cuisine-fermentation',
+      category: 'thematics',
+      title: 'Cuisine Sauvage & Fermentation',
+      subtitle: 'Cuisiniers du vivant cherchant tables d’hôtes, auberges ou résidences culinaires',
+      photoUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'apiculture-naturelle',
+      category: 'thematics',
+      title: 'Apiculture Naturelle & Ruches',
+      subtitle: 'Apiculteurs respectueux cherchant domaines mellifères et conservatoires',
+      photoUrl: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'herboristerie-plantes',
+      category: 'thematics',
+      title: 'Plantes Médicinales & Simples',
+      subtitle: 'Cueilleurs et transformateurs cherchant coopératives et laboratoires d’herboristerie',
       photoUrl: 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=400&q=80',
-      badge: '16 herboristes de brousse'
+      badge: '16 talents en recherche'
     },
     {
-      id: 'danse-rituelle',
+      id: 'massage-somatic',
       category: 'thematics',
-      title: 'Danse Rituelle & Transe',
-      subtitle: 'Quand le rythme prend possession de la chair',
+      title: 'Soins du Corps & Massothérapie',
+      subtitle: 'Praticiens corporels cherchant espaces de soins partagés et centres bien-être',
+      photoUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'ceramique-poterie',
+      category: 'thematics',
+      title: 'Céramique & Tournage d’Art',
+      subtitle: 'Céramistes cherchant résidences de poterie, fours collectifs et boutiques d’art',
+      photoUrl: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'musique-son',
+      category: 'thematics',
+      title: 'Musique Vivante & Sonothérapie',
+      subtitle: 'Musiciens et concepteurs sonores en quête de collaborations et projets scéniques',
+      photoUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'maroquinerie-cuir',
+      category: 'thematics',
+      title: 'Maroquinerie & Sellerie d’Art',
+      subtitle: 'Artisans du cuir formés cherchant maisons de création et ateliers d’excellence',
+      photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'calligraphie-lettre',
+      category: 'thematics',
+      title: 'Calligraphie & Lettres Peintes',
+      subtitle: 'Enlumineurs et peintres en lettres cherchant commandes éditoriales et fresques',
+      photoUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80',
+      badge: '16 talents en recherche'
+    },
+    {
+      id: 'education-nature',
+      category: 'thematics',
+      title: 'Pédagogie de la Nature & Éducation',
+      subtitle: 'Éducateurs de terrain cherchant éco-écoles, fermes pédagogiques et associations',
       photoUrl: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=400&q=80',
-      badge: '16 danseurs d’initiation'
+      badge: '16 talents en recherche'
     }
   ],
 

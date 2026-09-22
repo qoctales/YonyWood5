@@ -8,13 +8,13 @@ import {
   ChevronRight, 
   Sparkles, 
   Layers, 
-  Compass, 
   Search, 
   X,
   ExternalLink,
   Users,
   ChevronDown
 } from 'lucide-react';
+import { CircleDotsIcon } from './YonywoodBrandIcons';
 import { DOCUMENTARIES, DUOS, SERIES_AFFILIATION_TREES } from '../data/mockData';
 import { ViewScreen, AffiliationPerson, SeriesAffiliationTree } from '../types';
 
@@ -57,7 +57,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C89B3C]/15 border border-[#C89B3C]/30 text-[#8B6845] text-xs font-semibold uppercase tracking-wider">
-              <Compass className="w-3.5 h-3.5 text-[#C89B3C]" />
+              <CircleDotsIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
               <span>Exploration Vivante</span>
             </div>
             <h1 className="font-editorial text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1C1917] leading-tight">

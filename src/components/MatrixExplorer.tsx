@@ -30,7 +30,8 @@ import {
   Mountain,
   Atom,
   Fingerprint,
-  Sprout
+  Sprout,
+  Star
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
@@ -73,12 +74,12 @@ const ORBIT_RADII = [145, 280, 385, 490, 595];
 const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string }>> = {
   series: Film,
   countries: Mountain,
-  thematics: Atom,
-  personalities: Fingerprint,
+  questions: Atom,
+  thematics: GraduationCap,
+  personalities: Star,
   brands: Gem,
   projects: Sprout,
-  offers: GraduationCap,
-  questions: Flame
+  offers: ShoppingBag
 };
 
 export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ 
@@ -241,11 +242,16 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   };
 
   // Clic au centre de l'astrolabe :
-  // Si on est sur un sujet (ex: Bénin), recliquer sur le drapeau central renouvelle immédiatement les 16 voix
+  // Au niveau des portes : entre dans la porte survolée (ou la première par défaut)
+  // Au niveau des sujets : renouvelle immédiatement les 16 voix
   const handleCenterHubClick = () => {
     celestialAudio.playOrbSelect();
     if (explorerLevel === 'dimensions') {
-      handleSelectDimension('countries');
+      if (hoveredCategory) {
+        handleSelectDimension(hoveredCategory.id);
+      } else {
+        handleSelectDimension('series');
+      }
     } else {
       handleActualiser();
     }
@@ -491,12 +497,12 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         }}
       />
 
-      {/* 1. BARRE SUPÉRIEURE : FIL D'ARIANE ÉPURÉ TERRE CUITE */}
-      <header className="absolute top-3 sm:top-4 left-3 sm:left-4 right-3 sm:right-4 z-40 flex items-center justify-between pointer-events-none">
+      {/* 1. BARRE SUPÉRIEURE : FIL D'ARIANE ÉPURÉ EN TERRE CUITE & TEXTE BLANC */}
+      <header className="absolute top-3 sm:top-4 left-3 sm:left-4 right-16 sm:right-28 z-40 flex items-center justify-between pointer-events-none">
         
-        {/* FIL D'ARIANE INTERACTIF : [Porte] > [Catégorie] > [Sujet actif] */}
-        <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/95 backdrop-blur-md border border-stone-200 shadow-sm pointer-events-auto max-w-full overflow-x-auto no-scrollbar">
-          {/* Niveau 0 : Porte */}
+        {/* FIL D'ARIANE INTERACTIF : [Portes] > [Catégorie] > [Sujet actif] */}
+        <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#A2482B] text-white shadow-md border border-[#8A3B22] pointer-events-auto max-w-full overflow-x-auto no-scrollbar">
+          {/* Niveau 0 : Portes */}
           <button
             id="breadcrumb-dimensions-btn"
             onClick={() => {
@@ -504,22 +510,22 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
               setExplorerLevel('dimensions');
               setIsQuestionModalOpen(false);
             }}
-            className={`text-xs sm:text-sm font-medium px-2.5 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
               explorerLevel === 'dimensions'
-                ? 'bg-[#A2482B] text-white shadow-xs'
-                : 'text-stone-700 hover:text-[#A2482B] hover:bg-[#A2482B]/10'
+                ? 'bg-white text-[#A2482B] shadow-xs'
+                : 'text-white/85 hover:text-white hover:bg-white/15'
             }`}
-            title="Revenir au choix de la Porte"
+            title="Revenir au choix des Portes"
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>Porte</span>
+            <span>Portes</span>
           </button>
 
           {explorerLevel !== 'dimensions' && (
             <>
-              <span className="text-stone-300 text-xs shrink-0">/</span>
+              <span className="text-white/40 text-xs shrink-0">/</span>
 
-              {/* Catégorie active (Séries, Territoires, Thématiques, etc.) */}
+              {/* Catégorie active (Série, Territoire, Sagesse, Emploi, etc.) */}
               <button
                 id="breadcrumb-category-btn"
                 onClick={() => {
@@ -527,16 +533,16 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   setExplorerLevel('dimensions');
                   setIsQuestionModalOpen(false);
                 }}
-                className="text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-full text-[#A2482B] hover:text-[#8A3B22] bg-[#A2482B]/10 hover:bg-[#A2482B]/20 border border-[#A2482B]/25 transition-all cursor-pointer flex items-center gap-1 shadow-xs shrink-0"
+                className="text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-full text-white bg-white/20 hover:bg-white/30 border border-white/30 transition-all cursor-pointer flex items-center gap-1 shadow-xs shrink-0"
                 title={`${activeCategoryConfig.label} (cliquer pour changer de Porte)`}
               >
                 <span>{activeCategoryConfig.label}</span>
               </button>
 
-              <span className="text-stone-300 text-xs shrink-0">/</span>
+              <span className="text-white/40 text-xs shrink-0">/</span>
 
               {/* Sujet actif sélectionné */}
-              <div className="flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-full bg-[#A2482B]/10 border border-[#A2482B]/20 shrink-0">
+              <div className="flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-full bg-white/15 border border-white/25 shrink-0 text-white">
                 <button
                   id="breadcrumb-topic-title-btn"
                   onClick={() => {
@@ -544,14 +550,14 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                       setIsQuestionModalOpen(prev => !prev);
                     }
                   }}
-                  className={`text-xs sm:text-sm font-semibold text-[#A2482B] flex items-center gap-1.5 transition-colors ${
-                    activeCategory === 'questions' ? 'cursor-pointer hover:text-[#8A3B22]' : 'cursor-default'
+                  className={`text-xs sm:text-sm font-semibold text-white flex items-center gap-1.5 transition-colors ${
+                    activeCategory === 'questions' ? 'cursor-pointer hover:text-[#FFE7A3]' : 'cursor-default'
                   }`}
                   title={activeCategory === 'questions' ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
                 >
                   <span className="truncate max-w-[120px] sm:max-w-[180px]">{activeTopicItem?.title}</span>
                   {activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#A2482B]/20 text-[#A2482B] font-medium">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/25 text-white font-medium">
                       Question
                     </span>
                   )}
@@ -561,7 +567,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 <button
                   id="btn-symbol-16-autres-voix"
                   onClick={handleActualiser}
-                  className="w-6 h-6 rounded-full bg-white hover:bg-[#A2482B] text-[#A2482B] hover:text-white border border-[#A2482B]/30 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group ml-0.5"
+                  className="w-6 h-6 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#A2482B] border border-white/30 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group ml-0.5"
                   title="Actualiser : 16 autres voix"
                 >
                   <RefreshCw className={`w-3 h-3 transition-transform ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 duration-500'}`} />
@@ -736,7 +742,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   );
                 })}
 
-                {/* Les 8 Hublots Photographiques immersifs */}
+                {/* Les 8 Hublots / Portes de l'Astrolabe */}
                 {EXPLORER_CATEGORIES.map((cat, idx) => {
                   const angle = -90 + idx * (360 / 8);
                   const rad = (angle * Math.PI) / 180;
@@ -767,86 +773,50 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                       {/* Zone tactile généreuse */}
                       <circle cx={x} cy={y} r="42" fill="transparent" />
 
-                      {/* Halo lumineux d'ambre et d'or au survol */}
+                      {/* Halo d'or subtil au survol */}
                       <circle 
                         cx={x} 
                         cy={y} 
-                        r={isHovered ? "40" : "33"} 
-                        fill={cat.accentColor} 
-                        opacity={isHovered ? "0.45" : "0.15"} 
+                        r={isHovered ? "38" : "32"} 
+                        fill="#C89B3C" 
+                        opacity={isHovered ? "0.3" : "0.08"} 
                         className="transition-all duration-300 pointer-events-none" 
-                        filter="drop-shadow(0 0 16px rgba(162, 72, 43, 0.35))"
+                        filter="drop-shadow(0 0 12px rgba(200, 155, 60, 0.4))"
                       />
 
-                      {/* Vignette circulaire de la Porte (Pas de photo, fond noble et bague dorée) */}
+                      {/* Pastille circulaire : Fond blanc pur (#FFFFFF) et bordure dorée (#C89B3C) */}
                       <circle 
                         cx={x} 
                         cy={y} 
-                        r="32" 
-                        fill={isHovered ? "#292524" : "#1C1917"} 
+                        r={isHovered ? "33" : "30"} 
+                        fill="#FFFFFF" 
                         stroke={isHovered ? "#FFE7A3" : "#C89B3C"} 
-                        strokeWidth={isHovered ? "2.5" : "1.8"} 
-                        filter="drop-shadow(0 4px 14px rgba(0,0,0,0.32))" 
+                        strokeWidth={isHovered ? "2.6" : "1.8"} 
+                        filter="drop-shadow(0 3px 12px rgba(0,0,0,0.18))" 
                         className="transition-all duration-300"
                       />
 
-                      {/* Filet intérieur discret d'orfèvrerie */}
+                      {/* Filet intérieur discret d'orfèvrerie dorée */}
                       <circle 
                         cx={x} 
                         cy={y} 
-                        r="27" 
+                        r={isHovered ? "27" : "25"} 
                         fill="none" 
-                        stroke={isHovered ? "rgba(255,231,163,0.4)" : "rgba(200,155,60,0.22)"} 
+                        stroke={isHovered ? "rgba(200,155,60,0.5)" : "rgba(200,155,60,0.22)"} 
                         strokeWidth="1" 
-                        className="pointer-events-none transition-colors duration-300"
+                        className="pointer-events-none transition-all duration-300"
                       />
 
-                      {/* Grande Icône innovante & dédiée occupant toute la vignette */}
-                      <foreignObject x={x - 20} y={y - 20} width="40" height="40" className="pointer-events-none">
+                      {/* Icône de la Porte : Teinte Terre Cuite signature (#A2482B) */}
+                      <foreignObject x={x - 18} y={y - 18} width="36" height="36" className="pointer-events-none">
                         <div className={`w-full h-full flex items-center justify-center transition-transform duration-300 ${
-                          isHovered ? 'scale-110 text-[#FFE7A3]' : 'scale-100 text-[#FCE7A6]'
-                        }`}>
+                          isHovered ? 'scale-115' : 'scale-100'
+                        } text-[#A2482B]`}>
                           {React.createElement(CATEGORY_ICONS[cat.id] || Sparkles, {
-                            className: 'w-7 h-7 stroke-[1.8] drop-shadow-sm'
+                            className: 'w-6 h-6 stroke-[2] text-[#A2482B] drop-shadow-xs'
                           })}
                         </div>
                       </foreignObject>
-
-                      {/* Cartouche nominal de la Porte : Fond Terre Cuite signature, texte blanc ultra-lisible */}
-                      <g 
-                        transform={`translate(${x}, ${y + 46})`} 
-                        className={`transition-all duration-300 pointer-events-none ${
-                          isHovered ? 'scale-110' : 'scale-100'
-                        }`}
-                        style={{ transformOrigin: `${x}px ${y + 46}px` }}
-                      >
-                        {/* Fond du cartouche pilule en Terre Cuite (#A2482B) */}
-                        <rect 
-                          x="-52" 
-                          y="-13" 
-                          width="104" 
-                          height="26" 
-                          rx="13" 
-                          fill={isHovered ? "#8A3B22" : "#A2482B"} 
-                          stroke={isHovered ? "#FFE7A3" : "rgba(255,255,255,0.45)"}
-                          strokeWidth={isHovered ? "1.8" : "1.2"}
-                          filter="drop-shadow(0 4px 12px rgba(162,72,43,0.38))"
-                          className="transition-colors duration-200"
-                        />
-                        {/* Libellé unique en blanc éclatant */}
-                        <text 
-                          x="0" 
-                          y="4" 
-                          textAnchor="middle" 
-                          fill="#FFFFFF" 
-                          fontSize="11.5" 
-                          fontWeight="700"
-                          letterSpacing="0.03em"
-                          className="select-none transition-colors duration-200"
-                        >
-                          {cat.label}
-                        </text>
-                      </g>
                     </g>
                   );
                 })}
@@ -1488,7 +1458,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
               </div>
 
               <div className="flex flex-col items-center gap-3 shrink-0">
-                {/* Évaluation résonance (diamant) */}
+                {/* Évaluation résonance (Award en Terre Cuite) */}
                 <button
                   id={`btn-eval-resonance-${modalPerson.id}`}
                   onClick={(e) => {
@@ -1497,12 +1467,12 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   }}
                   className={`w-10 h-10 rounded-full backdrop-blur-md border flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
                     personResonancePct !== null
-                      ? 'bg-black/70 border-[#C89B3C] text-[#E5C16C] shadow-[0_0_14px_rgba(200,155,60,0.5)]'
-                      : 'bg-white/20 hover:bg-white/30 border-white/25 text-white'
+                      ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_14px_rgba(162,72,43,0.5)]'
+                      : 'bg-white/20 hover:bg-[#A2482B]/80 border-white/25 hover:border-[#A2482B] text-white'
                   }`}
                   title={personResonancePct !== null ? `Résonance : ${personResonancePct}%` : "Évaluer la résonance"}
                 >
-                  <Gem className="w-5 h-5" />
+                  <Award className="w-5 h-5" />
                 </button>
 
                 {/* Accès à son univers complet (bonhomme) */}

@@ -267,7 +267,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
       {/* ========================================================================= */}
       {/* HEADER DISCRET & SÉLECTEUR AU MÊME ENDROIT QUE 1 2 3 DE PROPOSER         */}
       {/* ========================================================================= */}
-      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-3">
+      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-3 pr-14 sm:pr-24">
         <div>
           <h1 className="font-editorial text-xl sm:text-2xl font-bold text-[#1C1917]">
             Productions

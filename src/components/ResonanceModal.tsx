@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Gem, X, Check } from 'lucide-react';
+import { Award, X, Check } from 'lucide-react';
 import { StoryResonanceRating } from '../types';
 
 interface ResonanceModalProps {
@@ -129,11 +129,11 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
         {/* Tirette / indicateur de glissement */}
         <div className="w-10 h-1 bg-[#D8D2C4] rounded-full mx-auto -mt-1 mb-2" />
 
-        {/* En-tête simplifié avec l'icône Diamant */}
+        {/* En-tête simplifié avec l'icône Évaluation (Award) en Terre Cuite */}
         <div className="flex items-center justify-between pb-1 border-b border-[#ECE7DC]">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-[#C89B3C]/15 border border-[#C89B3C]/30 flex items-center justify-center text-[#9A7024]">
-              <Gem className="w-3.5 h-3.5" />
+            <div className="w-7 h-7 rounded-full bg-[#A2482B]/15 border border-[#A2482B]/30 flex items-center justify-center text-[#A2482B]">
+              <Award className="w-3.5 h-3.5" />
             </div>
             <span className="text-xs font-bold text-[#1C1917] uppercase tracking-wider">
               Évaluation
@@ -155,15 +155,15 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
               <Check className="w-5 h-5" />
             </div>
             <p className="text-sm font-bold text-[#1C1917]">Résonance enregistrée</p>
-            <p className="text-xs text-[#9A7024] font-mono font-bold">{overallPercentage}%</p>
+            <p className="text-xs text-[#A2482B] font-mono font-bold">{overallPercentage}%</p>
           </div>
         ) : (
           <>
-            {/* Moyenne centrée, claire et épurée */}
+            {/* Moyenne centrée, claire et épurée en Terre Cuite */}
             <div className="text-center py-2 px-3 bg-white rounded-xl border border-[#E7E2D6] shadow-2xs">
-              <div className="text-3xl sm:text-4xl font-extrabold text-[#9A7024] font-mono tracking-tight flex items-baseline justify-center gap-0.5">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#A2482B] font-mono tracking-tight flex items-baseline justify-center gap-0.5">
                 <span>{overallPercentage}</span>
-                <span className="text-lg text-[#C89B3C] font-sans font-bold">%</span>
+                <span className="text-lg text-[#A2482B]/80 font-sans font-bold">%</span>
               </div>
             </div>
 
@@ -174,7 +174,7 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
               <div className="space-y-1 bg-white p-2.5 rounded-xl border border-[#EAE6DE] shadow-2xs">
                 <div className="flex justify-between items-center text-xs">
                   <span className="font-semibold text-[#1C1917] text-[11px]">Authenticité</span>
-                  <span className="font-mono text-[#8B6845] font-bold bg-[#F5F2EB] border border-[#E7E2D6] px-1.5 py-0.5 rounded text-[10px]">
+                  <span className="font-mono text-[#A2482B] font-bold bg-[#A2482B]/10 border border-[#A2482B]/20 px-1.5 py-0.5 rounded text-[10px]">
                     {authenticity}%
                   </span>
                 </div>
@@ -185,7 +185,7 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
                   step="1"
                   value={authenticity}
                   onChange={(e) => setAuthenticity(Number(e.target.value))}
-                  className="w-full h-1.5 bg-[#E7E2D6] rounded-lg appearance-none cursor-pointer accent-[#C89B3C]"
+                  className="w-full h-1.5 bg-[#E7E2D6] rounded-lg appearance-none cursor-pointer accent-[#A2482B]"
                 />
                 <div className="flex justify-between text-[9px] text-stone-400 font-mono">
                   <span>0%</span>
@@ -197,7 +197,7 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
               <div className="space-y-1 bg-white p-2.5 rounded-xl border border-[#EAE6DE] shadow-2xs">
                 <div className="flex justify-between items-center text-xs">
                   <span className="font-semibold text-[#1C1917] text-[11px]">Pertinence</span>
-                  <span className="font-mono text-[#8B6845] font-bold bg-[#F5F2EB] border border-[#E7E2D6] px-1.5 py-0.5 rounded text-[10px]">
+                  <span className="font-mono text-[#A2482B] font-bold bg-[#A2482B]/10 border border-[#A2482B]/20 px-1.5 py-0.5 rounded text-[10px]">
                     {relevance}%
                   </span>
                 </div>
@@ -208,7 +208,7 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
                   step="1"
                   value={relevance}
                   onChange={(e) => setRelevance(Number(e.target.value))}
-                  className="w-full h-1.5 bg-[#E7E2D6] rounded-lg appearance-none cursor-pointer accent-[#C89B3C]"
+                  className="w-full h-1.5 bg-[#E7E2D6] rounded-lg appearance-none cursor-pointer accent-[#A2482B]"
                 />
                 <div className="flex justify-between text-[9px] text-stone-400 font-mono">
                   <span>0%</span>
@@ -220,7 +220,7 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
               <div className="space-y-1 bg-white p-2.5 rounded-xl border border-[#EAE6DE] shadow-2xs">
                 <div className="flex justify-between items-center text-xs">
                   <span className="font-semibold text-[#1C1917] text-[11px]">Impact</span>
-                  <span className="font-mono text-[#8B6845] font-bold bg-[#F5F2EB] border border-[#E7E2D6] px-1.5 py-0.5 rounded text-[10px]">
+                  <span className="font-mono text-[#A2482B] font-bold bg-[#A2482B]/10 border border-[#A2482B]/20 px-1.5 py-0.5 rounded text-[10px]">
                     {impact}%
                   </span>
                 </div>
@@ -231,7 +231,7 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
                   step="1"
                   value={impact}
                   onChange={(e) => setImpact(Number(e.target.value))}
-                  className="w-full h-1.5 bg-[#E7E2D6] rounded-lg appearance-none cursor-pointer accent-[#C89B3C]"
+                  className="w-full h-1.5 bg-[#E7E2D6] rounded-lg appearance-none cursor-pointer accent-[#A2482B]"
                 />
                 <div className="flex justify-between text-[9px] text-stone-400 font-mono">
                   <span>0%</span>
@@ -241,11 +241,11 @@ export const ResonanceModal: React.FC<ResonanceModalProps> = ({
 
             </div>
 
-            {/* Bouton de validation simple et proportionné */}
+            {/* Bouton de validation Terre Cuite (#A2482B) */}
             <div className="pt-1 flex justify-center">
               <button
                 onClick={handleSubmit}
-                className="w-full max-w-xs h-9 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center cursor-pointer active:scale-[0.98]"
+                className="w-full max-w-xs h-9 px-4 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center cursor-pointer active:scale-[0.98]"
               >
                 Valider
               </button>

@@ -1,11 +1,10 @@
 import React from 'react';
 import { 
-  Compass, 
   Clapperboard, 
-  Coins, 
-  User
+  Coins 
 } from 'lucide-react';
 import { ViewScreen } from '../types';
+import { ExplorerEggIcon, CircleDotsIcon } from './YonywoodBrandIcons';
 
 interface BottomMenuProps {
   currentScreen: ViewScreen;
@@ -14,11 +13,10 @@ interface BottomMenuProps {
 
 export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigate }) => {
   // Determine active item
-  const isExplorerActive = currentScreen.type === 'home' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
-  const isProposeActive = currentScreen.type === 'submit_story' || currentScreen.type === 'request_videographer';
-  const isDuosActive = currentScreen.type === 'duo_feed' || currentScreen.type === 'duo_detail';
-  const isMarketActive = currentScreen.type === 'marketplace';
-  const isProfileActive = currentScreen.type === 'profile' || currentScreen.type === 'my_forest' || currentScreen.type === 'messaging';
+  const isTournageActive = currentScreen.type === 'submit_story' || currentScreen.type === 'request_videographer';
+  const isCercleActive = currentScreen.type === 'home' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
+  const isMiroirActive = currentScreen.type === 'duo_feed' || currentScreen.type === 'duo_detail';
+  const isProductionsActive = currentScreen.type === 'marketplace';
 
   // Do not show menu during fullscreen video player
   if (currentScreen.type === 'video_player') {
@@ -27,45 +25,37 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
 
   const menuItems = [
     {
-      id: 'explorer',
-      label: 'Explorer',
-      icon: Compass,
-      isActive: isExplorerActive,
-      onClick: () => onNavigate({ type: 'home' }),
-      screenId: 'menu-item-explorer'
-    },
-    {
-      id: 'proposer',
-      label: 'Proposer',
+      id: 'tournage',
+      label: 'Tournage',
       icon: Clapperboard,
-      isActive: isProposeActive,
+      isActive: isTournageActive,
       onClick: () => onNavigate({ type: 'submit_story' }),
-      screenId: 'menu-item-propose'
+      screenId: 'menu-item-tournage'
     },
     {
-      id: 'duos',
-      label: 'Duos',
-      icon: null,
-      isActive: isDuosActive,
+      id: 'cercle',
+      label: 'Cercle',
+      icon: CircleDotsIcon,
+      isActive: isCercleActive,
+      onClick: () => onNavigate({ type: 'home' }),
+      screenId: 'menu-item-cercle'
+    },
+    {
+      id: 'miroir',
+      label: 'Miroir',
+      icon: ExplorerEggIcon,
+      isActive: isMiroirActive,
       onClick: () => onNavigate({ type: 'duo_feed' }),
-      screenId: 'menu-item-duos'
+      screenId: 'menu-item-miroir'
     },
     {
       id: 'productions',
       label: 'Productions',
       icon: Coins,
-      isActive: isMarketActive,
+      isActive: isProductionsActive,
       onClick: () => onNavigate({ type: 'marketplace' }),
       screenId: 'menu-item-productions'
-    },
-    {
-      id: 'profil',
-      label: 'Profil',
-      icon: User,
-      isActive: isProfileActive,
-      onClick: () => onNavigate({ type: 'profile' }),
-      screenId: 'menu-item-profile'
-    },
+    }
   ];
 
   return (
@@ -73,7 +63,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       <nav 
         id="yonywood-main-menu"
         aria-label="Navigation principale"
-        className="pointer-events-auto max-w-md mx-auto bg-white/95 backdrop-blur-xl border border-stone-200/90 rounded-full shadow-2xl shadow-stone-900/10 px-3 py-1.5 flex items-center justify-around"
+        className="pointer-events-auto max-w-sm mx-auto bg-white/95 backdrop-blur-xl border border-stone-200/90 rounded-full shadow-2xl shadow-stone-900/10 px-3 py-1.5 flex items-center justify-around"
       >
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -97,19 +87,11 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
                     : 'bg-transparent text-current group-hover:bg-stone-100/80'
                 }`}
               >
-                {item.id === 'duos' ? (
-                  <span className={`font-mono font-black text-[13px] tracking-wider select-none leading-none transition-transform duration-200 ${
-                    item.isActive ? 'text-white scale-105' : 'text-stone-600 group-hover:scale-105'
-                  }`}>
-                    &lt; &gt;
-                  </span>
-                ) : Icon ? (
-                  <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2] text-white' : 'stroke-[1.8] text-stone-600 group-hover:scale-105'}`} />
-                ) : null}
+                <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2] text-white' : 'stroke-[1.8] text-stone-600 group-hover:scale-105'}`} />
               </div>
 
               {/* Label */}
-              <span className={`text-[10px] tracking-tight mt-0.5 transition-all duration-200 ${
+              <span className={`text-[10.5px] tracking-tight mt-0.5 transition-all duration-200 ${
                 item.isActive 
                   ? 'font-bold text-[#1C1917]' 
                   : 'font-medium text-stone-500'
@@ -128,3 +110,4 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     </div>
   );
 };
+

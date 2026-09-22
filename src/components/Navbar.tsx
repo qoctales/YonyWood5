@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { 
-  TreePine, 
   Film, 
   PlusCircle, 
   Menu,
@@ -9,6 +8,7 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { RemoteControlModal } from './RemoteControlModal';
+import { YonywoodLogoIcon } from './YonywoodBrandIcons';
 
 interface NavbarProps {
   currentScreen: ViewScreen;
@@ -33,8 +33,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => 
           className="flex items-center gap-2.5 cursor-pointer group select-none"
           id="nav-logo"
         >
-          <div className="w-7 h-7 rounded-full bg-[#C89B3C]/15 border border-[#C89B3C]/30 flex items-center justify-center text-[#C89B3C] group-hover:scale-105 transition-transform">
-            <TreePine className="w-3.5 h-3.5" />
+          <div className="w-8 h-8 rounded-full bg-[#C89B3C]/15 border border-[#C89B3C]/35 flex items-center justify-center text-[#C89B3C] group-hover:scale-105 group-hover:border-[#C89B3C] transition-all shadow-xs">
+            <YonywoodLogoIcon className="w-4 h-4 stroke-[2.2]" />
           </div>
           <span className="font-editorial text-lg font-bold tracking-tight text-[#1C1917]">
             YONYWOOD

@@ -1,5 +1,28 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Compass, RefreshCw, ChevronLeft } from 'lucide-react';
+import { 
+  Compass, 
+  RefreshCw, 
+  ChevronLeft,
+  Film,
+  Mountain,
+  Atom,
+  GraduationCap,
+  Star,
+  Gem,
+  Sprout,
+  ShoppingBag
+} from 'lucide-react';
+
+const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  series: Film,
+  countries: Mountain,
+  questions: Atom,
+  thematics: GraduationCap,
+  personalities: Star,
+  brands: Gem,
+  projects: Sprout,
+  offers: ShoppingBag,
+};
 
 interface CentralAstrolabeJoystickProps {
   onRotateDelta: (deltaDeg: number) => void;
@@ -13,7 +36,7 @@ interface CentralAstrolabeJoystickProps {
   activeCategory?: string;
   activeFlagUrl?: string;
   activeCoverImage?: string;
-  hoveredCategory?: { label: string; coverImage: string; accentColor: string } | null;
+  hoveredCategory?: { id: string; label: string; coverImage?: string; accentColor?: string } | null;
   onActualiser?: () => void;
   onStepBack?: () => void;
   isRefreshing?: boolean;
@@ -207,48 +230,39 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
           </div>
         </div>
       ) : (
-        /* CAS 2 : NIVEAU DES 8 PORTES (Reflet de la porte survolée ou Cœur d'or de l'Astrolabe) */
+        /* CAS 2 : NIVEAU DES 8 PORTES (Cœur Terre Cuite avec icône blanche au repos, ou icône de la porte survolée au centre) */
         <div 
-          className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[#FFFFFF] via-[#F4EFE6] to-[#DFCDB2] border-2 border-[#C89B3C] shadow-[0_6px_25px_rgba(139,104,69,0.35)] transition-transform group-hover:scale-105 flex items-center justify-center overflow-hidden"
+          className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A2482B] border-2 border-[#C89B3C] shadow-[0_6px_25px_rgba(162,72,43,0.45)] transition-transform group-hover:scale-105 flex items-center justify-center overflow-hidden"
           style={{
             transform: `translate(${knobOffset.x}px, ${knobOffset.y}px)`
           }}
         >
+          {/* Filet or intérieur d'orfèvrerie */}
+          <div className="absolute inset-1 rounded-full border border-[#FFE7A3]/30 pointer-events-none" />
+
           {hoveredCategory ? (
-            /* Reflet immersif de la porte survolée dans le miroir optique central */
-            <div className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center">
-              <img 
-                src={hoveredCategory.coverImage} 
-                alt={hoveredCategory.label}
-                className="w-full h-full object-cover select-none pointer-events-none scale-105"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-stone-950/40 backdrop-blur-[0.5px]" />
-              <div className="absolute inset-0 rounded-full border border-[#FCE7A6]/70 pointer-events-none" />
-              <div className="relative text-center px-1 pointer-events-none z-10">
-                <span className="text-[9px] sm:text-[10px] font-bold text-white uppercase tracking-wider block drop-shadow">
-                  {hoveredCategory.label}
-                </span>
-                <span className="text-[7.5px] text-[#FCE7A6] font-medium block">
-                  Entrer
-                </span>
-              </div>
+            /* L'icône de la porte survolée prend seule la place centrale (épurée, sans texte redondant ni Entrer) */
+            <div className="relative w-full h-full rounded-full flex items-center justify-center pointer-events-none z-10 animate-in zoom-in-90 duration-200">
+              {(() => {
+                const IconComp = CATEGORY_ICONS[hoveredCategory.id] || Compass;
+                return (
+                  <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/10 border border-[#FFE7A3]/40 flex items-center justify-center shadow-inner">
+                    <IconComp className="w-6 h-6 sm:w-7 sm:h-7 text-white stroke-[2.2] drop-shadow-md transition-transform group-hover:scale-110" />
+                  </div>
+                );
+              })()}
             </div>
           ) : (
-            /* Cœur de l'astrolabe / Boussole précieuse */
-            <div className="relative w-full h-full rounded-full flex items-center justify-center">
-              {/* Anneau gradué gravé */}
-              <div className="absolute inset-1.5 rounded-full border border-dashed border-[#8B6845]/35 pointer-events-none" />
-              
-              {/* Repères cardinaux discrets */}
-              <div className="absolute w-[1px] h-full bg-[#8B6845]/20 pointer-events-none" />
-              <div className="absolute h-[1px] w-full bg-[#8B6845]/20 pointer-events-none" />
+            /* Au repos : Cœur de l'astrolabe / Boussole blanche sur fond Terre Cuite (identique au menu) */
+            <div className="relative w-full h-full rounded-full flex items-center justify-center pointer-events-none">
+              {/* Repères cardinaux et anneau d'astrolabe discrets */}
+              <div className="absolute inset-2 rounded-full border border-dashed border-[#FFE7A3]/30" />
+              <div className="absolute w-[1px] h-full bg-[#FFE7A3]/15" />
+              <div className="absolute h-[1px] w-full bg-[#FFE7A3]/15" />
 
-              {/* Pommeau orné */}
-              <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-gradient-to-br from-[#FCE7A6] via-[#C89B3C] to-[#8B6845] border-2 border-white shadow-[0_3px_12px_rgba(139,104,69,0.5)] flex items-center justify-center pointer-events-none">
-                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#78593A] border border-[#F5D88C]/80 flex items-center justify-center shadow-inner">
-                  <Compass className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FCE7A6] transition-transform ${isInteracting ? 'animate-spin' : ''}`} />
-                </div>
+              {/* Médaillon central : fond terre cuite et icône boussole en blanc */}
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 border border-[#FFE7A3]/40 flex items-center justify-center shadow-inner">
+                <Compass className={`w-5 h-5 sm:w-6 sm:h-6 text-white stroke-[2] transition-transform ${isInteracting ? 'animate-spin' : ''}`} />
               </div>
             </div>
           )}
@@ -261,8 +275,7 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
           {topicName}
         </div>
       ) : explorerLevel === 'dimensions' && hoveredCategory ? (
-        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-[#FCE7A6]/50 shadow-lg shadow-[#A2482B]/20 flex items-center gap-1.5 animate-in fade-in duration-200">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FCE7A6] animate-pulse" />
+        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[10.5px] font-bold px-3 py-0.5 rounded-full border border-[#FCE7A6]/60 shadow-lg shadow-[#A2482B]/30 flex items-center animate-in fade-in duration-200 tracking-wide">
           <span>{hoveredCategory.label}</span>
         </div>
       ) : null}
