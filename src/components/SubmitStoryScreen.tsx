@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { PROPOSE_DOORS, ProposeDoor, ProposeSubject } from '../data/proposeDoorsData';
-import { ProfileAvatarButton } from './TopProfileButton';
 
 interface SubmitStoryScreenProps {
   preselectedDocumentaryId?: string;
@@ -324,45 +323,85 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   return (
     <div className={`max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 ${step === 3 ? 'pb-24 overflow-y-auto' : 'pb-20 sm:pb-24 h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between'} text-[#1C1917]`}>
       
-      {/* En-tête de la page & Indicateur d'étapes avec avatar profil parfaitement aligné */}
-      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
-        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-          <h1 className="font-editorial text-base sm:text-2xl font-bold text-[#1C1917] tracking-tight truncate">
-            Tournage d'un récit
-          </h1>
-          <span className="text-[11px] sm:text-xs text-stone-500 font-medium shrink-0">
-            • {step}/3
-          </span>
-        </div>
-
-        {/* Pastilles d'étapes + Avatar profil intégrés dans le header */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
-          <div className="flex items-center gap-1 sm:gap-1.5">
-            {[1, 2, 3].map((s) => (
-              <div
-                key={s}
-                className={`w-5 h-5 sm:w-6.5 sm:h-6.5 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold transition-all ${
-                  step === s
-                    ? 'bg-[#A2482B] text-white shadow-xs ring-1 ring-[#A2482B]/30'
-                    : step > s
-                    ? 'bg-[#A2482B] text-white'
-                    : 'bg-stone-200 text-stone-500'
-                }`}
-              >
-                {step > s ? '✓' : s}
+      {/* En-tête dynamique du Studio : Choix progressifs validés (Porte, Sujet, Format) avec bouton Modifier */}
+      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 min-h-[40px] sm:min-h-[44px] gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 flex-1">
+          {step === 1 ? (
+            /* Étape 1 : En-tête épuré et sobre */
+            <div className="flex items-center gap-2">
+              <span className="font-editorial text-sm sm:text-base font-bold text-[#1C1917] tracking-tight">
+                Studio
+              </span>
+              <span className="text-stone-300">•</span>
+              <span className="text-[11px] sm:text-xs text-stone-500 font-medium">
+                8 Portes d'entrée
+              </span>
+            </div>
+          ) : step === 2 ? (
+            /* Étape 2 : La porte choisie apparaît ici dans le header avec son bouton Modifier */
+            <div className="flex items-center gap-2 min-w-0 flex-wrap">
+              <div className="inline-flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full bg-[#A2482B] text-white shadow-xs text-[10.5px] sm:text-xs font-semibold shrink-0">
+                <CurrentDoorIcon className="w-3.5 h-3.5 text-white/90 shrink-0" />
+                <span className="truncate max-w-[140px] sm:max-w-[220px]">{currentDoor.label}</span>
               </div>
-            ))}
-          </div>
-
-          <ProfileAvatarButton onNavigate={onNavigate} />
+              <button
+                onClick={() => {
+                  setStep(1);
+                  setIsSubjectVideoPlaying(false);
+                  setShowSubjectQuestion(false);
+                }}
+                id="header-edit-door-btn"
+                className="h-6.5 px-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#A2482B] hover:text-[#8B3B20] text-[10.5px] sm:text-xs font-semibold border border-stone-200/90 transition-colors cursor-pointer shrink-0"
+                title="Modifier la porte choisie"
+              >
+                Modifier
+              </button>
+            </div>
+          ) : (
+            /* Étape 3 : La porte et le sujet choisi apparaissent ici dans le header avec bouton Modifier */
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-wrap">
+              <div className="inline-flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full bg-[#A2482B] text-white shadow-xs text-[10.5px] sm:text-xs font-semibold shrink-0">
+                <CurrentDoorIcon className="w-3.5 h-3.5 text-white/90 shrink-0" />
+                <span className="truncate max-w-[110px] sm:max-w-[170px]">{currentDoor.label}</span>
+              </div>
+              <span className="text-stone-300 shrink-0">•</span>
+              <span className="font-sans text-[11px] sm:text-xs font-bold text-[#1C1917] truncate max-w-[120px] sm:max-w-[200px]">
+                {currentSubject.title}
+              </span>
+              <button
+                onClick={() => {
+                  setChosenFlow(null);
+                  setShowFormatDetails(false);
+                  setIsFormatVideoPlaying(false);
+                  setStep(2);
+                }}
+                id="header-edit-subject-btn"
+                className="h-6.5 px-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#A2482B] hover:text-[#8B3B20] text-[10.5px] sm:text-xs font-semibold border border-stone-200/90 transition-colors cursor-pointer shrink-0"
+                title="Modifier le sujet choisi"
+              >
+                Modifier
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Côté droit épuré : Raccourci retour direct aux duos si nécessaire */}
+        {preselectedDocumentaryId && (
+          <button
+            onClick={() => onNavigate({ type: 'duo_feed' })}
+            className="text-[11px] sm:text-xs text-stone-500 hover:text-stone-900 font-medium underline cursor-pointer shrink-0"
+            title="Revenir aux duos"
+          >
+            Quitter
+          </button>
+        )}
       </div>
 
       {/* ========================================================================= */}
       {/* ÉTAPE 1 : CHOISIR PARMI LES 8 PORTES D'ENTRÉE                             */}
       {/* ========================================================================= */}
       {step === 1 && (
-        <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-hidden animate-in fade-in duration-200">
+        <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
           
           {/* Conteneur de l'écran 9:16 avec swipe et flèches (sans menu supérieur) */}
           <div className="relative w-full h-full flex items-center justify-center">
@@ -370,14 +409,14 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
             {/* Flèche Gauche */}
             <button
               onClick={handlePrevDoor}
-              className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
+              className="hidden sm:flex absolute left-2 sm:left-4 lg:left-6 z-20 w-11 h-11 rounded-full shrink-0 bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-xl items-center justify-center transition-all cursor-pointer transform hover:scale-105 active:scale-95"
               title="Porte précédente"
               id="prev-door-btn"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
 
-            {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL 9:16 */}
+            {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL 9:16 STRICTEMENT IDENTIQUE À LA PAGE DUOS */}
             <div
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
@@ -385,7 +424,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
               onMouseUp={onMouseUp}
-              className="w-auto max-w-[min(calc(100vw-28px),calc((100dvh-130px)*9/16))] max-h-[calc(100dvh-130px)] sm:max-h-[min(620px,calc(100dvh-150px))] aspect-[9/16] mx-auto transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing flex justify-center"
+              className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing flex justify-center shrink-0"
               style={{ transform: `translateX(${swipeOffset}px)` }}
             >
               <div 
@@ -399,7 +438,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   }
                   setIsDoorVideoPlaying(prev => !prev);
                 }}
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-stone-700/50 flex flex-col justify-between p-3.5 sm:p-5 cursor-pointer"
+                className="group relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-[#FFFFFF] shadow-2xl border border-stone-200/80 flex flex-col justify-between p-2.5 sm:p-4.5 cursor-pointer select-none"
                 id={`current-door-card-${currentDoor.id}`}
               >
                 {/* 1. Média de fond : Vidéo OU Poster officiel */}
@@ -480,10 +519,9 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       e.stopPropagation();
                       setShowDoorAdvantages(true);
                     }}
-                    className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
+                    className="h-7.5 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center justify-center border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
                     title="Découvrir les 5 avantages"
                   >
-                    <Sparkles className="w-3 h-3 text-[#FACC15] shrink-0" />
                     <span>Avantages</span>
                   </button>
 
@@ -573,7 +611,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
             {/* Flèche Droite */}
             <button
               onClick={handleNextDoor}
-              className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
+              className="hidden sm:flex absolute right-2 sm:right-4 lg:right-6 z-20 w-11 h-11 rounded-full shrink-0 bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-xl items-center justify-center transition-all cursor-pointer transform hover:scale-105 active:scale-95"
               title="Porte suivante"
               id="next-door-btn"
             >
@@ -588,28 +626,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {/* ÉTAPE 2 : CHOISIR LE SUJET / SOUS-CATÉGORIE DANS LA PORTE SÉLECTIONNÉE     */}
       {/* ========================================================================= */}
       {step === 2 && (
-        <div className="flex-1 flex flex-col justify-between py-1 min-h-0 overflow-hidden animate-in fade-in duration-200">
+        <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
           
-          {/* Ligne informative compacte : Sujet & Porte sélectionnée */}
-          <div className="flex items-center justify-between text-xs text-stone-600 px-1 shrink-0 mb-1">
-            <span className="truncate font-medium text-[11px] sm:text-xs">Choisissez votre sujet ({subjectIndex + 1}/{currentDoor.subjects.length})</span>
-            <button
-              onClick={() => {
-                setStep(1);
-                setIsSubjectVideoPlaying(false);
-                setShowSubjectQuestion(false);
-              }}
-              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10.5px] font-semibold border border-stone-200/80 cursor-pointer shrink-0 transition-colors"
-              title="Changer de Porte"
-            >
-              <CurrentDoorIcon className="w-3 h-3 text-[#A2482B]" />
-              <span>{currentDoor.label}</span>
-              <span className="text-[#A2482B] underline ml-0.5">Modifier</span>
-            </button>
-          </div>
-
-          {/* CONTENEUR DU SWIPE SUJET AVEC FLÈCHES LATÉRALES (sans chips/menu) */}
-          <div className="relative flex-1 flex items-center justify-center min-h-0 px-2 sm:px-6 md:px-10">
+          {/* CONTENEUR DU SWIPE SUJET AVEC FLÈCHES LATÉRALES - alignement identique à l'étape 1 */}
+          <div className="relative w-full h-full flex items-center justify-center">
             
             {/* Flèche précédente */}
             <button
@@ -629,7 +649,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               onMouseDown={onSubMouseDown}
               onMouseMove={onSubMouseMove}
               onMouseUp={onSubMouseUp}
-              className="w-auto max-w-[min(calc(100vw-28px),calc((100dvh-135px)*9/16))] max-h-[calc(100dvh-135px)] sm:max-h-[min(640px,calc(100dvh-150px))] aspect-[9/16] mx-auto rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white shadow-2xl border border-stone-700/50 flex flex-col justify-between p-3.5 sm:p-5 transition-transform duration-150 ease-out select-none cursor-pointer"
+              className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between p-2.5 sm:p-4.5 transition-transform duration-150 ease-out select-none cursor-pointer shrink-0"
               id={`current-subject-card-${currentSubject.id}`}
             >
               {/* Vidéo ou affiche officielle de fond */}
@@ -842,7 +862,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   onMouseDown={onFmtMouseDown}
                   onMouseMove={onFmtMouseMove}
                   onMouseUp={onFmtMouseUp}
-                  className="relative w-auto max-w-[min(340px,calc((100dvh-175px)*9/16))] max-h-[calc(100dvh-175px)] sm:max-h-[min(580px,calc(100dvh-200px))] aspect-[9/16] mx-auto rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white shadow-2xl border border-stone-700/50 flex flex-col justify-between p-4 sm:p-6 transition-transform duration-150 ease-out select-none cursor-pointer"
+                  className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between p-3 sm:p-5 transition-transform duration-150 ease-out select-none cursor-pointer shrink-0"
                   id={`current-format-card-${formatCardIndex}`}
                 >
                   {/* Vidéo ou affiche officielle de fond selon le format */}
@@ -1057,29 +1077,6 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   <ChevronRight className="w-5 h-5" />
                 </button>
 
-              </div>
-
-              {/* Informations sous la vidéo : Récapitulatif discret Porte & Sujet */}
-              <div className="max-w-[320px] sm:max-w-[350px] mx-auto p-3 sm:p-3.5 rounded-2xl bg-white border border-[#E7E5E4] flex items-center justify-between gap-3 shadow-xs">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-[11px] font-bold text-[#A2482B] uppercase tracking-wider shrink-0">
-                    {currentDoor.label}
-                  </span>
-                  <span className="text-stone-300 shrink-0">•</span>
-                  <span className="text-xs font-bold text-[#1C1917] truncate">
-                    {currentSubject.title}
-                  </span>
-                </div>
-                <button
-                  onClick={() => {
-                    setChosenFlow(null);
-                    setShowFormatDetails(false);
-                    setStep(2);
-                  }}
-                  className="text-xs text-[#A2482B] hover:text-[#8B3B20] font-semibold underline cursor-pointer shrink-0"
-                >
-                  Modifier
-                </button>
               </div>
             </div>
           )}

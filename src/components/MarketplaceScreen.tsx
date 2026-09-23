@@ -9,7 +9,6 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ViewScreen } from '../types';
-import { ProfileAvatarButton } from './TopProfileButton';
 
 interface MarketplaceScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -287,12 +286,13 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                   : 'bg-[#E7E5E4] text-[#7A756B] hover:text-[#1C1917]'
               }`}
             >
-              Coproduire
+              À l'affiche
             </button>
 
             <button
               onClick={() => setActiveTab('marche')}
               id="tab-marche"
+              title="Pour l'échange et le rachat de parts entre membres de la communauté"
               className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'marche'
                   ? 'bg-[#A2482B] text-white shadow-sm shadow-[#A2482B]/30 ring-1 ring-[#C89B3C]/40'
@@ -302,8 +302,6 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
               Marché
             </button>
           </div>
-
-          <ProfileAvatarButton onNavigate={onNavigate} />
         </div>
       </div>
 
@@ -334,7 +332,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
             <ChevronLeft className="w-5 h-5" />
           </button>
 
-          {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL 9:16 AVEC SUPPORT DU SWIPE */}
+          {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL 9:16 STRICTEMENT IDENTIQUE À LA PAGE DUOS */}
           <div
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
@@ -342,11 +340,11 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
-            className="w-auto max-w-[min(calc(100vw-28px),calc((100dvh-130px)*9/16))] max-h-[calc(100dvh-130px)] sm:max-h-[min(620px,calc(100dvh-150px))] aspect-[9/16] mx-auto transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing flex justify-center"
+            className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing flex justify-center shrink-0"
             style={{ transform: `translateX(${swipeOffset}px)` }}
           >
             {/* =================================================================== */}
-            {/* VUE A : COPRODUIRE                                                 */}
+            {/* VUE A : À L'AFFICHE                                                */}
             {/* =================================================================== */}
             {activeTab === 'coproduire' && currentProd && (
               <div 
@@ -356,7 +354,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                   }
                   toggleVideoPlayback();
                 }}
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-3.5 sm:p-5 cursor-pointer"
+                className="group relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-[#FFFFFF] shadow-2xl border border-stone-200/80 flex flex-col justify-between p-2.5 sm:p-4.5 cursor-pointer select-none"
                 id={`card-coproduire-${currentProd.id}`}
               >
                 {/* 1. Média de fond : Affiche officielle par défaut OU Vidéo si lecture activée */}
@@ -414,7 +412,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                     <span className="text-[9.5px] text-white/70">/ part</span>
                   </div>
 
-                  {/* Bouton Coproduire la série : gris clair au repos, marron terre cuite au survol */}
+                  {/* Bouton Acquérir : gris clair au repos, marron terre cuite au survol */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -423,9 +421,9 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                     }}
                     id={`btn-coproduire-${currentProd.id}`}
                     className="h-7.5 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-stone-100/95 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1 shadow-md border border-stone-200/80 hover:border-[#A2482B] cursor-pointer shrink-0 active:scale-95 group/coprod"
-                    title="Coproduire cette série"
+                    title="Acquérir des parts pour cette série"
                   >
-                    <span>Coproduire</span>
+                    <span>Acquérir</span>
                     <ArrowRight className="w-3 h-3 text-stone-600 group-hover/coprod:text-white transition-colors" />
                   </button>
                 </div>
@@ -444,7 +442,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                   }
                   toggleVideoPlayback();
                 }}
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-3.5 sm:p-5 cursor-pointer"
+                className="group relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-[#FFFFFF] shadow-2xl border border-stone-200/80 flex flex-col justify-between p-2.5 sm:p-4.5 cursor-pointer select-none"
                 id={`card-marche-${currentOffer.id}`}
               >
                 {/* 1. Média de fond : Affiche officielle par défaut OU Vidéo si lecture activée */}
@@ -551,7 +549,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
 
             {/* Si Marché vide */}
             {activeTab === 'marche' && peerOffers.length === 0 && (
-              <div className="w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white/80 flex flex-col items-center justify-center p-6 text-center space-y-3 border border-[#E7E5E4]/50">
+              <div className="w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white/80 flex flex-col items-center justify-center p-6 text-center space-y-3 border border-stone-200/80 shadow-2xl">
                 <Coins className="w-12 h-12 text-[#C89B3C] opacity-60" />
                 <h3 className="font-editorial text-lg font-bold text-white">Marché au repos</h3>
                 <p className="text-xs text-white/70">Toutes les parts ont été rachetées par la communauté.</p>

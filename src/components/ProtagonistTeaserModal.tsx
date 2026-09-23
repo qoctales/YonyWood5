@@ -76,7 +76,7 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
     >
       {/* Container vertical 9:16 adapté à l'écran mobile */}
       <div 
-        className="relative w-auto max-w-[min(340px,calc((100dvh-100px)*9/16))] max-h-[calc(100dvh-100px)] aspect-[9/16] mx-auto rounded-3xl shadow-2xl border border-white/25 bg-black flex flex-col justify-between p-4 sm:p-5 text-white animate-in zoom-in-95 duration-200 group/modal select-none cursor-pointer"
+        className="relative aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl shadow-2xl border border-stone-200/80 bg-black flex flex-col justify-between p-4 sm:p-5 text-white animate-in zoom-in-95 duration-200 group/modal select-none cursor-pointer shrink-0"
         onClick={(e) => {
           if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
           togglePlay();

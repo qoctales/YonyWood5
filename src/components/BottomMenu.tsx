@@ -1,6 +1,7 @@
 import React from 'react';
 import { 
-  Clapperboard
+  Clapperboard,
+  User
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { 
@@ -16,10 +17,15 @@ interface BottomMenuProps {
 
 export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigate }) => {
   // Déterminer l'élément actif selon l'écran en cours
-  const isRealiserActive = currentScreen.type === 'submit_story' || currentScreen.type === 'request_videographer';
+  const isStudioActive = currentScreen.type === 'submit_story' || currentScreen.type === 'request_videographer';
   const isCastingActive = currentScreen.type === 'home' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
   const isDuocumentairesActive = currentScreen.type === 'duo_feed' || currentScreen.type === 'duo_detail';
-  const isCoproduireActive = currentScreen.type === 'marketplace';
+  const isCoproductionActive = currentScreen.type === 'marketplace';
+  const isProfilActive = 
+    currentScreen.type === 'profile' || 
+    currentScreen.type === 'protagonist_profile' || 
+    currentScreen.type === 'my_forest' || 
+    currentScreen.type === 'messaging';
 
   // Ne pas afficher le menu pendant le lecteur vidéo plein écran
   if (currentScreen.type === 'video_player') {
@@ -28,12 +34,12 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
 
   const menuItems = [
     {
-      id: 'realiser',
-      label: 'Réaliser',
+      id: 'studio',
+      label: 'Studio',
       icon: Clapperboard,
-      isActive: isRealiserActive,
+      isActive: isStudioActive,
       onClick: () => onNavigate({ type: 'submit_story' }),
-      screenId: 'menu-item-realiser'
+      screenId: 'menu-item-studio'
     },
     {
       id: 'casting',
@@ -52,12 +58,20 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       screenId: 'menu-item-duocumentaires'
     },
     {
-      id: 'coproduire',
-      label: 'Coproduire',
+      id: 'coproduction',
+      label: 'Coproduction',
       icon: CoproduireRingsIcon,
-      isActive: isCoproduireActive,
+      isActive: isCoproductionActive,
       onClick: () => onNavigate({ type: 'marketplace' }),
-      screenId: 'menu-item-coproduire'
+      screenId: 'menu-item-coproduction'
+    },
+    {
+      id: 'profil',
+      label: 'Profil',
+      icon: User,
+      isActive: isProfilActive,
+      onClick: () => onNavigate({ type: 'profile' }),
+      screenId: 'menu-item-profil'
     }
   ];
 
@@ -66,17 +80,18 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       <nav 
         id="yonywood-main-menu"
         aria-label="Navigation principale"
-        className="pointer-events-auto max-w-sm mx-auto bg-white/95 backdrop-blur-xl border border-stone-200/90 rounded-full shadow-2xl shadow-stone-900/10 px-3 py-1.5 flex items-center justify-around"
+        className="pointer-events-auto max-w-md sm:max-w-lg mx-auto bg-white/95 backdrop-blur-xl border border-stone-200/90 rounded-full shadow-2xl shadow-stone-900/10 px-2 sm:px-4 py-1.5 flex items-center justify-between gap-1 sm:gap-2"
       >
         {menuItems.map((item) => {
           const Icon = item.icon;
+
           return (
             <button
               key={item.id}
               onClick={item.onClick}
               id={item.screenId}
               title={item.label}
-              className={`relative flex flex-col items-center justify-center px-2 sm:px-3 py-1 rounded-full transition-colors duration-200 group cursor-pointer ${
+              className={`relative flex-1 flex flex-col items-center justify-center px-1 sm:px-2 py-1 rounded-full transition-colors duration-200 group cursor-pointer ${
                 item.isActive
                   ? 'text-stone-900'
                   : 'text-stone-500 hover:text-stone-800'
@@ -91,15 +106,21 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
                 }`}
               >
                 <Icon 
-                  className={`${item.id === 'casting' ? 'w-[21.5px] h-[21.5px]' : 'w-5 h-5'} transition-transform duration-200`} 
-                  strokeWidth={item.id === 'casting' ? 1.6 : 1.35} 
+                  className={`${
+                    item.id === 'casting' 
+                      ? 'w-[21.5px] h-[21.5px]' 
+                      : item.id === 'profil'
+                      ? 'w-[19px] h-[19px]'
+                      : 'w-5 h-5'
+                  } transition-transform duration-200`} 
+                  strokeWidth={item.id === 'casting' ? 1.6 : item.id === 'profil' ? 1.7 : 1.35} 
                 />
               </div>
 
-              {/* Libellé textuel : épaisseur uniforme (sans passage en gras), aligné strictement */}
-              <span className={`text-[10.5px] sm:text-[11px] tracking-tight mt-1 transition-colors duration-200 font-normal ${
+              {/* Libellé textuel en noms communs uniformes, taille optimisée sur mobile pour éviter toute coupure */}
+              <span className={`text-[9px] sm:text-[10.5px] leading-tight tracking-tight mt-0.5 sm:mt-1 transition-colors duration-200 font-normal truncate max-w-full text-center ${
                 item.isActive 
-                  ? 'text-[#A2482B]' 
+                  ? 'text-[#A2482B] font-semibold' 
                   : 'text-stone-500'
               }`}>
                 {item.label}

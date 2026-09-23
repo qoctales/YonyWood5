@@ -45,6 +45,7 @@ import {
   User
 } from 'lucide-react';
 import { ShareIcon } from './ShareIcon';
+import { CoproduireRingsIcon } from './YonywoodBrandIcons';
 import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
 import { PROTAGONISTS, DOCUMENTARIES } from '../data/mockData';
 import { MATRIX_SERIES_DATA } from '../data/matrixData';
@@ -994,7 +995,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   const CATEGORIES: { key: ProfileCategory; label: string; icon: React.FC<{ className?: string }> }[] = [
     { key: 'recit', label: 'Récits & Épisodes', icon: Film },
-    { key: 'production', label: 'Productions', icon: Coins },
+    { key: 'production', label: 'Productions', icon: CoproduireRingsIcon },
     { key: 'offre', label: 'Offre', icon: ShoppingBag },
     { key: 'appel', label: 'Projet', icon: Sprout },
   ];
@@ -1478,7 +1479,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   className="h-8 sm:h-8.5 px-3 sm:px-4 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-semibold text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer whitespace-nowrap"
                   title={`Envoyer un message à ${userName}`}
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-[#A2482B]" />
+                  <MessageSquare className="w-3.5 h-3.5 text-white" />
                   <span>Message</span>
                 </button>
 
@@ -1527,7 +1528,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
               toggleVideoPlayback();
             }}
-            className="w-auto max-w-[min(340px,calc((100dvh-175px)*9/16))] max-h-[calc(100dvh-175px)] sm:max-h-[min(580px,calc(100dvh-190px))] aspect-[9/16] mx-auto transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-3xl overflow-hidden shadow-2xl border border-stone-800 bg-stone-950 outline-none focus:outline-none ring-0"
+            className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-stone-200/80 bg-stone-950 outline-none focus:outline-none ring-0 shrink-0"
             style={{ transform: `translate(${swipeOffsetX}px, ${swipeOffsetY}px)` }}
           >
             {/* ================================================================= */}
@@ -2174,14 +2175,6 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             </button>
           </div>
         )}
-
-        {/* Aide visuelle intuitive */}
-        <div className="flex items-center justify-center text-center px-4 pt-1">
-          <p className="text-[11px] text-stone-500 font-medium">
-            <span className="text-[#C89B3C] font-semibold">↕ Swipe vertical</span> : changer de catégorie •{' '}
-            <span className="text-[#C89B3C] font-semibold">↔ Swipe horizontal</span> : changer de vidéo
-          </p>
-        </div>
 
       </div>
 

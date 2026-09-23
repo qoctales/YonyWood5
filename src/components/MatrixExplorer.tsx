@@ -31,13 +31,13 @@ import {
   Atom,
   Fingerprint,
   Sprout,
-  Star
+  Star,
+  BookOpen
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
 import { CentralAstrolabeJoystick } from './CentralAstrolabeJoystick';
 import { VerticalZoomSlider } from './VerticalZoomSlider';
-import { ProfileAvatarButton } from './TopProfileButton';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 import { ResonanceModal } from './ResonanceModal';
 import { 
@@ -100,6 +100,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   const [hoveredTopic, setHoveredTopic] = useState<ExplorerCatalogItem | null>(null);
   const [hoveredCategory, setHoveredCategory] = useState<ExplorerCategoryConfig | null>(null);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState<boolean>(false);
+  const [isPersonQuestionModalOpen, setIsPersonQuestionModalOpen] = useState<boolean>(false);
   const [showQuestionInVideo, setShowQuestionInVideo] = useState<boolean>(false);
 
   // Filtrage par série (si mode séries)
@@ -589,11 +590,6 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             </div>
           </div>
         )}
-
-        {/* Avatar profil aligné sur le bord droit du header */}
-        <div className="pointer-events-auto">
-          <ProfileAvatarButton onNavigate={onNavigate} />
-        </div>
       </header>
 
       {/* POP-OVER AÉRÉ DE LA QUESTION (S'affiche uniquement au clic sur la Question pour la catégorie Sagesses) */}
@@ -1394,7 +1390,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         >
           <div 
             id="person-detail-modal"
-            className="group relative rounded-3xl overflow-hidden bg-stone-900 text-white shadow-2xl border border-stone-700/60 flex flex-col justify-between w-auto max-w-[min(340px,calc((100dvh-120px)*9/16))] max-h-[calc(100dvh-120px)] aspect-[9/16] mx-auto animate-in zoom-in-95 duration-200 select-none cursor-pointer"
+            className="group relative aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between animate-in zoom-in-95 duration-200 select-none cursor-pointer shrink-0"
             onClick={(e) => {
               if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
               toggleVideoPlayback();
@@ -1450,11 +1446,6 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 <span className="truncate block font-semibold">
                   {activeTopicItem?.title || modalPerson.universeTag}
                 </span>
-                {activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[#C89B3C]/25 text-[#F5D88C] font-normal shrink-0">
-                    Question
-                  </span>
-                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -1478,6 +1469,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     setModalPerson(null);
                     setIsPlaying(false);
                     setIsResonanceModalOpen(false);
+                    setIsPersonQuestionModalOpen(false);
                   }}
                   className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-stone-200 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95"
                   title="Fermer"
@@ -1498,35 +1490,48 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 </p>
               </div>
 
-              <div className="flex flex-col items-center gap-3 shrink-0">
-                {/* Évaluation résonance (Award en Terre Cuite) */}
+              <div className="flex flex-col items-center gap-2.5 sm:gap-3 shrink-0">
+                {/* 1. Évaluation résonance (Award en Terre Cuite) */}
                 <button
                   id={`btn-eval-resonance-${modalPerson.id}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsResonanceModalOpen(true);
                   }}
-                  className={`w-10 h-10 rounded-full backdrop-blur-md border flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full backdrop-blur-md border flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
                     personResonancePct !== null
                       ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_14px_rgba(162,72,43,0.5)]'
                       : 'bg-white/20 hover:bg-[#A2482B]/80 border-white/25 hover:border-[#A2482B] text-white'
                   }`}
                   title={personResonancePct !== null ? `Résonance : ${personResonancePct}%` : "Évaluer la résonance"}
                 >
-                  <Award className="w-5 h-5" />
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
 
-                {/* Accès à son univers complet (bonhomme) */}
+                {/* 2. Question (vignette circulaire assortie avec icône livre ouvert) */}
+                <button
+                  id={`modal-btn-question-${modalPerson.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPersonQuestionModalOpen(true);
+                  }}
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 shrink-0"
+                  title="Découvrir la question"
+                >
+                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </button>
+
+                {/* 3. Accès à son univers complet (bonhomme) */}
                 <button
                   id={`modal-btn-universe-${modalPerson.id}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleOpenUniverse(modalPerson);
                   }}
-                  className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
                   title="Découvrir son univers complet"
                 >
-                  <User className="w-5 h-5" />
+                  <User className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
@@ -1543,6 +1548,41 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 setPersonResonancePct(pct);
               }}
             />
+
+            {/* Modale Question (au clic sur l'icône question) */}
+            {isPersonQuestionModalOpen && (
+              <div 
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsPersonQuestionModalOpen(false);
+                }}
+              >
+                <div 
+                  className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-stone-200 text-center animate-in zoom-in-95 duration-200 pointer-events-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    onClick={() => setIsPersonQuestionModalOpen(false)}
+                    className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+
+                  <div className="w-12 h-12 rounded-full bg-[#C89B3C]/15 text-[#C89B3C] flex items-center justify-center mx-auto mb-4 border border-[#C89B3C]/30">
+                    <BookOpen className="w-6 h-6" />
+                  </div>
+
+                  <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917] mb-3">
+                    {activeTopicItem?.title || modalPerson.universeTag || modalPerson.name}
+                  </h3>
+
+                  <p className="font-serif-editorial text-base sm:text-lg text-stone-800 leading-relaxed italic px-2">
+                    « {(activeTopicItem?.question || (modalPerson as any).question || "Quelle vision singulière ce parcours apporte-t-il au monde ?").replace(/^[«"'\s]+|[»"'\s]+$/g, '')} »
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
