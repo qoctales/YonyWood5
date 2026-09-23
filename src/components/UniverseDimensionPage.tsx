@@ -568,7 +568,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
           <div className="relative flex items-center justify-center py-1">
             <button
               onClick={handlePrev}
-              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
               title="Production précédente"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -616,7 +616,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
                     }}
                     className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-xs border border-white/30 text-white flex items-center justify-center transition-all hover:scale-105 z-10 cursor-pointer"
                   >
-                    {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1 text-[#C89B3C]" />}
+                    {isPlaying ? <Pause className="w-6 h-6 fill-white text-white" /> : <Play className="w-6 h-6 ml-1 text-white fill-white" />}
                   </button>
 
                   {/* Bottom Content Gradient */}
@@ -662,7 +662,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
 
             <button
               onClick={handleNext}
-              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
               title="Production suivante"
             >
               <ChevronRight className="w-5 h-5" />
@@ -701,7 +701,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
           <div className="relative flex items-center justify-center py-1">
             <button
               onClick={handlePrev}
-              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -800,7 +800,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
 
             <button
               onClick={handleNext}
-              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -837,7 +837,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
           <div className="relative flex items-center justify-center py-1">
             <button
               onClick={handlePrev}
-              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -911,7 +911,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
 
             <button
               onClick={handleNext}
-              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -948,7 +948,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
           <div className="relative flex items-center justify-center py-1">
             <button
               onClick={handlePrev}
-              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -1022,7 +1022,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
 
             <button
               onClick={handleNext}
-              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -1059,7 +1059,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
           <div className="relative flex items-center justify-center py-1">
             <button
               onClick={handlePrev}
-              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute left-2 md:left-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -1128,7 +1128,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
 
             <button
               onClick={handleNext}
-              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-md items-center justify-center transition-all cursor-pointer"
+              className="hidden sm:flex absolute right-2 md:right-10 z-20 w-10 h-10 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-md items-center justify-center transition-all cursor-pointer"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -1320,7 +1320,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
                     }}
                     className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-xs border border-white/30 text-white flex items-center justify-center transition-all hover:scale-105 z-10 cursor-pointer"
                   >
-                    {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1 text-[#C89B3C]" />}
+                    {isPlaying ? <Pause className="w-6 h-6 fill-white text-white" /> : <Play className="w-6 h-6 ml-1 text-white fill-white" />}
                   </button>
 
                   {/* Bottom Content */}

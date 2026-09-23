@@ -1343,28 +1343,37 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-36 space-y-6 text-[#1C1917]">
+    <div className="max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-6 pb-20 sm:pb-36 space-y-3 sm:space-y-6 text-[#1C1917]">
       
       {/* ========================================================================= */}
-      {/* 1. EN-TÊTE D'IDENTITÉ UNIFIÉ : MODE PROPRIÉTAIRE & VISITEUR               */}
+      {/* 1. EN-TÊTE D'IDENTITÉ UNIFIÉ COMPACT : MODE PROPRIÉTAIRE & VISITEUR        */}
       {/* ========================================================================= */}
-      <div className="space-y-4 border-b border-stone-200 pb-4">
+      <div className="border-b border-stone-200 pb-2 sm:pb-4">
         
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3.5">
-            {/* Bouton retour vers l'accueil si ce n'est pas un visiteur venant d'un duo */}
-            {!returnToDuoId && !isOwner && (
-              <button
-                onClick={() => onNavigate({ type: 'home' })}
-                className="p-2 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 transition-colors shadow-xs cursor-pointer mr-1"
-                title="Retour à l'explorateur"
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </button>
-            )}
+        {/* LIGNE PRINCIPALE : IDENTITÉ & ACTIONS RAPIDES SANS COLLISION */}
+        <div className="flex items-center justify-between gap-1.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
+            {/* Bouton retour vers l'accueil ou vers le duo */}
+            <button
+              onClick={() => {
+                if (returnToDuoId) {
+                  onNavigate({
+                    type: 'duo_feed',
+                    currentDuoIndex: returnToDuoIndex ?? 0,
+                    selectedDocId: returnToDocId
+                  });
+                } else {
+                  onNavigate({ type: 'home' });
+                }
+              }}
+              className="p-1.5 sm:p-2 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 transition-colors shadow-xs cursor-pointer shrink-0"
+              title="Retour"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </button>
 
-            <div className="relative">
-              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-0.5 border-2 border-[#C89B3C] shadow-sm overflow-hidden bg-white">
+            <div className="relative shrink-0">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full p-0.5 border-2 border-[#C89B3C] shadow-sm overflow-hidden bg-white">
                 <img
                   src={userPhoto}
                   alt={userFullName}
@@ -1374,28 +1383,28 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               {isOwner && (
                 <button
                   onClick={() => setIsEditingProfile(true)}
-                  className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#1C1917] hover:bg-[#C89B3C] text-white flex items-center justify-center shadow-md cursor-pointer transition-colors border-2 border-white"
+                  className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 sm:w-6 sm:h-6 rounded-full bg-[#1C1917] hover:bg-[#C89B3C] text-white flex items-center justify-center shadow-md cursor-pointer transition-colors border border-white"
                   title="Modifier mon profil"
                   id="btn-edit-profile-avatar"
                 >
-                  <Camera className="w-3 h-3" />
+                  <Camera className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 </button>
               )}
             </div>
 
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-editorial text-lg sm:text-xl font-bold text-[#1C1917] leading-tight">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h1 className="font-editorial text-sm sm:text-xl font-bold text-[#1C1917] leading-tight truncate">
                   {profileDisplayName}
                 </h1>
-                {targetProtagonist?.flag && <span className="text-sm">{targetProtagonist.flag}</span>}
+                {targetProtagonist?.flag && <span className="text-xs sm:text-sm shrink-0">{targetProtagonist.flag}</span>}
               </div>
-              <p className="text-xs text-[#8B6845] font-medium mt-0.5 line-clamp-1">{userRole}</p>
+              <p className="text-[10.5px] sm:text-xs text-[#8B6845] font-medium mt-0.5 truncate">{userRole}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Bouton Revenir au Duo placé à côté des actions */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Bouton Revenir au Duo placé à côté des actions (sur desktop) */}
             {returnToDuoId && (
               <button
                 type="button"
@@ -1404,7 +1413,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   currentDuoIndex: returnToDuoIndex ?? 0,
                   selectedDocId: returnToDocId
                 })}
-                className="h-9 px-3.5 rounded-full bg-white hover:bg-stone-50 border border-[#C89B3C] text-[#C89B3C] hover:text-[#B78A2E] text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                className="hidden sm:flex h-8.5 px-3 rounded-full bg-white hover:bg-stone-50 border border-[#C89B3C] text-[#C89B3C] hover:text-[#B78A2E] text-xs font-semibold transition-all shadow-xs items-center gap-1.5 cursor-pointer whitespace-nowrap"
                 title="Revenir au Duo"
                 id="btn-return-to-duo-actions"
               >
@@ -1415,77 +1424,78 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
             {isOwner ? (
               <>
-                {/* Propriétaire : Bouton Modifier profil */}
+                {/* Bouton Modifier profil */}
                 <button
                   onClick={() => setIsEditingProfile(true)}
                   id="btn-profile-edit-header"
-                  className="h-9 px-3.5 rounded-full bg-stone-100 hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-stone-800 hover:text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 group/editbtn"
+                  className="w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-stone-100 hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-stone-800 hover:text-white flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 group/editbtn"
                   title="Modifier mon profil"
                 >
                   <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editbtn:text-white transition-colors" />
-                  <span>Modifier</span>
+                  <span className="hidden sm:inline">Modifier</span>
                 </button>
 
-                {/* Propriétaire : Bouton Messagerie */}
+                {/* Bouton Messagerie */}
                 <button
                   onClick={() => onNavigate({ type: 'messaging' })}
                   id="btn-profile-messages"
-                  className="h-9 px-3.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-semibold text-[#1C1917] flex items-center gap-1.5 transition-all shadow-xs cursor-pointer relative"
+                  className="w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-semibold text-[#1C1917] flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative"
                   title="Ouvrir la messagerie"
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-stone-700" />
-                  <span>Messages</span>
-                  <span className="w-4 h-4 rounded-full bg-[#A2482B] text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="hidden sm:inline">Messages</span>
+                  <span className="absolute -top-1 -right-1 sm:static sm:top-auto sm:right-auto w-4 h-4 rounded-full bg-[#A2482B] text-white text-[9px] font-bold flex items-center justify-center">
                     2
                   </span>
                 </button>
 
-                {/* Propriétaire : Bouton Partager (Icône Terre Cuite #A2482B) */}
+                {/* Bouton Partager */}
                 <button
                   onClick={handleShareProfile}
                   id="btn-share-profile"
-                  className="w-9 h-9 rounded-full bg-white hover:bg-[#A2482B]/10 border border-stone-200 hover:border-[#A2482B] text-[#A2482B] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-[#A2482B]/10 border border-stone-200 hover:border-[#A2482B] text-[#A2482B] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                   title="Partager mon profil"
                 >
-                  <ShareIcon className="w-4 h-4 text-[#A2482B]" />
+                  <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#A2482B]" />
                 </button>
 
-                {/* Propriétaire : Icône discrète PARAMÈTRES dans l'en-tête */}
+                {/* Icône Paramètres */}
                 <button
                   onClick={() => setIsSettingsOpen(true)}
                   id="btn-profile-settings-gear"
-                  className="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-700 hover:text-[#1C1917] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-700 hover:text-[#1C1917] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                   title="Paramètres du compte"
                 >
-                  <Sliders className="w-4 h-4" />
+                  <Sliders className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               </>
             ) : (
               <>
-                {/* Visiteur : Bouton Envoyer un message */}
+                {/* Visiteur : Bouton Message */}
                 <button
                   onClick={() => onNavigate({ type: 'messaging' })}
                   id="btn-visitor-message"
-                  className="h-9 px-4 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-semibold text-white flex items-center gap-2 transition-all shadow-xs cursor-pointer whitespace-nowrap"
+                  className="h-8 sm:h-8.5 px-3 sm:px-4 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-semibold text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer whitespace-nowrap"
                   title={`Envoyer un message à ${userName}`}
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-[#A2482B]" />
-                  <span>Envoyer un message</span>
+                  <span>Message</span>
                 </button>
 
-                {/* Visiteur : Bouton Partager (Icône Terre Cuite #A2482B) */}
+                {/* Visiteur : Bouton Partager */}
                 <button
                   onClick={handleShareProfile}
                   id="btn-share-visitor-profile"
-                  className="w-9 h-9 rounded-full bg-white hover:bg-[#A2482B]/10 border border-stone-200 hover:border-[#A2482B] text-[#A2482B] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-[#A2482B]/10 border border-stone-200 hover:border-[#A2482B] text-[#A2482B] flex items-center justify-center transition-all shadow-xs cursor-pointer"
                   title={`Partager le profil de ${userName}`}
                 >
-                  <ShareIcon className="w-4 h-4 text-[#A2482B]" />
+                  <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#A2482B]" />
                 </button>
               </>
             )}
           </div>
         </div>
+
       </div>
 
       {/* TOAST SUCCÈS */}
@@ -1517,7 +1527,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
               toggleVideoPlayback();
             }}
-            className="w-full max-w-[320px] sm:max-w-[360px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-3xl overflow-hidden shadow-2xl border border-stone-800 bg-stone-950 outline-none focus:outline-none ring-0"
+            className="w-auto max-w-[min(340px,calc((100dvh-175px)*9/16))] max-h-[calc(100dvh-175px)] sm:max-h-[min(580px,calc(100dvh-190px))] aspect-[9/16] mx-auto transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-3xl overflow-hidden shadow-2xl border border-stone-800 bg-stone-950 outline-none focus:outline-none ring-0"
             style={{ transform: `translate(${swipeOffsetX}px, ${swipeOffsetY}px)` }}
           >
             {/* ================================================================= */}
@@ -1563,14 +1573,25 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               })}
             </div>
 
-            {/* Indication visuelle discrète au centre quand la vidéo est en pause */}
-            {!isPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl">
-                  <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-90" />
-                </div>
-              </div>
-            )}
+            {/* CENTRE : Icône vidéo Play / Pause au centre exact de l'image */}
+            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+              <button
+                type="button"
+                id="btn-center-play-pause-profile"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleVideoPlayback(e);
+                }}
+                className="pointer-events-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/45 hover:bg-black/70 backdrop-blur-xs border border-white/25 text-white flex items-center justify-center transition-all duration-200 shadow-2xl hover:scale-105 active:scale-95 cursor-pointer"
+                title={isPlaying ? 'Mettre en pause' : 'Lire la vidéo'}
+              >
+                {isPlaying ? (
+                  <Pause className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white" />
+                ) : (
+                  <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white translate-x-0.5 opacity-95" />
+                )}
+              </button>
+            </div>
 
             {/* ================================================================= */}
             {/* CATÉGORIE 1 : RÉCIT (Récits personnels & Épisodes réunis)         */}
@@ -1621,14 +1642,14 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 <div className="my-auto" />
 
                 {/* BAS : Titre, durée/vues, actions & lecteur moderne (Style Image 2) */}
-                <div className="relative z-10 space-y-2.5 pr-14">
+                <div className="relative z-10 space-y-2 sm:space-y-2.5 pr-12 sm:pr-14 pb-0.5">
                   <div>
-                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                    <h3 className="font-editorial text-xs sm:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                       {currentRecitUnified.kind === 'recit'
                         ? (currentRecitUnified.item.subtitle || currentRecitUnified.item.chapter || currentRecitUnified.item.title)
                         : currentRecitUnified.item.title}
                     </h3>
-                    <div className="flex items-center gap-2 text-[11px] text-white/80 mt-1 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                    <div className="flex items-center gap-1.5 text-[10.5px] sm:text-[11px] text-white/80 mt-0.5 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                       <span>{currentRecitUnified.item.duration}</span>
                       <span>•</span>
                       <span>{currentRecitUnified.item.viewsCount?.toLocaleString()} vues</span>
@@ -1636,7 +1657,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   </div>
 
                   {isOwner && (
-                    <div className="grid grid-cols-2 gap-2 pt-0.5">
+                    <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-0.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1650,10 +1671,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                             setEpisodeFormViews(currentRecitUnified.item.viewsCount);
                           }
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
+                        className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                         id="btn-edit-recit-unified"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
+                        <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                         <span>Modifier</span>
                       </button>
                       <button
@@ -1667,10 +1688,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                             setIsDeletingEpisode(true);
                           }
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                        className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
                         id="btn-delete-recit-unified"
                       >
-                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-400" />
                         <span>Retirer</span>
                       </button>
                     </div>
@@ -1737,12 +1758,12 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 <div className="my-auto" />
 
                 {/* BAS : Détails coproduction, actions & lecteur moderne (Style Image 2) */}
-                <div className="relative z-10 space-y-2.5 pr-14">
+                <div className="relative z-10 space-y-2 sm:space-y-2.5 pr-12 sm:pr-14 pb-0.5">
                   <div>
-                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
+                    <h3 className="font-editorial text-xs sm:text-base font-bold text-white leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                       {currentProduction.seriesTitle}
                     </h3>
-                    <div className="flex items-center gap-3 text-[11px] text-white/90 mt-1 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                    <div className="flex items-center gap-2 text-[10.5px] sm:text-[11px] text-white/90 mt-0.5 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                       <span>{currentProduction.sharesCount} parts</span>
                       <span>•</span>
                       <span>Valeur : {currentProduction.currentValue}</span>
@@ -1750,7 +1771,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   </div>
 
                   {isOwner ? (
-                    <div className="grid grid-cols-2 gap-2 pt-0.5">
+                    <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-0.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1761,10 +1782,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setProdFormSharesCount(currentProduction.sharesCount);
                           setProdFormSharesOnSale(currentProduction.sharesOnSale);
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
+                        className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                         id="btn-edit-production"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
+                        <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                         <span>Modifier</span>
                       </button>
                       <button
@@ -1774,10 +1795,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setSellPriceInput(currentProduction.salePrice || currentProduction.recommendedPrice);
                           setIsSellingShares(true);
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-black/65 hover:bg-stone-800 border border-white/20 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                        className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-stone-800 border border-white/20 text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
                         id="btn-sell-production"
                       >
-                        <Coins className="w-3.5 h-3.5 text-[#FACC15]" />
+                        <Coins className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FACC15]" />
                         <span>Vendre</span>
                       </button>
                     </div>
@@ -1788,10 +1809,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           e.stopPropagation();
                           setIsBuyingSharesModalOpen(true);
                         }}
-                        className="w-full h-9 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                        className="w-full h-8 sm:h-9 px-4 rounded-lg sm:rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                         id="btn-buy-shares"
                       >
-                        <Coins className="w-4 h-4 text-[#1C1917]" />
+                        <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917]" />
                         <span>Acheter des parts</span>
                       </button>
                     </div>
@@ -1858,21 +1879,21 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 <div className="my-auto" />
 
                 {/* BAS : Titre court, catégorie, prix, actions & lecteur moderne (Style Image 2) */}
-                <div className="relative z-10 space-y-2.5 pr-14">
+                <div className="relative z-10 space-y-2 sm:space-y-2.5 pr-12 sm:pr-14 pb-0.5">
                   <div>
-                    <div className="text-[11px] font-medium text-[#FACC15] uppercase tracking-wider drop-shadow-sm">
+                    <div className="text-[10px] sm:text-[11px] font-medium text-[#FACC15] uppercase tracking-wider drop-shadow-sm">
                       {currentCreation.categoryLabel || 'Offre & Savoir-faire'}
                     </div>
-                    <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] mt-0.5" title={currentCreation.title}>
+                    <h3 className="font-editorial text-xs sm:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] mt-0.5" title={currentCreation.title}>
                       {currentCreation.title}
                     </h3>
-                    <p className="font-mono text-base font-bold text-[#FACC15] pt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                    <p className="font-mono text-sm sm:text-base font-bold text-[#FACC15] pt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                       {currentCreation.price}
                     </p>
                   </div>
 
                   {isOwner ? (
-                    <div className="grid grid-cols-2 gap-2 pt-0.5">
+                    <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-0.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -1884,10 +1905,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setCreationFormPoster(currentCreation.posterUrl);
                           setCreationFormVideo(currentCreation.videoUrl);
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
+                        className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                         id="btn-edit-creation"
                       >
-                        <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
+                        <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                         <span>Modifier</span>
                       </button>
                       <button
@@ -1895,10 +1916,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           e.stopPropagation();
                           setIsDeletingCreation(true);
                         }}
-                        className="h-8.5 px-3 rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                        className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
                         id="btn-delete-creation"
                       >
-                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-400" />
                         <span>Supprimer</span>
                       </button>
                     </div>
@@ -1910,10 +1931,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setOrderActionType('commander');
                           setIsOrderingCreationModalOpen(true);
                         }}
-                        className="w-full h-9 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                        className="w-full h-8 sm:h-9 px-4 rounded-lg sm:rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                         id="btn-order-creation"
                       >
-                        <ShoppingBag className="w-4 h-4 text-[#1C1917]" />
+                        <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917]" />
                         <span>Commander</span>
                       </button>
                     </div>
@@ -1983,17 +2004,17 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 <div className="my-auto" />
 
                 {/* BAS : Détails & Actions selon Initiative ou Appel */}
-                <div className="relative z-10 space-y-2.5 pr-14">
+                <div className="relative z-10 space-y-2 sm:space-y-2.5 pr-12 sm:pr-14 pb-0.5">
                   {currentAppelUnified.kind === 'initiative' ? (
                     <>
                       <div>
-                        <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2" title={currentAppelUnified.item.title}>
+                        <h3 className="font-editorial text-xs sm:text-base font-bold text-white leading-tight line-clamp-2" title={currentAppelUnified.item.title}>
                           {currentAppelUnified.item.title}
                         </h3>
                       </div>
 
-                      <div className="space-y-1.5 p-2.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/20">
-                        <div className="flex items-center justify-between text-[11px]">
+                      <div className="space-y-1 p-2 rounded-lg sm:rounded-xl bg-black/60 backdrop-blur-md border border-white/20">
+                        <div className="flex items-center justify-between text-[10.5px] sm:text-[11px]">
                           <span className="text-white/80">Obj : {currentAppelUnified.item.targetAmount.toLocaleString()} €</span>
                           <span className="font-mono text-[#FACC15] font-bold">{currentAppelUnified.item.collectedAmount.toLocaleString()} € récoltés</span>
                         </div>
@@ -2006,7 +2027,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                       </div>
 
                       {isOwner ? (
-                        <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-0.5">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -2017,10 +2038,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               setInitiativeFormPoster(currentAppelUnified.item.posterUrl);
                               setInitiativeFormVideo(currentAppelUnified.item.videoUrl);
                             }}
-                            className="h-9 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
+                            className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                             id="btn-edit-initiative"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
+                            <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                             <span>Modifier</span>
                           </button>
                           <button
@@ -2029,25 +2050,25 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               setEditingInitiative(currentAppelUnified.item);
                               setIsDeletingInitiative(true);
                             }}
-                            className="h-9 px-3 rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                            className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
                             id="btn-delete-initiative"
                           >
-                            <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                            <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-400" />
                             <span>Supprimer</span>
                           </button>
                         </div>
                       ) : (
-                        <div className="pt-1">
+                        <div className="pt-0.5">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setInitiativeActionType('contribuer');
                               setIsContributingModalOpen(true);
                             }}
-                            className="w-full h-10 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                            className="w-full h-8 sm:h-9 px-4 rounded-lg sm:rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                             id="btn-contribute-initiative"
                           >
-                            <Users className="w-4 h-4 text-[#1C1917]" />
+                            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917]" />
                             <span>Contribuer</span>
                           </button>
                         </div>
@@ -2056,13 +2077,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   ) : (
                     <>
                       <div>
-                        <h3 className="font-editorial text-sm sm:text-base font-bold text-white leading-snug line-clamp-2" title={currentAppelUnified.item.title}>
+                        <h3 className="font-editorial text-xs sm:text-base font-bold text-white leading-tight line-clamp-2" title={currentAppelUnified.item.title}>
                           {currentAppelUnified.item.title}
                         </h3>
                       </div>
 
                       {isOwner ? (
-                        <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-0.5">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -2072,10 +2093,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               setAppelFormDescription(currentAppelUnified.item.description);
                               setAppelFormImpact(currentAppelUnified.item.impact || '');
                             }}
-                            className="h-9 px-3 rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
+                            className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
                             id="btn-edit-appel"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
+                            <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
                             <span>Modifier</span>
                           </button>
                           <button
@@ -2084,10 +2105,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               setEditingAppel(currentAppelUnified.item);
                               setIsDeletingAppel(true);
                             }}
-                            className="h-9 px-3 rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                            className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-red-600/90 border border-white/20 hover:border-red-500 text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
                             id="btn-delete-appel"
                           >
-                            <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                            <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-400" />
                             <span>Supprimer</span>
                           </button>
                         </div>
@@ -2098,10 +2119,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               e.stopPropagation();
                               setIsOfferingHelpModalOpen(true);
                             }}
-                            className="w-full h-9 px-4 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                            className="w-full h-8 sm:h-9 px-4 rounded-lg sm:rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
                             id="btn-reply-appel"
                           >
-                            <Sprout className="w-4 h-4 text-[#1C1917]" />
+                            <Sprout className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917]" />
                             <span>Soutenir ce projet</span>
                           </button>
                         </div>

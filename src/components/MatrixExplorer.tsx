@@ -37,6 +37,7 @@ import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
 import { CentralAstrolabeJoystick } from './CentralAstrolabeJoystick';
 import { VerticalZoomSlider } from './VerticalZoomSlider';
+import { ProfileAvatarButton } from './TopProfileButton';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 import { ResonanceModal } from './ResonanceModal';
 import { 
@@ -106,9 +107,44 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   const [teaserProtagonist, setTeaserProtagonist] = useState<Protagonist | null>(null);
 
   // 2. Navigation spatiale : rotation, zoom et pan
+  // Calibrage automatique du zoom initial pour adapter parfaitement le cercle des 16 visages à l'écran mobile
   const [rotationAngle, setRotationAngle] = useState<number>(0);
-  const [zoomLevel, setZoomLevel] = useState<number>(1.0);
+  const [zoomLevel, setZoomLevel] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (w < 640) {
+        // Cercle diamètre complet ~620px -> adaptation automatique pour tenir d'un seul coup d'œil
+        const availableW = w - 36;
+        const availableH = h - 160;
+        return Math.min(0.54, Math.max(0.38, Math.min(availableW / 640, availableH / 640)));
+      }
+      if (w < 1024) return 0.8;
+    }
+    return 1.0;
+  });
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  // Écoute du redimensionnement pour maintenir le cercle calibré sur smartphone
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (w < 640) {
+        setZoomLevel(prev => {
+          // Si l'utilisateur n'a pas déjà manuellement dézoomé/zoomé loin
+          if (prev >= 0.7) {
+            const availableW = w - 36;
+            const availableH = h - 160;
+            return Math.min(0.54, Math.max(0.38, Math.min(availableW / 640, availableH / 640)));
+          }
+          return prev;
+        });
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Références d'interaction pour la rotation fluide par glisser-déposer
   const containerRef = useRef<HTMLDivElement>(null);
@@ -497,84 +533,66 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         }}
       />
 
-      {/* 1. BARRE SUPÉRIEURE : FIL D'ARIANE ÉPURÉ EN TERRE CUITE & TEXTE BLANC */}
-      <header className="absolute top-3 sm:top-4 left-3 sm:left-4 right-16 sm:right-28 z-40 flex items-center justify-between pointer-events-none">
+      {/* 1. BARRE SUPÉRIEURE : EN-TÊTE ÉPURÉ, COMPACT AVEC BREADCRUMBS ET AVATAR PROFIL ALIGNÉS */}
+      <header className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 flex items-center justify-between pointer-events-none">
         
-        {/* FIL D'ARIANE INTERACTIF : [Portes] > [Catégorie] > [Sujet actif] */}
-        <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#A2482B] text-white shadow-md border border-[#8A3B22] pointer-events-auto max-w-full overflow-x-auto no-scrollbar">
-          {/* Niveau 0 : Portes */}
-          <button
-            id="breadcrumb-dimensions-btn"
-            onClick={() => {
-              celestialAudio.playOrbSelect();
-              setExplorerLevel('dimensions');
-              setIsQuestionModalOpen(false);
-            }}
-            className={`text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-              explorerLevel === 'dimensions'
-                ? 'bg-white text-[#A2482B] shadow-xs'
-                : 'text-white/85 hover:text-white hover:bg-white/15'
-            }`}
-            title="Revenir au choix des Portes"
-          >
+        {explorerLevel === 'dimensions' ? (
+          /* Niveau 0 : Portes d'entrée */
+          <div className="flex items-center gap-1.5 h-7.5 px-3 rounded-full bg-[#A2482B] text-white shadow-sm border border-[#8A3B22] pointer-events-auto text-[11px] sm:text-xs font-semibold">
             <Layers className="w-3.5 h-3.5" />
-            <span>Portes</span>
-          </button>
+            <span>8 Portes d'entrée</span>
+          </div>
+        ) : (
+          /* Niveau 1+ : Bouton retour aux Portes + Capsule Sujet actif & Actualiser */
+          <div className="flex items-center gap-1.5 pointer-events-auto min-w-0">
+            {/* Bouton retour aux 8 Portes */}
+            <button
+              id="breadcrumb-dimensions-btn"
+              onClick={() => {
+                celestialAudio.playOrbSelect();
+                setExplorerLevel('dimensions');
+                setIsQuestionModalOpen(false);
+              }}
+              className="h-7.5 px-2.5 rounded-full bg-stone-900/85 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1 backdrop-blur-md border border-white/20 shadow-sm cursor-pointer transition-all active:scale-95 shrink-0"
+              title="Revenir au choix des Portes"
+            >
+              <Layers className="w-3 h-3 text-[#C89B3C]" />
+              <span>Portes</span>
+            </button>
 
-          {explorerLevel !== 'dimensions' && (
-            <>
-              <span className="text-white/40 text-xs shrink-0">/</span>
-
-              {/* Catégorie active (Série, Territoire, Sagesse, Emploi, etc.) */}
+            {/* Sujet actif sélectionné & Bouton Actualiser */}
+            <div className="h-7.5 pl-2.5 pr-1 rounded-full bg-[#A2482B] text-white shadow-sm border border-[#8A3B22] flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold shrink-0 max-w-[210px] sm:max-w-[320px]">
               <button
-                id="breadcrumb-category-btn"
+                id="breadcrumb-topic-title-btn"
                 onClick={() => {
-                  celestialAudio.playOrbSelect();
-                  setExplorerLevel('dimensions');
-                  setIsQuestionModalOpen(false);
+                  if (activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle)) {
+                    setIsQuestionModalOpen(prev => !prev);
+                  }
                 }}
-                className="text-xs sm:text-sm font-semibold px-2.5 py-1 rounded-full text-white bg-white/20 hover:bg-white/30 border border-white/30 transition-all cursor-pointer flex items-center gap-1 shadow-xs shrink-0"
-                title={`${activeCategoryConfig.label} (cliquer pour changer de Porte)`}
+                className={`truncate text-white transition-colors ${
+                  activeCategory === 'questions' ? 'cursor-pointer hover:text-[#FFE7A3]' : 'cursor-default'
+                }`}
+                title={activeCategory === 'questions' ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
               >
-                <span>{activeCategoryConfig.label}</span>
+                <span className="truncate">{activeTopicItem?.title}</span>
               </button>
 
-              <span className="text-white/40 text-xs shrink-0">/</span>
+              {/* Symbole discret pour actualiser les 16 voix */}
+              <button
+                id="btn-symbol-16-autres-voix"
+                onClick={handleActualiser}
+                className="w-5.5 h-5.5 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#A2482B] border border-white/30 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group shrink-0"
+                title="Actualiser : 16 autres voix"
+              >
+                <RefreshCw className={`w-2.5 h-2.5 transition-transform ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 duration-500'}`} />
+              </button>
+            </div>
+          </div>
+        )}
 
-              {/* Sujet actif sélectionné */}
-              <div className="flex items-center gap-1.5 pl-2.5 pr-1 py-0.5 rounded-full bg-white/15 border border-white/25 shrink-0 text-white">
-                <button
-                  id="breadcrumb-topic-title-btn"
-                  onClick={() => {
-                    if (activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle)) {
-                      setIsQuestionModalOpen(prev => !prev);
-                    }
-                  }}
-                  className={`text-xs sm:text-sm font-semibold text-white flex items-center gap-1.5 transition-colors ${
-                    activeCategory === 'questions' ? 'cursor-pointer hover:text-[#FFE7A3]' : 'cursor-default'
-                  }`}
-                  title={activeCategory === 'questions' ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
-                >
-                  <span className="truncate max-w-[120px] sm:max-w-[180px]">{activeTopicItem?.title}</span>
-                  {activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/25 text-white font-medium">
-                      Question
-                    </span>
-                  )}
-                </button>
-
-                {/* Symbole discret pour actualiser les 16 voix */}
-                <button
-                  id="btn-symbol-16-autres-voix"
-                  onClick={handleActualiser}
-                  className="w-6 h-6 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#A2482B] border border-white/30 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group ml-0.5"
-                  title="Actualiser : 16 autres voix"
-                >
-                  <RefreshCw className={`w-3 h-3 transition-transform ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 duration-500'}`} />
-                </button>
-              </div>
-            </>
-          )}
+        {/* Avatar profil aligné sur le bord droit du header */}
+        <div className="pointer-events-auto">
+          <ProfileAvatarButton onNavigate={onNavigate} />
         </div>
       </header>
 
@@ -602,14 +620,32 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         </div>
       )}
 
-      {/* 2. SLIDER DE ZOOM VERTICAL LATÉRAL */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 pointer-events-auto">
+      {/* 2. SLIDER DE ZOOM VERTICAL LATÉRAL (DESKTOP) & CONTRÔLE DISCRET (MOBILE) */}
+      <div className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 z-30 pointer-events-auto">
         <VerticalZoomSlider 
           zoom={zoomLevel}
           onZoomChange={setZoomLevel}
           minZoom={0.5}
           maxZoom={1.5}
         />
+      </div>
+
+      {/* Sur smartphone : mini boutons zoom flottants en bas à droite au-dessus du menu pour dégager 100% de la roue */}
+      <div className="sm:hidden absolute right-3 bottom-24 z-30 pointer-events-auto flex flex-col gap-1.5 bg-white/90 backdrop-blur-md p-1 rounded-full border border-stone-200/90 shadow-md">
+        <button
+          onClick={() => setZoomLevel(prev => Math.min(1.5, Number((prev + 0.08).toFixed(2))))}
+          className="w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center text-sm font-bold active:scale-90 cursor-pointer"
+          title="Zoomer"
+        >
+          +
+        </button>
+        <button
+          onClick={() => setZoomLevel(prev => Math.max(0.35, Number((prev - 0.08).toFixed(2))))}
+          className="w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center text-sm font-bold active:scale-90 cursor-pointer"
+          title="Dézoomer"
+        >
+          −
+        </button>
       </div>
 
       {/* 3. SCÈNE CENTRALE : ROUE PLANÉTAIRE & CONSTELLATIONS */}
@@ -1190,6 +1226,11 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                           if (hasDraggedRef.current) return;
                           handleNodeClick(node.person, node.gen);
                         }}
+                        onDoubleClick={(e) => {
+                          e.stopPropagation();
+                          setModalPerson(node.person);
+                          setIsPlaying(true);
+                        }}
                         onMouseEnter={() => celestialAudio.playOrbHover(540)}
                       >
                         {/* Zone tactile */}
@@ -1353,7 +1394,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         >
           <div 
             id="person-detail-modal"
-            className="group relative rounded-3xl overflow-hidden bg-stone-900 text-white shadow-2xl border border-stone-700/60 flex flex-col justify-between w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] animate-in zoom-in-95 duration-200 select-none cursor-pointer"
+            className="group relative rounded-3xl overflow-hidden bg-stone-900 text-white shadow-2xl border border-stone-700/60 flex flex-col justify-between w-auto max-w-[min(340px,calc((100dvh-120px)*9/16))] max-h-[calc(100dvh-120px)] aspect-[9/16] mx-auto animate-in zoom-in-95 duration-200 select-none cursor-pointer"
             onClick={(e) => {
               if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
               toggleVideoPlayback();
@@ -1381,6 +1422,26 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             {/* Gradient pour lisibilité */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 pointer-events-none" />
 
+            {/* CENTRE : Icône vidéo Play / Pause au centre exact de l'image */}
+            <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+              <button
+                type="button"
+                id="btn-center-play-pause-modal"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleVideoPlayback();
+                }}
+                className="pointer-events-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/45 hover:bg-black/70 backdrop-blur-xs border border-white/25 text-white flex items-center justify-center transition-all duration-200 shadow-2xl hover:scale-105 active:scale-95 cursor-pointer"
+                title={isPlaying ? 'Mettre en pause' : 'Lire la vidéo'}
+              >
+                {isPlaying ? (
+                  <Pause className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white" />
+                ) : (
+                  <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white translate-x-0.5 opacity-95" />
+                )}
+              </button>
+            </div>
+
             {/* HAUT : Titre du sujet + Commandes */}
             <div className="relative z-20 p-4 flex items-center justify-between pointer-events-auto">
               <div 
@@ -1407,26 +1468,6 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     <VolumeX className="w-4 h-4 text-white/80" />
                   ) : (
                     <Volume2 className="w-4 h-4 text-[#C89B3C]" />
-                  )}
-                </button>
-
-                {/* Pause / Play */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleVideoPlayback();
-                  }}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-lg ${
-                    isPlaying
-                      ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 backdrop-blur-md shadow-[0_0_16px_rgba(200,155,60,0.6)]'
-                      : 'border border-transparent bg-black/40 hover:bg-black/60 backdrop-blur-md'
-                  }`}
-                  title={isPlaying ? 'Mettre en pause' : 'Lire la vidéo'}
-                >
-                  {isPlaying ? (
-                    <Pause className="w-4 h-4 text-[#C89B3C] fill-[#C89B3C]" />
-                  ) : (
-                    <Play className="w-4 h-4 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5" />
                   )}
                 </button>
 

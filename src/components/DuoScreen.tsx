@@ -120,8 +120,8 @@ export const DuoScreen: React.FC<DuoScreenProps> = ({ duoId, onNavigate }) => {
                       className="w-full h-full object-cover rounded-2xl shadow-sm border-2 border-[#C89B3C]/40 group-hover/thumb:border-[#C89B3C] transition-all"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-black/20 group-hover/thumb:bg-black/40 transition-colors flex items-center justify-center">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-black/50 group-hover/thumb:bg-black/70 backdrop-blur-sm border border-transparent group-hover/thumb:border-[#C89B3C] group-hover/thumb:ring-2 group-hover/thumb:ring-[#C89B3C]/30 transition-all shadow-md">
-                        <Play className="w-5 h-5 text-[#C89B3C] fill-[#C89B3C] ml-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] drop-shadow-[0_0_8px_rgba(200,155,60,0.7)] group-hover/thumb:scale-110 transition-transform" />
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-black/50 group-hover/thumb:bg-black/70 backdrop-blur-sm border border-transparent group-hover/thumb:border-white/40 group-hover/thumb:ring-2 group-hover/thumb:ring-white/20 transition-all shadow-md">
+                        <Play className="w-5 h-5 text-white fill-white ml-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] group-hover/thumb:scale-110 transition-transform" />
                       </div>
                     </div>
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-[#FFFFFF] border border-[#E7E5E4] shadow flex items-center justify-center text-sm z-10">
@@ -231,8 +231,8 @@ export const DuoScreen: React.FC<DuoScreenProps> = ({ duoId, onNavigate }) => {
                       className="w-full h-full object-cover rounded-2xl shadow-sm border-2 border-[#8B6845]/40 group-hover/thumb:border-[#C89B3C] transition-all"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-black/20 group-hover/thumb:bg-black/40 transition-colors flex items-center justify-center">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-black/50 group-hover/thumb:bg-black/70 backdrop-blur-sm border border-transparent group-hover/thumb:border-[#C89B3C] group-hover/thumb:ring-2 group-hover/thumb:ring-[#C89B3C]/30 transition-all shadow-md">
-                        <Play className="w-5 h-5 text-[#C89B3C] fill-[#C89B3C] ml-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] drop-shadow-[0_0_8px_rgba(200,155,60,0.7)] group-hover/thumb:scale-110 transition-transform" />
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-black/50 group-hover/thumb:bg-black/70 backdrop-blur-sm border border-transparent group-hover/thumb:border-white/40 group-hover/thumb:ring-2 group-hover/thumb:ring-white/20 transition-all shadow-md">
+                        <Play className="w-5 h-5 text-white fill-white ml-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] group-hover/thumb:scale-110 transition-transform" />
                       </div>
                     </div>
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-[#FFFFFF] border border-[#E7E5E4] shadow flex items-center justify-center text-sm z-10">

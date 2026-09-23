@@ -106,8 +106,8 @@ export const ReviewSystemScreen: React.FC<ReviewSystemScreenProps> = ({ onNaviga
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
               />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-[#D9AF52] flex items-center justify-center text-black shadow-lg">
-                  <Play className="w-7 h-7 fill-current ml-0.5" />
+                <div className="w-16 h-16 rounded-full bg-[#A2482B] flex items-center justify-center text-white shadow-lg">
+                  <Play className="w-7 h-7 fill-white text-white ml-0.5" />
                 </div>
               </div>
               <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-xs">

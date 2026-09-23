@@ -74,11 +74,11 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
       className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
-      {/* Container vertical 9:16 */}
+      {/* Container vertical 9:16 adapté à l'écran mobile */}
       <div 
-        className="relative w-full max-w-[340px] max-h-[94vh] overflow-y-auto rounded-3xl shadow-2xl border border-white/25 bg-black flex flex-col justify-between p-5 text-white animate-in zoom-in-95 duration-200 scrollbar-none"
+        className="relative w-auto max-w-[min(340px,calc((100dvh-100px)*9/16))] max-h-[calc(100dvh-100px)] aspect-[9/16] mx-auto rounded-3xl shadow-2xl border border-white/25 bg-black flex flex-col justify-between p-4 sm:p-5 text-white animate-in zoom-in-95 duration-200 group/modal select-none cursor-pointer"
         onClick={(e) => {
-          e.stopPropagation();
+          if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
           togglePlay();
         }}
       >
@@ -102,6 +102,26 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
 
         {/* Voile d'ambiance cinématographique */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/50 pointer-events-none" />
+
+        {/* CENTRE : Icône vidéo Play / Pause au centre exact de l'image */}
+        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <button
+            type="button"
+            id="btn-center-play-pause-teaser"
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePlay();
+            }}
+            className="pointer-events-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/45 hover:bg-black/70 backdrop-blur-xs border border-white/25 text-white flex items-center justify-center transition-all duration-200 shadow-2xl hover:scale-105 active:scale-95 cursor-pointer"
+            title={isPlaying ? 'Pause' : 'Lecture'}
+          >
+            {isPlaying ? (
+              <Pause className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white" />
+            ) : (
+              <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white translate-x-0.5 opacity-95" />
+            )}
+          </button>
+        </div>
 
         {/* HAUT : Bouton Évaluer (Award en Terre Cuite) & Contrôles */}
         <div className="relative z-10 flex items-center justify-between gap-2 w-full">
@@ -128,23 +148,6 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
               title={isMuted ? 'Activer le son' : 'Couper le son'}
             >
               {isMuted ? <VolumeX className="w-4 h-4 text-white/80" /> : <Volume2 className="w-4 h-4 text-[#C89B3C]" />}
-            </button>
-
-            {/* Bouton Play/Pause doré */}
-            <button
-              onClick={togglePlay}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-md ${
-                isPlaying 
-                  ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/70 backdrop-blur-md' 
-                  : 'border border-transparent bg-black/50 hover:bg-black/70'
-              }`}
-              title={isPlaying ? 'Pause' : 'Lecture'}
-            >
-              {isPlaying ? (
-                <Pause className="w-4 h-4 text-[#C89B3C] fill-[#C89B3C]" />
-              ) : (
-                <Play className="w-4 h-4 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5" />
-              )}
             </button>
 
             {/* Bouton Fermer */}

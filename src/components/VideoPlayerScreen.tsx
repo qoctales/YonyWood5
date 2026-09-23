@@ -72,7 +72,7 @@ export const VideoPlayerScreen: React.FC<VideoPlayerScreenProps> = ({
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md text-xs sm:text-sm font-medium transition-all text-[#FAFAF9] border border-white/10"
           id="video-return-btn"
         >
-          <ArrowLeft className="w-4 h-4 text-[#D9AF52]" />
+          <ArrowLeft className="w-4 h-4 text-[#A2482B]" />
           <span>Quitter l'immersion</span>
         </button>
 
@@ -115,7 +115,7 @@ export const VideoPlayerScreen: React.FC<VideoPlayerScreenProps> = ({
         
         {/* Simulated Film Feed with warm documentary tone in Vertical Video Format 9:16 */}
         <div className="relative w-full h-full max-w-sm sm:max-w-md max-h-[84vh] aspect-[9/16] flex items-center justify-center p-2 sm:p-4">
-          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-[#1B1916]">
+          <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-[#1B1916] group/player">
             
             <img
               src={story.videoCoverUrl}
@@ -137,17 +137,24 @@ export const VideoPlayerScreen: React.FC<VideoPlayerScreenProps> = ({
               </div>
             )}
 
-            {/* Pause center indicator */}
-            {!isPlaying && (
+            {/* Interactive video playback zone */}
+            <div 
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="absolute inset-0 cursor-pointer z-10 flex items-center justify-center"
+            >
+              {/* Centre : Bouton Play / Pause blanc au centre exact */}
               <div 
-                onClick={() => setIsPlaying(true)}
-                className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer z-10"
+                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white shadow-2xl transition-all duration-200 pointer-events-none ${
+                  isPlaying ? 'opacity-0 group-hover/player:opacity-100 hover:scale-105' : 'opacity-100 scale-100'
+                }`}
               >
-                <div className="w-20 h-20 rounded-full bg-[#D9AF52] flex items-center justify-center text-black shadow-2xl hover:scale-105 transition-transform">
-                  <Play className="w-8 h-8 fill-current ml-1" />
-                </div>
+                {isPlaying ? (
+                  <Pause className="w-8 h-8 fill-white text-white" />
+                ) : (
+                  <Play className="w-8 h-8 fill-white text-white translate-x-0.5 opacity-95" />
+                )}
               </div>
-            )}
+            </div>
 
           </div>
         </div>
@@ -244,7 +251,7 @@ export const VideoPlayerScreen: React.FC<VideoPlayerScreenProps> = ({
               className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
               title={isPlaying ? 'Pause' : 'Lecture'}
             >
-              {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
+              {isPlaying ? <Pause className="w-5 h-5 fill-white text-white" /> : <Play className="w-5 h-5 fill-white text-white ml-0.5" />}
             </button>
 
             <button

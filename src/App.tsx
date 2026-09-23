@@ -165,7 +165,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Modern 4-Item Navigation Menu: Tournage, Cercle, Miroir, Productions */}
+      {/* Menu de navigation 4 onglets : Réaliser, Casting, Duocumentaires, Coproduire */}
       {!isVideoPlayer && (
         <BottomMenu 
           currentScreen={currentScreen} 

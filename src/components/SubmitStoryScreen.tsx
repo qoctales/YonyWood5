@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { PROPOSE_DOORS, ProposeDoor, ProposeSubject } from '../data/proposeDoorsData';
+import { ProfileAvatarButton } from './TopProfileButton';
 
 interface SubmitStoryScreenProps {
   preselectedDocumentaryId?: string;
@@ -45,10 +46,11 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const [showSubjectQuestion, setShowSubjectQuestion] = useState(false);
 
   // Form submission (Étape 3)
-  // formatCardIndex: 0 = "J'ai ma vidéo", 1 = "Être filmé"
+  // formatCardIndex: 0 = "J'ai ma vidéo", 1 = "Se faire filmer"
   const [formatCardIndex, setFormatCardIndex] = useState<0 | 1>(0);
   const [isFormatVideoPlaying, setIsFormatVideoPlaying] = useState(false);
   const [isFormatMuted, setIsFormatMuted] = useState(true);
+  const [showFormatDetails, setShowFormatDetails] = useState(false);
   const [chosenFlow, setChosenFlow] = useState<'UPLOAD_DIRECT' | 'REQUEST_CREW' | null>(null);
 
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
@@ -62,7 +64,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const currentSubject: ProposeSubject = currentDoor.subjects[subjectIndex] || currentDoor.subjects[0];
   const isSeries = currentDoor.id === 'series';
 
-  // Gestures pour l'Étape 3 (Swipe Format : J'ai ma vidéo vs Être filmé)
+  // Gestures pour l'Étape 3 (Swipe Format : J'ai ma vidéo vs Se faire filmer)
   const [fmtTouchStartX, setFmtTouchStartX] = useState<number | null>(null);
   const [fmtTouchEndX, setFmtTouchEndX] = useState<number | null>(null);
   const [fmtMouseStartX, setFmtMouseStartX] = useState<number | null>(null);
@@ -116,6 +118,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const handleToggleFormat = () => {
     setFormatCardIndex(prev => (prev === 0 ? 1 : 0));
     setIsFormatVideoPlaying(false);
+    setShowFormatDetails(false);
   };
 
   // Swipe Étape 3 (Formats)
@@ -319,37 +322,39 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-28 space-y-6 text-[#1C1917]">
+    <div className={`max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 ${step === 3 ? 'pb-24 overflow-y-auto' : 'pb-20 sm:pb-24 h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between'} text-[#1C1917]`}>
       
-      {/* En-tête de la page & Indicateur d'étapes */}
-      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-3.5 pr-14 sm:pr-24">
-        <div>
-          <h1 className="font-editorial text-xl sm:text-2xl font-bold text-[#1C1917]">
+      {/* En-tête de la page & Indicateur d'étapes avec avatar profil parfaitement aligné */}
+      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <h1 className="font-editorial text-base sm:text-2xl font-bold text-[#1C1917] tracking-tight truncate">
             Tournage d'un récit
           </h1>
-          <p className="text-xs text-stone-500 mt-0.5">
-            {step === 1 && "Étape 1 sur 3 • Choisissez la Porte de votre tournage"}
-            {step === 2 && `Étape 2 sur 3 • Choisissez votre sujet dans la Porte ${currentDoor.label}`}
-            {step === 3 && "Étape 3 sur 3 • Format de votre vidéo et transmission"}
-          </p>
+          <span className="text-[11px] sm:text-xs text-stone-500 font-medium shrink-0">
+            • {step}/3
+          </span>
         </div>
 
-        {/* Pastilles d'étapes */}
-        <div className="flex items-center gap-1.5">
-          {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                step === s
-                  ? 'bg-[#A2482B] text-white shadow-xs ring-2 ring-[#A2482B]/30'
-                  : step > s
-                  ? 'bg-[#A2482B] text-white'
-                  : 'bg-stone-200 text-stone-500'
-              }`}
-            >
-              {step > s ? '✓' : s}
-            </div>
-          ))}
+        {/* Pastilles d'étapes + Avatar profil intégrés dans le header */}
+        <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            {[1, 2, 3].map((s) => (
+              <div
+                key={s}
+                className={`w-5 h-5 sm:w-6.5 sm:h-6.5 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold transition-all ${
+                  step === s
+                    ? 'bg-[#A2482B] text-white shadow-xs ring-1 ring-[#A2482B]/30'
+                    : step > s
+                    ? 'bg-[#A2482B] text-white'
+                    : 'bg-stone-200 text-stone-500'
+                }`}
+              >
+                {step > s ? '✓' : s}
+              </div>
+            ))}
+          </div>
+
+          <ProfileAvatarButton onNavigate={onNavigate} />
         </div>
       </div>
 
@@ -357,15 +362,15 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {/* ÉTAPE 1 : CHOISIR PARMI LES 8 PORTES D'ENTRÉE                             */}
       {/* ========================================================================= */}
       {step === 1 && (
-        <div className="space-y-4 animate-in fade-in duration-200">
+        <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-hidden animate-in fade-in duration-200">
           
           {/* Conteneur de l'écran 9:16 avec swipe et flèches (sans menu supérieur) */}
-          <div className="relative flex items-center justify-center py-2">
+          <div className="relative w-full h-full flex items-center justify-center">
             
             {/* Flèche Gauche */}
             <button
               onClick={handlePrevDoor}
-              className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#8B4513] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
+              className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
               title="Porte précédente"
               id="prev-door-btn"
             >
@@ -380,7 +385,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
               onMouseUp={onMouseUp}
-              className="w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing"
+              className="w-auto max-w-[min(calc(100vw-28px),calc((100dvh-130px)*9/16))] max-h-[calc(100dvh-130px)] sm:max-h-[min(620px,calc(100dvh-150px))] aspect-[9/16] mx-auto transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing flex justify-center"
               style={{ transform: `translateX(${swipeOffset}px)` }}
             >
               <div 
@@ -394,7 +399,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   }
                   setIsDoorVideoPlaying(prev => !prev);
                 }}
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-stone-700/50 flex flex-col justify-between p-5 sm:p-6 cursor-pointer"
+                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-stone-700/50 flex flex-col justify-between p-3.5 sm:p-5 cursor-pointer"
                 id={`current-door-card-${currentDoor.id}`}
               >
                 {/* 1. Média de fond : Vidéo OU Poster officiel */}
@@ -422,7 +427,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
 
                 {/* HAUT : Cartouche sobre avec l'icône et le nom de la catégorie */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-white shadow-sm">
                     <CurrentDoorIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
                     <span>{currentDoor.label}</span>
                   </div>
@@ -434,10 +439,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                         e.stopPropagation();
                         setIsDoorMuted(!isDoorMuted);
                       }}
-                      className="p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                      className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
                       title={isDoorMuted ? 'Activer le son' : 'Couper le son'}
                     >
-                      {isDoorMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                      {isDoorMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                     </button>
                   )}
                 </div>
@@ -450,39 +455,39 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       e.stopPropagation();
                       setIsDoorVideoPlaying(!isDoorVideoPlaying);
                     }}
-                    className={`pointer-events-auto group/btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
+                    className={`pointer-events-auto group/btn relative w-11 h-11 sm:w-13 sm:h-13 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
                       isDoorVideoPlaying
-                        ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 shadow-[0_0_20px_rgba(200,155,60,0.6)]'
-                        : 'border border-white/25 hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/40 bg-black/45 hover:bg-black/65'
+                        ? 'border border-white/40 ring-2 ring-white/20 bg-black/60 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                        : 'border border-white/25 hover:border-white hover:ring-2 hover:ring-white/30 bg-black/45 hover:bg-black/65'
                     }`}
                     title={isDoorVideoPlaying ? 'Pause' : `Visionner la présentation ${currentDoor.label}`}
                     id={`play-door-btn-${currentDoor.id}`}
                   >
                     {isDoorVideoPlaying ? (
-                      <Pause className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] transition-transform group-hover/btn:scale-110" />
+                      <Pause className="w-5 h-5 text-white fill-white transition-transform group-hover/btn:scale-110" />
                     ) : (
-                      <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                      <Play className="w-5 h-5 text-white fill-white translate-x-0.5 transition-transform group-hover/btn:scale-115" />
                     )}
                   </button>
                 </div>
 
-                {/* BAS : UNIQUEMENT LES DEUX BOUTONS (SANS TEXTE SUPERFLU AU-DESSUS) */}
-                <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
-                  {/* Bouton Avantages pour toutes les 8 portes : fond gris translucide -> marron au survol */}
+                {/* BAS : BOUTONS ADAPTÉS SANS DÉBORDEMENT */}
+                <div className="relative z-10 flex items-center justify-between gap-1.5 pt-0.5">
+                  {/* Bouton Avantages pour toutes les 8 portes : fond gris translucide -> marron terre cuite au survol */}
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowDoorAdvantages(true);
                     }}
-                    className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                    className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
                     title="Découvrir les 5 avantages"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-[#C89B3C]" />
+                    <Sparkles className="w-3 h-3 text-[#FACC15] shrink-0" />
                     <span>Avantages</span>
                   </button>
 
-                  {/* Bouton Choisir cette porte : fond gris translucide -> marron au survol */}
+                  {/* Bouton Choisir cette porte : compact sur mobile pour éviter tout débordement */}
                   <button
                     type="button"
                     onClick={(e) => {
@@ -490,12 +495,13 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       setSubjectIndex(0);
                       setStep(2);
                     }}
-                    className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
+                    className="h-7.5 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-white/90 hover:bg-[#A2482B] text-stone-900 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1 shadow-sm border border-white/40 hover:border-transparent cursor-pointer active:scale-95 group/btn shrink-0"
                     title={currentDoor.actionDoorLabel}
                     id={`choose-door-btn-${currentDoor.id}`}
                   >
-                    <span>{currentDoor.actionDoorLabel}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <span className="sm:hidden">Choisir</span>
+                    <span className="hidden sm:inline">{currentDoor.actionDoorLabel}</span>
+                    <ArrowRight className="w-3 h-3 text-stone-600 group-hover/btn:text-white transition-colors shrink-0" />
                   </button>
                 </div>
 
@@ -552,7 +558,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                           setSubjectIndex(0);
                           setStep(2);
                         }}
-                        className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
+                        className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
                       >
                         <span>{currentDoor.actionDoorLabel}</span>
                         <ArrowRight className="w-3.5 h-3.5" />
@@ -567,7 +573,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
             {/* Flèche Droite */}
             <button
               onClick={handleNextDoor}
-              className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#8B4513] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
+              className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
               title="Porte suivante"
               id="next-door-btn"
             >
@@ -582,37 +588,34 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {/* ÉTAPE 2 : CHOISIR LE SUJET / SOUS-CATÉGORIE DANS LA PORTE SÉLECTIONNÉE     */}
       {/* ========================================================================= */}
       {step === 2 && (
-        <div className="space-y-4 animate-in fade-in duration-200">
+        <div className="flex-1 flex flex-col justify-between py-1 min-h-0 overflow-hidden animate-in fade-in duration-200">
           
-          {/* Rappel sobre de la Porte choisie & action changer de porte (sans menu de sous-catégories) */}
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-stone-500">Porte choisie :</span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#A2482B]/10 text-[#A2482B] text-xs font-bold border border-[#A2482B]/20">
-                <CurrentDoorIcon className="w-3 h-3" />
-                {currentDoor.label}
-              </span>
-            </div>
+          {/* Ligne informative compacte : Sujet & Porte sélectionnée */}
+          <div className="flex items-center justify-between text-xs text-stone-600 px-1 shrink-0 mb-1">
+            <span className="truncate font-medium text-[11px] sm:text-xs">Choisissez votre sujet ({subjectIndex + 1}/{currentDoor.subjects.length})</span>
             <button
               onClick={() => {
                 setStep(1);
                 setIsSubjectVideoPlaying(false);
                 setShowSubjectQuestion(false);
               }}
-              className="text-xs text-[#A2482B] hover:text-[#8B3B20] font-semibold cursor-pointer underline"
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-[10.5px] font-semibold border border-stone-200/80 cursor-pointer shrink-0 transition-colors"
+              title="Changer de Porte"
             >
-              Changer de porte
+              <CurrentDoorIcon className="w-3 h-3 text-[#A2482B]" />
+              <span>{currentDoor.label}</span>
+              <span className="text-[#A2482B] underline ml-0.5">Modifier</span>
             </button>
           </div>
 
           {/* CONTENEUR DU SWIPE SUJET AVEC FLÈCHES LATÉRALES (sans chips/menu) */}
-          <div className="relative flex items-center justify-center py-2">
+          <div className="relative flex-1 flex items-center justify-center min-h-0 px-2 sm:px-6 md:px-10">
             
             {/* Flèche précédente */}
             <button
               onClick={handlePrevSubject}
               aria-label="Sujet précédent"
-              className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] text-[#1C1917] hover:bg-[#8B4513] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+              className="hidden sm:flex absolute left-2 sm:left-4 lg:left-6 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white items-center justify-center shadow-xl transition-all cursor-pointer transform hover:scale-105 active:scale-95"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -626,7 +629,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               onMouseDown={onSubMouseDown}
               onMouseMove={onSubMouseMove}
               onMouseUp={onSubMouseUp}
-              className="relative w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white shadow-2xl border border-stone-700/50 flex flex-col justify-between p-5 sm:p-6 transition-transform duration-150 ease-out select-none cursor-pointer"
+              className="w-auto max-w-[min(calc(100vw-28px),calc((100dvh-135px)*9/16))] max-h-[calc(100dvh-135px)] sm:max-h-[min(640px,calc(100dvh-150px))] aspect-[9/16] mx-auto rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white shadow-2xl border border-stone-700/50 flex flex-col justify-between p-3.5 sm:p-5 transition-transform duration-150 ease-out select-none cursor-pointer"
               id={`current-subject-card-${currentSubject.id}`}
             >
               {/* Vidéo ou affiche officielle de fond */}
@@ -653,9 +656,9 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
 
               {/* HAUT : Cartouche sobre du sujet & Son discret */}
               <div className="relative z-10 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-white shadow-sm">
                   <CurrentDoorIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  <span>{currentSubject.title}</span>
+                  <span className="truncate max-w-[160px] sm:max-w-none">{currentSubject.title}</span>
                 </div>
 
                 {isSubjectVideoPlaying && (
@@ -664,10 +667,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       e.stopPropagation();
                       setIsSubjectMuted(!isSubjectMuted);
                     }}
-                    className="p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
                     title={isSubjectMuted ? 'Activer le son' : 'Couper le son'}
                   >
-                    {isSubjectMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    {isSubjectMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                   </button>
                 )}
               </div>
@@ -680,24 +683,24 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     e.stopPropagation();
                     setIsSubjectVideoPlaying(!isSubjectVideoPlaying);
                   }}
-                  className={`pointer-events-auto group/btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
+                  className={`pointer-events-auto group/btn relative w-11 h-11 sm:w-13 sm:h-13 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
                     isSubjectVideoPlaying
-                      ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 shadow-[0_0_20px_rgba(200,155,60,0.6)]'
-                      : 'border border-white/25 hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/40 bg-black/45 hover:bg-black/65'
+                      ? 'border border-white/40 ring-2 ring-white/20 bg-black/60 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                      : 'border border-white/25 hover:border-white hover:ring-2 hover:ring-white/30 bg-black/45 hover:bg-black/65'
                   }`}
                   title={isSubjectVideoPlaying ? 'Pause' : `Visionner ${currentSubject.title}`}
                   id={`play-subject-btn-${currentSubject.id}`}
                 >
                   {isSubjectVideoPlaying ? (
-                    <Pause className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] transition-transform group-hover/btn:scale-110" />
+                    <Pause className="w-5 h-5 text-white fill-white transition-transform group-hover/btn:scale-110" />
                   ) : (
-                    <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                    <Play className="w-5 h-5 text-white fill-white translate-x-0.5 transition-transform group-hover/btn:scale-115" />
                   )}
                 </button>
               </div>
 
-              {/* BAS : UNIQUEMENT LES DEUX BOUTONS (SYNOPSIS OU QUESTION + CHOISIR CE SUJET) SANS TEXTE FLOTTANT */}
-              <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
+              {/* BAS : BOUTONS ADAPTÉS SANS DÉBORDEMENT */}
+              <div className="relative z-10 flex items-center justify-between gap-1.5 pt-0.5">
                 {/* Cartouche SYNOPSIS (pour les Séries) ou QUESTION (pour les autres portes) */}
                 <button
                   type="button"
@@ -705,30 +708,30 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     e.stopPropagation();
                     setShowSubjectQuestion(true);
                   }}
-                  className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                  className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
                   title={isSeries ? "Découvrir le synopsis de la série" : "Découvrir la question à laquelle répondre"}
                 >
                   {isSeries ? (
-                    <FileText className="w-3.5 h-3.5 text-[#C89B3C]" />
+                    <FileText className="w-3 h-3 text-[#FACC15] shrink-0" />
                   ) : (
-                    <HelpCircle className="w-3.5 h-3.5 text-[#C89B3C]" />
+                    <HelpCircle className="w-3 h-3 text-[#FACC15] shrink-0" />
                   )}
                   <span>{isSeries ? 'Synopsis' : 'Question'}</span>
                 </button>
 
-                {/* Bouton de choix contextualisé à fond gris translucide -> marron au survol */}
+                {/* Bouton de choix contextualisé sans déborder */}
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     setStep(3);
                   }}
-                  className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
+                  className="h-7.5 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-white/90 hover:bg-[#A2482B] text-stone-900 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1 shadow-sm border border-white/40 hover:border-transparent cursor-pointer active:scale-95 group/btn shrink-0"
                   title={currentSubject.actionLabel}
                   id={`choose-subject-btn-${currentSubject.id}`}
                 >
-                  <span>{currentSubject.actionLabel}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span className="truncate max-w-[105px] sm:max-w-none">{currentSubject.actionLabel}</span>
+                  <ArrowRight className="w-3 h-3 text-stone-600 group-hover/btn:text-white transition-colors shrink-0" />
                 </button>
               </div>
 
@@ -784,7 +787,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                         setShowSubjectQuestion(false);
                         setStep(3);
                       }}
-                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#8B4513] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
+                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
                     >
                       <span>{currentSubject.actionLabel}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -799,7 +802,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
             <button
               onClick={handleNextSubject}
               aria-label="Sujet suivant"
-              className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] text-[#1C1917] hover:bg-[#8B4513] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+              className="hidden sm:flex absolute right-2 sm:right-4 lg:right-6 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white items-center justify-center shadow-xl transition-all cursor-pointer transform hover:scale-105 active:scale-95"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -814,56 +817,18 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {/* ========================================================================= */}
       {step === 3 && (
         <div className="space-y-4 animate-in fade-in duration-200">
-          
-          {/* Récapitulatif discret du choix de la Porte et du Sujet */}
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-[#E7E5E4] flex items-center justify-between gap-3 shadow-xs">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold text-[#A2482B] uppercase tracking-wider">
-                  {currentDoor.label}
-                </span>
-                <span className="text-stone-300">•</span>
-                <span className="text-xs font-bold text-[#1C1917]">
-                  {currentSubject.title}
-                </span>
-              </div>
-              <p className="text-xs text-stone-500 italic line-clamp-1">
-                {isSeries ? (currentSubject.synopsis || currentSubject.subtitle) : `« ${currentSubject.question} »`}
-              </p>
-            </div>
-            <button
-              onClick={() => {
-                setChosenFlow(null);
-                setStep(2);
-              }}
-              className="text-xs text-[#A2482B] hover:text-[#8B3B20] font-semibold underline cursor-pointer shrink-0"
-            >
-              Modifier
-            </button>
-          </div>
 
-          {/* SOUS-ÉCRAN 1 : LE SWIPE VIDÉO ENTRE "J'AI MA VIDÉO" ET "ÊTRE FILMÉ" */}
+          {/* SOUS-ÉCRAN 1 : LE SWIPE VIDÉO ENTRE "J'AI MA VIDÉO" ET "SE FAIRE FILMER" */}
           {!chosenFlow && (
             <div className="space-y-4">
-              {/* Pagination discrète (1/2 J'ai ma vidéo • 2/2 Être filmé) */}
-              <div className="flex items-center justify-between px-1">
-                <span className="text-xs text-stone-500 font-medium">
-                  {formatCardIndex === 0 ? "1/2 • Dépôt autonome de votre film" : "2/2 • Accompagnement par un cadreur"}
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <span className={`w-2.5 h-1.5 rounded-full transition-all ${formatCardIndex === 0 ? 'bg-[#A2482B] w-6' : 'bg-stone-300'}`} />
-                  <span className={`w-2.5 h-1.5 rounded-full transition-all ${formatCardIndex === 1 ? 'bg-[#A2482B] w-6' : 'bg-stone-300'}`} />
-                </div>
-              </div>
-
               {/* CONTENEUR DU SWIPE FORMAT AVEC FLÈCHES LATÉRALES */}
-              <div className="relative flex items-center justify-center py-1">
+              <div className="relative flex items-center justify-center py-2">
                 
                 {/* Flèche précédente */}
                 <button
                   onClick={handleToggleFormat}
                   aria-label="Format précédent"
-                  className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] text-[#1C1917] hover:bg-[#8B4513] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+                  className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -877,7 +842,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   onMouseDown={onFmtMouseDown}
                   onMouseMove={onFmtMouseMove}
                   onMouseUp={onFmtMouseUp}
-                  className="relative w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white shadow-2xl border border-stone-700/50 flex flex-col justify-between p-5 sm:p-6 transition-transform duration-150 ease-out select-none cursor-pointer"
+                  className="relative w-auto max-w-[min(340px,calc((100dvh-175px)*9/16))] max-h-[calc(100dvh-175px)] sm:max-h-[min(580px,calc(100dvh-200px))] aspect-[9/16] mx-auto rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-white shadow-2xl border border-stone-700/50 flex flex-col justify-between p-4 sm:p-6 transition-transform duration-150 ease-out select-none cursor-pointer"
                   id={`current-format-card-${formatCardIndex}`}
                 >
                   {/* Vidéo ou affiche officielle de fond selon le format */}
@@ -900,29 +865,17 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       src={formatCardIndex === 0 
                         ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" 
                         : "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80"}
-                      alt={formatCardIndex === 0 ? "J'ai ma vidéo" : "Être filmé"}
+                      alt={formatCardIndex === 0 ? "J'ai ma vidéo" : "Se faire filmer"}
                       className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                     />
                   )}
 
                   {/* Voile cinématographique */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/50 pointer-events-none" />
-
-                  {/* Repères optiques de cadrage 9:16 subtils */}
-                  <div className="absolute inset-3 border border-white/20 rounded-2xl pointer-events-none flex flex-col justify-between p-2">
-                    <div className="flex justify-between text-[9px] font-mono text-[#C89B3C]/80">
-                      <span>┌</span>
-                      <span>┐</span>
-                    </div>
-                    <div className="flex justify-between text-[9px] font-mono text-[#C89B3C]/80">
-                      <span>└</span>
-                      <span>┘</span>
-                    </div>
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/50 pointer-events-none" />
 
                   {/* HAUT : Badge du format & Bouton Son */}
                   <div className="relative z-10 flex items-center justify-between">
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
                       {formatCardIndex === 0 ? (
                         <>
                           <UploadCloud className="w-3.5 h-3.5 text-[#C89B3C]" />
@@ -931,7 +884,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       ) : (
                         <>
                           <Camera className="w-3.5 h-3.5 text-[#C89B3C]" />
-                          <span>Être filmé</span>
+                          <span>Se faire filmer</span>
                         </>
                       )}
                     </div>
@@ -960,30 +913,37 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       }}
                       className={`pointer-events-auto group/btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
                         isFormatVideoPlaying
-                          ? 'border border-[#C89B3C] ring-2 ring-[#C89B3C]/40 bg-black/60 shadow-[0_0_20px_rgba(200,155,60,0.6)]'
-                          : 'border border-white/25 hover:border-[#C89B3C] hover:ring-2 hover:ring-[#C89B3C]/40 bg-black/45 hover:bg-black/65'
+                          ? 'border border-white/40 ring-2 ring-white/20 bg-black/60 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                          : 'border border-white/25 hover:border-white hover:ring-2 hover:ring-white/30 bg-black/45 hover:bg-black/65'
                       }`}
-                      title={isFormatVideoPlaying ? 'Pause' : 'Lire la vidéo explicative'}
+                      title={isFormatVideoPlaying ? 'Pause' : 'Lire la vidéo'}
                       id={`play-format-video-${formatCardIndex}`}
                     >
                       {isFormatVideoPlaying ? (
-                        <Pause className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] transition-transform group-hover/btn:scale-110" />
+                        <Pause className="w-6 h-6 text-white fill-white transition-transform group-hover/btn:scale-110" />
                       ) : (
-                        <Play className="w-6 h-6 text-[#C89B3C] fill-[#C89B3C] translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                        <Play className="w-6 h-6 text-white fill-white translate-x-0.5 transition-transform group-hover/btn:scale-115" />
                       )}
                     </button>
                   </div>
 
-                  {/* BAS : BOUTON D'ACTION IMMÉDIAT (J'AI MA VIDÉO ou ÊTRE FILMÉ) */}
-                  <div className="relative z-10 pt-2 flex flex-col gap-2">
-                    <div className="text-center px-1">
-                      <p className="text-[11px] text-stone-300/90 leading-snug">
-                        {formatCardIndex === 0 
-                          ? "Votre vidéo 9:16 déjà enregistrée, prête à être transmise."
-                          : "Un cadreur partenaire se déplace pour enregistrer votre récit."}
-                      </p>
-                    </div>
+                  {/* BAS : UNIQUEMENT LES DEUX BOUTONS (DÉTAILS + CHOIX) DANS LE MÊME PROFIL QUE LES ÉTAPES 1 ET 2 */}
+                  <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
+                    {/* Bouton Détails : fond translucide -> marron terre cuite au survol */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowFormatDetails(true);
+                      }}
+                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                      title="Découvrir les détails de cette option"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-white" />
+                      <span>Détails</span>
+                    </button>
 
+                    {/* Bouton Choisir : fond translucide -> marron terre cuite au survol */}
                     <button
                       type="button"
                       onClick={(e) => {
@@ -994,13 +954,97 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                           setChosenFlow('REQUEST_CREW');
                         }
                       }}
-                      className="w-full py-3 px-5 rounded-2xl bg-[#A2482B] hover:bg-[#8B3B20] text-white font-bold text-xs sm:text-sm tracking-wide shadow-xl shadow-black/40 border border-white/20 transition-all transform hover:scale-[1.02] cursor-pointer flex items-center justify-center gap-2"
-                      id={`btn-select-format-${formatCardIndex}`}
+                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
+                      title={formatCardIndex === 0 ? "J'ai ma vidéo" : "Se faire filmer"}
+                      id={`choose-format-btn-${formatCardIndex}`}
                     >
-                      <span>{formatCardIndex === 0 ? "J'ai ma vidéo" : "Être filmé"}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>{formatCardIndex === 0 ? "J'ai ma vidéo" : "Se faire filmer"}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
+
+                  {/* OVERLAY DES DÉTAILS DU FORMAT */}
+                  {showFormatDetails && (
+                    <div 
+                      onClick={(e) => e.stopPropagation()}
+                      className="details-overlay absolute inset-0 bg-black/92 backdrop-blur-md z-20 flex flex-col justify-between p-6 text-white animate-in fade-in duration-200"
+                    >
+                      <div className="space-y-4 overflow-y-auto max-h-[82%] pr-1">
+                        <div className="flex items-center justify-between pb-2 border-b border-white/15">
+                          <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
+                            {formatCardIndex === 0 ? "Option dépôt autonome" : "Option tournage accompagné"}
+                          </span>
+                          <button
+                            onClick={() => setShowFormatDetails(false)}
+                            className="p-1.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer"
+                            title="Fermer"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <h4 className="font-editorial text-lg font-bold text-white flex items-center gap-2">
+                          {formatCardIndex === 0 ? (
+                            <>
+                              <UploadCloud className="w-4 h-4 text-[#C89B3C]" />
+                              <span>J'ai ma vidéo</span>
+                            </>
+                          ) : (
+                            <>
+                              <Camera className="w-4 h-4 text-[#C89B3C]" />
+                              <span>Se faire filmer</span>
+                            </>
+                          )}
+                        </h4>
+
+                        <div className="space-y-2.5 pt-1">
+                          {(formatCardIndex === 0 ? [
+                            "Vidéo déjà tournée au smartphone ou à la caméra",
+                            "Format vertical 9:16 privilégié",
+                            "Fichiers acceptés : MP4, MOV, WebM",
+                            "Intégration directe après validation éditoriale"
+                          ] : [
+                            "Mise en relation avec un cadreur partenaire local",
+                            "Tournage sur votre lieu de vie ou de travail",
+                            "Cadrage et prise de son professionnels assurés",
+                            "Prise en charge intégrale de la captation"
+                          ]).map((item, idx) => (
+                            <div key={idx} className="flex items-start gap-2.5 text-xs text-white/95">
+                              <span className="w-4 h-4 rounded-full bg-white/20 border border-white/30 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                                {idx + 1}
+                              </span>
+                              <p className="leading-snug">{item}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-white/15 flex items-center justify-between gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowFormatDetails(false)}
+                          className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition-colors cursor-pointer"
+                        >
+                          Fermer
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowFormatDetails(false);
+                            if (formatCardIndex === 0) {
+                              setChosenFlow('UPLOAD_DIRECT');
+                            } else {
+                              setChosenFlow('REQUEST_CREW');
+                            }
+                          }}
+                          className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
+                        >
+                          <span>{formatCardIndex === 0 ? "J'ai ma vidéo" : "Se faire filmer"}</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                 </div>
 
@@ -1008,28 +1052,33 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 <button
                   onClick={handleToggleFormat}
                   aria-label="Format suivant"
-                  className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] text-[#1C1917] hover:bg-[#8B4513] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+                  className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
 
               </div>
 
-              {/* Bouton de retour vers l'étape 2 (Choix du sujet) */}
-              <div className="pt-2 flex items-center justify-between">
+              {/* Informations sous la vidéo : Récapitulatif discret Porte & Sujet */}
+              <div className="max-w-[320px] sm:max-w-[350px] mx-auto p-3 sm:p-3.5 rounded-2xl bg-white border border-[#E7E5E4] flex items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-[11px] font-bold text-[#A2482B] uppercase tracking-wider shrink-0">
+                    {currentDoor.label}
+                  </span>
+                  <span className="text-stone-300 shrink-0">•</span>
+                  <span className="text-xs font-bold text-[#1C1917] truncate">
+                    {currentSubject.title}
+                  </span>
+                </div>
                 <button
-                  onClick={() => setStep(2)}
-                  className="px-5 py-2.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-medium text-[#1C1917] flex items-center gap-2 cursor-pointer"
+                  onClick={() => {
+                    setChosenFlow(null);
+                    setShowFormatDetails(false);
+                    setStep(2);
+                  }}
+                  className="text-xs text-[#A2482B] hover:text-[#8B3B20] font-semibold underline cursor-pointer shrink-0"
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Retour aux sujets</span>
-                </button>
-
-                <button
-                  onClick={handleToggleFormat}
-                  className="text-xs text-stone-500 hover:text-stone-800 underline cursor-pointer"
-                >
-                  {formatCardIndex === 0 ? "Voir l'option « Être filmé »" : "Voir l'option « J'ai ma vidéo »"}
+                  Modifier
                 </button>
               </div>
             </div>
@@ -1123,7 +1172,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
             </div>
           )}
 
-          {/* SOUS-ÉCRAN 2B : ÊTRE FILMÉ -> FORMULAIRE SIMPLE POUR COORDONNÉES */}
+          {/* SOUS-ÉCRAN 2B : SE FAIRE FILMER -> FORMULAIRE SIMPLE POUR COORDONNÉES */}
           {chosenFlow === 'REQUEST_CREW' && (
             <div className="space-y-5 bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm animate-in fade-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between border-b border-stone-100 pb-3">
@@ -1133,7 +1182,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   </div>
                   <div>
                     <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
-                      Être filmé(e) par un cadreur
+                      Se faire filmer par un cadreur
                     </h3>
                     <p className="text-xs text-stone-500">
                       Nous vous mettons en relation avec un cinéaste partenaire

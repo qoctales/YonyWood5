@@ -9,6 +9,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ViewScreen } from '../types';
+import { ProfileAvatarButton } from './TopProfileButton';
 
 interface MarketplaceScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -262,49 +263,53 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-28 pt-safe pb-safe min-h-[100dvh] space-y-6 text-[#1C1917]">
+    <div className="w-full max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 pb-20 sm:pb-24 pt-safe pb-safe h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between text-[#1C1917]">
       
       {/* ========================================================================= */}
       {/* HEADER DISCRET & SÉLECTEUR AU MÊME ENDROIT QUE 1 2 3 DE PROPOSER         */}
       {/* ========================================================================= */}
-      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-3 pr-14 sm:pr-24">
+      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
         <div>
-          <h1 className="font-editorial text-xl sm:text-2xl font-bold text-[#1C1917]">
-            Productions
+          <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
+            Coproduire
           </h1>
         </div>
 
-        {/* Boutons d'onglets Coproduire / Marché avec fond terre cuite signature */}
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => setActiveTab('coproduire')}
-            id="tab-coproduire"
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'coproduire'
-                ? 'bg-[#A2482B] text-white shadow-sm shadow-[#A2482B]/30 ring-1 ring-[#C89B3C]/40'
-                : 'bg-[#E7E5E4] text-[#7A756B] hover:text-[#1C1917]'
-            }`}
-          >
-            Coproduire
-          </button>
+        {/* Boutons d'onglets Coproduire / Marché + Avatar profil parfaitement alignés */}
+        <div className="flex items-center gap-2.5 sm:gap-3.5">
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <button
+              onClick={() => setActiveTab('coproduire')}
+              id="tab-coproduire"
+              className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'coproduire'
+                  ? 'bg-[#A2482B] text-white shadow-sm shadow-[#A2482B]/30 ring-1 ring-[#C89B3C]/40'
+                  : 'bg-[#E7E5E4] text-[#7A756B] hover:text-[#1C1917]'
+              }`}
+            >
+              Coproduire
+            </button>
 
-          <button
-            onClick={() => setActiveTab('marche')}
-            id="tab-marche"
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'marche'
-                ? 'bg-[#A2482B] text-white shadow-sm shadow-[#A2482B]/30 ring-1 ring-[#C89B3C]/40'
-                : 'bg-[#E7E5E4] text-[#7A756B] hover:text-[#1C1917]'
-            }`}
-          >
-            Marché
-          </button>
+            <button
+              onClick={() => setActiveTab('marche')}
+              id="tab-marche"
+              className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                activeTab === 'marche'
+                  ? 'bg-[#A2482B] text-white shadow-sm shadow-[#A2482B]/30 ring-1 ring-[#C89B3C]/40'
+                  : 'bg-[#E7E5E4] text-[#7A756B] hover:text-[#1C1917]'
+              }`}
+            >
+              Marché
+            </button>
+          </div>
+
+          <ProfileAvatarButton onNavigate={onNavigate} />
         </div>
       </div>
 
       {/* TOAST SUCCÈS LUDIQUE */}
       {successToast && (
-        <div className="fixed top-14 z-50 max-w-sm mx-auto px-4 py-2.5 rounded-2xl bg-[#1C1917] text-white text-xs font-semibold flex items-center gap-2 shadow-xl animate-in fade-in">
+        <div className="fixed top-14 z-50 max-w-sm mx-auto px-4 py-2 rounded-2xl bg-[#1C1917] text-white text-xs font-semibold flex items-center gap-2 shadow-xl animate-in fade-in">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{successToast}</span>
         </div>
@@ -314,15 +319,15 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
       {/* PANNEAU UNIQUE AVEC SWIPE (EXACTEMENT COMME SUR PROPOSER UNE HISTOIRE)    */}
       {/* SANS AUCUN BOUTON NI POINT DE NAVIGATION EN DESSOUS                      */}
       {/* ========================================================================= */}
-      <div className="space-y-4 animate-in fade-in duration-200">
+      <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
         
         {/* Conteneur de l'écran unique avec swipe et navigation fléchée latérale */}
-        <div className="relative flex items-center justify-center py-2">
+        <div className="relative w-full h-full flex items-center justify-center">
           
           {/* Flèche Gauche (Navigation rapide latérale) */}
           <button
             onClick={handlePrev}
-            className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
+            className="hidden sm:flex absolute left-2 sm:left-4 lg:left-6 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-xl items-center justify-center transition-all cursor-pointer transform hover:scale-105 active:scale-95"
             title="Précédent"
             id="prev-poster-btn"
           >
@@ -337,7 +342,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
-            className="w-full max-w-[320px] sm:max-w-[350px] aspect-[9/16] transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing"
+            className="w-auto max-w-[min(calc(100vw-28px),calc((100dvh-130px)*9/16))] max-h-[calc(100dvh-130px)] sm:max-h-[min(620px,calc(100dvh-150px))] aspect-[9/16] mx-auto transition-transform duration-150 ease-out select-none cursor-grab active:cursor-grabbing flex justify-center"
             style={{ transform: `translateX(${swipeOffset}px)` }}
           >
             {/* =================================================================== */}
@@ -351,7 +356,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                   }
                   toggleVideoPlayback();
                 }}
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 cursor-pointer"
+                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-3.5 sm:p-5 cursor-pointer"
                 id={`card-coproduire-${currentProd.id}`}
               >
                 {/* 1. Média de fond : Affiche officielle par défaut OU Vidéo si lecture activée */}
@@ -379,30 +384,34 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
 
                 {/* HAUT : Badge du titre de la série à gauche */}
                 <div className="relative z-10 flex items-center justify-between gap-2">
-                  <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-semibold tracking-widest text-white shadow-sm max-w-full leading-relaxed">
+                  <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10.5px] sm:text-[11px] font-semibold tracking-widest text-white shadow-sm max-w-full leading-relaxed">
                     {currentProd.title}
                   </span>
                 </div>
 
-                {/* CENTRE : Icône vidéo de lecture centrée quand la vidéo est en pause */}
-                {!isPlaying && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                    <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-110 transition-transform">
-                      <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-90" />
-                    </div>
+                {/* CENTRE : Icône vidéo de lecture / pause centrée */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                  <div className={`w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white shadow-xl transition-all duration-200 ${
+                    isPlaying ? 'opacity-0 group-hover:opacity-100 hover:scale-110' : 'opacity-100 scale-100'
+                  }`}>
+                    {isPlaying ? (
+                      <Pause className="w-5 h-5 fill-white text-white" />
+                    ) : (
+                      <Play className="w-5 h-5 fill-white text-white translate-x-0.5 opacity-90" />
+                    )}
                   </div>
-                )}
+                </div>
 
                 {/* CENTRE LIBÉRÉ : Affiche visible et sans encombrement */}
                 <div className="my-auto" />
 
                 {/* BAS : Prix de la part à gauche et bouton d'action Coproduire à droite */}
-                <div className="relative z-10 flex items-center justify-between gap-2">
+                <div className="relative z-10 flex items-center justify-between gap-1.5 pt-0.5">
                   {/* Prix de la part en dessous pour libérer le haut */}
-                  <div className="px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 shadow-sm">
-                    <Coins className="w-3.5 h-3.5 text-[#C89B3C]" />
+                  <div className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[10.5px] sm:text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 shadow-sm">
+                    <Coins className="w-3 h-3 text-[#C89B3C]" />
                     <span className="font-bold text-[#C89B3C]">{currentProd.sharePrice} €</span>
-                    <span className="text-[10px] text-white/70">/ part</span>
+                    <span className="text-[9.5px] text-white/70">/ part</span>
                   </div>
 
                   {/* Bouton Coproduire la série : gris clair au repos, marron terre cuite au survol */}
@@ -413,11 +422,11 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                       setPurchaseQuantity(1);
                     }}
                     id={`btn-coproduire-${currentProd.id}`}
-                    className="px-4 py-2 rounded-full bg-stone-100/95 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-stone-200/80 hover:border-[#A2482B] cursor-pointer shrink-0 active:scale-95 group/coprod"
+                    className="h-7.5 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-stone-100/95 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1 shadow-md border border-stone-200/80 hover:border-[#A2482B] cursor-pointer shrink-0 active:scale-95 group/coprod"
                     title="Coproduire cette série"
                   >
                     <span>Coproduire</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-stone-600 group-hover/coprod:text-white transition-colors" />
+                    <ArrowRight className="w-3 h-3 text-stone-600 group-hover/coprod:text-white transition-colors" />
                   </button>
                 </div>
 
@@ -435,7 +444,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                   }
                   toggleVideoPlayback();
                 }}
-                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-5 sm:p-6 cursor-pointer"
+                className="group relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#1C1917] text-[#FFFFFF] shadow-2xl border border-[#E7E5E4]/50 flex flex-col justify-between p-3.5 sm:p-5 cursor-pointer"
                 id={`card-marche-${currentOffer.id}`}
               >
                 {/* 1. Média de fond : Affiche officielle par défaut OU Vidéo si lecture activée */}
@@ -463,37 +472,41 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
 
                 {/* HAUT : Badge du titre de la série à gauche */}
                 <div className="relative z-10 flex items-center justify-between gap-2">
-                  <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-semibold tracking-widest text-white shadow-sm max-w-full leading-relaxed">
+                  <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10.5px] sm:text-[11px] font-semibold tracking-widest text-white shadow-sm max-w-full leading-relaxed">
                     {currentOffer.seriesTitle}
                   </span>
                 </div>
 
-                {/* CENTRE : Icône vidéo de lecture centrée quand la vidéo est en pause */}
-                {!isPlaying && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                    <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-110 transition-transform">
-                      <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-90" />
-                    </div>
+                {/* CENTRE : Icône vidéo de lecture / pause centrée */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                  <div className={`w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white shadow-xl transition-all duration-200 ${
+                    isPlaying ? 'opacity-0 group-hover:opacity-100 hover:scale-110' : 'opacity-100 scale-100'
+                  }`}>
+                    {isPlaying ? (
+                      <Pause className="w-5 h-5 fill-white text-white" />
+                    ) : (
+                      <Play className="w-5 h-5 fill-white text-white translate-x-0.5 opacity-90" />
+                    )}
                   </div>
-                )}
+                </div>
 
                 {/* CENTRE LIBÉRÉ : Affiche visible et sans encombrement */}
                 <div className="my-auto" />
 
                 {/* BAS : À gauche (au-dessus : nb de parts et prix au même format / en dessous : vignette photo + prénom) */}
                 {/* Et à droite : bouton d'action Racheter avec fond Terre Cuite */}
-                <div className="relative z-10 flex items-end justify-between gap-2">
+                <div className="relative z-10 flex items-end justify-between gap-1.5 pt-0.5">
                   
                   {/* BLOC GAUCHE : parts + prix, puis vignette photo et prénom */}
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1.5">
                     
                     {/* Nombre de parts & Prix (Même format & design que coproduire) */}
-                    <div className="px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 shadow-sm w-fit">
-                      <Coins className="w-3.5 h-3.5 text-[#C89B3C]" />
+                    <div className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[10.5px] sm:text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 shadow-sm w-fit">
+                      <Coins className="w-3 h-3 text-[#C89B3C]" />
                       <span className="font-bold text-white">{currentOffer.sharesCount} part{currentOffer.sharesCount > 1 ? 's' : ''}</span>
                       <span className="text-white/40">•</span>
                       <span className="font-bold text-[#C89B3C]">{currentOffer.unitPrice} €</span>
-                      <span className="text-[10px] text-white/70">/ part</span>
+                      <span className="text-[9.5px] text-white/70">/ part</span>
                     </div>
 
                     {/* Juste le prénom et sa vignette photo cliquable vers son univers */}
@@ -502,15 +515,15 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                         e.stopPropagation();
                         onNavigate({ type: 'protagonist_profile', protagonistId: currentOffer.sellerId });
                       }}
-                      className="px-2.5 py-1.5 rounded-full bg-black/60 hover:bg-black/85 text-white text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-2 border border-white/20 cursor-pointer shadow-sm group/user text-left w-fit"
+                      className="h-7 sm:h-7.5 px-2 sm:px-2.5 rounded-full bg-black/60 hover:bg-black/85 text-white text-[10.5px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 cursor-pointer shadow-sm group/user text-left w-fit active:scale-95"
                       title={`Découvrir l’univers de ${currentOffer.sellerName}`}
                     >
                       <img 
                         src={currentOffer.sellerPhoto} 
                         alt={currentOffer.sellerName}
-                        className="w-5 h-5 rounded-full object-cover ring-1 ring-[#C89B3C]"
+                        className="w-4.5 h-4.5 rounded-full object-cover ring-1 ring-[#C89B3C]"
                       />
-                      <span className="font-bold text-white group-hover/user:text-[#C89B3C] transition-colors truncate max-w-[100px]">
+                      <span className="font-bold text-white group-hover/user:text-[#C89B3C] transition-colors truncate max-w-[85px]">
                         {currentOffer.sellerName}
                       </span>
                     </button>
@@ -524,11 +537,11 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                       handleBuyPeerOffer(currentOffer);
                     }}
                     id={`btn-buy-peer-${currentOffer.id}`}
-                    className="px-4 py-2 rounded-full bg-stone-100/95 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-stone-200/80 hover:border-[#A2482B] cursor-pointer shrink-0 active:scale-95 group/racheter"
+                    className="h-7.5 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-stone-100/95 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1 shadow-md border border-stone-200/80 hover:border-[#A2482B] cursor-pointer shrink-0 active:scale-95 group/racheter"
                     title="Racheter ces parts"
                   >
                     <span>Racheter</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-stone-600 group-hover/racheter:text-white transition-colors" />
+                    <ArrowRight className="w-3 h-3 text-stone-600 group-hover/racheter:text-white transition-colors" />
                   </button>
 
                 </div>
@@ -550,7 +563,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
           {/* Flèche Droite (Navigation rapide latérale) */}
           <button
             onClick={handleNext}
-            className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-[#C89B3C] text-[#1C1917] hover:text-white border border-[#E7E5E4] shadow-lg items-center justify-center transition-all cursor-pointer transform hover:scale-105"
+            className="hidden sm:flex absolute right-2 sm:right-4 lg:right-6 z-20 w-11 h-11 rounded-full bg-white/95 hover:bg-[#A2482B] text-[#1C1917] hover:text-white border border-[#E7E5E4] hover:border-[#A2482B] shadow-xl items-center justify-center transition-all cursor-pointer transform hover:scale-105 active:scale-95"
             title="Suivant"
             id="next-poster-btn"
           >

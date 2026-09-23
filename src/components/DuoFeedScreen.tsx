@@ -9,18 +9,22 @@ import {
   Tv, 
   Shuffle, 
   User, 
+  Eye,
   EyeOff,
   RotateCcw,
   Sparkles,
   Columns,
-  Square
+  Square,
+  HelpCircle,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
 import { DUOS, DOCUMENTARIES } from '../data/mockData';
 import { ViewScreen, Duo, Protagonist } from '../types';
 import { RemoteControlModal } from './RemoteControlModal';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
-import { ExplorerEggIcon } from './YonywoodBrandIcons';
+import { DuocumentairesTvIcon } from './YonywoodBrandIcons';
+import { ProfileAvatarButton } from './TopProfileButton';
 
 interface DuoFeedScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -48,6 +52,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
   const [isQuestionRevealed, setIsQuestionRevealed] = useState(false);
+  const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
   
   // Mobile active protagonist: 'A' or 'B' (tap story toggle like Bumble)
   const [activeProtagonist, setActiveProtagonist] = useState<'A' | 'B'>('A');
@@ -63,7 +68,20 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const mobileVideoRef = useRef<HTMLVideoElement | null>(null);
 
   // Desktop view mode: 'mirror' (face-to-face 2 cards) | 'deck' (Bumble solo card deck)
+  // Dès que l'écran devient petit (< 768px), le mode Deck est AUTOMATIQUE
   const [desktopViewMode, setDesktopViewMode] = useState<'mirror' | 'deck'>('mirror');
+  const [windowWidth, setWindowWidth] = useState<number>(() => 
+    typeof window !== 'undefined' ? window.innerWidth : 1024
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isSmallScreen = windowWidth < 768;
+  const activeMode: 'mirror' | 'deck' = isSmallScreen ? 'deck' : desktopViewMode;
 
   // Swipe direction animation track: 'next' | 'prev' | null
   const [swipeDirection, setSwipeDirection] = useState<'next' | 'prev' | null>(null);
@@ -242,30 +260,30 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const isMobileMuted = activeProtagonist === 'A' ? isMutedA : isMutedB;
 
   return (
-    <div className="min-h-[100dvh] pb-28 pt-2 pt-safe pb-safe px-3 sm:px-6 max-w-6xl mx-auto flex flex-col justify-between select-none">
+    <div className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-2 sm:py-3 pb-20 sm:pb-24 pt-safe pb-safe h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between text-[#1C1917] select-none">
       
       {/* ========================================================================= */}
-      {/* 1. BARRE SUPÉRIEURE ÉPURÉE (SÉLECTEUR TÉLÉCOMMANDE + TITRE SÉRIE + SHUFFLE) */}
+      {/* 1. BARRE SUPÉRIEURE ÉPURÉE AVEC SÉRIES, DUO ET PROFIL ALIGNÉS             */}
       {/* ========================================================================= */}
-      <div className="relative flex items-center justify-between py-2 border-b border-stone-200/80 mb-3">
+      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
         
         {/* Télécommande / Séries */}
-        <div className="flex items-center gap-1.5 z-10">
+        <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => setIsRemoteOpen(true)}
             id="open-series-choice-btn"
             title="Changer de série ou voir toutes les séries"
-            className="group flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 hover:border-stone-400 transition-all shadow-xs cursor-pointer"
+            className="group flex items-center gap-1 sm:gap-1.5 h-7.5 sm:h-8 px-2.5 sm:px-3 rounded-full bg-white hover:bg-stone-50 border border-stone-200 hover:border-stone-400 transition-all shadow-xs cursor-pointer"
           >
-            <Tv className="w-3.5 h-3.5 text-[#C89B3C] group-hover:scale-110 transition-transform" />
-            <span className="font-sans text-xs sm:text-sm font-semibold text-[#1C1917]">
+            <Tv className="w-3.5 h-3.5 text-[#C89B3C] group-hover:scale-110 transition-transform shrink-0" />
+            <span className="font-sans text-[10.5px] sm:text-xs font-semibold text-[#1C1917] truncate max-w-[85px] sm:max-w-none">
               {selectedDocId 
                 ? (activeDoc?.title || currentDuo.documentaryTitle)
-                : 'Toutes les séries'
+                : <><span className="sm:hidden">Séries</span><span className="hidden sm:inline">Toutes les séries</span></>
               }
             </span>
             {selectedDocId && (
-              <span className="w-2 h-2 rounded-full bg-[#C89B3C] animate-pulse" title="Filtre actif" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C89B3C] animate-pulse shrink-0" title="Filtre actif" />
             )}
           </button>
 
@@ -276,46 +294,45 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                 setCurrentIndex(0);
               }}
               title="Revenir à toutes les séries (flux aléatoire)"
-              className="p-1 rounded-full hover:bg-stone-100 text-stone-500 hover:text-stone-900 text-xs transition-colors cursor-pointer"
+              className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-stone-100 text-stone-500 hover:text-stone-900 text-xs transition-colors cursor-pointer"
             >
               ✕
             </button>
           )}
         </div>
 
-        {/* Titre Face-à-Face centré : Pilule Terre Cuite avec typographie et symboles blancs */}
-        <div className="flex absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 items-center justify-center pointer-events-none z-10 max-w-[55%] sm:max-w-none">
+        {/* Titre Face-à-Face centré : Pilule Terre Cuite ultra-compacte */}
+        <div className="flex items-center justify-center min-w-0 flex-1 px-1">
           {(() => {
             const title = currentDuo.documentaryTitle || '';
             const parts = title.includes('< >') ? title.split('< >') : title.includes('<>') ? title.split('<>') : null;
             return parts ? (
               <div 
                 key={`duo-series-${currentDuo.id}-${title}`}
-                className="pointer-events-auto inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-sm shadow-[#A2482B]/25 text-xs sm:text-sm animate-in fade-in zoom-in-95 duration-200 text-white truncate"
+                className="inline-flex items-center gap-1 sm:gap-1.5 h-6.5 sm:h-7.5 px-2 sm:px-3 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-xs text-[10px] sm:text-xs animate-in fade-in duration-200 text-white truncate max-w-[170px] sm:max-w-xs"
               >
-                <span className="font-sans font-bold text-white tracking-tight truncate">{parts[0].trim()}</span>
+                <span className="font-sans font-bold text-white tracking-tight truncate max-w-[65px] sm:max-w-[110px]">{parts[0].trim()}</span>
                 <span 
-                  className="inline-flex items-center gap-0.5 font-mono text-xs font-black text-white px-0.5 sm:px-1 select-none tracking-wider shrink-0"
-                  title="Symbole face à face"
+                  className="font-mono text-[8.5px] sm:text-[10px] font-black text-white/90 px-0.5 select-none shrink-0"
+                  title="Face à face"
                 >
-                  &lt; &gt;
+                  &lt;&gt;
                 </span>
-                <span className="font-sans font-bold text-white tracking-tight truncate">{parts[1].trim()}</span>
+                <span className="font-sans font-bold text-white tracking-tight truncate max-w-[65px] sm:max-w-[110px]">{parts[1].trim()}</span>
               </div>
             ) : null;
           })()}
         </div>
 
-        {/* Contrôles droits : commutateur mode desktop (Miroir / Deck) + Shuffle (avec espace pour le bouton Profil fixe en haut à droite) */}
-        <div className="flex items-center gap-2 z-10 sm:pr-24 pr-14">
-          
-          {/* Commutateur mode : Miroir (les 2 vidéos face-à-face) / Deck (Carte immersive) */}
-          <div className="flex items-center bg-stone-100 p-0.5 rounded-full border border-stone-200">
+        {/* Contrôles droits : commutateur mode desktop (masqué sur mobile) + Shuffle + Profil */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Commutateur mode : Desktop uniquement */}
+          <div className="hidden md:flex items-center bg-stone-100 p-0.5 rounded-full border border-stone-200">
             <button
               onClick={() => setDesktopViewMode('mirror')}
               title="Vue Miroir (Duo Face-à-face, 2 vidéos)"
               className={`p-1.5 rounded-full transition-all cursor-pointer ${
-                desktopViewMode === 'mirror'
+                activeMode === 'mirror'
                   ? 'bg-white text-stone-900 shadow-xs'
                   : 'text-stone-500 hover:text-stone-900'
               }`}
@@ -326,7 +343,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
               onClick={() => setDesktopViewMode('deck')}
               title="Vue Deck (Carte unique)"
               className={`p-1.5 rounded-full transition-all cursor-pointer ${
-                desktopViewMode === 'deck'
+                activeMode === 'deck'
                   ? 'bg-white text-stone-900 shadow-xs'
                   : 'text-stone-500 hover:text-stone-900'
               }`}
@@ -339,10 +356,13 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
           <button
             onClick={handleShuffle}
             title="Duo aléatoire"
-            className="p-2 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 hover:text-stone-900 transition-colors shadow-xs cursor-pointer"
+            className="w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-stone-600 hover:text-stone-900 flex items-center justify-center transition-colors shadow-xs cursor-pointer"
           >
-            <Shuffle className="w-3.5 h-3.5" />
+            <Shuffle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           </button>
+
+          {/* Avatar profil parfaitement aligné dans le header */}
+          <ProfileAvatarButton onNavigate={onNavigate} />
         </div>
       </div>
 
@@ -350,12 +370,12 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
       {/* 2. ZONE PRINCIPALE DE SWIPE PERMANENT (WEB, TABLETTE, MOBILE)            */}
       {/* Glisser à droite = Revenir au duo précédent | Glisser à gauche = Suivant  */}
       {/* ========================================================================= */}
-      <div className="relative my-auto flex items-center justify-center py-2 sm:py-4">
+      <div className="relative flex-1 flex items-center justify-center min-h-0 py-0.5 sm:py-2">
         
         {/* Flèche Gauche Desktop / Tablette (Click pour revenir en arrière) */}
         <button
           onClick={handlePrev}
-          className="hidden md:flex absolute -left-4 lg:-left-12 z-30 w-12 h-12 rounded-full bg-white hover:bg-[#1C1917] text-stone-800 hover:text-white border border-stone-200 shadow-xl items-center justify-center transition-all cursor-pointer transform hover:scale-110 active:scale-95 group"
+          className="hidden md:flex absolute left-4 lg:left-8 z-30 w-12 h-12 rounded-full bg-white hover:bg-[#1C1917] text-stone-800 hover:text-white border border-stone-200 shadow-xl items-center justify-center transition-all cursor-pointer transform hover:scale-105 active:scale-95 group"
           title="Duo précédent (Glisser à droite)"
           id="prev-duo-arrow-btn"
         >
@@ -365,7 +385,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
         {/* Flèche Droite Desktop / Tablette (Click pour avancer) */}
         <button
           onClick={handleNext}
-          className="hidden md:flex absolute -right-4 lg:-right-12 z-30 w-12 h-12 rounded-full bg-white hover:bg-[#1C1917] text-stone-800 hover:text-white border border-stone-200 shadow-xl items-center justify-center transition-all cursor-pointer transform hover:scale-110 active:scale-95 group"
+          className="hidden md:flex absolute right-4 lg:right-8 z-30 w-12 h-12 rounded-full bg-white hover:bg-[#1C1917] text-stone-800 hover:text-white border border-stone-200 shadow-xl items-center justify-center transition-all cursor-pointer transform hover:scale-105 active:scale-95 group"
           title="Duo suivant (Glisser à gauche)"
           id="next-duo-arrow-btn"
         >
@@ -373,7 +393,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
         </button>
 
         {/* Conteneur Draggable avec Motion (Permanent Swipe) */}
-        <div className="w-full flex justify-center items-center relative overflow-visible">
+        <div className="w-full h-full flex justify-center items-center relative overflow-visible">
           
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
@@ -411,7 +431,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                 opacity: 0,
               }}
               transition={{ duration: 0.32, ease: 'easeInOut' }}
-              className="cursor-grab active:cursor-grabbing w-full max-w-4xl relative"
+              className="cursor-grab active:cursor-grabbing w-full max-w-4xl relative h-full flex items-center justify-center"
             >
               
               {/* Dynamic Swipe Stamps (Bumble Feedback) */}
@@ -433,18 +453,18 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
 
               {/* ========================================================================= */}
-              {/* MODE DECK (CARTE UNIQUE FORMAT 9:16 RIGISIEUSEMENT IDENTIQUE AU MIROIR)  */}
+              {/* MODE DECK (CARTE UNIQUE FORMAT 9:16 AGRANDIE AU MAXIMUM)                   */}
               {/* ========================================================================= */}
-              {desktopViewMode === 'deck' && (
-                <div className="w-full flex flex-col items-center justify-center">
-                  <div className="w-full max-w-xs sm:max-w-sm md:max-w-[364px] flex justify-center">
+              {activeMode === 'deck' && (
+                <div className="w-full h-full flex flex-col items-center justify-center">
+                  <div className="w-auto max-w-[min(calc(100vw-28px),calc((100dvh-130px)*9/16))] max-h-[calc(100dvh-130px)] sm:max-h-[min(680px,calc(100dvh-140px))] aspect-[9/16] mx-auto flex justify-center">
                     <div 
                       onClick={(e) => {
                         if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
                         if (isDraggingRef.current) return;
                         toggleMobilePlay();
                       }}
-                      className="relative w-full rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 aspect-[9/16] flex flex-col justify-between cursor-pointer"
+                      className="relative w-full h-full rounded-[2rem] sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 aspect-[9/16] flex flex-col justify-between cursor-pointer"
                     >
                       
                       {/* Background Video (when playing) or Poster Image */}
@@ -472,8 +492,8 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/25 pointer-events-none" />
 
                   {/* TOP: Bumble-style segmented story bars (Univers A vs Univers B) */}
-                  <div className="relative z-20 pt-3 px-3 sm:px-4">
-                    <div className="grid grid-cols-2 gap-1.5 mb-2.5">
+                  <div className="relative z-20 pt-2.5 px-3 sm:px-4">
+                    <div className="grid grid-cols-2 gap-1.5 mb-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -504,25 +524,39 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       </button>
                     </div>
 
-                    {/* Top Row Header inside Card: Pole Pill on left & [Switch button + Golden play/pause button] on right */}
+                    {/* Top Row Header inside Card: Pole Pill on left & [Switch button + Question vignette + Audio] on right */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-medium text-white shadow-md shrink-0">
+                      <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white shadow-md shrink-0">
                         {currentTheme}
                       </span>
 
-                      {/* Right controls: Switch A/B pill + Audio toggle + Hybrid Golden Play/Pause button */}
-                      <div className="flex items-center gap-2">
+                      {/* Right controls: Switch A/B pill + Question Vignette + Audio toggle */}
+                      <div className="flex items-center gap-1.5">
                         {/* Pill to toggle between Protagonist A and B */}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setActiveProtagonist(prev => prev === 'A' ? 'B' : 'A');
                           }}
-                          className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                          className="h-7 px-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-[10.5px] font-semibold flex items-center gap-1 transition-all cursor-pointer shadow-sm active:scale-95"
                           title="Basculer vers l'autre univers du duo"
                         >
-                          <ExplorerEggIcon className="w-3.5 h-3.5 text-white" />
+                          <DuocumentairesTvIcon className="w-3 h-3 text-white" strokeWidth={1.4} />
                           <span>{activeProtagonist === 'A' ? pB.name.split(' ')[0] : pA.name.split(' ')[0]}</span>
+                        </button>
+
+                        {/* Vignette interactive pour la question en miroir */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsQuestionModalOpen(true);
+                          }}
+                          className="h-7 px-2 sm:px-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white text-[10.5px] font-semibold flex items-center gap-1 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
+                          title="Afficher la question centrale en miroir"
+                          id="deck-question-vignette-btn"
+                        >
+                          <HelpCircle className="w-3.5 h-3.5 text-[#C89B3C]" />
+                          <span className="hidden sm:inline">Question</span>
                         </button>
 
                         {/* Son activé / muet si vidéo en cours */}
@@ -533,13 +567,13 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                               if (activeProtagonist === 'A') setIsMutedA(prev => !prev);
                               else setIsMutedB(prev => !prev);
                             }}
-                            className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-md cursor-pointer"
+                            className="w-7 h-7 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-md cursor-pointer"
                             title={isMobileMuted ? "Activer le son" : "Couper le son"}
                           >
                             {isMobileMuted ? (
-                              <VolumeX className="w-4 h-4 text-stone-300" />
+                              <VolumeX className="w-3.5 h-3.5 text-stone-300" />
                             ) : (
-                              <Volume2 className="w-4 h-4 text-[#C89B3C]" />
+                              <Volume2 className="w-3.5 h-3.5 text-[#C89B3C]" />
                             )}
                           </button>
                         )}
@@ -548,37 +582,41 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                     </div>
                   </div>
 
-                  {/* Bouton de lecture vidéo CENTRÉ : visible au centre quand la vidéo est en pause */}
-                  {!isMobilePlaying && (
-                    <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-105 transition-transform">
-                        <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white text-white translate-x-0.5 opacity-95" />
-                      </div>
+                  {/* Bouton de lecture / pause vidéo CENTRÉ */}
+                  <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                    <div className={`w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl transition-all duration-200 ${
+                      isMobilePlaying ? 'opacity-0 group-hover:opacity-100 hover:scale-105' : 'opacity-100 scale-100'
+                    }`}>
+                      {isMobilePlaying ? (
+                        <Pause className="w-5 h-5 fill-white text-white" />
+                      ) : (
+                        <Play className="w-5 h-5 fill-white text-white translate-x-0.5 opacity-95" />
+                      )}
                     </div>
-                  )}
+                  </div>
 
                   {/* Espace central */}
                   <div className="my-auto" />
 
                   {/* BOTTOM IDENTITY & DETAILS */}
-                  <div className="relative z-20 p-5 sm:p-6 space-y-3 pointer-events-auto">
+                  <div className="relative z-20 p-3.5 sm:p-5 space-y-2 pointer-events-auto">
                     
                     {/* Protagonist name, age & territorial origin */}
                     <div className="flex items-end justify-between">
                       <div>
-                        <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none drop-shadow-md">
+                        <h3 className="font-editorial text-xl sm:text-2xl font-bold text-white tracking-tight leading-none drop-shadow-md">
                           {currentP.name}
                         </h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          {currentP.age && (
-                            <span className="text-xs text-white/80 font-medium">
+                        {currentP.age && (
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <span className="text-[11px] text-white/80 font-medium">
                               {currentP.age} ans
                             </span>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Son univers button (icône bonhomme -> Aller directement sur son profil avec retour au Duo) */}
+                      {/* Son univers button */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -590,11 +628,11 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                             returnToDocId: selectedDocId || currentDuo.documentaryId
                           });
                         }}
-                        className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
+                        className="w-7.5 h-7.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
                         title={`Consulter le profil de ${currentP.name}`}
                         id={`open-universe-${currentP.id}`}
                       >
-                        <User className="w-4 h-4" />
+                        <User className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -608,9 +646,26 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
               {/* AFFICHAGE FORMAT TABLETTE & DESKTOP (MODE MIROIR FACE-À-FACE)             */}
               {/* Les 2 protagonistes côte-à-côte avec le lien miroir au centre             */}
               {/* ========================================================================= */}
-              {desktopViewMode === 'mirror' && (
-                <div className="w-full">
-                  <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-10 relative max-w-xs sm:max-w-xl md:max-w-3xl mx-auto items-center">
+              {activeMode === 'mirror' && (
+                <div className="w-full h-full flex flex-col items-center justify-center relative">
+                  
+                  {/* Vignette Flottante au centre : Question en miroir */}
+                  <div className="mb-2 sm:mb-3 z-30 pointer-events-auto">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsQuestionModalOpen(true);
+                      }}
+                      className="h-7.5 sm:h-8 px-3.5 rounded-full bg-[#1C1917]/90 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md border border-white/25 shadow-xl flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                      title="Afficher la question centrale en miroir"
+                      id="mirror-question-vignette-btn"
+                    >
+                      <HelpCircle className="w-3.5 h-3.5 text-[#C89B3C]" />
+                      <span>Question en miroir</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-4 sm:gap-6 lg:gap-8 relative h-full max-h-[calc(100dvh-150px)]">
                     
                     {/* CARTE PROTAGONISTE A */}
                     <div 
@@ -618,7 +673,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
                         togglePlayA();
                       }}
-                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/16] transition-all duration-300 cursor-pointer"
+                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/16] w-auto max-w-[min(360px,calc((100dvh-160px)*9/16))] max-h-[calc(100dvh-160px)] sm:max-h-[min(620px,calc(100dvh-160px))] transition-all duration-300 cursor-pointer shrink-0"
                     >
                       {/* Background Media: Video when isPlayingA, otherwise Poster Photo */}
                       {isPlayingA ? (
@@ -669,14 +724,18 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         </div>
                       </div>
 
-                      {/* Centre : Bouton Play central quand en pause */}
-                      {!isPlayingA && (
-                        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                          <div className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-105 transition-transform">
+                      {/* Centre : Bouton Play / Pause central */}
+                      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                        <div className={`w-14 h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl transition-all duration-200 ${
+                          isPlayingA ? 'opacity-0 group-hover:opacity-100 hover:scale-105' : 'opacity-100 scale-100'
+                        }`}>
+                          {isPlayingA ? (
+                            <Pause className="w-6 h-6 fill-white text-white" />
+                          ) : (
                             <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-95" />
-                          </div>
+                          )}
                         </div>
-                      )}
+                      </div>
 
                       {/* Centre libéré */}
                       <div className="my-auto" />
@@ -714,23 +773,13 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       </div>
                     </div>
 
-                    {/* SYMBOLE CENTRAL DUO FACE-À-FACE : Icône des deux parenthèses galbées face à face avec fond Terre Cuite signature */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center pointer-events-none">
-                      <div 
-                        className="w-12 h-12 rounded-full bg-[#A2482B] text-white border-2 border-white shadow-2xl shadow-[#A2482B]/40 ring-1 ring-[#C89B3C]/50 flex items-center justify-center pointer-events-auto transition-transform hover:scale-110 select-none"
-                        title="Duo Miroir face-à-face"
-                      >
-                        <ExplorerEggIcon className="w-6 h-6 stroke-[2.4] text-white" />
-                      </div>
-                    </div>
-
                     {/* CARTE PROTAGONISTE B */}
                     <div 
                       onClick={(e) => {
                         if ((e.target as HTMLElement).closest('button, a, input, textarea')) return;
                         togglePlayB();
                       }}
-                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/16] transition-all duration-300 cursor-pointer"
+                      className="group relative rounded-[28px] overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/16] w-auto max-w-[min(360px,calc((100dvh-160px)*9/16))] max-h-[calc(100dvh-160px)] sm:max-h-[min(620px,calc(100dvh-160px))] transition-all duration-300 cursor-pointer shrink-0"
                     >
                       {/* Background Media: Video when isPlayingB, otherwise Poster Photo */}
                       {isPlayingB ? (
@@ -781,14 +830,18 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         </div>
                       </div>
 
-                      {/* Centre : Bouton Play central quand en pause */}
-                      {!isPlayingB && (
-                        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-                          <div className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl group-hover:scale-105 transition-transform">
+                      {/* Centre : Bouton Play / Pause central */}
+                      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                        <div className={`w-14 h-14 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white/90 shadow-xl transition-all duration-200 ${
+                          isPlayingB ? 'opacity-0 group-hover:opacity-100 hover:scale-105' : 'opacity-100 scale-100'
+                        }`}>
+                          {isPlayingB ? (
+                            <Pause className="w-6 h-6 fill-white text-white" />
+                          ) : (
                             <Play className="w-6 h-6 fill-white text-white translate-x-0.5 opacity-95" />
-                          </div>
+                          )}
                         </div>
-                      )}
+                      </div>
 
                       {/* Centre libéré */}
                       <div className="my-auto" />
@@ -836,34 +889,42 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* 3. LA QUESTION CENTRALE : RÉVÉLÉE SUR CLIC DU BOUTON (SUR FOND BLANC)     */}
-      {/* ========================================================================= */}
-      <div className="mt-2 sm:mt-4 flex flex-col items-center max-w-xl mx-auto w-full">
-        {!isQuestionRevealed ? (
-          <button
-            onClick={() => setIsQuestionRevealed(true)}
-            id="reveal-question-btn"
-            className="px-5 py-2 rounded-full bg-white hover:bg-stone-50 border border-stone-300 hover:border-stone-400 text-stone-700 text-xs font-semibold transition-all shadow-xs cursor-pointer"
+      {/* Modale Question Centrale en Miroir (affichée au clic sur la vignette interactive) */}
+      {isQuestionModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setIsQuestionModalOpen(false)}
+        >
+          <div 
+            className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-stone-200 text-center animate-in zoom-in-95 duration-200 pointer-events-auto"
+            onClick={(e) => e.stopPropagation()}
           >
-            <span>Révéler la question en miroir</span>
-          </button>
-        ) : (
-          <div className="w-full p-4 sm:p-5 rounded-2xl bg-white border border-stone-200 shadow-md text-center relative animate-in fade-in zoom-in-95 duration-200">
             <button
-              onClick={() => setIsQuestionRevealed(false)}
-              className="absolute top-2.5 right-2.5 p-1 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition-colors cursor-pointer"
-              title="Masquer la question"
+              onClick={() => setIsQuestionModalOpen(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition-colors cursor-pointer"
+              title="Fermer"
             >
-              <EyeOff className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
-            <p className="font-serif-editorial text-base sm:text-lg font-normal text-[#1C1917] leading-relaxed px-6 italic">
-              {cleanQuotes(currentDuo.centralQuestion)}
+
+            <div className="w-10 h-10 rounded-full bg-[#A2482B]/10 text-[#A2482B] flex items-center justify-center mx-auto mb-3">
+              <HelpCircle className="w-5 h-5" />
+            </div>
+
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#A2482B] mb-2">
+              Question centrale en miroir
+            </p>
+
+            <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917] mb-3">
+              {currentDuo.documentaryTitle}
+            </h3>
+
+            <p className="font-serif-editorial text-base sm:text-lg text-stone-800 leading-relaxed italic px-2">
+              « {cleanQuotes(currentDuo.centralQuestion)} »
             </p>
           </div>
-        )}
-
-      </div>
+        </div>
+      )}
 
       {/* Télécommande des Séries (Modal) */}
       <RemoteControlModal

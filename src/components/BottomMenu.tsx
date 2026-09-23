@@ -1,10 +1,13 @@
 import React from 'react';
 import { 
-  Clapperboard, 
-  Coins 
+  Clapperboard
 } from 'lucide-react';
 import { ViewScreen } from '../types';
-import { ExplorerEggIcon, CircleDotsIcon } from './YonywoodBrandIcons';
+import { 
+  CastingSearchIcon,
+  DuocumentairesTvIcon,
+  CoproduireRingsIcon 
+} from './YonywoodBrandIcons';
 
 interface BottomMenuProps {
   currentScreen: ViewScreen;
@@ -12,49 +15,49 @@ interface BottomMenuProps {
 }
 
 export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigate }) => {
-  // Determine active item
-  const isTournageActive = currentScreen.type === 'submit_story' || currentScreen.type === 'request_videographer';
-  const isCercleActive = currentScreen.type === 'home' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
-  const isMiroirActive = currentScreen.type === 'duo_feed' || currentScreen.type === 'duo_detail';
-  const isProductionsActive = currentScreen.type === 'marketplace';
+  // Déterminer l'élément actif selon l'écran en cours
+  const isRealiserActive = currentScreen.type === 'submit_story' || currentScreen.type === 'request_videographer';
+  const isCastingActive = currentScreen.type === 'home' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
+  const isDuocumentairesActive = currentScreen.type === 'duo_feed' || currentScreen.type === 'duo_detail';
+  const isCoproduireActive = currentScreen.type === 'marketplace';
 
-  // Do not show menu during fullscreen video player
+  // Ne pas afficher le menu pendant le lecteur vidéo plein écran
   if (currentScreen.type === 'video_player') {
     return null;
   }
 
   const menuItems = [
     {
-      id: 'tournage',
-      label: 'Tournage',
+      id: 'realiser',
+      label: 'Réaliser',
       icon: Clapperboard,
-      isActive: isTournageActive,
+      isActive: isRealiserActive,
       onClick: () => onNavigate({ type: 'submit_story' }),
-      screenId: 'menu-item-tournage'
+      screenId: 'menu-item-realiser'
     },
     {
-      id: 'cercle',
-      label: 'Cercle',
-      icon: CircleDotsIcon,
-      isActive: isCercleActive,
+      id: 'casting',
+      label: 'Casting',
+      icon: CastingSearchIcon,
+      isActive: isCastingActive,
       onClick: () => onNavigate({ type: 'home' }),
-      screenId: 'menu-item-cercle'
+      screenId: 'menu-item-casting'
     },
     {
-      id: 'miroir',
-      label: 'Miroir',
-      icon: ExplorerEggIcon,
-      isActive: isMiroirActive,
+      id: 'duocumentaires',
+      label: 'Duocumentaires',
+      icon: DuocumentairesTvIcon,
+      isActive: isDuocumentairesActive,
       onClick: () => onNavigate({ type: 'duo_feed' }),
-      screenId: 'menu-item-miroir'
+      screenId: 'menu-item-duocumentaires'
     },
     {
-      id: 'productions',
-      label: 'Productions',
-      icon: Coins,
-      isActive: isProductionsActive,
+      id: 'coproduire',
+      label: 'Coproduire',
+      icon: CoproduireRingsIcon,
+      isActive: isCoproduireActive,
       onClick: () => onNavigate({ type: 'marketplace' }),
-      screenId: 'menu-item-productions'
+      screenId: 'menu-item-coproduire'
     }
   ];
 
@@ -73,36 +76,34 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
               onClick={item.onClick}
               id={item.screenId}
               title={item.label}
-              className={`relative flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all duration-300 group cursor-pointer ${
+              className={`relative flex flex-col items-center justify-center px-2 sm:px-3 py-1 rounded-full transition-colors duration-200 group cursor-pointer ${
                 item.isActive
-                  ? '-translate-y-0.5 text-[#1C1917]'
-                  : 'translate-y-0 text-stone-400 hover:text-stone-800'
+                  ? 'text-stone-900'
+                  : 'text-stone-500 hover:text-stone-800'
               }`}
             >
-              {/* Active illuminated pill background with pure white icon for crisp contrast */}
+              {/* Capsule changeante uniquement sur l'icône en Terre Cuite signature (#A2482B) */}
               <div 
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
                   item.isActive 
-                    ? 'bg-[#A2482B] text-white shadow-md shadow-[#A2482B]/30 ring-1.5 ring-[#C89B3C]/50 scale-105' 
-                    : 'bg-transparent text-current group-hover:bg-stone-100/80'
+                    ? 'bg-[#A2482B] text-white shadow-sm' 
+                    : 'bg-transparent text-stone-600 group-hover:bg-stone-100/80'
                 }`}
               >
-                <Icon className={`w-5 h-5 transition-transform duration-200 ${item.isActive ? 'stroke-[2.2] text-white' : 'stroke-[1.8] text-stone-600 group-hover:scale-105'}`} />
+                <Icon 
+                  className={`${item.id === 'casting' ? 'w-[21.5px] h-[21.5px]' : 'w-5 h-5'} transition-transform duration-200`} 
+                  strokeWidth={item.id === 'casting' ? 1.6 : 1.35} 
+                />
               </div>
 
-              {/* Label */}
-              <span className={`text-[10.5px] tracking-tight mt-0.5 transition-all duration-200 ${
+              {/* Libellé textuel : épaisseur uniforme (sans passage en gras), aligné strictement */}
+              <span className={`text-[10.5px] sm:text-[11px] tracking-tight mt-1 transition-colors duration-200 font-normal ${
                 item.isActive 
-                  ? 'font-bold text-[#1C1917]' 
-                  : 'font-medium text-stone-500'
+                  ? 'text-[#A2482B]' 
+                  : 'text-stone-500'
               }`}>
                 {item.label}
               </span>
-
-              {/* Small subtle active dot indicator */}
-              {item.isActive && (
-                <span className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-[#A2482B]" />
-              )}
             </button>
           );
         })}
