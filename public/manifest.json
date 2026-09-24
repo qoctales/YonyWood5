@@ -1,0 +1,18 @@
+{
+  "short_name": "YonyWood",
+  "name": "YonyWood — Des histoires qui nous relient",
+  "description": "Plateforme documentaire d'auteur et réseau de transmission humaine",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FDFBF7",
+  "theme_color": "#A2482B",
+  "display": "standalone",
+  "orientation": "portrait"
+}

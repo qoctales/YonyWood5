@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  ArrowLeft, 
   ChevronLeft, 
   ChevronRight, 
-  Coins, 
   TrendingUp, 
   Eye, 
   Plus, 
@@ -15,6 +13,7 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { UserProductionShare } from './ProfileSettingsScreen';
+import { CoproduireRingsIcon } from './YonywoodBrandIcons';
 
 export interface PortfolioTransactionItem {
   id: string;
@@ -50,7 +49,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
   // Onglet courant : 'shares' (Mes parts) ou 'history' (Historique)
   const [currentTab, setCurrentTab] = useState<'shares' | 'history'>('shares');
 
-  // Liste des séries coproduites
+  // Liste des séries coproduites avec affiches officielles vérifiées
   const [productions, setProductions] = useState<UserProductionShare[]>([
     {
       id: 'prod-1',
@@ -69,7 +68,6 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 24.5,
       liquidityScore: 'Élevée',
       status: 'En diffusion',
-      videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
       posterUrl: '/assets/posters/finagnon-qosqorico.png'
     },
     {
@@ -89,7 +87,6 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 15.2,
       liquidityScore: 'Moyenne',
       status: 'En post-production',
-      videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
       posterUrl: '/assets/posters/jesus-esu.png'
     },
     {
@@ -109,7 +106,6 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 18.0,
       liquidityScore: 'Élevée',
       status: 'En diffusion',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
     },
     {
@@ -129,13 +125,12 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 11.8,
       liquidityScore: 'Moyenne',
       status: 'En tournage',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
       posterUrl: '/assets/posters/dixeat-fiat-luxe.png'
     },
     {
       id: 'prod-5',
       seriesId: 'investors-builders',
-      seriesTitle: 'Investors Builders',
+      seriesTitle: 'Investors < > Builders',
       sharesCount: 12,
       sharesOnSale: 4,
       startPrice: 50,
@@ -149,12 +144,11 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 29.0,
       liquidityScore: 'Élevée',
       status: 'En production',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      posterUrl: '/assets/posters/investors-builders.png'
+      posterUrl: '/investors-builders.png'
     }
   ]);
 
-  // Historique des cessions / ventes passées avec posters et acheteurs cliquables
+  // Historique des cessions / ventes passées avec affiches officielles
   const [transactions] = useState<PortfolioTransactionItem[]>([
     {
       id: 'tx-1',
@@ -193,7 +187,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
     {
       id: 'tx-3',
       seriesId: 'investors-builders',
-      seriesTitle: 'Investors Builders',
+      seriesTitle: 'Investors < > Builders',
       sharesSold: 3,
       boughtPriceUnit: 50,
       soldPriceUnit: 64,
@@ -205,14 +199,14 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       buyerPhoto: '/assets/protagonists/koffi-tisserand.jpg',
       buyerProtagonistId: 'koffi-tisserand',
       buyerRole: 'Tisserand traditionnel (Porto-Novo)',
-      posterUrl: '/assets/posters/investors-builders.png'
+      posterUrl: '/investors-builders.png'
     }
   ]);
 
-  // Index de la série active affichée en plein écran dans "Mes parts"
+  // Index de la série active
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Index de la vente active dans "Historique"
+  // Index de la transaction active dans "Historique"
   const [historyActiveIndex, setHistoryActiveIndex] = useState(0);
 
   // Toast temporaire d'action
@@ -293,7 +287,6 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
   const currentUnitPrice = currentProd?.salePrice || startUnitPrice;
   const gainPerShare = currentUnitPrice - startUnitPrice;
   const gainPercent = Math.round((gainPerShare / startUnitPrice) * 100);
-  const isHighDemand = (currentProd?.growthRatePercent || 0) >= 18;
 
   // Transaction active pour la page d'historique
   const activeTx = transactions[historyActiveIndex] || transactions[0];
@@ -322,47 +315,47 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
 
   return (
     <div 
-      className="relative w-full h-[100dvh] bg-white text-[#1C1917] flex flex-col overflow-hidden select-none font-sans"
+      className="relative min-h-screen bg-white text-[#1C1917] flex flex-col font-sans select-none pb-28 sm:pb-32"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {/* Toast de confirmation */}
       {toastMessage && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-[#1C1917] text-white text-xs font-semibold shadow-2xl flex items-center gap-2 border border-white/20 animate-in fade-in slide-in-from-top-3">
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-[#1C1917] text-white text-xs font-semibold shadow-2xl flex items-center gap-2 border border-white/20 animate-in fade-in slide-in-from-top-3">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* 1. EN-TÊTE ÉPURÉ COMME MESSAGERIE (Flèche retour + Options Parts & Historique) */}
+      {/* 1. EN-TÊTE ÉPURÉ (Chevron unifié + Onglets avec Terre Cuite au survol & actif) */}
       {/* ========================================================================= */}
-      <header className="relative z-30 flex items-center justify-between px-3 sm:px-6 py-2.5 bg-white border-b border-[#E7E5E4] shrink-0">
+      <header className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 py-3 bg-white/95 backdrop-blur-md border-b border-[#E7E5E4] shrink-0">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={handleReturnToProfile}
-            className="p-2 rounded-full bg-white hover:bg-[#FAFAF9] border border-[#E7E5E4] text-[#8B6845] hover:text-[#1C1917] transition-colors cursor-pointer shadow-xs active:scale-95"
+            className="w-8 h-8 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-[#1C1917] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
             title="Retour au profil"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
           </button>
 
           <h1 className="font-editorial text-xl sm:text-2xl font-bold text-[#1C1917] leading-none">
-            {currentTab === 'shares' ? 'Parts' : 'Historique'}
+            {currentTab === 'shares' ? 'Mes parts' : 'Historique'}
           </h1>
         </div>
 
-        {/* Côté droit : Navigation entre Parts et Historique dans la même police et même taille */}
+        {/* Côté droit : Navigation entre Parts et Historique */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={() => setCurrentTab('shares')}
-            className={`px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
               currentTab === 'shares'
-                ? 'bg-[#1C1917] text-white shadow-xs'
-                : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
+                ? 'bg-[#A2482B] text-white border-[#A2482B] shadow-xs'
+                : 'bg-white text-[#1C1917] border-stone-200 hover:bg-[#A2482B] hover:text-white hover:border-[#A2482B]'
             }`}
           >
             Parts
@@ -370,10 +363,10 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
           <button
             type="button"
             onClick={() => setCurrentTab('history')}
-            className={`px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+            className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer border ${
               currentTab === 'history'
-                ? 'bg-[#1C1917] text-white shadow-xs'
-                : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
+                ? 'bg-[#A2482B] text-white border-[#A2482B] shadow-xs'
+                : 'bg-white text-[#1C1917] border-stone-200 hover:bg-[#A2482B] hover:text-white hover:border-[#A2482B]'
             }`}
           >
             Historique
@@ -382,286 +375,346 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       </header>
 
       {/* ========================================================================= */}
-      {/* 2. CONTENU PRINCIPAL                                                      */}
+      {/* 2. CONTENU PRINCIPAL (Au-dessus de la barre de navigation, aéré et clair)   */}
       {/* ========================================================================= */}
       {currentTab === 'shares' ? (
         /* ======================================================================= */
-        /* VUE : MES PARTS                                                         */
+        /* VUE : MES PARTS EN SPLIT-SCREEN (Affiche à gauche, Données à droite)    */
         /* ======================================================================= */
-        <main className="relative flex-1 w-full h-full flex flex-col justify-between overflow-hidden bg-stone-900 pb-24 sm:pb-28">
-          {/* Affiche de fond cinéma plein écran */}
-          <div className="absolute inset-0 z-0">
-            <img
-              src={currentProd?.posterUrl}
-              alt={currentProd?.seriesTitle}
-              className="w-full h-full object-cover select-none"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/60 pointer-events-none" />
-          </div>
+        <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 flex flex-col justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-center">
+            
+            {/* ------------------------------------------------------------------- */}
+            {/* CÔTÉ GAUCHE : AFFICHE OFFICIELLE VERTICALE (Avec chevrons & swipe)  */}
+            {/* ------------------------------------------------------------------- */}
+            <div className="lg:col-span-5 flex flex-col items-center">
+              <div className="relative w-full max-w-[280px] sm:max-w-[310px] aspect-[9/13.5] rounded-3xl overflow-hidden shadow-xl border border-stone-200 bg-stone-100 group select-none">
+                
+                {/* Affiche officielle de la série */}
+                <img
+                  src={currentProd?.posterUrl}
+                  alt={currentProd?.seriesTitle}
+                  className="w-full h-full object-cover"
+                />
 
-          {/* Flèches de navigation gauche / droite */}
-          {activeIndex > 0 && (
-            <button
-              type="button"
-              onClick={() => setActiveIndex(prev => prev - 1)}
-              className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer active:scale-90 shadow-lg"
-              title="Série précédente"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-          )}
-          {activeIndex < productions.length - 1 && (
-            <button
-              type="button"
-              onClick={() => setActiveIndex(prev => prev + 1)}
-              className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer active:scale-90 shadow-lg"
-              title="Série suivante"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          )}
+                {/* Voile dégradé subtil pour la lisibilité du titre */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/55 pointer-events-none" />
 
-          {/* HAUT DU VISUEL : Titre de la série + Audience */}
-          <div className="relative z-10 px-4 sm:px-8 pt-4">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 max-w-3xl mx-auto">
-              <div>
-                <h2 className="font-editorial text-2xl sm:text-4xl font-bold text-white leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-                  {currentProd?.seriesTitle}
-                </h2>
-              </div>
+                {/* Titre de la série en haut à gauche */}
+                <div className="absolute top-3.5 left-3.5 z-20 max-w-[85%]">
+                  <div className="px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white font-editorial text-xs sm:text-sm font-bold border border-white/20 shadow-md truncate">
+                    {currentProd?.seriesTitle}
+                  </div>
+                </div>
 
-              {/* Signal d'Audience & Croissance (sans icône devant le pourcentage) */}
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-2xl shrink-0 self-start sm:self-auto">
-                <Eye className="w-4 h-4 text-white" />
-                <div className="text-left">
-                  <span className="text-[10px] text-white/70 block uppercase leading-none">Audience</span>
-                  <span className="font-mono font-bold text-white text-xs sm:text-sm">
-                    {currentProd?.viewsCount ? (currentProd.viewsCount / 1000).toFixed(1) + ' k spectateurs' : '30 k'}
+                {/* Badge d'état en haut à droite */}
+                <div className="absolute top-3.5 right-3.5 z-20">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white border border-white/20">
+                    {currentProd?.status}
                   </span>
                 </div>
-                <div className="ml-2 pl-2 border-l border-white/20">
-                  <span className="text-xs font-bold text-emerald-400">
+
+                {/* Flèche navigation gauche sur l'affiche */}
+                {activeIndex > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveIndex(prev => prev - 1)}
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/25 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer active:scale-90 shadow-lg"
+                    title="Série précédente"
+                  >
+                    <ChevronLeft className="w-5 h-5 stroke-[2.2]" />
+                  </button>
+                )}
+
+                {/* Flèche navigation droite sur l'affiche */}
+                {activeIndex < productions.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveIndex(prev => prev + 1)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/25 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer active:scale-90 shadow-lg"
+                    title="Série suivante"
+                  >
+                    <ChevronRight className="w-5 h-5 stroke-[2.2]" />
+                  </button>
+                )}
+
+              </div>
+            </div>
+
+            {/* ------------------------------------------------------------------- */}
+            {/* CÔTÉ DROIT : FICHE CLAIRE, ÉPURÉE ET DÉTAILLÉE                       */}
+            {/* ------------------------------------------------------------------- */}
+            <div className="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-6 border border-stone-200 shadow-xs space-y-3.5 sm:space-y-4">
+              
+              {/* Titre & Statut */}
+              <div className="flex items-start justify-between gap-3 pb-2.5 border-b border-stone-100">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#A2482B] block">
+                    Coproduction active
+                  </span>
+                  <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-stone-900 leading-tight">
+                    {currentProd?.seriesTitle}
+                  </h2>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                  {currentProd?.status}
+                </span>
+              </div>
+
+              {/* 1. AUDIENCE */}
+              <div className="p-3 rounded-2xl bg-stone-50 border border-stone-200/70 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-700 shadow-2xs">
+                    <Eye className="w-4 h-4 text-[#A2482B]" />
+                  </div>
+                  <div>
+                    <span className="text-[10.5px] uppercase font-bold tracking-wider text-stone-500 block">
+                      Audience cumulée
+                    </span>
+                    <span className="font-mono text-base sm:text-lg font-bold text-stone-900">
+                      {currentProd?.viewsCount ? (currentProd.viewsCount / 1000).toFixed(1) + ' k spectateurs' : '30 k'}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs sm:text-sm font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200/60 font-mono">
                     +{currentProd?.growthRatePercent}%
                   </span>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* CENTRE : Les 3 blocs clés + LIGNE HARMONIEUSE (Parts détenues, parts en vente, bouton Vendre) */}
-          <div className="relative z-10 px-4 sm:px-8 py-2 my-auto">
-            <div className="max-w-3xl mx-auto space-y-3 sm:space-y-4">
-              
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3.5">
-                {/* 1. Acheté à l'origine */}
-                <div className="p-3 sm:p-3.5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/15 flex items-center justify-between shadow-lg">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] sm:text-[10.5px] text-white/70 uppercase tracking-wider block font-semibold">
-                      Acheté à l'origine
+              {/* 2. PRIX D'ACHAT & 3. VALEUR AUJOURD'HUI (Grille côte à côte) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Prix d'achat à l'origine */}
+                <div className="p-3 rounded-2xl bg-stone-50 border border-stone-200/70 space-y-1">
+                  <span className="text-[10.5px] uppercase font-bold tracking-wider text-stone-500 block">
+                    Prix d'achat à l'origine
+                  </span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="font-mono text-xl sm:text-2xl font-bold text-stone-900">
+                      {startUnitPrice} €
                     </span>
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-mono text-xl sm:text-2xl font-bold text-white">
-                        {startUnitPrice} €
-                      </span>
-                      <span className="text-[10px] text-white/60">/ part</span>
-                    </div>
-                    <span className="text-[10px] text-white/50 block">
-                      Total : {currentProd?.sharesCount * startUnitPrice} €
-                    </span>
+                    <span className="text-[11px] text-stone-400">/ part</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white/80">
-                    <Coins className="w-4 h-4 text-stone-300" />
-                  </div>
+                  <span className="text-[11px] text-stone-500 block">
+                    Total investi : <strong className="text-stone-700 font-mono">{currentProd?.sharesCount * startUnitPrice} €</strong>
+                  </span>
                 </div>
 
-                {/* 2. Valeur aujourd'hui */}
-                <div className="p-3 sm:p-3.5 rounded-2xl bg-stone-900/90 backdrop-blur-md border border-white/20 flex items-center justify-between shadow-xl">
-                  <div className="space-y-0.5 text-white">
-                    <span className="text-[10px] sm:text-[10.5px] text-white/80 uppercase tracking-wider block font-semibold">
-                      Valeur aujourd'hui
+                {/* Valeur aujourd'hui */}
+                <div className="p-3 rounded-2xl bg-amber-50/40 border border-amber-200/60 space-y-1">
+                  <span className="text-[10.5px] uppercase font-bold tracking-wider text-amber-900/80 block">
+                    Valeur aujourd'hui
+                  </span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="font-mono text-xl sm:text-2xl font-bold text-stone-900">
+                      {currentUnitPrice} €
                     </span>
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-mono text-xl sm:text-2xl font-black text-white">
-                        {currentUnitPrice} €
-                      </span>
-                      <span className="text-[10px] text-white/80">/ part</span>
-                    </div>
-                    <span className="text-[10.5px] font-bold text-emerald-400 flex items-center gap-1">
-                      <TrendingUp className="w-3.5 h-3.5" />
-                      +{gainPerShare} € (+{gainPercent}%)
-                    </span>
+                    <span className="text-[11px] text-stone-400">/ part</span>
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-emerald-400">
-                    <TrendingUp className="w-4 h-4" />
-                  </div>
-                </div>
-
-                {/* 3. Tendance */}
-                <div className="p-3 sm:p-3.5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/15 flex items-center justify-between shadow-lg">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] sm:text-[10.5px] text-white/70 uppercase tracking-wider block font-semibold">
-                      Tendance
-                    </span>
-                    <span className="text-xs sm:text-sm font-bold block text-emerald-400">
-                      {isHighDemand ? 'Forte demande' : 'Série en croissance'}
-                    </span>
-                    <span className="text-[10px] text-white/60 block">
-                      Prix conseillé : <span className="font-mono font-bold text-white">{currentProd?.recommendedPrice} €</span>
-                    </span>
-                  </div>
-                  <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-stone-300">
-                    <Coins className="w-4 h-4" />
-                  </div>
+                  <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 font-mono">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    +{gainPerShare} € (+{gainPercent}%)
+                  </span>
                 </div>
               </div>
 
-              {/* LIGNE HARMONIEUSE : Nombre de parts détenues, en vente, et bouton Vendre des parts sur la même ligne */}
-              <div className="pt-2">
-                <div className="bg-black/75 backdrop-blur-md border border-white/20 p-2 sm:p-2.5 rounded-2xl flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 sm:gap-4 pl-2 text-xs text-white">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-sm sm:text-base font-mono">{currentProd?.sharesCount}</span>
-                      <span className="text-white/70">parts détenues</span>
-                    </div>
-
-                    {(currentProd?.sharesOnSale || 0) > 0 && (
-                      <>
-                        <span className="text-white/30">•</span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-sm sm:text-base font-mono text-emerald-400">{currentProd?.sharesOnSale}</span>
-                          <span className="text-emerald-300">en vente</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsQuickSellOpen(true)}
-                    className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl bg-white hover:bg-stone-100 text-[#1C1917] font-bold text-xs sm:text-sm tracking-wide transition-all cursor-pointer shadow-md active:scale-95 flex items-center justify-center gap-2 shrink-0"
-                  >
-                    <span>Vendre des parts</span>
-                  </button>
+              {/* 4. TENDANCE & PRIX CONSEILLÉ */}
+              <div className="p-3 rounded-2xl bg-stone-50 border border-stone-200/70 flex items-center justify-between">
+                <div>
+                  <span className="text-[10.5px] uppercase font-bold tracking-wider text-stone-500 block">
+                    Tendance du marché
+                  </span>
+                  <span className="text-xs sm:text-sm font-semibold text-stone-800 block mt-0.5">
+                    Progression régulière
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] text-stone-400 block">Prix conseillé</span>
+                  <span className="font-mono font-bold text-sm text-[#A2482B]">
+                    {currentProd?.recommendedPrice} €
+                  </span>
                 </div>
               </div>
 
+              {/* 5. NOMBRE DE PARTS DÉTENUES */}
+              <div className="p-3 rounded-2xl bg-stone-100/70 border border-stone-200 flex items-center justify-between">
+                <div>
+                  <span className="text-[10.5px] uppercase font-bold tracking-wider text-stone-500 block">
+                    Votre portefeuille
+                  </span>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="font-mono text-xl sm:text-2xl font-black text-stone-900">
+                      {currentProd?.sharesCount}
+                    </span>
+                    <span className="text-xs font-semibold text-stone-700">parts détenues</span>
+                  </div>
+                </div>
+
+                {(currentProd?.sharesOnSale || 0) > 0 ? (
+                  <div className="text-right px-3 py-1 rounded-xl bg-amber-100/60 border border-amber-300/50">
+                    <span className="text-[10px] text-amber-800 font-bold block uppercase">En vente</span>
+                    <span className="font-mono font-bold text-xs text-amber-900">
+                      {currentProd?.sharesOnSale} part(s) à {currentProd?.salePrice} €
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-xs text-stone-400 italic">Aucune part en vente</span>
+                )}
+              </div>
+
+              {/* 6. BOUTON D'ACTION AVEC L'ICÔNE OFFICIELLE DE COPRODUCTION (Anneaux Yonywood) */}
+              <div className="pt-1.5">
+                <button
+                  type="button"
+                  onClick={() => setIsQuickSellOpen(true)}
+                  className="w-full h-11 sm:h-12 rounded-2xl bg-[#A2482B] hover:bg-[#8B3A20] text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2.5"
+                >
+                  <CoproduireRingsIcon className="w-5 h-5 text-white" />
+                  <span>Vendre des parts</span>
+                </button>
+              </div>
+
             </div>
+
           </div>
         </main>
       ) : (
         /* ======================================================================= */
-        /* VUE : HISTORIQUE PLEIN ÉCRAN CINÉMA                                     */
+        /* VUE : HISTORIQUE DES TRANSACTIONS (Affiche à gauche, Données à droite)  */
         /* ======================================================================= */
-        <main className="relative flex-1 w-full h-full flex flex-col justify-between overflow-hidden bg-black text-white pb-24 sm:pb-28">
-          {/* Affiche de fond cinéma de la vente sélectionnée */}
-          <div className="absolute inset-0 z-0">
-            <img
-              src={activeTx.posterUrl}
-              alt={activeTx.seriesTitle}
-              className="w-full h-full object-cover opacity-85 select-none"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/75 pointer-events-none" />
-          </div>
-
-          {/* Flèches de navigation gauche / droite dans l'historique */}
-          {historyActiveIndex > 0 && (
-            <button
-              type="button"
-              onClick={() => setHistoryActiveIndex(prev => prev - 1)}
-              className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 flex items-center justify-center backdrop-blur-md cursor-pointer transition-all active:scale-90 shadow-lg"
-              title="Vente précédente"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-          )}
-          {historyActiveIndex < transactions.length - 1 && (
-            <button
-              type="button"
-              onClick={() => setHistoryActiveIndex(prev => prev + 1)}
-              className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 flex items-center justify-center backdrop-blur-md cursor-pointer transition-all active:scale-90 shadow-lg"
-              title="Vente suivante"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          )}
-
-          {/* Contenu central de la vente */}
-          <div className="relative z-20 px-4 sm:px-8 py-3 my-auto max-w-2xl mx-auto w-full space-y-4 text-center">
+        <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 flex flex-col justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-center">
             
-            {/* Titre et Date */}
-            <div className="space-y-1">
-              <h2 className="font-editorial text-3xl sm:text-5xl font-bold text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
-                {activeTx.seriesTitle}
-              </h2>
-              <div className="flex items-center justify-center gap-1.5 text-xs text-white/80 font-medium">
-                <Calendar className="w-3.5 h-3.5 text-stone-300" />
-                <span>{activeTx.date}</span>
-              </div>
-            </div>
-
-            {/* Vignette cliquable de la personne qui a acquis les parts */}
-            <div className="flex justify-center">
-              <button
-                type="button"
-                onClick={() => handleBuyerClick(activeTx.buyerProtagonistId)}
-                className="group flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-black/70 hover:bg-black/90 backdrop-blur-md border border-white/20 transition-all cursor-pointer active:scale-95 shadow-xl text-left"
-                title={`Voir le profil de ${activeTx.buyerName}`}
-              >
+            {/* CÔTÉ GAUCHE : AFFICHE VERTICALE DE LA SÉRIE CÉDÉE */}
+            <div className="lg:col-span-5 flex flex-col items-center">
+              <div className="relative w-full max-w-[280px] sm:max-w-[310px] aspect-[9/13.5] rounded-3xl overflow-hidden shadow-xl border border-stone-200 bg-stone-100 group select-none">
                 <img
-                  src={activeTx.buyerPhoto}
-                  alt={activeTx.buyerName}
-                  className="w-10 h-10 rounded-full object-cover border border-white/30 shrink-0 group-hover:scale-105 transition-transform"
+                  src={activeTx.posterUrl}
+                  alt={activeTx.seriesTitle}
+                  className="w-full h-full object-cover"
                 />
-                <div>
-                  <span className="text-[10px] text-white/60 block uppercase font-medium">Acquis par</span>
-                  <span className="text-xs sm:text-sm font-bold text-white group-hover:text-emerald-300 transition-colors block">
-                    {activeTx.buyerName}
-                  </span>
-                  {activeTx.buyerRole && (
-                    <span className="text-[10px] text-white/70 block truncate max-w-[220px]">
-                      {activeTx.buyerRole}
-                    </span>
-                  )}
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/55 pointer-events-none" />
+
+                <div className="absolute top-3.5 left-3.5 z-20 max-w-[85%]">
+                  <div className="px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white font-editorial text-xs sm:text-sm font-bold border border-white/20 shadow-md truncate">
+                    {activeTx.seriesTitle}
+                  </div>
                 </div>
-              </button>
+
+                {/* Flèche transaction précédente */}
+                {historyActiveIndex > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setHistoryActiveIndex(prev => prev - 1)}
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/25 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer active:scale-90 shadow-lg"
+                    title="Cession précédente"
+                  >
+                    <ChevronLeft className="w-5 h-5 stroke-[2.2]" />
+                  </button>
+                )}
+
+                {/* Flèche transaction suivante */}
+                {historyActiveIndex < transactions.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setHistoryActiveIndex(prev => prev + 1)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/25 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer active:scale-90 shadow-lg"
+                    title="Cession suivante"
+                  >
+                    <ChevronRight className="w-5 h-5 stroke-[2.2]" />
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* Gros Macaron du Gain Net Encaissé */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-black/75 backdrop-blur-md border border-white/20 shadow-2xl space-y-3">
-              <span className="text-xs sm:text-sm text-white/70 uppercase tracking-widest font-bold block">
-                Gain net encaissé dans votre coffre
-              </span>
-              <div className="flex items-center justify-center gap-2">
-                <span className="font-mono text-4xl sm:text-6xl font-black text-emerald-400 drop-shadow-md">
-                  +{activeTx.netGain} €
-                </span>
-                <span className="text-sm font-bold text-emerald-300">
-                  (+{txGainPercent}%)
-                </span>
+            {/* CÔTÉ DROIT : INFORMATIONS & ACQUÉREUR */}
+            <div className="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-6 border border-stone-200 shadow-xs space-y-4 sm:space-y-5">
+              
+              {/* Titre et Date avec espace aéré */}
+              <div className="pb-3 border-b border-stone-100">
+                <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-stone-900 leading-tight">
+                  {activeTx.seriesTitle}
+                </h2>
+                <div className="flex items-center gap-1.5 text-xs text-stone-500 mt-2 font-medium">
+                  <Calendar className="w-3.5 h-3.5 text-stone-400" />
+                  <span>Cédé le {activeTx.date}</span>
+                </div>
               </div>
 
-              {/* Comparaison Acheté vs Vendu */}
-              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/15 text-left">
-                <div className="p-3 rounded-2xl bg-white/10 border border-white/10 space-y-0.5">
-                  <span className="text-[10px] text-white/60 uppercase font-semibold block">Ce que vous aviez payé</span>
-                  <span className="font-mono text-lg sm:text-xl font-bold text-white block">
-                    {activeTx.totalBought} €
-                  </span>
-                  <span className="text-[10px] text-white/50 block">
-                    {activeTx.sharesSold} part(s) à {activeTx.boughtPriceUnit} €
+              {/* 1. ACQUÉREUR DES PARTS (Remonté tout en haut) */}
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-2.5">
+                <span className="text-[10.5px] uppercase font-bold tracking-wider text-stone-500 block">
+                  Acquéreur des parts
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => handleBuyerClick(activeTx.buyerProtagonistId)}
+                  className="w-full flex items-center gap-3.5 p-3 rounded-2xl bg-white hover:bg-stone-100 border border-stone-200 transition-all cursor-pointer text-left shadow-2xs group"
+                >
+                  <img
+                    src={activeTx.buyerPhoto}
+                    alt={activeTx.buyerName}
+                    className="w-12 h-12 rounded-full object-cover border border-stone-300 group-hover:scale-105 transition-transform"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs sm:text-sm font-bold text-stone-900 group-hover:text-[#A2482B] transition-colors block truncate">
+                      {activeTx.buyerName}
+                    </span>
+                    {activeTx.buyerRole && (
+                      <span className="text-[11px] text-stone-500 block truncate">
+                        {activeTx.buyerRole}
+                      </span>
+                    )}
+                    <span className="text-[10px] text-[#A2482B] font-semibold block mt-0.5">
+                      Voir le profil →
+                    </span>
+                  </div>
+                </button>
+
+                <div className="text-[11px] text-stone-500 flex items-center justify-between pt-1">
+                  <span>Volume cédé :</span>
+                  <span className="font-mono font-bold text-stone-800">{activeTx.sharesSold} part(s)</span>
+                </div>
+              </div>
+
+              {/* 2. BILAN FINANCIER & GAIN NET */}
+              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 space-y-3">
+                <span className="text-[10.5px] uppercase font-bold tracking-wider text-emerald-800 block">
+                  Gain net encaissé
+                </span>
+
+                <div className="text-center py-1">
+                  <div className="flex items-baseline justify-center gap-1.5">
+                    <span className="font-mono text-3xl sm:text-4xl font-black text-emerald-700">
+                      +{activeTx.netGain} €
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-emerald-600 font-mono">
+                      (+{txGainPercent}%)
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-emerald-700/80 block mt-1">
+                    Directement reversé dans votre coffre
                   </span>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-white/10 border border-white/20 space-y-0.5">
-                  <span className="text-[10px] text-white/80 uppercase font-bold block">Ce que vous avez perçu</span>
-                  <span className="font-mono text-lg sm:text-xl font-black text-white block">
-                    {activeTx.totalSold} €
-                  </span>
-                  <span className="text-[10px] text-white/70 block">
-                    {activeTx.sharesSold} part(s) vendue(s) à {activeTx.soldPriceUnit} €
-                  </span>
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-emerald-200/50 text-xs">
+                  <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                    <span className="text-[10px] text-stone-500 block">Prix d'achat :</span>
+                    <span className="font-mono font-bold text-stone-800">{activeTx.totalBought} €</span>
+                    <span className="text-[9.5px] text-stone-400 block font-mono">{activeTx.boughtPriceUnit} € / part</span>
+                  </div>
+
+                  <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                    <span className="text-[10px] text-stone-500 block">Prix de cession :</span>
+                    <span className="font-mono font-bold text-emerald-700">{activeTx.totalSold} €</span>
+                    <span className="text-[9.5px] text-stone-400 block font-mono">{activeTx.soldPriceUnit} € / part</span>
+                  </div>
                 </div>
               </div>
+
             </div>
 
           </div>
@@ -669,15 +722,20 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* 3. MODALE DE VENTE (« Proposer des parts à l’achat »)                      */}
+      {/* 3. MODALE DE VENTE CLAIRE (« Proposer des parts à la vente »)              */}
       {/* ========================================================================= */}
       {isQuickSellOpen && currentProd && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in">
           <div className="bg-white max-w-md w-full rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in slide-in-from-bottom-5">
             <div className="flex items-center justify-between pb-2 border-b border-stone-200">
-              <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917]">
-                Proposer des parts à l’achat
-              </h3>
+              <div>
+                <h3 className="font-editorial text-base sm:text-lg font-bold text-stone-900">
+                  Proposer des parts à la vente
+                </h3>
+                <p className="text-[11px] text-stone-500">
+                  {currentProd.seriesTitle}
+                </p>
+              </div>
               <button 
                 onClick={() => setIsQuickSellOpen(false)}
                 className="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer"
@@ -686,8 +744,8 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
               </button>
             </div>
 
-            <p className="text-xs text-stone-600">
-              Choisissez combien de parts de <span className="font-bold text-[#1C1917]">{currentProd.seriesTitle}</span> vous souhaitez proposer à la vente.
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Fixez le nombre de parts et le prix unitaire auquel vous souhaitez les céder sur la bourse des coproductions.
             </p>
 
             {/* Sélecteur de quantité */}
@@ -697,18 +755,18 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
                 <button
                   type="button"
                   onClick={() => setSellSharesCount(Math.max(1, sellSharesCount - 1))}
-                  className="w-11 h-11 rounded-xl bg-white border border-stone-300 text-[#1C1917] flex items-center justify-center font-bold text-xl active:scale-90 transition-transform cursor-pointer shadow-xs"
+                  className="w-11 h-11 rounded-xl bg-white border border-stone-300 text-stone-800 flex items-center justify-center font-bold text-xl active:scale-90 transition-transform cursor-pointer shadow-xs"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
                 <div className="text-center">
-                  <span className="font-mono text-2xl font-black text-[#1C1917]">{sellSharesCount}</span>
+                  <span className="font-mono text-2xl font-black text-stone-900">{sellSharesCount}</span>
                   <span className="text-[10px] text-stone-400 block">sur {currentProd.sharesCount} détenues</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSellSharesCount(Math.min(currentProd.sharesCount, sellSharesCount + 1))}
-                  className="w-11 h-11 rounded-xl bg-white border border-stone-300 text-[#1C1917] flex items-center justify-center font-bold text-xl active:scale-90 transition-transform cursor-pointer shadow-xs"
+                  className="w-11 h-11 rounded-xl bg-white border border-stone-300 text-stone-800 flex items-center justify-center font-bold text-xl active:scale-90 transition-transform cursor-pointer shadow-xs"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -727,13 +785,13 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
                   min={1}
                   value={customSalePrice}
                   onChange={(e) => setCustomSalePrice(Number(e.target.value))}
-                  className="flex-1 px-3 py-2 rounded-xl border border-stone-300 text-sm font-mono font-bold bg-white text-[#1C1917]"
+                  className="flex-1 px-3 py-2 rounded-xl border border-stone-300 text-sm font-mono font-bold bg-white text-stone-900 focus:outline-none focus:border-[#A2482B]"
                 />
                 <span className="font-bold text-sm text-stone-600">€</span>
               </div>
               <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1">
                 <span>Total si vendu :</span>
-                <span className="font-mono font-bold text-[#1C1917] text-sm">
+                <span className="font-mono font-bold text-stone-900 text-sm">
                   {sellSharesCount * customSalePrice} €
                 </span>
               </div>
@@ -744,10 +802,10 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
               <button
                 type="button"
                 onClick={handleSaveSellConfig}
-                className="flex-1 h-12 rounded-xl bg-[#1C1917] hover:bg-black text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+                className="flex-1 h-12 rounded-xl bg-[#A2482B] hover:bg-[#8B3A20] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2"
               >
                 <Check className="w-4 h-4" />
-                <span>Confirmer</span>
+                <span>Confirmer la mise en vente</span>
               </button>
               <button
                 type="button"

@@ -12,7 +12,10 @@ import {
   Bell,
   Coins,
   Clapperboard,
-  Tv
+  Tv,
+  MessageSquare,
+  Users,
+  BellRing
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { DOCUMENTARIES } from '../data/mockData';
@@ -26,7 +29,7 @@ interface SettingsScreenProps {
   onUpdateLanguage: (lang: string) => void;
 }
 
-type SettingsTab = 'series' | 'lang_sec';
+type SettingsTab = 'series' | 'messages' | 'lang_sec';
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onNavigate,
@@ -36,7 +39,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   language,
   onUpdateLanguage
 }) => {
-  // 2 onglets épurés : "Choix des séries" et "Langue et sécurité"
+  // 3 onglets thématiques : "Choix des séries", "Messages & Alertes", et "Compte & Sécurité"
   const [activeTab, setActiveTab] = useState<SettingsTab>('series');
 
   // État du carrousel des séries
@@ -46,11 +49,27 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Préférences de messagerie & notifications : ouvert à tous les utilisateurs de Yonywood par défaut
+  const [messagePermission, setMessagePermission] = useState<'none' | 'invitation' | 'all'>(() => {
+    return (localStorage.getItem('yonywood_msg_permission') as 'none' | 'invitation' | 'all') || 'all';
+  });
+  const [pushNewMessage, setPushNewMessage] = useState<boolean>(() => {
+    const saved = localStorage.getItem('yonywood_push_msg');
+    return saved !== null ? saved === 'true' : true;
+  });
+  const [messagePreview, setMessagePreview] = useState<boolean>(() => {
+    const saved = localStorage.getItem('yonywood_msg_preview');
+    return saved !== null ? saved === 'true' : true;
+  });
+
   // Alertes & Préférences de coproduction
   const [alertFunding, setAlertFunding] = useState(true);
   const [alertNewEpisodes, setAlertNewEpisodes] = useState(true);
-  const [alertDuos, setAlertDuos] = useState(true);
-  const [autoPlayOnSwipe, setAutoPlayOnSwipe] = useState(false);
+  const [alertDuocumentaires, setAlertDuocumentaires] = useState(true);
+  const [autoPlayOnSwipe, setAutoPlayOnSwipe] = useState<boolean>(() => {
+    const saved = localStorage.getItem('yonywood_autoplay');
+    return saved !== null ? saved === 'true' : true;
+  });
 
   // Configuration du compte
   const [userEmail, setUserEmail] = useState('finagnonakimnonvide@gmail.com');
@@ -214,29 +233,40 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </h1>
         </div>
 
-        {/* 2 Onglets : Choix des séries & Langue et sécurité (fond terre cuite pour l'actif) */}
-        <div className="flex items-center gap-1 sm:gap-1.5">
+        {/* 3 Onglets : Séries, Messages & Alertes, Compte & Sécurité */}
+        <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab('series')}
-            className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'series'
                 ? 'bg-[#A2482B] text-white shadow-xs'
-                : 'bg-[#E7E5E4] hover:bg-[#D6D3D1] text-[#7A756B] hover:text-[#1C1917]'
+                : 'bg-[#E7E5E4] hover:bg-[#A2482B] text-[#7A756B] hover:text-white'
             }`}
           >
-            Choix des séries
+            Séries
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('messages')}
+            className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'messages'
+                ? 'bg-[#A2482B] text-white shadow-xs'
+                : 'bg-[#E7E5E4] hover:bg-[#A2482B] text-[#7A756B] hover:text-white'
+            }`}
+          >
+            Messages & Alertes
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('lang_sec')}
-            className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'lang_sec'
                 ? 'bg-[#A2482B] text-white shadow-xs'
-                : 'bg-[#E7E5E4] hover:bg-[#D6D3D1] text-[#7A756B] hover:text-[#1C1917]'
+                : 'bg-[#E7E5E4] hover:bg-[#A2482B] text-[#7A756B] hover:text-white'
             }`}
           >
-            Langue et sécurité
+            Compte & Sécurité
           </button>
 
           {/* Bouton de déconnexion : fond terre cuite et icône blanche au survol */}
@@ -408,55 +438,152 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         )}
 
         {/* ======================================================================= */}
-        {/* VUE 2 : LANGUE, SÉCURITÉ & ALERTES COPRODUCTION (MISE EN PAGE AÉRÉE)     */}
+        {/* VUE 2 : MESSAGES, NOTIFICATIONS & ALERTES                                */}
         {/* ======================================================================= */}
-        {activeTab === 'lang_sec' && (
+        {activeTab === 'messages' && (
           <div className="w-full max-w-4xl flex-1 flex flex-col justify-center animate-in fade-in duration-200 my-auto py-2">
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 items-start">
               
-              {/* --- COLONNE 1 : LANGUES & ALERTES COPRODUCTION --- */}
+              {/* --- COLONNE 1 : RÉCEPTION DES MESSAGES & NOTIFICATIONS --- */}
               <div className="space-y-6 sm:space-y-8">
                 
-                {/* 1. Langue de l'application */}
+                {/* 1. Autorisation de réception des messages */}
                 <div>
                   <h2 className="text-xs sm:text-sm font-bold text-[#1C1917] uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <span>Langue et sous-titres</span>
+                    <MessageSquare className="w-3.5 h-3.5 text-[#A2482B]" />
+                    <span>Réception des messages directs</span>
                   </h2>
 
-                  <div className="grid grid-cols-4 gap-2">
-                    {SUPPORTED_LANGUAGES.map((item) => {
-                      const isSelected = language === item.code;
-                      return (
-                        <button
-                          key={item.code}
-                          type="button"
-                          onClick={() => {
-                            onUpdateLanguage(item.code);
-                            showToast(`Langue : ${item.label}`);
-                          }}
-                          className={`py-2.5 px-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 shadow-xs ${
-                            isSelected
-                              ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-xs'
-                              : 'bg-white border-stone-200 hover:bg-stone-50 text-stone-800'
-                          }`}
-                        >
-                          <span className="text-base sm:text-lg leading-none">{item.flag}</span>
-                          <div className="flex items-center gap-1">
-                            <span className="text-[11px] sm:text-xs font-semibold">{item.label}</span>
-                            {isSelected && <Check className="w-2.5 h-2.5 text-white stroke-[3]" />}
-                          </div>
-                        </button>
-                      );
-                    })}
+                  <div className="space-y-2 bg-stone-50/60 p-3.5 rounded-2xl border border-stone-200/70">
+                    <label className="text-[11px] font-semibold text-stone-600 block">
+                      Qui peut vous contacter sur YonyWood :
+                    </label>
+
+                    <div className="grid grid-cols-1 gap-2">
+                      {[
+                        { 
+                          id: 'all', 
+                          title: 'Tous les utilisateurs de Yonywood', 
+                          desc: 'Ouvert directement à l’ensemble des membres et protagonistes de Yonywood' 
+                        },
+                        { 
+                          id: 'invitation', 
+                          title: 'Sur demande d’échange', 
+                          desc: 'Nécessite une invitation préalable acceptée avant de pouvoir dialoguer' 
+                        },
+                        { 
+                          id: 'none', 
+                          title: 'Désactivé', 
+                          desc: 'Personne ne peut vous envoyer de message direct' 
+                        }
+                      ].map((item) => {
+                        const isSelected = messagePermission === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => {
+                              setMessagePermission(item.id as 'none' | 'invitation' | 'all');
+                              localStorage.setItem('yonywood_msg_permission', item.id);
+                              showToast(`Messagerie : ${item.title}`);
+                            }}
+                            className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between shadow-2xs ${
+                              isSelected
+                                ? 'bg-[#1C1917] text-white border-[#1C1917]'
+                                : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-200/80'
+                            }`}
+                          >
+                            <div>
+                              <span className="block text-xs font-semibold">{item.title}</span>
+                              <span className={`text-[10px] ${isSelected ? 'text-stone-300' : 'text-stone-500'}`}>
+                                {item.desc}
+                              </span>
+                            </div>
+                            {isSelected && <Check className="w-3.5 h-3.5 text-[#E5C16C] shrink-0 ml-2" />}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 
-                {/* 2. Alertes & Coproduction */}
-                <div className="pt-4 border-t border-stone-100">
-                  <h2 className="text-xs sm:text-sm font-bold text-[#1C1917] uppercase tracking-wider mb-3.5 flex items-center gap-2">
+                {/* 2. Notifications de messages */}
+                <div>
+                  <h2 className="text-xs sm:text-sm font-bold text-[#1C1917] uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <BellRing className="w-3.5 h-3.5 text-[#A2482B]" />
+                    <span>Alertes & Notifications de messages</span>
+                  </h2>
+
+                  <div className="space-y-3 bg-stone-50/60 p-3.5 rounded-2xl border border-stone-200/70">
+                    {/* Push instantané */}
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <span className="text-xs font-semibold text-stone-800 block">
+                          Notifications push instantanées
+                        </span>
+                        <span className="text-[11px] text-stone-500">
+                          Alerte immédiate à l'arrivée d'un message
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = !pushNewMessage;
+                          setPushNewMessage(next);
+                          localStorage.setItem('yonywood_push_msg', String(next));
+                          showToast(next ? 'Notifications push activées' : 'Notifications push désactivées');
+                        }}
+                        className={`w-9 h-5 rounded-full transition-colors cursor-pointer relative shrink-0 p-0.5 ${
+                          pushNewMessage ? 'bg-[#A2482B]' : 'bg-stone-300'
+                        }`}
+                      >
+                        <div className={`w-4 h-4 rounded-full bg-white shadow-xs transition-transform ${
+                          pushNewMessage ? 'translate-x-4' : 'translate-x-0'
+                        }`} />
+                      </button>
+                    </div>
+
+                    {/* Aperçu du texte */}
+                    <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-stone-200/50">
+                      <div>
+                        <span className="text-xs font-semibold text-stone-800 block">
+                          Aperçu du contenu du message
+                        </span>
+                        <span className="text-[11px] text-stone-500">
+                          Afficher les premières lignes dans l'alerte
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = !messagePreview;
+                          setMessagePreview(next);
+                          localStorage.setItem('yonywood_msg_preview', String(next));
+                          showToast(next ? 'Aperçu activé' : 'Aperçu masqué');
+                        }}
+                        className={`w-9 h-5 rounded-full transition-colors cursor-pointer relative shrink-0 p-0.5 ${
+                          messagePreview ? 'bg-[#A2482B]' : 'bg-stone-300'
+                        }`}
+                      >
+                        <div className={`w-4 h-4 rounded-full bg-white shadow-xs transition-transform ${
+                          messagePreview ? 'translate-x-4' : 'translate-x-0'
+                        }`} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* --- COLONNE 2 : ALERTES COPRODUCTION & PROJETS --- */}
+              <div className="space-y-6 sm:space-y-8">
+                
+                {/* 3. Alertes Documentaires & Coproduction */}
+                <div>
+                  <h2 className="text-xs sm:text-sm font-bold text-[#1C1917] uppercase tracking-wider mb-3 flex items-center gap-2">
                     <Bell className="w-3.5 h-3.5 text-[#A2482B]" />
-                    <span>Coproduction & Alertes</span>
+                    <span>Coproduction & Projets</span>
                   </h2>
 
                   <div className="space-y-3 bg-stone-50/60 p-3.5 rounded-2xl border border-stone-200/70">
@@ -508,26 +635,27 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       </button>
                     </div>
 
-                    {/* Alerte Duos */}
+                    {/* Alerte Invitations aux duocumentaires */}
                     <div className="flex items-center justify-between gap-3 pt-2 border-t border-stone-200/50">
                       <div className="flex items-center gap-2.5">
                         <Tv className="w-4 h-4 text-stone-600 shrink-0" />
                         <span className="text-xs font-medium text-stone-800">
-                          Invitations aux duos & répliques
+                          Invitations aux duocumentaires
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => {
-                          setAlertDuos(!alertDuos);
-                          showToast(alertDuos ? 'Alertes duos désactivées' : 'Alertes duos activées');
+                          const next = !alertDuocumentaires;
+                          setAlertDuocumentaires(next);
+                          showToast(next ? 'Invitations aux duocumentaires activées' : 'Invitations aux duocumentaires désactivées');
                         }}
                         className={`w-9 h-5 rounded-full transition-colors cursor-pointer relative shrink-0 p-0.5 ${
-                          alertDuos ? 'bg-[#A2482B]' : 'bg-stone-300'
+                          alertDuocumentaires ? 'bg-[#A2482B]' : 'bg-stone-300'
                         }`}
                       >
                         <div className={`w-4 h-4 rounded-full bg-white shadow-xs transition-transform ${
-                          alertDuos ? 'translate-x-4' : 'translate-x-0'
+                          alertDuocumentaires ? 'translate-x-4' : 'translate-x-0'
                         }`} />
                       </button>
                     </div>
@@ -536,83 +664,62 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
               </div>
 
-              {/* --- COLONNE 2 : SÉCURITÉ ET COMPTE --- */}
-              <div className="space-y-6 sm:space-y-8">
+            </div>
+
+          </div>
+        )}
+
+        {/* ======================================================================= */}
+        {/* VUE 3 : COMPTE, SÉCURITÉ & LANGUE (ALIGNEMENT PARFAIT DES BAS DE BLOCS) */}
+        {/* ======================================================================= */}
+        {activeTab === 'lang_sec' && (
+          <div className="w-full max-w-4xl flex-1 flex flex-col justify-center animate-in fade-in duration-200 my-auto py-2">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 items-stretch">
+              
+              {/* --- COLONNE 1 : LANGUES & EXPÉRIENCE DE LECTURE --- */}
+              <div className="flex flex-col justify-between h-full space-y-6 sm:space-y-0">
                 
+                {/* 1. Langue de l'application */}
                 <div>
                   <h2 className="text-xs sm:text-sm font-bold text-[#1C1917] uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#A2482B]" />
-                    <span>Sécurité et compte</span>
+                    <span>Langue et sous-titres</span>
                   </h2>
 
-                  <div className="space-y-4">
-                    {/* Formulaire E-mail */}
-                    <form onSubmit={handleSaveEmail} className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-stone-600 block">
-                        Adresse e-mail
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <input
-                          type="email"
-                          value={userEmail}
-                          onChange={(e) => setUserEmail(e.target.value)}
-                          className="flex-1 px-3.5 py-2 text-xs bg-white border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-stone-800 transition-colors shadow-2xs"
-                          placeholder="nom@exemple.com"
-                          required
-                        />
+                  <div className="grid grid-cols-4 gap-2">
+                    {SUPPORTED_LANGUAGES.map((item) => {
+                      const isSelected = language === item.code;
+                      return (
                         <button
-                          type="submit"
-                          className="h-8.5 px-3.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold transition-all cursor-pointer active:scale-95 shrink-0"
+                          key={item.code}
+                          type="button"
+                          onClick={() => {
+                            onUpdateLanguage(item.code);
+                            showToast(`Langue : ${item.label}`);
+                          }}
+                          className={`py-2.5 px-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 shadow-xs ${
+                            isSelected
+                              ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-xs'
+                              : 'bg-white border-stone-200 hover:bg-stone-50 text-stone-800'
+                          }`}
                         >
-                          Enregistrer
-                        </button>
-                      </div>
-                    </form>
-
-                    {/* Formulaire Mot de passe */}
-                    <form onSubmit={handleSavePassword} className="space-y-2 pt-1">
-                      <label className="text-[11px] font-semibold text-stone-600 flex items-center gap-1 block">
-                        <Lock className="w-3 h-3 text-stone-400" />
-                        <span>Modifier le mot de passe</span>
-                      </label>
-
-                      <div className="space-y-2">
-                        <div className="relative">
-                          <KeyRound className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                          <input
-                            type="password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            className="w-full pl-8 pr-3.5 py-2 text-xs bg-white border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-stone-800 transition-colors shadow-2xs"
-                            placeholder="Mot de passe actuel"
-                          />
-                        </div>
-
-                        <div className="flex items-center gap-1.5">
-                          <div className="relative flex-1">
-                            <Lock className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <input
-                              type="password"
-                              value={newPassword}
-                              onChange={(e) => setNewPassword(e.target.value)}
-                              className="w-full pl-8 pr-3.5 py-2 text-xs bg-white border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-stone-800 transition-colors shadow-2xs"
-                              placeholder="Nouveau mot de passe"
-                            />
+                          <span className="text-base sm:text-lg leading-none">{item.flag}</span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-[11px] sm:text-xs font-semibold">{item.label}</span>
+                            {isSelected && <Check className="w-2.5 h-2.5 text-white stroke-[3]" />}
                           </div>
-                          <button
-                            type="submit"
-                            className="h-8.5 px-3.5 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-semibold transition-all cursor-pointer active:scale-95 shrink-0 shadow-xs"
-                          >
-                            Mettre à jour
-                          </button>
-                        </div>
-                      </div>
-                    </form>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
                 {/* Préférence Lecture automatique au swipe */}
-                <div className="pt-4 border-t border-stone-100">
+                <div className="pt-4 sm:pt-6">
+                  <h2 className="text-xs sm:text-sm font-bold text-[#1C1917] uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <span>Expérience de lecture</span>
+                  </h2>
+
                   <div className="flex items-center justify-between gap-3 bg-stone-50/60 p-3.5 rounded-2xl border border-stone-200/70">
                     <div>
                       <span className="text-xs font-semibold text-stone-800 block">
@@ -625,8 +732,10 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                     <button
                       type="button"
                       onClick={() => {
-                        setAutoPlayOnSwipe(!autoPlayOnSwipe);
-                        showToast(autoPlayOnSwipe ? 'Lecture auto désactivée' : 'Lecture auto activée');
+                        const next = !autoPlayOnSwipe;
+                        setAutoPlayOnSwipe(next);
+                        localStorage.setItem('yonywood_autoplay', String(next));
+                        showToast(next ? 'Lecture auto activée' : 'Lecture auto désactivée');
                       }}
                       className={`w-9 h-5 rounded-full transition-colors cursor-pointer relative shrink-0 p-0.5 ${
                         autoPlayOnSwipe ? 'bg-[#A2482B]' : 'bg-stone-300'
@@ -637,6 +746,83 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       }`} />
                     </button>
                   </div>
+                </div>
+
+              </div>
+
+              {/* --- COLONNE 2 : SÉCURITÉ ET COMPTE --- */}
+              <div className="flex flex-col justify-between h-full space-y-6 sm:space-y-0">
+                
+                {/* 1. Adresse e-mail */}
+                <div>
+                  <h2 className="text-xs sm:text-sm font-bold text-[#1C1917] uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#A2482B]" />
+                    <span>Sécurité et compte</span>
+                  </h2>
+
+                  <form onSubmit={handleSaveEmail} className="space-y-1.5">
+                    <label className="text-[11px] font-semibold text-stone-600 block">
+                      Adresse e-mail
+                    </label>
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="email"
+                        value={userEmail}
+                        onChange={(e) => setUserEmail(e.target.value)}
+                        className="flex-1 px-3.5 py-2 text-xs bg-white border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-stone-800 transition-colors shadow-2xs"
+                        placeholder="nom@exemple.com"
+                        required
+                      />
+                      <button
+                        type="submit"
+                        className="h-8.5 px-3.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold transition-all cursor-pointer active:scale-95 shrink-0"
+                      >
+                        Enregistrer
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* 2. Formulaire Mot de passe : baissé pour que le bas soit au même niveau horizontal que le bas de Lecture automatique */}
+                <div className="pt-4 sm:pt-6">
+                  <form onSubmit={handleSavePassword} className="space-y-2">
+                    <label className="text-[11px] font-semibold text-stone-600 flex items-center gap-1 block">
+                      <Lock className="w-3 h-3 text-stone-400" />
+                      <span>Modifier le mot de passe</span>
+                    </label>
+
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <KeyRound className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          className="w-full pl-8 pr-3.5 py-2 text-xs bg-white border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-stone-800 transition-colors shadow-2xs"
+                          placeholder="Mot de passe actuel"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <div className="relative flex-1">
+                          <Lock className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                          <input
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="w-full pl-8 pr-3.5 py-2 text-xs bg-white border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-stone-800 transition-colors shadow-2xs"
+                            placeholder="Nouveau mot de passe"
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          className="h-8.5 px-3.5 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-semibold transition-all cursor-pointer active:scale-95 shrink-0 shadow-xs"
+                        >
+                          Mettre à jour
+                        </button>
+                      </div>
+                    </div>
+                  </form>
                 </div>
 
               </div>

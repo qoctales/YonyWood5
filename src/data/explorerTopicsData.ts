@@ -61,11 +61,11 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
   },
   {
     id: 'thematics',
-    label: 'Emplois',
-    shortLabel: 'Emplois',
-    tagline: 'Talents, savoir-faire & recherche d’opportunités',
-    description: 'Des profils, artisans, diplômés et créateurs en quête d’opportunités et de collaborations pour déployer leurs compétences.',
-    badge: 'Talents & Opportunités',
+    label: 'Expertises',
+    shortLabel: 'Expertises',
+    tagline: 'Maîtres d’art, savoir-faire d’exception & expertises vivantes',
+    description: 'Des praticiens d’exception, artisans d’art, maîtres et créateurs détenant une haute expertise prêts à collaborer ou transmettre.',
+    badge: 'Expertises & Savoir-faire',
     iconName: 'GraduationCap',
     accentColor: '#0EA5E9',
     glowColor: 'rgba(14, 165, 233, 0.65)',
@@ -355,7 +355,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
     }
   ],
 
-  // 4. EMPLOI & TALENTS (16 filières de recherche d'emploi et compagnonnage)
+  // 4. COMPÉTENCES & TALENTS (16 filières de savoir-faire, recherche d'opportunités et compagnonnage)
   thematics: [
     {
       id: 'ebenisterie-bois',

@@ -112,14 +112,14 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       const w = window.innerWidth;
       const h = window.innerHeight;
       if (w < 640) {
-        // Cercle diamètre complet ~620px -> adaptation automatique pour tenir d'un seul coup d'œil
-        const availableW = w - 36;
-        const availableH = h - 160;
-        return Math.min(0.54, Math.max(0.38, Math.min(availableW / 640, availableH / 640)));
+        // Cercle diamètre complet ~620px -> adaptation automatique et aérée pour dégager la barre de navigation
+        const availableW = w - 40;
+        const availableH = h - 220; // 220px pour l'en-tête (60px) + la barre de navigation basse (90px) + marges d'aération
+        return Math.min(0.48, Math.max(0.36, Math.min(availableW / 640, availableH / 640)));
       }
-      if (w < 1024) return 0.8;
+      if (w < 1024) return 0.72;
     }
-    return 1.0;
+    return 0.88;
   });
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -131,10 +131,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       if (w < 640) {
         setZoomLevel(prev => {
           // Si l'utilisateur n'a pas déjà manuellement dézoomé/zoomé loin
-          if (prev >= 0.7) {
-            const availableW = w - 36;
-            const availableH = h - 160;
-            return Math.min(0.54, Math.max(0.38, Math.min(availableW / 640, availableH / 640)));
+          if (prev >= 0.6) {
+            const availableW = w - 40;
+            const availableH = h - 220;
+            return Math.min(0.48, Math.max(0.36, Math.min(availableW / 640, availableH / 640)));
           }
           return prev;
         });
@@ -622,9 +622,9 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         </button>
       </div>
 
-      {/* 3. SCÈNE CENTRALE : ROUE PLANÉTAIRE & CONSTELLATIONS */}
+      {/* 3. SCÈNE CENTRALE : ROUE PLANÉTAIRE & CONSTELLATIONS (Parfaitement centrée dans l'espace utile entre l'en-tête et le menu inférieur) */}
       <div 
-        className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none"
+        className="absolute top-[46%] sm:top-[48%] left-1/2 w-0 h-0 pointer-events-none"
         style={{
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoomLevel})`
         }}

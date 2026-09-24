@@ -46,7 +46,9 @@ import {
   Wallet,
   History,
   Eye,
-  ArrowUpRight
+  ArrowUpRight,
+  Calendar,
+  Target
 } from 'lucide-react';
 import { ShareIcon } from './ShareIcon';
 import { CoproduireRingsIcon } from './YonywoodBrandIcons';
@@ -618,6 +620,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [addFormSharesCount, setAddFormSharesCount] = useState<number>(10);
   const [addFormSharesOnSale, setAddFormSharesOnSale] = useState<number>(3);
   const [addFormTargetAmount, setAddFormTargetAmount] = useState<number>(3000);
+  const [addFormProjectDays, setAddFormProjectDays] = useState<30 | 60 | 90>(30);
   const [addFormCategoryLabel, setAddFormCategoryLabel] = useState<string>('Artisanat & Transmission');
   const [addFormUrgency, setAddFormUrgency] = useState<string>('Prioritaire');
   const [addFormImpact, setAddFormImpact] = useState<string>('Permettra de former 10 nouveaux apprentis');
@@ -1049,6 +1052,33 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [isBuyingSharesModalOpen, setIsBuyingSharesModalOpen] = useState<boolean>(false);
   const [buySharesCount, setBuySharesCount] = useState<number>(1);
 
+  // Modale d'invitation à l'échange
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false);
+  const [inviteMotif, setInviteMotif] = useState<'coprod' | 'savoir_faire' | 'collab' | 'question'>('coprod');
+  const [inviteMessage, setInviteMessage] = useState<string>('');
+
+  const handleContactProtagonist = () => {
+    const perm = localStorage.getItem('yonywood_msg_permission') || 'invitation';
+    if (perm === 'none') {
+      setShareToast('Les messages directs de ce profil sont actuellement désactivés.');
+      setTimeout(() => setShareToast(null), 3000);
+      return;
+    }
+    if (perm === 'invitation') {
+      setIsInviteModalOpen(true);
+      return;
+    }
+    onNavigate({ type: 'messaging' });
+  };
+
+  const handleSendInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsInviteModalOpen(false);
+    setShareToast(`Invitation à échanger envoyée à ${userName} ! Vous serez averti(e) dès sa réponse.`);
+    setTimeout(() => setShareToast(null), 3500);
+    setInviteMessage('');
+  };
+
   const [isOrderingCreationModalOpen, setIsOrderingCreationModalOpen] = useState<boolean>(false);
   const [orderActionType, setOrderActionType] = useState<'commander' | 'reserver' | 'acheter'>('commander');
   const [orderQuantity, setOrderQuantity] = useState<number>(1);
@@ -1470,7 +1500,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
         {/* LIGNE PRINCIPALE : IDENTITÉ & ACTIONS RAPIDES SANS COLLISION */}
         <div className="flex items-center justify-between gap-1.5 sm:gap-3">
           <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
-            {/* Bouton retour vers l'accueil ou vers le duo */}
+            {/* Bouton retour avec le chevron officiel unifié */}
             <button
               onClick={() => {
                 if (returnToDuoId) {
@@ -1483,10 +1513,11 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   onNavigate({ type: 'home' });
                 }
               }}
-              className="p-1.5 sm:p-2 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 transition-colors shadow-xs cursor-pointer shrink-0"
+              className="w-8 h-8 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-[#1C1917] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
               title="Retour"
+              id="btn-profile-back"
             >
-              <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
             </button>
 
             <div className="relative shrink-0">
@@ -1539,18 +1570,18 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   currentDuoIndex: returnToDuoIndex ?? 0,
                   selectedDocId: returnToDocId
                 })}
-                className="hidden sm:flex h-8.5 px-3 rounded-full bg-white hover:bg-stone-50 border border-[#C89B3C] text-[#C89B3C] hover:text-[#B78A2E] text-xs font-semibold transition-all shadow-xs items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                className="group hidden sm:flex h-8 sm:h-8.5 px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-xs font-semibold transition-all shadow-xs items-center gap-1.5 cursor-pointer whitespace-nowrap"
                 title="Revenir au Duo"
                 id="btn-return-to-duo-actions"
               >
-                <ArrowLeft className="w-3.5 h-3.5" />
+                <ChevronLeft className="w-3.5 h-3.5 text-stone-700 group-hover:text-white stroke-[2.2] transition-colors" />
                 <span>Revenir au Duo</span>
               </button>
             )}
 
             {isOwner ? (
               <>
-                {/* Bouton Mes Parts (identique au bouton Messages : fond blanc, écriture noire) */}
+                {/* Bouton Mes Parts : fond terre cuite et contenu blanc au survol */}
                 <button
                   onClick={() => onNavigate({ 
                     type: 'portfolio', 
@@ -1559,71 +1590,71 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     returnToDocId 
                   })}
                   id="btn-profile-portfolio-header"
-                  className="w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-semibold text-[#1C1917] flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative"
+                  className="group w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-[#1C1917] hover:text-white flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative"
                   title="Voir mes parts de coproduction"
                 >
-                  <Wallet className="w-3.5 h-3.5 text-stone-700" />
+                  <Wallet className="w-3.5 h-3.5 text-stone-700 group-hover:text-white transition-colors" />
                   <span className="hidden sm:inline">Mes parts</span>
-                  <span className="absolute -top-1 -right-1 sm:static sm:top-auto sm:right-auto w-4 h-4 rounded-full bg-[#A2482B] text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 sm:static sm:top-auto sm:right-auto w-4 h-4 rounded-full bg-[#A2482B] group-hover:bg-white text-white group-hover:text-[#A2482B] text-[9px] font-bold flex items-center justify-center transition-colors">
                     {productions.reduce((acc, p) => acc + (p.sharesCount || 0), 0)}
                   </span>
                 </button>
 
-                {/* Bouton Messagerie */}
+                {/* Bouton Messagerie : fond terre cuite et contenu blanc au survol */}
                 <button
                   onClick={() => onNavigate({ type: 'messaging' })}
                   id="btn-profile-messages"
-                  className="w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-semibold text-[#1C1917] flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative"
+                  className="group w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-[#1C1917] hover:text-white flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative"
                   title="Ouvrir la messagerie"
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-stone-700" />
+                  <MessageSquare className="w-3.5 h-3.5 text-stone-700 group-hover:text-white transition-colors" />
                   <span className="hidden sm:inline">Messages</span>
-                  <span className="absolute -top-1 -right-1 sm:static sm:top-auto sm:right-auto w-4 h-4 rounded-full bg-[#A2482B] text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 sm:static sm:top-auto sm:right-auto w-4 h-4 rounded-full bg-[#A2482B] group-hover:bg-white text-white group-hover:text-[#A2482B] text-[9px] font-bold flex items-center justify-center transition-colors">
                     2
                   </span>
                 </button>
 
-                {/* Bouton Partager */}
+                {/* Bouton Partager : fond blanc avec icône noire au repos, fond terre cuite avec icône blanche au survol */}
                 <button
                   onClick={handleShareProfile}
                   id="btn-share-profile"
-                  className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-[#A2482B]/10 border border-stone-200 hover:border-[#A2482B] text-[#A2482B] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="group w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white flex items-center justify-center transition-all shadow-xs cursor-pointer active:scale-95"
                   title="Partager mon profil"
                 >
-                  <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#A2482B]" />
+                  <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917] group-hover:text-white transition-colors" />
                 </button>
 
-                {/* Icône Paramètres & Curateur de Séries -> Navigation vers la vraie page Paramètres */}
+                {/* Icône Paramètres : fond terre cuite et contenu blanc au survol */}
                 <button
                   onClick={() => onNavigate({ type: 'settings', returnTo: 'profile' })}
                   id="btn-profile-settings-gear"
-                  className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-[#1C1917] flex items-center justify-center transition-all shadow-xs cursor-pointer active:scale-95"
+                  className="group w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white flex items-center justify-center transition-all shadow-xs cursor-pointer active:scale-95"
                   title="Paramètres & Séries du flux"
                 >
-                  <Sliders className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <Sliders className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917] group-hover:text-white transition-colors" />
                 </button>
               </>
             ) : (
               <>
-                {/* Visiteur : Bouton Message */}
+                {/* Visiteur : Bouton Message (fond terre cuite et texte blanc au survol) */}
                 <button
-                  onClick={() => onNavigate({ type: 'messaging' })}
+                  onClick={handleContactProtagonist}
                   id="btn-visitor-message"
-                  className="h-8 sm:h-8.5 px-3 sm:px-4 rounded-full bg-[#1C1917] hover:bg-stone-800 text-xs font-semibold text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer whitespace-nowrap"
+                  className="group h-8 sm:h-8.5 px-3 sm:px-4 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-[#1C1917] hover:text-white flex items-center gap-1.5 transition-all shadow-xs cursor-pointer whitespace-nowrap"
                   title={`Envoyer un message à ${userName}`}
                 >
-                  <MessageSquare className="w-3.5 h-3.5 text-white" />
+                  <MessageSquare className="w-3.5 h-3.5 text-stone-700 group-hover:text-white transition-colors" />
                   <span>Message</span>
                 </button>
 
-                {/* Visiteur : Bouton Partager */}
+                {/* Visiteur : Bouton Partager (fond blanc avec icône noire au repos, fond terre cuite avec icône blanche au survol) */}
                 <button
                   onClick={handleShareProfile}
                   id="btn-share-visitor-profile"
-                  className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-[#A2482B]/10 border border-stone-200 hover:border-[#A2482B] text-[#A2482B] flex items-center justify-center transition-all shadow-xs cursor-pointer"
+                  className="group w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white flex items-center justify-center transition-all shadow-xs cursor-pointer active:scale-95"
                   title={`Partager le profil de ${userName}`}
                 >
-                  <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#A2482B]" />
+                  <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917] group-hover:text-white transition-colors" />
                 </button>
               </>
             )}
@@ -1643,7 +1674,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       {/* ========================================================================= */}
       {/* 2. VISIONNEUSE VERTICALE 9:16 (STRICTEMENT ALIGNÉE SUR COPRODUCTION)       */}
       {/* ========================================================================= */}
-      <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
+      <div className="flex-1 flex flex-col items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
 
         {/* Conteneur principal avec vidéo 9:16 épurée */}
         <div className="relative w-full h-full flex items-center justify-center">
@@ -1938,22 +1969,6 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           <span>Vendre</span>
                         </button>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onNavigate({ 
-                            type: 'portfolio', 
-                            returnToDuoId, 
-                            returnToDuoIndex, 
-                            returnToDocId 
-                          });
-                        }}
-                        className="w-full h-7 sm:h-7.5 px-3 rounded-lg sm:rounded-xl bg-[#A2482B]/90 hover:bg-[#A2482B] text-white text-[10.5px] sm:text-[11px] font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99]"
-                        id="btn-open-portfolio-from-card"
-                      >
-                        <Wallet className="w-3 h-3 text-white" />
-                        <span>Mon Portefeuille & Parts de coproduction</span>
-                      </button>
                     </div>
                   ) : (
                     <div className="pt-0.5">
@@ -2032,13 +2047,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
                 <div className="my-auto" />
 
-                {/* BAS : Titre court, catégorie, prix, actions & lecteur moderne (Style Image 2) */}
+                {/* BAS : Titre court, prix, actions & lecteur moderne */}
                 <div className="relative z-10 space-y-2 sm:space-y-2.5 pr-12 sm:pr-14 pb-0.5">
                   <div>
-                    <div className="text-[10px] sm:text-[11px] font-semibold text-[#E5C16C] uppercase tracking-wider drop-shadow-sm">
-                      {currentCreation.categoryLabel || 'Offre & Savoir-faire'}
-                    </div>
-                    <h3 className="font-editorial text-xs sm:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] mt-0.5" title={currentCreation.title}>
+                    <h3 className="font-editorial text-xs sm:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]" title={currentCreation.title}>
                       {currentCreation.title}
                     </h3>
                     <p className="font-mono text-sm sm:text-base font-bold text-[#E5C16C] pt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
@@ -2302,9 +2314,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
         </div>
 
-        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Lancer un projet seulement) */}
+        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Créer un projet sur une seule ligne) */}
         {isOwner && (activeCategory === 'offre' || activeCategory === 'appel') && (
-          <div className="flex items-center justify-center max-w-[340px] mx-auto pt-1 pb-3 px-2">
+          <div className="flex items-center justify-center w-full max-w-[340px] mx-auto pt-2 pb-2 px-2 shrink-0">
             <button
               type="button"
               onClick={() => {
@@ -2312,18 +2324,21 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   setAddFormKind('offre');
                   setAddFormTitle('');
                   setAddFormPrice('45 €');
+                  setAddFormCategoryLabel('Artisanat & Objet');
                 } else {
                   setAddFormKind('initiative');
                   setAddFormTitle('');
                   setAddFormTargetAmount(3000);
+                  setAddFormProjectDays(30);
+                  setAddFormCategoryLabel('Initiative solidaire');
                 }
                 setIsAddingModalOpen(true);
               }}
               id="btn-add-new-publication"
-              className="h-9 px-4 rounded-full bg-stone-100 hover:bg-[#A2482B] text-stone-700 hover:text-white text-xs font-semibold transition-all shadow-xs border border-stone-200/90 hover:border-[#A2482B] flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 group/addaction"
+              className="h-9 px-5 rounded-full bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-semibold transition-all shadow-xs border border-stone-200/90 hover:border-[#A2482B] flex items-center justify-center gap-2 cursor-pointer active:scale-95 group/addaction whitespace-nowrap shrink-0"
             >
-              <Plus className="w-3.5 h-3.5 text-stone-500 group-hover/addaction:text-white transition-colors" />
-              <span>
+              <Plus className="w-3.5 h-3.5 text-stone-500 group-hover/addaction:text-white transition-colors shrink-0" />
+              <span className="whitespace-nowrap font-medium tracking-wide">
                 {activeCategory === 'offre' && 'Ajouter une offre'}
                 {activeCategory === 'appel' && 'Créer un projet'}
               </span>
@@ -3793,6 +3808,108 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       )}
 
       {/* ========================================================================= */}
+      {/* MODALE D'INVITATION À L'ÉCHANGE (Pour contacter un protagoniste)         */}
+      {/* ========================================================================= */}
+      {isInviteModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+              <div className="flex items-center gap-3">
+                <img
+                  src={userPhoto}
+                  alt={profileDisplayName}
+                  className="w-10 h-10 rounded-full object-cover border border-[#A2482B]/30"
+                />
+                <div>
+                  <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917]">
+                    Inviter {profileDisplayName} à échanger
+                  </h3>
+                  <p className="text-[11px] text-stone-500">
+                    Messagerie protectrice sur invitation
+                  </p>
+                </div>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setIsInviteModalOpen(false)} 
+                className="p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-stone-600 leading-relaxed bg-amber-50/60 p-3 rounded-xl border border-amber-200/60">
+              Pour préserver l'authenticité des liens et le temps de création de <span className="font-semibold text-stone-900">{profileDisplayName}</span>, la discussion débute par une invitation respectueuse.
+            </p>
+
+            <form onSubmit={handleSendInvite} className="space-y-3.5 text-xs">
+              <div>
+                <label className="text-stone-800 font-semibold block mb-1.5">
+                  Motif de votre prise de contact :
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: 'coprod', label: 'Coproduction & Projet', icon: '🎬' },
+                    { id: 'savoir_faire', label: 'Savoir-faire & Métier', icon: '🌿' },
+                    { id: 'collab', label: 'Collaboration artistique', icon: '🤝' },
+                    { id: 'question', label: 'Question sur une œuvre', icon: '💬' }
+                  ].map((m) => {
+                    const isSel = inviteMotif === m.id;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setInviteMotif(m.id as any)}
+                        className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex items-center gap-2 ${
+                          isSel
+                            ? 'bg-[#A2482B] text-white border-[#A2482B] shadow-2xs'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                        }`}
+                      >
+                        <span className="text-sm shrink-0">{m.icon}</span>
+                        <span className="font-semibold text-[11px] leading-tight">{m.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-stone-800 font-semibold block mb-1">
+                  Votre message d'introduction :
+                </label>
+                <textarea
+                  rows={3}
+                  value={inviteMessage}
+                  onChange={(e) => setInviteMessage(e.target.value)}
+                  placeholder={`Bonjour ${profileDisplayName}, j'ai été très touché(e) par votre univers et souhaiterais vous proposer...`}
+                  className="w-full px-3 py-2.5 rounded-xl border border-stone-300 text-xs bg-stone-50 focus:bg-white focus:outline-none focus:border-[#A2482B] resize-none"
+                  required
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2 border-t border-stone-200">
+                <button
+                  type="submit"
+                  className="flex-1 h-10 sm:h-11 bg-[#A2482B] hover:bg-[#8B3A20] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Envoyer l'invitation</span>
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setIsInviteModalOpen(false)} 
+                  className="h-10 sm:h-11 px-4 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs rounded-xl border border-stone-200/60 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center"
+                >
+                  Annuler
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
       {/* 8. MODALE D'ÉDITION DU PROFIL (Identité & Présentation)                   */}
       {/* ========================================================================= */}
       {isOwner && isEditingProfile && (
@@ -3886,463 +4003,447 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       {/* 9. MODALE DE NOUVELLE PUBLICATION (Pour le Propriétaire)                  */}
       {/* ========================================================================= */}
       {isOwner && isAddingModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white max-w-lg w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5 max-h-[90vh] overflow-y-auto">
-            
-            <div className="flex items-center justify-between pb-3 border-b border-stone-200">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#FACC15]/20 border border-[#FACC15]/50 text-[#8B6845] flex items-center justify-center">
-                  <Plus className="w-5 h-5 text-[#1C1917]" />
+        activeCategory === 'offre' ? (
+          /* ================================================================= */
+          /* MODALE OFFRE : 4 CHAMPS ESSENTIELS SEULEMENT                      */
+          /* Titre, Catégorie, Prix, Vidéo                                     */
+          /* ================================================================= */
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
+            <div className="bg-[#FAF8F5] max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 max-h-[92vh] overflow-y-auto">
+              
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-2xl bg-[#A2482B]/10 border border-[#A2482B]/20 text-[#A2482B] flex items-center justify-center shrink-0 shadow-xs">
+                    <ShoppingBag className="w-5 h-5 text-[#A2482B]" />
+                  </div>
+                  <div>
+                    <h3 className="font-editorial text-base sm:text-lg font-bold text-stone-900 leading-tight">
+                      Proposer une offre
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Partagez votre savoir-faire, objet artisanal ou atelier
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917]">
-                    Nouvelle publication
-                  </h3>
-                  <p className="text-xs text-[#8B6845]">
-                    {activeCategory === 'recit' && 'Récit personnel ou épisode documentaire'}
-                    {activeCategory === 'production' && 'Série ouverte en coproduction'}
-                    {activeCategory === 'offre' && 'Œuvre d’artisanat, objet ou atelier'}
-                    {activeCategory === 'appel' && 'Projet participatif ou appel à compétences'}
-                  </p>
-                </div>
-              </div>
-              <button 
-                onClick={() => setIsAddingModalOpen(false)} 
-                className="p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Sélecteur de type selon la catégorie */}
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="text-stone-700 font-semibold block mb-1">Type de contenu :</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {activeCategory === 'recit' && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => setAddFormKind('recit')}
-                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
-                          addFormKind === 'recit'
-                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
-                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
-                        }`}
-                      >
-                        <span className="block font-bold">Récit personnel</span>
-                        <span className="text-[10px] opacity-80">Histoire, cheminement, vision</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAddFormKind('episode')}
-                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
-                          addFormKind === 'episode'
-                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
-                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
-                        }`}
-                      >
-                        <span className="block font-bold">Épisode de série</span>
-                        <span className="text-[10px] opacity-80">Extrait vidéo documentaire</span>
-                      </button>
-                    </>
-                  )}
-
-                  {activeCategory === 'production' && (
-                    <div className="col-span-2 p-2.5 rounded-xl bg-stone-50 border border-stone-200">
-                      <span className="font-bold text-[#1C1917] block">Parts de coproduction</span>
-                      <span className="text-[11px] text-stone-500">Ouverture de parts participatives pour les spectateurs</span>
-                    </div>
-                  )}
-
-                  {activeCategory === 'offre' && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => setAddFormCategoryLabel('Artisanat & Pièces d’art')}
-                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
-                          addFormCategoryLabel.includes('Artisanat')
-                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
-                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
-                        }`}
-                      >
-                        <span className="block font-bold">Artisanat / Objet</span>
-                        <span className="text-[10px] opacity-80">Création originale, textile, sculpture</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAddFormCategoryLabel('Atelier & Expérience')}
-                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
-                          addFormCategoryLabel.includes('Atelier')
-                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
-                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
-                        }`}
-                      >
-                        <span className="block font-bold">Atelier d’initiation</span>
-                        <span className="text-[10px] opacity-80">Transmission en présentiel ou vidéo</span>
-                      </button>
-                    </>
-                  )}
-
-                  {activeCategory === 'appel' && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => setAddFormKind('initiative')}
-                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
-                          addFormKind === 'initiative'
-                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
-                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
-                        }`}
-                      >
-                        <span className="block font-bold">Initiative solidaire</span>
-                        <span className="text-[10px] opacity-80">Financement participatif & projet</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAddFormKind('appel')}
-                        className={`p-2.5 rounded-xl border text-left font-semibold transition-all cursor-pointer ${
-                          addFormKind === 'appel'
-                            ? 'bg-[#1C1917] text-white border-[#1C1917]'
-                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
-                        }`}
-                      >
-                        <span className="block font-bold">Appel à compétences</span>
-                        <span className="text-[10px] opacity-80">Besoin matériel ou humain</span>
-                      </button>
-                    </>
-                  )}
-                </div>
+                <button 
+                  onClick={() => setIsAddingModalOpen(false)} 
+                  className="p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-200/50 cursor-pointer transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
-              {/* Titre */}
-              <div>
-                <label className="text-stone-700 font-semibold block">Titre :</label>
-                <input
-                  type="text"
-                  placeholder="Donnez un titre clair et percutant..."
-                  value={addFormTitle}
-                  onChange={(e) => setAddFormTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 focus:outline-none focus:border-[#C89B3C]"
-                />
-              </div>
-
-              {/* Sous-titre ou chapitrage si récit */}
-              {activeCategory === 'recit' && addFormKind === 'recit' && (
-                <div>
-                  <label className="text-stone-700 font-semibold block">Sous-titre / Chapitre :</label>
+              <div className="space-y-4 text-xs">
+                {/* 1. Titre */}
+                <div className="space-y-1.5">
+                  <label className="text-stone-800 font-bold block text-xs">
+                    1. Titre de l'offre
+                  </label>
                   <input
                     type="text"
-                    placeholder="Ex: Chapitre II : Les fils du destin"
-                    value={addFormSubtitle}
-                    onChange={(e) => setAddFormSubtitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 focus:outline-none focus:border-[#C89B3C]"
+                    placeholder="ex: Écharpe en vigogne tissée main, Atelier initiation poterie..."
+                    value={addFormTitle}
+                    onChange={(e) => setAddFormTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B] transition-all shadow-2xs"
                   />
                 </div>
-              )}
 
-              {/* Description */}
-              <div>
-                <label className="text-stone-700 font-semibold block">Description :</label>
-                <textarea
-                  rows={2}
-                  placeholder="Décrivez la démarche, l'esprit ou le contexte..."
-                  value={addFormDescription}
-                  onChange={(e) => setAddFormDescription(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 focus:outline-none focus:border-[#C89B3C] resize-none"
-                />
-              </div>
-
-              {/* Paramètres financiers ou spécifiques selon catégorie */}
-              {activeCategory === 'production' && (
-                <div className="grid grid-cols-3 gap-2 bg-stone-50 p-3 rounded-2xl border border-stone-200">
-                  <div>
-                    <label className="text-stone-700 font-semibold block text-[11px]">Prix de la part :</label>
-                    <input
-                      type="number"
-                      value={addFormPriceNumeric}
-                      onChange={(e) => setAddFormPriceNumeric(Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 text-xs bg-white mt-1"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-stone-700 font-semibold block text-[11px]">Parts totales :</label>
-                    <input
-                      type="number"
-                      value={addFormSharesCount}
-                      onChange={(e) => setAddFormSharesCount(Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 text-xs bg-white mt-1"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-stone-700 font-semibold block text-[11px]">En vente :</label>
-                    <input
-                      type="number"
-                      value={addFormSharesOnSale}
-                      onChange={(e) => setAddFormSharesOnSale(Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 text-xs bg-white mt-1"
-                    />
+                {/* 2. Catégorie */}
+                <div className="space-y-1.5">
+                  <label className="text-stone-800 font-bold block text-xs">
+                    2. Catégorie
+                  </label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {[
+                      { id: 'Artisanat & Pièces d’art', label: 'Artisanat & Pièce d’art' },
+                      { id: 'Atelier d’initiation', label: 'Atelier d’initiation' },
+                      { id: 'Création textile & mode', label: 'Création textile & mode' },
+                      { id: 'Gastronomie & Terroir', label: 'Gastronomie & Terroir' }
+                    ].map((cat) => {
+                      const isSelected = addFormCategoryLabel === cat.id;
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setAddFormCategoryLabel(cat.id)}
+                          className={`p-2.5 rounded-xl border text-left font-medium transition-all cursor-pointer text-xs flex items-center justify-between ${
+                            isSelected
+                              ? 'bg-[#1C1917] text-white border-[#1C1917] shadow-xs'
+                              : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200'
+                          }`}
+                        >
+                          <span className="truncate">{cat.label}</span>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-[#E5C16C] shrink-0 ml-1" />}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
-              )}
 
-              {activeCategory === 'offre' && (
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="text-stone-700 font-semibold block">Prix affiché :</label>
+                {/* 3. Prix */}
+                <div className="space-y-1.5">
+                  <label className="text-stone-800 font-bold block text-xs">
+                    3. Prix (€)
+                  </label>
+                  <div className="relative">
                     <input
                       type="text"
-                      placeholder="Ex: 85 €"
+                      placeholder="45 €"
                       value={addFormPrice}
                       onChange={(e) => setAddFormPrice(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
+                      className="w-full pl-3.5 pr-12 py-2.5 rounded-xl border border-stone-300 text-xs font-mono font-bold bg-white text-stone-900 focus:outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B] transition-all shadow-2xs"
                     />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-stone-400 font-bold text-xs pointer-events-none">
+                      EUR
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-stone-700 font-semibold block">Durée ou format :</label>
-                    <input
-                      type="text"
-                      placeholder="Ex: 03:45 ou 2h30"
-                      value={addFormDuration}
-                      onChange={(e) => setAddFormDuration(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
-                    />
+                  <div className="flex gap-1.5 pt-0.5">
+                    {['25 €', '45 €', '85 €', '140 €'].map((quickPrice) => (
+                      <button
+                        key={quickPrice}
+                        type="button"
+                        onClick={() => setAddFormPrice(quickPrice)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-colors cursor-pointer border ${
+                          addFormPrice === quickPrice 
+                            ? 'bg-stone-800 text-white border-stone-800' 
+                            : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
+                        }`}
+                      >
+                        {quickPrice}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              )}
 
-              {activeCategory === 'appel' && addFormKind === 'initiative' && (
-                <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 space-y-2">
-                  <div>
-                    <label className="text-stone-700 font-semibold block">Objectif financier (€) :</label>
-                    <input
-                      type="number"
-                      value={addFormTargetAmount}
-                      onChange={(e) => setAddFormTargetAmount(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-white mt-1"
-                    />
+                {/* 4. Vidéo */}
+                <div className="space-y-1.5 pt-1">
+                  <label className="text-stone-800 font-bold block text-xs">
+                    4. Vidéo d'illustration
+                  </label>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {MEDIA_VIDEO_PRESETS.map((v, idx) => {
+                      const isSelected = addFormVideoUrl === v.url;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setAddFormVideoUrl(v.url)}
+                          className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                            isSelected
+                              ? 'bg-[#A2482B] text-white border-[#A2482B] shadow-xs'
+                              : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200'
+                          }`}
+                        >
+                          <Film className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-stone-500'}`} />
+                          <span className="text-[10px] font-medium truncate w-full">{v.name}</span>
+                        </button>
+                      );
+                    })}
                   </div>
+                  <input
+                    type="text"
+                    placeholder="Ou collez l'URL directe d'une vidéo .mp4"
+                    value={addFormVideoUrl}
+                    onChange={(e) => setAddFormVideoUrl(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-[11px] bg-white text-stone-800 focus:outline-none focus:border-[#A2482B] mt-1"
+                  />
                 </div>
-              )}
-
-              {activeCategory === 'appel' && addFormKind === 'appel' && (
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="text-stone-700 font-semibold block">Urgence :</label>
-                    <select
-                      value={addFormUrgency}
-                      onChange={(e) => setAddFormUrgency(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
-                    >
-                      <option value="Prioritaire">Prioritaire</option>
-                      <option value="D’ici fin de semaine">D’ici fin de semaine</option>
-                      <option value="Pour le prochain mois">Pour le prochain mois</option>
-                      <option value="Continu">Continu</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-stone-700 font-semibold block">Impact visé :</label>
-                    <input
-                      type="text"
-                      placeholder="Ex: 10 apprentis formés"
-                      value={addFormImpact}
-                      onChange={(e) => setAddFormImpact(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Sélection visuelle du média (Poster & Vidéo) */}
-              <div className="space-y-2 pt-2 border-t border-stone-200">
-                <label className="text-stone-700 font-semibold block flex items-center justify-between">
-                  <span>Image de fond / Affiche :</span>
-                  <span className="text-[10px] text-stone-500 font-normal">Presets ou lien</span>
-                </label>
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                  {MEDIA_POSTER_PRESETS.map((p, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setAddFormPosterUrl(p.url)}
-                      className={`relative w-16 h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
-                        addFormPosterUrl === p.url ? 'border-[#C89B3C] scale-95 shadow-md' : 'border-stone-200 opacity-75 hover:opacity-100'
-                      }`}
-                      title={p.name}
-                    >
-                      <img src={p.url} alt={p.name} className="w-full h-full object-cover" />
-                      <div className="absolute inset-x-0 bottom-0 bg-black/60 text-[9px] text-white text-center py-0.5 truncate px-1">
-                        {p.name}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                <input
-                  type="text"
-                  placeholder="Ou URL de l'image (https://...)"
-                  value={addFormPosterUrl}
-                  onChange={(e) => setAddFormPosterUrl(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-[11px] bg-stone-50"
-                />
               </div>
 
-              {/* Sélection de la vidéo */}
-              <div className="space-y-2">
-                <label className="text-stone-700 font-semibold block flex items-center justify-between">
-                  <span>Vidéo d'illustration :</span>
-                  <span className="text-[10px] text-stone-500 font-normal">Presets vidéo</span>
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {MEDIA_VIDEO_PRESETS.map((v, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setAddFormVideoUrl(v.url)}
-                      className={`p-2 rounded-xl border text-left text-[11px] transition-all cursor-pointer flex items-center gap-2 ${
-                        addFormVideoUrl === v.url
-                          ? 'bg-[#1C1917] text-white border-[#1C1917]'
-                          : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
-                      }`}
-                    >
-                      <Film className="w-3.5 h-3.5 shrink-0 text-[#FACC15]" />
-                      <span className="truncate font-semibold">{v.name}</span>
-                    </button>
-                  ))}
-                </div>
-                <input
-                  type="text"
-                  placeholder="Ou URL de la vidéo .mp4 (https://...)"
-                  value={addFormVideoUrl}
-                  onChange={(e) => setAddFormVideoUrl(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg border border-stone-300 text-[11px] bg-stone-50"
-                />
-              </div>
-
-            </div>
-
-            {/* Boutons d'action */}
-            <div className="flex gap-2 pt-2 border-t border-stone-200">
-              <button
-                onClick={() => {
-                  const finalTitle = addFormTitle.trim() || (
-                    activeCategory === 'recit' ? 'Récit personnel' :
-                    activeCategory === 'production' ? 'Nouvelle série' :
-                    activeCategory === 'offre' ? 'Création d’art' : 'Nouvel appel'
-                  );
-
-                  if (activeCategory === 'recit') {
-                    if (addFormKind === 'recit') {
-                      const newRecit: UserRecitItem = {
-                        id: `recit-${Date.now()}`,
-                        title: finalTitle,
-                        subtitle: addFormSubtitle.trim() || 'Chapitre inédit',
-                        description: addFormDescription.trim() || 'Récit personnel de transmission et d’expérience.',
-                        duration: addFormDuration || '03:45',
-                        viewsCount: 1,
-                        videoUrl: addFormVideoUrl || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-                        posterUrl: addFormPosterUrl || '/assets/protagonists/amara-tisserande.jpg'
-                      };
-                      setRecits(prev => [newRecit, ...prev]);
-                    } else {
-                      const newEpisode: UserEpisodeVideo = {
-                        id: `ep-${Date.now()}`,
-                        seriesId: 'series-custom',
-                        seriesTitle: finalTitle,
-                        title: addFormSubtitle.trim() || 'Épisode inédit',
-                        duration: addFormDuration || '03:45',
-                        viewsCount: 1,
-                        videoUrl: addFormVideoUrl || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-                        posterUrl: addFormPosterUrl || '/assets/protagonists/amara-tisserande.jpg'
-                      };
-                      setEpisodes(prev => [newEpisode, ...prev]);
-                    }
-                  } else if (activeCategory === 'production') {
-                    const newProd: UserProductionShare = {
-                      id: `prod-${Date.now()}`,
-                      seriesId: 'series-custom',
-                      seriesTitle: finalTitle,
-                      sharesCount: addFormSharesCount,
-                      sharesOnSale: addFormSharesOnSale,
-                      startPrice: addFormPriceNumeric,
-                      salePrice: addFormPriceNumeric,
-                      purchasePrice: addFormPriceNumeric,
-                      recommendedPrice: Math.round(addFormPriceNumeric * 1.3),
-                      rsiPercent: 50,
-                      returnForecastPercent: 50,
-                      returnForecastAmount: Math.round(addFormPriceNumeric * 0.5),
-                      videoUrl: addFormVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                      posterUrl: addFormPosterUrl || '/assets/protagonists/koffi-tisserand.jpg',
-                      status: 'Actif'
-                    };
-                    setProductions(prev => [newProd, ...prev]);
-                  } else if (activeCategory === 'offre') {
+              {/* Boutons d'action */}
+              <div className="flex gap-2 pt-3 border-t border-stone-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const finalTitle = addFormTitle.trim() || 'Nouvelle offre';
                     const newCreation: UserCreationItem = {
                       id: `cr-${Date.now()}`,
                       title: finalTitle,
-                      seriesTitle: 'Collection personnelle',
-                      categoryLabel: addFormCategoryLabel,
+                      seriesTitle: 'Offre & Savoir-faire',
+                      categoryLabel: addFormCategoryLabel || 'Artisanat & Pièces d’art',
                       type: 'produit',
-                      price: addFormPrice || '45 €',
-                      priceNumeric: parseFloat(addFormPrice) || 45,
+                      price: addFormPrice.includes('€') ? addFormPrice : `${addFormPrice} €`,
+                      priceNumeric: parseFloat(addFormPrice.replace(/[^0-9.]/g, '')) || 45,
                       stock: 'Disponible',
-                      description: addFormDescription || 'Création originale d’artisanat.',
-                      specs: 'Fait main • Pièce unique',
+                      description: 'Création originale d’artisanat et transmission de savoir-faire.',
+                      specs: 'Fait main • Pièce d’exception',
                       videoUrl: addFormVideoUrl || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-                      posterUrl: addFormPosterUrl || '/assets/protagonists/fatou-restauratrice.jpg'
+                      posterUrl: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80'
                     };
                     setCreations(prev => [newCreation, ...prev]);
-                  } else {
-                    if (addFormKind === 'initiative') {
-                      const newInit: UserInitiativeItem = {
-                        id: `init-${Date.now()}`,
-                        title: finalTitle,
-                        seriesTitle: 'Initiative communautaire',
-                        category: 'Préservation & Soutien',
-                        collectedAmount: 0,
-                        targetAmount: addFormTargetAmount || 3000,
-                        backersCount: 0,
-                        daysRemaining: 30,
-                        description: addFormDescription || 'Projet solidaire et participatif.',
-                        videoUrl: addFormVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-                        posterUrl: addFormPosterUrl || '/assets/posters/finagnon-qosqorico.png'
-                      };
-                      setInitiatives(prev => [newInit, ...prev]);
-                    } else {
-                      const newAppel: UserAppelItem = {
-                        id: `app-${Date.now()}`,
-                        title: finalTitle,
-                        category: 'Collaborations & Compétences',
-                        urgency: addFormUrgency || 'Prioritaire',
-                        description: addFormDescription || 'Recherche de collaboration.',
-                        impact: addFormImpact || 'Impact communautaire immédiat',
-                        videoUrl: addFormVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-                        posterUrl: addFormPosterUrl || '/assets/protagonists/amara-tisserande.jpg'
-                      };
-                      setAppels(prev => [newAppel, ...prev]);
-                    }
-                  }
-
-                  // Réinitialisation de l'index sur la nouvelle vidéo ajoutée
-                  setCategoryIndices(prev => ({ ...prev, [activeCategory]: 0 }));
-                  setIsAddingModalOpen(false);
-                  setShareToast("Publication ajoutée avec succès !");
-                  setTimeout(() => setShareToast(null), 3000);
-                }}
-                className="flex-1 h-11 bg-[#1C1917] hover:bg-[#C89B3C] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <Check className="w-4 h-4" />
-                <span>Publier</span>
-              </button>
-              <button 
-                onClick={() => setIsAddingModalOpen(false)} 
-                className="flex-1 h-11 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs rounded-xl border border-stone-200/60 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center"
-              >
-                Annuler
-              </button>
+                    setCategoryIndices(prev => ({ ...prev, offre: 0 }));
+                    setIsAddingModalOpen(false);
+                    setShareToast("Offre publiée avec succès !");
+                    setTimeout(() => setShareToast(null), 3000);
+                  }}
+                  className="flex-1 h-10 sm:h-11 bg-[#A2482B] hover:bg-[#8B3A20] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Publier l'offre</span>
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setIsAddingModalOpen(false)} 
+                  className="h-10 sm:h-11 px-4 bg-white hover:bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl border border-stone-200 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center"
+                >
+                  Annuler
+                </button>
+              </div>
             </div>
-
           </div>
-        </div>
+        ) : activeCategory === 'appel' ? (
+          /* ================================================================= */
+          /* MODALE PROJET : 4 CHAMPS ESSENTIELS SEULEMENT                     */
+          /* Titre, Catégorie, Objectif financier, Durée (30, 60, 90 jours)     */
+          /* ================================================================= */
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
+            <div className="bg-[#FAF8F5] max-w-md w-full rounded-3xl p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 max-h-[92vh] overflow-y-auto">
+              
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-2xl bg-[#A2482B]/10 border border-[#A2482B]/20 text-[#A2482B] flex items-center justify-center shrink-0 shadow-xs">
+                    <Sprout className="w-5 h-5 text-[#A2482B]" />
+                  </div>
+                  <div>
+                    <h3 className="font-editorial text-base sm:text-lg font-bold text-stone-900 leading-tight">
+                      Créer un projet
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Lancez un financement participatif pour votre projet
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsAddingModalOpen(false)} 
+                  className="p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-200/50 cursor-pointer transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                {/* 1. Titre */}
+                <div className="space-y-1.5">
+                  <label className="text-stone-800 font-bold block text-xs">
+                    1. Titre du projet
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ex: L'Atelier solidaire des voix, École de tissage traditionnel..."
+                    value={addFormTitle}
+                    onChange={(e) => setAddFormTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B] transition-all shadow-2xs"
+                  />
+                </div>
+
+                {/* 2. Catégorie */}
+                <div className="space-y-1.5">
+                  <label className="text-stone-800 font-bold block text-xs">
+                    2. Catégorie
+                  </label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {[
+                      { id: 'Initiative solidaire', label: 'Initiative solidaire' },
+                      { id: 'Préservation & Patrimoine', label: 'Préservation & Patrimoine' },
+                      { id: 'Transmission & Éducation', label: 'Transmission & Éducation' },
+                      { id: 'Écologie & Terroir', label: 'Écologie & Terroir' }
+                    ].map((cat) => {
+                      const isSelected = addFormCategoryLabel === cat.id;
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setAddFormCategoryLabel(cat.id)}
+                          className={`p-2.5 rounded-xl border text-left font-medium transition-all cursor-pointer text-xs flex items-center justify-between ${
+                            isSelected
+                              ? 'bg-[#1C1917] text-white border-[#1C1917] shadow-xs'
+                              : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200'
+                          }`}
+                        >
+                          <span className="truncate">{cat.label}</span>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-[#E5C16C] shrink-0 ml-1" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. Objectif financier */}
+                <div className="space-y-1.5">
+                  <label className="text-stone-800 font-bold block text-xs">
+                    3. Objectif financier (€)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="100"
+                      step="100"
+                      value={addFormTargetAmount}
+                      onChange={(e) => setAddFormTargetAmount(Number(e.target.value))}
+                      className="w-full pl-3.5 pr-12 py-2.5 rounded-xl border border-stone-300 text-xs font-mono font-bold bg-white text-stone-900 focus:outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B] transition-all shadow-2xs"
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-stone-400 font-bold text-xs pointer-events-none">
+                      EUR
+                    </div>
+                  </div>
+                  <div className="flex gap-1.5 pt-0.5">
+                    {[1500, 3000, 5000, 10000].map((quickTarget) => (
+                      <button
+                        key={quickTarget}
+                        type="button"
+                        onClick={() => setAddFormTargetAmount(quickTarget)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-colors cursor-pointer border ${
+                          addFormTargetAmount === quickTarget 
+                            ? 'bg-stone-800 text-white border-stone-800' 
+                            : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
+                        }`}
+                      >
+                        {quickTarget.toLocaleString('fr-FR')} €
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 4. Durée (30, 60, 90 jours) */}
+                <div className="space-y-1.5 pt-1">
+                  <label className="text-stone-800 font-bold block text-xs">
+                    4. Durée de la collecte
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { days: 30, desc: 'Campagne agile' },
+                      { days: 60, desc: 'Recommandé' },
+                      { days: 90, desc: 'Grand projet' }
+                    ].map(({ days, desc }) => {
+                      const isSelected = addFormProjectDays === days;
+                      return (
+                        <button
+                          key={days}
+                          type="button"
+                          onClick={() => setAddFormProjectDays(days as 30 | 60 | 90)}
+                          className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 active:scale-95 ${
+                            isSelected
+                              ? 'bg-[#A2482B] text-white border-[#A2482B] shadow-sm'
+                              : 'bg-white hover:bg-stone-50 text-stone-700 border-stone-200'
+                          }`}
+                        >
+                          <span className="font-bold text-sm sm:text-base leading-tight">
+                            {days} jours
+                          </span>
+                          <span className={`text-[9.5px] ${isSelected ? 'text-amber-100 font-medium' : 'text-stone-500'}`}>
+                            {desc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Boutons d'action */}
+              <div className="flex gap-2 pt-3 border-t border-stone-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const finalTitle = addFormTitle.trim() || 'Nouveau projet';
+                    const newInit: UserInitiativeItem = {
+                      id: `init-${Date.now()}`,
+                      title: finalTitle,
+                      seriesTitle: 'Projet participatif',
+                      category: addFormCategoryLabel || 'Initiative solidaire',
+                      collectedAmount: 0,
+                      targetAmount: Number(addFormTargetAmount) || 3000,
+                      backersCount: 0,
+                      daysRemaining: addFormProjectDays,
+                      description: 'Projet solidaire et participatif pour valoriser et transmettre nos savoir-faire.',
+                      videoUrl: addFormVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+                      posterUrl: '/assets/posters/finagnon-qosqorico.png'
+                    };
+                    setInitiatives(prev => [newInit, ...prev]);
+                    setCategoryIndices(prev => ({ ...prev, appel: 0 }));
+                    setIsAddingModalOpen(false);
+                    setShareToast("Projet lancé avec succès !");
+                    setTimeout(() => setShareToast(null), 3000);
+                  }}
+                  className="flex-1 h-10 sm:h-11 bg-[#A2482B] hover:bg-[#8B3A20] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Sprout className="w-4 h-4" />
+                  <span>Lancer le projet</span>
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setIsAddingModalOpen(false)} 
+                  className="h-10 sm:h-11 px-4 bg-white hover:bg-stone-100 text-stone-700 font-semibold text-xs rounded-xl border border-stone-200 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Formulaire standard pour les autres onglets */
+          <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+            <div className="bg-white max-w-lg w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-5 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-[#FACC15]/20 border border-[#FACC15]/50 text-[#8B6845] flex items-center justify-center">
+                    <Plus className="w-5 h-5 text-[#1C1917]" />
+                  </div>
+                  <div>
+                    <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917]">
+                      Nouvelle publication
+                    </h3>
+                    <p className="text-xs text-[#8B6845]">
+                      {activeCategory === 'recit' && 'Récit personnel ou épisode documentaire'}
+                      {activeCategory === 'production' && 'Série ouverte en coproduction'}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsAddingModalOpen(false)} 
+                  className="p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div>
+                  <label className="text-stone-700 font-semibold block">Titre :</label>
+                  <input
+                    type="text"
+                    placeholder="Donnez un titre clair et percutant..."
+                    value={addFormTitle}
+                    onChange={(e) => setAddFormTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs bg-stone-50 mt-1 focus:outline-none focus:border-[#C89B3C]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2 border-t border-stone-200">
+                <button
+                  onClick={() => {
+                    setIsAddingModalOpen(false);
+                    setShareToast("Publication enregistrée !");
+                    setTimeout(() => setShareToast(null), 3000);
+                  }}
+                  className="flex-1 h-11 bg-[#1C1917] hover:bg-[#C89B3C] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>Enregistrer</span>
+                </button>
+                <button 
+                  onClick={() => setIsAddingModalOpen(false)} 
+                  className="flex-1 h-11 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs rounded-xl border border-stone-200/60 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        )
       )}
 
     </div>

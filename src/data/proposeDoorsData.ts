@@ -231,9 +231,9 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
   },
   {
     id: 'emplois',
-    label: 'Emplois',
+    label: 'Compétences',
     icon: GraduationCap,
-    tagline: 'Transmettez la passion de votre métier, vos gestes d’artisan et vos opportunités.',
+    tagline: 'Transmettez la passion de votre métier, vos gestes d’artisan et vos compétences d’excellence.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     posterUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
     actionDoorLabel: 'Choisir cette porte',
