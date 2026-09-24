@@ -42,12 +42,16 @@ import {
   Info,
   Copy,
   Users,
-  User
+  User,
+  Wallet,
+  History,
+  Eye,
+  ArrowUpRight
 } from 'lucide-react';
 import { ShareIcon } from './ShareIcon';
 import { CoproduireRingsIcon } from './YonywoodBrandIcons';
 import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
-import { PROTAGONISTS, DOCUMENTARIES } from '../data/mockData';
+import { PROTAGONISTS, DOCUMENTARIES, DUOS } from '../data/mockData';
 import { MATRIX_SERIES_DATA } from '../data/matrixData';
 
 export type ProfileCategory = 'recit' | 'production' | 'offre' | 'appel';
@@ -102,18 +106,36 @@ export interface UserProductionShare {
   id: string;
   seriesId: string;
   seriesTitle: string;
-  sharesCount: number; // Total parts
+  sharesCount: number; // Total parts détenues
   sharesOnSale: number; // Mises en vente
-  startPrice?: number; // Prix de départ unitaire par part
-  salePrice: number; // Prix actuel unitaire
-  purchasePrice: number;
+  startPrice?: number; // Prix d'achat / départ unitaire par part
+  salePrice: number; // Prix de vente actuel unitaire
+  purchasePrice: number; // Total investi
   recommendedPrice: number;
   rsiPercent?: number; // Retour sur investissement en %
   returnForecastPercent: number;
   returnForecastAmount: number;
+  viewsCount?: number; // Nombre de vues de la série
+  growthRatePercent?: number; // Taux de croissance trimestriel
+  liquidityScore?: 'Haute' | 'Moyenne' | 'Élevée'; // Liquidité marché
   videoUrl: string;
   posterUrl: string;
   status: string;
+}
+
+// 3.b Historique des ventes / transactions de coproduction
+export interface ShareTransaction {
+  id: string;
+  seriesId: string;
+  seriesTitle: string;
+  sharesSold: number;
+  boughtPriceUnit: number;
+  soldPriceUnit: number;
+  totalBought: number;
+  totalSold: number;
+  netGain: number;
+  date: string;
+  buyerName?: string;
 }
 
 // 4. Créations : Artisanat, pièces & ateliers
@@ -402,6 +424,24 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   // État d'ouverture de la modale Paramètres (accessible uniquement par l'icône dans l'en-tête)
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
+  const handleToggleSeriesFilter = (docId: string) => {
+    let next: string[];
+    if (selectedDocFilter.includes(docId)) {
+      next = selectedDocFilter.filter(id => id !== docId);
+    } else {
+      next = [...selectedDocFilter, docId];
+    }
+    onUpdateDocFilter(next);
+  };
+
+  const handleSelectAllSeries = () => {
+    onUpdateDocFilter(DOCUMENTARIES.map(d => d.id));
+  };
+
+  const handleDeselectAllSeries = () => {
+    onUpdateDocFilter([]);
+  };
+
   // Identité du profil affiché
   const [userName, setUserName] = useState<string>(
     targetProtagonist ? targetProtagonist.name : 'Amina'
@@ -478,6 +518,51 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [profileEditBio, setProfileEditBio] = useState<string>(userBio);
   const [profileEditPhoto, setProfileEditPhoto] = useState<string>(userPhoto);
   const [shareToast, setShareToast] = useState<string | null>(null);
+
+  // État du portefeuille de parts de coproduction
+  const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState<boolean>(false);
+  const [portfolioTab, setPortfolioTab] = useState<'holdings' | 'history' | 'analytics'>('holdings');
+  const [shareTransactions, setShareTransactions] = useState<ShareTransaction[]>([
+    {
+      id: 'tx-1',
+      seriesId: 'finagnon-qosqorico',
+      seriesTitle: 'Finagnon < > Qosqorico',
+      sharesSold: 4,
+      boughtPriceUnit: 35,
+      soldPriceUnit: 55,
+      totalBought: 140,
+      totalSold: 220,
+      netGain: 80,
+      date: '18 Fév 2026',
+      buyerName: 'Coopérative Ganvié Vivante'
+    },
+    {
+      id: 'tx-2',
+      seriesId: 'jesus-legba',
+      seriesTitle: 'Jésus < > Èṣù',
+      sharesSold: 2,
+      boughtPriceUnit: 40,
+      soldPriceUnit: 52,
+      totalBought: 80,
+      totalSold: 104,
+      netGain: 24,
+      date: '02 Mar 2026',
+      buyerName: 'Atelier Mémoires du Bénin'
+    },
+    {
+      id: 'tx-3',
+      seriesId: 'blacks-one-beyond-eve',
+      seriesTitle: 'Blacks One < > Beyond Eve',
+      sharesSold: 3,
+      boughtPriceUnit: 42,
+      soldPriceUnit: 50,
+      totalBought: 126,
+      totalSold: 150,
+      netGain: 24,
+      date: '10 Mar 2026',
+      buyerName: 'Fondation Racines & Horizons'
+    }
+  ]);
 
   // Indices de navigation par catégorie (chariot horizontal)
   const [categoryIndices, setCategoryIndices] = useState<Record<ProfileCategory, number>>({
@@ -664,6 +749,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       rsiPercent: 57.1,
       returnForecastPercent: 18.5,
       returnForecastAmount: 64.75,
+      viewsCount: 38400,
+      growthRatePercent: 24.5,
+      liquidityScore: 'Élevée',
       status: 'Diffusion internationale',
       videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
       posterUrl: '/assets/posters/finagnon-qosqorico.png'
@@ -681,6 +769,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       rsiPercent: 25.0,
       returnForecastPercent: 12.0,
       returnForecastAmount: 24.00,
+      viewsCount: 19200,
+      growthRatePercent: 15.2,
+      liquidityScore: 'Moyenne',
       status: 'Post-production active',
       videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
       posterUrl: '/assets/posters/jesus-esu.png'
@@ -698,6 +789,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       rsiPercent: 23.8,
       returnForecastPercent: 15.0,
       returnForecastAmount: 41.60,
+      viewsCount: 28100,
+      growthRatePercent: 18.0,
+      liquidityScore: 'Élevée',
       status: 'En diffusion',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
@@ -715,6 +809,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       rsiPercent: 28.8,
       returnForecastPercent: 14.0,
       returnForecastAmount: 38.00,
+      viewsCount: 14500,
+      growthRatePercent: 11.8,
+      liquidityScore: 'Moyenne',
       status: 'En tournage',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
       posterUrl: '/assets/posters/dixeat-fiat-luxe.png'
@@ -732,6 +829,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       rsiPercent: 30.0,
       returnForecastPercent: 16.5,
       returnForecastAmount: 97.50,
+      viewsCount: 42700,
+      growthRatePercent: 29.0,
+      liquidityScore: 'Élevée',
       status: 'En production',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
       posterUrl: '/assets/posters/investors-builders.png'
@@ -1199,10 +1299,14 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     }
   };
 
-  // Nom complet affiché pour garantir une stricte cohérence avec l'explorateur
-  const profileDisplayName = targetProtagonist 
-    ? targetProtagonist.name 
-    : (userFullName || userName || 'Amina Traoré');
+  // Prénom affiché uniquement
+  const profileDisplayName = useMemo(() => {
+    const raw = targetProtagonist 
+      ? targetProtagonist.name 
+      : (userFullName || userName || 'Amina');
+    // On extrait uniquement le prénom (premier mot, sans tirets complexes si nom composé)
+    return raw.trim().split(' ')[0] || raw;
+  }, [targetProtagonist, userFullName, userName]);
 
   // Partager le profil (ouvre la modale des réseaux sociaux + copie de lien)
   const handleShareProfile = () => {
@@ -1395,12 +1499,21 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <h1 className="font-editorial text-sm sm:text-xl font-bold text-[#1C1917] leading-tight truncate">
+                <h1 className="font-editorial text-base sm:text-xl font-bold text-[#1C1917] leading-tight truncate">
                   {profileDisplayName}
                 </h1>
                 {targetProtagonist?.flag && <span className="text-xs sm:text-sm shrink-0">{targetProtagonist.flag}</span>}
+                {isOwner && (
+                  <button
+                    onClick={() => setIsEditingProfile(true)}
+                    className="p-1 rounded-full text-stone-400 hover:text-[#A2482B] hover:bg-[#A2482B]/10 transition-colors cursor-pointer shrink-0"
+                    title="Modifier mon profil"
+                    id="btn-edit-profile-inline"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
-              <p className="text-[10.5px] sm:text-xs text-[#8B6845] font-medium mt-0.5 truncate">{userRole}</p>
             </div>
           </div>
 
@@ -1425,15 +1538,23 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
             {isOwner ? (
               <>
-                {/* Bouton Modifier profil */}
+                {/* Bouton Mes Parts (identique au bouton Messages : fond blanc, écriture noire) */}
                 <button
-                  onClick={() => setIsEditingProfile(true)}
-                  id="btn-profile-edit-header"
-                  className="w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-stone-100 hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-stone-800 hover:text-white flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 group/editbtn"
-                  title="Modifier mon profil"
+                  onClick={() => onNavigate({ 
+                    type: 'portfolio', 
+                    returnToDuoId, 
+                    returnToDuoIndex, 
+                    returnToDocId 
+                  })}
+                  id="btn-profile-portfolio-header"
+                  className="w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-semibold text-[#1C1917] flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative"
+                  title="Voir mes parts de coproduction"
                 >
-                  <Edit3 className="w-3.5 h-3.5 text-stone-600 group-hover/editbtn:text-white transition-colors" />
-                  <span className="hidden sm:inline">Modifier</span>
+                  <Wallet className="w-3.5 h-3.5 text-stone-700" />
+                  <span className="hidden sm:inline">Mes parts</span>
+                  <span className="absolute -top-1 -right-1 sm:static sm:top-auto sm:right-auto w-4 h-4 rounded-full bg-[#A2482B] text-white text-[9px] font-bold flex items-center justify-center">
+                    {productions.reduce((acc, p) => acc + (p.sharesCount || 0), 0)}
+                  </span>
                 </button>
 
                 {/* Bouton Messagerie */}
@@ -1767,40 +1888,60 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     <div className="flex items-center gap-2 text-[10.5px] sm:text-[11px] text-white/90 mt-0.5 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                       <span>{currentProduction.sharesCount} parts</span>
                       <span>•</span>
-                      <span>Valeur : {currentProduction.currentValue}</span>
+                      <span>Valeur : {currentProduction.sharesCount * (currentProduction.salePrice || currentProduction.startPrice || 50)} €</span>
+                      <span>•</span>
+                      <span className="text-[#FACC15] font-semibold">+{currentProduction.rsiPercent || 25}% RSI</span>
                     </div>
                   </div>
 
                   {isOwner ? (
-                    <div className="grid grid-cols-2 gap-1.5 sm:gap-2 pt-0.5">
+                    <div className="space-y-1.5 pt-0.5">
+                      <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingProduction(currentProduction);
+                            setProdFormStartPrice(currentProduction.startPrice);
+                            setProdFormSalePrice(currentProduction.salePrice || currentProduction.startPrice);
+                            setProdFormRsi(currentProduction.rsiPercent);
+                            setProdFormSharesCount(currentProduction.sharesCount);
+                            setProdFormSharesOnSale(currentProduction.sharesOnSale);
+                          }}
+                          className="h-7.5 sm:h-8 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
+                          id="btn-edit-production"
+                        >
+                          <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
+                          <span>Modifier</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSellCountInput(currentProduction.sharesOnSale || 1);
+                            setSellPriceInput(currentProduction.salePrice || currentProduction.recommendedPrice);
+                            setIsSellingShares(true);
+                          }}
+                          className="h-7.5 sm:h-8 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-stone-800 border border-white/20 text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                          id="btn-sell-production"
+                        >
+                          <Coins className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FACC15]" />
+                          <span>Vendre</span>
+                        </button>
+                      </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setEditingProduction(currentProduction);
-                          setProdFormStartPrice(currentProduction.startPrice);
-                          setProdFormSalePrice(currentProduction.salePrice || currentProduction.startPrice);
-                          setProdFormRsi(currentProduction.rsiPercent);
-                          setProdFormSharesCount(currentProduction.sharesCount);
-                          setProdFormSharesOnSale(currentProduction.sharesOnSale);
+                          onNavigate({ 
+                            type: 'portfolio', 
+                            returnToDuoId, 
+                            returnToDuoIndex, 
+                            returnToDocId 
+                          });
                         }}
-                        className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] border border-stone-200/80 hover:border-[#A2482B] group/editcard"
-                        id="btn-edit-production"
+                        className="w-full h-7 sm:h-7.5 px-3 rounded-lg sm:rounded-xl bg-[#A2482B]/90 hover:bg-[#A2482B] text-white text-[10.5px] sm:text-[11px] font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99]"
+                        id="btn-open-portfolio-from-card"
                       >
-                        <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-600 group-hover/editcard:text-white transition-colors" />
-                        <span>Modifier</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSellCountInput(currentProduction.sharesOnSale || 1);
-                          setSellPriceInput(currentProduction.salePrice || currentProduction.recommendedPrice);
-                          setIsSellingShares(true);
-                        }}
-                        className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-stone-800 border border-white/20 text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
-                        id="btn-sell-production"
-                      >
-                        <Coins className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FACC15]" />
-                        <span>Vendre</span>
+                        <Wallet className="w-3 h-3 text-white" />
+                        <span>Mon Portefeuille & Parts de coproduction</span>
                       </button>
                     </div>
                   ) : (
@@ -2260,6 +2401,97 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               </button>
             </form>
 
+            {/* Mon expérience & Séries suivies */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold text-[#1C1917] uppercase tracking-wider flex items-center gap-1.5">
+                    <Film className="w-3.5 h-3.5 text-[#A2482B]" />
+                    <span>Mon expérience & Séries suivies</span>
+                  </h4>
+                  <p className="text-[11px] text-stone-500 mt-0.5">
+                    Choisissez les séries documentaires à voir dans votre flux Duos.
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleSelectAllSeries}
+                    className="text-[11px] font-semibold text-[#A2482B] hover:underline px-1.5 py-0.5 rounded cursor-pointer"
+                  >
+                    Toutes
+                  </button>
+                  <span className="text-stone-300 text-xs">•</span>
+                  <button
+                    type="button"
+                    onClick={handleDeselectAllSeries}
+                    className="text-[11px] font-semibold text-stone-500 hover:text-stone-800 px-1.5 py-0.5 rounded cursor-pointer"
+                  >
+                    Effacer
+                  </button>
+                </div>
+              </div>
+
+              {/* Liste des séries avec toggle clair */}
+              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                {DOCUMENTARIES.map((doc) => {
+                  const isChecked = selectedDocFilter.includes(doc.id);
+                  const duosInDoc = DUOS.filter(d => d.documentaryId === doc.id).length;
+                  return (
+                    <div
+                      key={doc.id}
+                      onClick={() => handleToggleSeriesFilter(doc.id)}
+                      className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer select-none ${
+                        isChecked 
+                          ? 'bg-[#A2482B]/5 border-[#A2482B]/40 hover:border-[#A2482B]' 
+                          : 'bg-stone-50 border-stone-200 opacity-60 hover:opacity-100 hover:bg-stone-100'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <img 
+                          src={doc.posterUrl} 
+                          alt={doc.title} 
+                          className="w-10 h-10 rounded-lg object-cover border border-stone-200 shrink-0" 
+                        />
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-[#1C1917] truncate">
+                            {doc.title}
+                          </p>
+                          <p className="text-[10px] text-stone-500 truncate">
+                            {duosInDoc} duos
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Switch / Checkbox personnalisé */}
+                      <div 
+                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors shrink-0 ${
+                          isChecked 
+                            ? 'bg-[#A2482B] text-white shadow-xs' 
+                            : 'bg-stone-200 text-transparent'
+                        }`}
+                      >
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Raccourci vers le flux */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSettingsOpen(false);
+                  onNavigate({ type: 'duo_feed' });
+                }}
+                className="w-full py-2.5 px-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+              >
+                <span>Voir mon flux Duos ({selectedDocFilter.length} {selectedDocFilter.length > 1 ? 'séries actives' : 'série active'})</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             {/* Préférences */}
             <div className="space-y-3 pt-2">
               <h4 className="text-xs font-bold text-[#1C1917] uppercase tracking-wider">
@@ -2712,6 +2944,350 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 className="px-4 h-11 bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs rounded-xl border border-stone-200/60 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center"
               >
                 Retirer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 5.B MODALE PORTEFEUILLE DE COPRODUCTION (Parts détenues, Ventes, Analyses)  */}
+      {/* ========================================================================= */}
+      {isOwner && isPortfolioModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 animate-in fade-in">
+          <div className="bg-white max-w-2xl w-full max-h-[90vh] rounded-3xl p-5 sm:p-7 shadow-2xl border border-stone-200 flex flex-col space-y-4 sm:space-y-5 overflow-hidden">
+            {/* Entête de la modale */}
+            <div className="flex items-center justify-between pb-3 border-b border-stone-200 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-2xl bg-[#C89B3C]/15 border border-[#C89B3C]/30 flex items-center justify-center">
+                  <Wallet className="w-5 h-5 text-[#8B6845]" />
+                </div>
+                <div>
+                  <h3 className="font-editorial text-lg sm:text-xl font-bold text-[#1C1917] leading-tight">
+                    Portefeuille de coproduction
+                  </h3>
+                  <p className="text-[11px] text-stone-500">
+                    Acquisition, gestion et revente de parts valorisées de séries documentaires
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsPortfolioModalOpen(false)} 
+                className="p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+                title="Fermer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Chiffres clés du portefeuille (Synthèse algorithmique) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 shrink-0">
+              <div className="p-3 rounded-2xl bg-stone-50 border border-stone-200">
+                <span className="text-[10px] sm:text-[11px] text-stone-500 font-medium block">Parts en stock</span>
+                <span className="text-lg sm:text-xl font-mono font-bold text-[#1C1917]">
+                  {productions.reduce((acc, p) => acc + (p.sharesCount || 0), 0)}
+                </span>
+                <span className="text-[9.5px] text-stone-400 block mt-0.5">Sur 5 séries</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-[#C89B3C]/10 border border-[#C89B3C]/30">
+                <span className="text-[10px] sm:text-[11px] text-[#8B6845] font-medium block">Valeur actuelle</span>
+                <span className="text-lg sm:text-xl font-mono font-black text-[#1C1917]">
+                  {productions.reduce((acc, p) => acc + (p.sharesCount * (p.salePrice || p.startPrice || 50)), 0)} €
+                </span>
+                <span className="text-[9.5px] text-[#8B6845] font-semibold block mt-0.5">+33.8% de plus-value</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
+                <span className="text-[10px] sm:text-[11px] text-emerald-700 font-medium block">Gains réalisés (Ventes)</span>
+                <span className="text-lg sm:text-xl font-mono font-bold text-emerald-800">
+                  +{shareTransactions.reduce((acc, tx) => acc + tx.netGain, 0)} €
+                </span>
+                <span className="text-[9.5px] text-emerald-600 block mt-0.5">Sur 3 transactions</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-stone-50 border border-stone-200">
+                <span className="text-[10px] sm:text-[11px] text-stone-500 font-medium block">Mises en vente</span>
+                <span className="text-lg sm:text-xl font-mono font-bold text-[#A2482B]">
+                  {productions.reduce((acc, p) => acc + (p.sharesOnSale || 0), 0)} parts
+                </span>
+                <span className="text-[9.5px] text-stone-400 block mt-0.5">Actuellement au marché</span>
+              </div>
+            </div>
+
+            {/* Onglets de navigation dans le portefeuille */}
+            <div className="flex items-center gap-1.5 p-1 bg-stone-100 rounded-xl shrink-0">
+              <button
+                type="button"
+                onClick={() => setPortfolioTab('holdings')}
+                className={`flex-1 py-1.5 sm:py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  portfolioTab === 'holdings'
+                    ? 'bg-white text-[#1C1917] shadow-xs'
+                    : 'text-stone-500 hover:text-stone-800'
+                }`}
+              >
+                <Coins className="w-3.5 h-3.5 text-[#C89B3C]" />
+                <span>Mes parts en stock</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPortfolioTab('history')}
+                className={`flex-1 py-1.5 sm:py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  portfolioTab === 'history'
+                    ? 'bg-white text-[#1C1917] shadow-xs'
+                    : 'text-stone-500 hover:text-stone-800'
+                }`}
+              >
+                <History className="w-3.5 h-3.5 text-stone-600" />
+                <span>Historique des ventes ({shareTransactions.length})</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPortfolioTab('analytics')}
+                className={`flex-1 py-1.5 sm:py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  portfolioTab === 'analytics'
+                    ? 'bg-white text-[#1C1917] shadow-xs'
+                    : 'text-stone-500 hover:text-stone-800'
+                }`}
+              >
+                <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Aide à la revente</span>
+              </button>
+            </div>
+
+            {/* Contenu selon l'onglet actif */}
+            <div className="flex-1 overflow-y-auto pr-1 space-y-3 min-h-[220px]">
+              {/* ONGLET 1 : PARTS DÉTENUES EN STOCK */}
+              {portfolioTab === 'holdings' && (
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] text-stone-500 font-medium px-1">
+                    <span>Série documentaire & Parts</span>
+                    <span>Prix achat / Valeur revente</span>
+                  </div>
+                  {productions.map((prod, idx) => {
+                    const boughtUnit = prod.startPrice || 35;
+                    const currentUnit = prod.salePrice || boughtUnit;
+                    const totalBought = prod.sharesCount * boughtUnit;
+                    const totalCurrent = prod.sharesCount * currentUnit;
+                    const diffGain = totalCurrent - totalBought;
+                    const diffPercent = Math.round(((currentUnit - boughtUnit) / boughtUnit) * 100);
+
+                    return (
+                      <div
+                        key={prod.id}
+                        className="p-3.5 rounded-2xl border border-stone-200 bg-white hover:border-[#C89B3C]/50 transition-all shadow-xs space-y-2.5"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={prod.posterUrl}
+                              alt={prod.seriesTitle}
+                              className="w-12 h-14 rounded-xl object-cover border border-stone-200 shrink-0"
+                            />
+                            <div>
+                              <h4 className="font-editorial text-sm font-bold text-[#1C1917]">
+                                {prod.seriesTitle}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-0.5 text-[11px] text-stone-500">
+                                <span className="font-mono font-bold text-stone-800">{prod.sharesCount} parts</span>
+                                <span>•</span>
+                                <span>{prod.sharesOnSale > 0 ? `${prod.sharesOnSale} en vente` : 'Stock complet'}</span>
+                                <span>•</span>
+                                <span className="text-stone-400">{prod.status}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="text-right shrink-0">
+                            <span className="font-mono font-bold text-base text-[#1C1917] block">
+                              {totalCurrent} €
+                            </span>
+                            <span className={`text-[10.5px] font-semibold flex items-center justify-end gap-0.5 ${diffGain >= 0 ? 'text-emerald-600' : 'text-stone-500'}`}>
+                              <TrendingUp className="w-3 h-3" />
+                              +{diffGain} € (+{diffPercent}%)
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Barre d'évaluation & Métriques */}
+                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-stone-100 text-[11px]">
+                          <div className="bg-stone-50 p-2 rounded-xl">
+                            <span className="text-stone-500 block text-[10px]">Acheté à</span>
+                            <span className="font-mono font-bold text-stone-800">{boughtUnit} € / part</span>
+                          </div>
+                          <div className="bg-stone-50 p-2 rounded-xl">
+                            <span className="text-stone-500 block text-[10px]">Prix conseillé</span>
+                            <span className="font-mono font-bold text-[#C89B3C]">{prod.recommendedPrice} € / part</span>
+                          </div>
+                          <div className="bg-stone-50 p-2 rounded-xl">
+                            <span className="text-stone-500 block text-[10px]">Vues série</span>
+                            <span className="font-mono font-bold text-stone-800">
+                              {prod.viewsCount ? (prod.viewsCount / 1000).toFixed(1) + ' k' : '28.5 k'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Actions : Vendre / Ajuster */}
+                        <div className="flex items-center justify-end gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShareIndex(idx);
+                              setSellCountInput(prod.sharesOnSale || 1);
+                              setSellPriceInput(prod.salePrice || prod.recommendedPrice);
+                              setIsSellingShares(true);
+                            }}
+                            className="px-3.5 py-1.5 rounded-xl bg-black hover:bg-stone-800 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95"
+                          >
+                            <Coins className="w-3 h-3 text-[#FACC15]" />
+                            <span>{prod.sharesOnSale > 0 ? 'Modifier mise en vente' : 'Mettre en vente'}</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* ONGLET 2 : HISTORIQUE DES VENTES RÉALISÉES */}
+              {portfolioTab === 'history' && (
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] text-stone-500 font-medium px-1">
+                    <span>Transaction & Acheteur</span>
+                    <span>Prix achat ➔ Prix vendu (Gain net)</span>
+                  </div>
+                  {shareTransactions.map((tx) => (
+                    <div
+                      key={tx.id}
+                      className="p-3.5 rounded-2xl border border-stone-200 bg-white hover:border-emerald-300 transition-all shadow-xs space-y-2"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-editorial text-sm font-bold text-[#1C1917]">{tx.seriesTitle}</span>
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                              Vendu
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[11px] text-stone-500 mt-0.5">
+                            <span>{tx.sharesSold} part(s) vendue(s)</span>
+                            <span>•</span>
+                            <span>{tx.date}</span>
+                            {tx.buyerName && (
+                              <>
+                                <span>•</span>
+                                <span className="text-[#8B6845] font-medium">{tx.buyerName}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          <span className="font-mono font-black text-sm text-emerald-700 block">
+                            +{tx.netGain} € de gain net
+                          </span>
+                          <span className="text-[10.5px] text-stone-400 block font-mono">
+                            Total encaissé : {tx.totalSold} €
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between p-2 rounded-xl bg-stone-50 text-[11px] text-stone-600 font-mono">
+                        <div>
+                          <span className="text-stone-400 block text-[9.5px]">Acheté :</span>
+                          <span className="font-bold text-stone-700">{tx.sharesSold} × {tx.boughtPriceUnit} € = {tx.totalBought} €</span>
+                        </div>
+                        <span className="text-stone-400 font-sans">➔</span>
+                        <div>
+                          <span className="text-stone-400 block text-[9.5px]">Vendu :</span>
+                          <span className="font-bold text-emerald-700">{tx.sharesSold} × {tx.soldPriceUnit} € = {tx.totalSold} €</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-stone-400 block text-[9.5px]">Rendement :</span>
+                          <span className="font-bold text-emerald-600">
+                            +{Math.round(((tx.soldPriceUnit - tx.boughtPriceUnit) / tx.boughtPriceUnit) * 100)}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ONGLET 3 : ANALYSES & STATISTIQUES POUR DÉCIDER DE VENDRE */}
+              {portfolioTab === 'analytics' && (
+                <div className="space-y-3">
+                  <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold">
+                      <Sparkles className="w-4 h-4 text-[#C89B3C]" />
+                      <span>Algorithme d'optimisation de valorisation YonyWood</span>
+                    </div>
+                    <p className="text-[11px] text-amber-800 leading-relaxed">
+                      L'algorithme analyse l'audience cumulée, la viralité des récits, le taux d'engagement et la rareté des parts sur le marché pour calculer le prix idéal de revente.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    {productions.map((prod) => {
+                      const views = prod.viewsCount || 28000;
+                      const growth = prod.growthRatePercent || 15;
+                      const isHighInterest = growth >= 18;
+
+                      return (
+                        <div
+                          key={prod.id}
+                          className="p-3 rounded-2xl border border-stone-200 bg-white space-y-2.5"
+                        >
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-editorial text-sm font-bold text-[#1C1917]">{prod.seriesTitle}</h4>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              isHighInterest ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-700'
+                            }`}>
+                              {isHighInterest ? 'Moment optimal pour revendre' : 'À conserver pour valorisation'}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                            <div className="p-2 rounded-xl bg-stone-50 border border-stone-100">
+                              <span className="text-[10px] text-stone-500 block">Audience vidéo</span>
+                              <span className="font-mono font-bold text-[#1C1917]">
+                                {(views / 1000).toFixed(1)}k vues
+                              </span>
+                            </div>
+                            <div className="p-2 rounded-xl bg-stone-50 border border-stone-100">
+                              <span className="text-[10px] text-stone-500 block">Croissance intérêt</span>
+                              <span className="font-mono font-bold text-emerald-600">+{growth}%</span>
+                            </div>
+                            <div className="p-2 rounded-xl bg-stone-50 border border-stone-100">
+                              <span className="text-[10px] text-stone-500 block">Prix conseillé</span>
+                              <span className="font-mono font-bold text-[#C89B3C]">{prod.recommendedPrice} €</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between text-[11px] pt-1 border-t border-stone-100">
+                            <span className="text-stone-500">
+                              Acheté à {prod.startPrice || 35} € • Valeur actuelle : {prod.salePrice || 50} €
+                            </span>
+                            <span className="font-semibold text-[#8B6845]">
+                              Plus-value potentielle : +{((prod.salePrice || 50) - (prod.startPrice || 35)) * prod.sharesCount} €
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Pied de la modale */}
+            <div className="pt-2 border-t border-stone-200 flex items-center justify-between shrink-0">
+              <span className="text-[11px] text-stone-500">
+                Paiements sécurisés & contrats de cession authentifiés
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsPortfolioModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+              >
+                Fermer
               </button>
             </div>
           </div>

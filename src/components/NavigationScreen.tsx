@@ -35,7 +35,7 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({ onNavigate }
     {
       id: '02',
       title: 'Flux Continu des Duos (Swipeable)',
-      desc: 'Découverte aléatoire ou filtrée par télécommande, présentation en miroir, question en majesté et accès direct aux univers.',
+      desc: 'Découverte des duos selon vos séries choisies, présentation en miroir, question en majesté et accès direct aux univers.',
       target: { type: 'duo_feed' } as ViewScreen,
       icon: Compass,
       level: 'Niveau 2 (L’Écho des Duos)'

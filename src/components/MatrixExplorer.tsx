@@ -10,7 +10,6 @@ import {
   Trees,
   ShoppingBag,
   GraduationCap,
-  HelpCircle,
   Flame,
   Users,
   X, 
@@ -25,7 +24,6 @@ import {
   ChevronRight,
   Layers,
   ChevronDown,
-  Shuffle,
   Film,
   Mountain,
   Atom,
@@ -96,7 +94,6 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   const [shuffleSeed, setShuffleSeed] = useState<number>(0);
   const [topicsShuffleSeed, setTopicsShuffleSeed] = useState<number>(0);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [isShuffling, setIsShuffling] = useState<boolean>(false);
   const [hoveredTopic, setHoveredTopic] = useState<ExplorerCatalogItem | null>(null);
   const [hoveredCategory, setHoveredCategory] = useState<ExplorerCategoryConfig | null>(null);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState<boolean>(false);
@@ -257,25 +254,6 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     setTimeout(() => {
       setIsRefreshing(false);
     }, 450);
-  };
-
-  // Action Aléatoire (Shuffle orbital) : brasse les 16 propositions du premier cercle
-  const handleShuffleOrbital = () => {
-    setIsShuffling(true);
-    celestialAudio.playOrbSelect();
-    if (explorerLevel === 'dimensions') {
-      const randomCat = EXPLORER_CATEGORIES[Math.floor(Math.random() * EXPLORER_CATEGORIES.length)];
-      setRotationAngle(prev => (prev + 180 + Math.floor(Math.random() * 90)) % 360);
-      setHoveredCategory(randomCat);
-    } else {
-      // Brasse les 16 propositions du premier cercle et renouvelle les voix
-      setTopicsShuffleSeed(prev => prev + 1);
-      setShuffleSeed(prev => prev + 1);
-      setRotationAngle(prev => (prev + 90 + Math.floor(Math.random() * 60)) % 360);
-    }
-    setTimeout(() => {
-      setIsShuffling(false);
-    }, 600);
   };
 
   // Clic au centre de l'astrolabe :
@@ -541,12 +519,12 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
           /* Niveau 0 : Portes d'entrée */
           <div className="flex items-center gap-1.5 h-7.5 px-3 rounded-full bg-[#A2482B] text-white shadow-sm border border-[#8A3B22] pointer-events-auto text-[11px] sm:text-xs font-semibold">
             <Layers className="w-3.5 h-3.5" />
-            <span>8 Portes d'entrée</span>
+            <span>Portes</span>
           </div>
         ) : (
-          /* Niveau 1+ : Bouton retour aux Portes + Capsule Sujet actif & Actualiser */
+          /* Niveau 1+ : Bouton retour aux Portes (Fond blanc, écriture noire, contour terre cuite) + Capsule Sujet actif & Actualiser */
           <div className="flex items-center gap-1.5 pointer-events-auto min-w-0">
-            {/* Bouton retour aux 8 Portes */}
+            {/* Bouton retour aux Portes */}
             <button
               id="breadcrumb-dimensions-btn"
               onClick={() => {
@@ -554,10 +532,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 setExplorerLevel('dimensions');
                 setIsQuestionModalOpen(false);
               }}
-              className="h-7.5 px-2.5 rounded-full bg-stone-900/85 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold flex items-center gap-1 backdrop-blur-md border border-white/20 shadow-sm cursor-pointer transition-all active:scale-95 shrink-0"
+              className="h-7.5 px-3 rounded-full bg-white hover:bg-stone-50 text-stone-900 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border border-[#A2482B] shadow-xs cursor-pointer transition-all active:scale-95 shrink-0"
               title="Revenir au choix des Portes"
             >
-              <Layers className="w-3 h-3 text-[#C89B3C]" />
+              <Layers className="w-3.5 h-3.5 text-[#A2482B]" />
               <span>Portes</span>
             </button>
 
@@ -619,7 +597,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       {/* 2. SLIDER DE ZOOM VERTICAL LATÉRAL (DESKTOP) & CONTRÔLE DISCRET (MOBILE) */}
       <div className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 z-30 pointer-events-auto">
         <VerticalZoomSlider 
-          zoom={zoomLevel}
+          zoomLevel={zoomLevel}
           onZoomChange={setZoomLevel}
           minZoom={0.5}
           maxZoom={1.5}
@@ -759,16 +737,16 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                         x2={x} 
                         y2={y} 
                         stroke="#C89B3C" 
-                        strokeWidth={isHovered ? "1.8" : "1"} 
-                        strokeDasharray={isHovered ? "none" : "2 3"} 
-                        opacity={isHovered ? "0.85" : "0.35"} 
+                        strokeWidth={isHovered ? "1.2" : "0.75"} 
+                        strokeDasharray={isHovered ? "2 2" : "1.5 3"} 
+                        opacity={isHovered ? "0.45" : "0.12"} 
                       />
                       <circle 
                         cx={x * 0.52} 
                         cy={y * 0.52} 
-                        r={isHovered ? "2.5" : "1.8"} 
+                        r={isHovered ? "2" : "1.2"} 
                         fill="#C89B3C" 
-                        opacity={isHovered ? "0.9" : "0.5"} 
+                        opacity={isHovered ? "0.6" : "0.2"} 
                       />
                     </g>
                   );
@@ -869,9 +847,9 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     x2={pNode.x} 
                     y2={pNode.y} 
                     stroke="#C89B3C" 
-                    strokeWidth="1.2" 
-                    strokeDasharray="3 4" 
-                    opacity="0.35" 
+                    strokeWidth="0.8" 
+                    strokeDasharray="2 4" 
+                    opacity="0.15" 
                   />
                 ))}
 
@@ -1183,9 +1161,9 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     x2={pNode.x} 
                     y2={pNode.y} 
                     stroke="#C89B3C" 
-                    strokeWidth="1.2" 
-                    strokeDasharray="3 4" 
-                    opacity="0.35" 
+                    strokeWidth="0.8" 
+                    strokeDasharray="2 4" 
+                    opacity="0.15" 
                   />
                 ))}
 

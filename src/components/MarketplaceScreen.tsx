@@ -270,7 +270,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
       <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
         <div>
           <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
-            Coproduire
+            Coproduction
           </h1>
         </div>
 
@@ -405,9 +405,8 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
 
                 {/* BAS : Prix de la part à gauche et bouton d'action Coproduire à droite */}
                 <div className="relative z-10 flex items-center justify-between gap-1.5 pt-0.5">
-                  {/* Prix de la part en dessous pour libérer le haut */}
+                  {/* Prix de la part en dessous pour libérer le haut (sans icône) */}
                   <div className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[10.5px] sm:text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 shadow-sm">
-                    <Coins className="w-3 h-3 text-[#C89B3C]" />
                     <span className="font-bold text-[#C89B3C]">{currentProd.sharePrice} €</span>
                     <span className="text-[9.5px] text-white/70">/ part</span>
                   </div>
@@ -498,9 +497,8 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                   {/* BLOC GAUCHE : parts + prix, puis vignette photo et prénom */}
                   <div className="flex flex-col gap-1.5">
                     
-                    {/* Nombre de parts & Prix (Même format & design que coproduire) */}
+                    {/* Nombre de parts & Prix épurés sans icône */}
                     <div className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/60 hover:bg-black/85 text-white/95 text-[10.5px] sm:text-[11px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 shadow-sm w-fit">
-                      <Coins className="w-3 h-3 text-[#C89B3C]" />
                       <span className="font-bold text-white">{currentOffer.sharesCount} part{currentOffer.sharesCount > 1 ? 's' : ''}</span>
                       <span className="text-white/40">•</span>
                       <span className="font-bold text-[#C89B3C]">{currentOffer.unitPrice} €</span>

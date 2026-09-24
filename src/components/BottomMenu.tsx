@@ -23,6 +23,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
   const isCoproductionActive = currentScreen.type === 'marketplace';
   const isProfilActive = 
     currentScreen.type === 'profile' || 
+    currentScreen.type === 'portfolio' || 
     currentScreen.type === 'protagonist_profile' || 
     currentScreen.type === 'my_forest' || 
     currentScreen.type === 'messaging';

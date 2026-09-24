@@ -13,7 +13,7 @@ import {
   Sparkles, 
   ChevronLeft, 
   ChevronRight, 
-  HelpCircle,
+  BookOpen,
   FileText
 } from 'lucide-react';
 import { ViewScreen } from '../types';
@@ -321,20 +321,16 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   }
 
   return (
-    <div className={`max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 ${step === 3 ? 'pb-24 overflow-y-auto' : 'pb-20 sm:pb-24 h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between'} text-[#1C1917]`}>
+    <div className={`max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-3 pb-24 overflow-x-hidden ${step === 3 ? 'min-h-[100dvh] flex flex-col' : 'h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between'} text-[#1C1917]`}>
       
       {/* En-tête dynamique du Studio : Choix progressifs validés (Porte, Sujet, Format) avec bouton Modifier */}
       <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 min-h-[40px] sm:min-h-[44px] gap-2">
         <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 flex-1">
           {step === 1 ? (
-            /* Étape 1 : En-tête épuré et sobre */
+            /* Étape 1 : En-tête épuré et sobre - Juste Studio */
             <div className="flex items-center gap-2">
               <span className="font-editorial text-sm sm:text-base font-bold text-[#1C1917] tracking-tight">
                 Studio
-              </span>
-              <span className="text-stone-300">•</span>
-              <span className="text-[11px] sm:text-xs text-stone-500 font-medium">
-                8 Portes d'entrée
               </span>
             </div>
           ) : step === 2 ? (
@@ -734,7 +730,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   {isSeries ? (
                     <FileText className="w-3 h-3 text-[#FACC15] shrink-0" />
                   ) : (
-                    <HelpCircle className="w-3 h-3 text-[#FACC15] shrink-0" />
+                    <BookOpen className="w-3 h-3 text-[#FACC15] shrink-0" />
                   )}
                   <span>{isSeries ? 'Synopsis' : 'Question'}</span>
                 </button>
@@ -838,19 +834,21 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {step === 3 && (
         <div className="space-y-4 animate-in fade-in duration-200">
 
-          {/* SOUS-ÉCRAN 1 : LE SWIPE VIDÉO ENTRE "J'AI MA VIDÉO" ET "SE FAIRE FILMER" */}
+            {/* SOUS-ÉCRAN 1 : LE SWIPE VIDÉO ENTRE "J'AI MA VIDÉO" ET "SE FAIRE FILMER" */}
           {!chosenFlow && (
-            <div className="space-y-4">
-              {/* CONTENEUR DU SWIPE FORMAT AVEC FLÈCHES LATÉRALES */}
-              <div className="relative flex items-center justify-center py-2">
+            <div className="w-full max-w-xl mx-auto flex flex-col items-center">
+              {/* CONTENEUR DU SWIPE FORMAT AVEC FLÈCHES LATÉRALES TOUJOURS VISIBLES */}
+              <div className="relative w-full flex items-center justify-center py-1 sm:py-2">
                 
-                {/* Flèche précédente */}
+                {/* Flèche précédente - repositionnée et visible sur mobile comme desktop */}
                 <button
+                  type="button"
                   onClick={handleToggleFormat}
                   aria-label="Format précédent"
-                  className="hidden sm:flex absolute left-0 lg:-left-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+                  className="absolute left-1 sm:left-2 md:-left-12 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white flex items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+                  title="Option précédente"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
 
                 {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL AVEC SUPPORT DU SWIPE */}
@@ -947,19 +945,18 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     </button>
                   </div>
 
-                  {/* BAS : UNIQUEMENT LES DEUX BOUTONS (DÉTAILS + CHOIX) DANS LE MÊME PROFIL QUE LES ÉTAPES 1 ET 2 */}
+                  {/* BAS : UNIQUEMENT LES DEUX BOUTONS (DÉTAILS SANS ICÔNE + CHOIX) */}
                   <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
-                    {/* Bouton Détails : fond translucide -> marron terre cuite au survol */}
+                    {/* Bouton Détails : Texte pur, sans icône */}
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         setShowFormatDetails(true);
                       }}
-                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center justify-center border border-white/25 hover:border-transparent cursor-pointer shadow-md"
                       title="Découvrir les détails de cette option"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-white" />
                       <span>Détails</span>
                     </button>
 
@@ -1068,13 +1065,15 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
 
                 </div>
 
-                {/* Flèche suivante */}
+                {/* Flèche suivante - repositionnée et visible sur mobile comme desktop */}
                 <button
+                  type="button"
                   onClick={handleToggleFormat}
                   aria-label="Format suivant"
-                  className="hidden sm:flex absolute right-0 lg:-right-12 z-20 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105"
+                  className="absolute right-1 sm:right-2 md:-right-12 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white flex items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+                  title="Option suivante"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
 
               </div>

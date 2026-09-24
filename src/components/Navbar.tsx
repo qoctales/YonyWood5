@@ -3,11 +3,9 @@ import {
   Film, 
   PlusCircle, 
   Menu,
-  X,
-  Tv
+  X
 } from 'lucide-react';
 import { ViewScreen } from '../types';
-import { RemoteControlModal } from './RemoteControlModal';
 import { YonywoodLogoIcon } from './YonywoodBrandIcons';
 
 interface NavbarProps {
@@ -17,7 +15,6 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isRemoteOpen, setIsRemoteOpen] = useState(false);
 
   if (currentScreen.type === 'video_player') {
     return null;
@@ -76,15 +73,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => 
             }`} />
             <span>Séries</span>
           </button>
-
-          <button
-            onClick={() => setIsRemoteOpen(true)}
-            className="px-3 py-1.5 rounded-xl text-xs font-medium text-stone-600 hover:text-[#1C1917] hover:bg-stone-100 transition-all flex items-center gap-1.5"
-            id="nav-remote-btn"
-          >
-            <Tv className="w-3.5 h-3.5 text-[#C89B3C]" />
-            <span>Télécommande</span>
-          </button>
         </nav>
 
         {/* Right CTA */}
@@ -125,25 +113,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => 
             <Film className="w-3.5 h-3.5" />
             Séries
           </button>
-          <button
-            onClick={() => { setIsRemoteOpen(true); setMobileMenuOpen(false); }}
-            className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium text-[#1C1917] hover:bg-stone-50 flex items-center gap-2"
-          >
-            <Tv className="w-3.5 h-3.5 text-[#C89B3C]" />
-            Télécommande
-          </button>
         </div>
       )}
-
-      <RemoteControlModal
-        isOpen={isRemoteOpen}
-        onClose={() => setIsRemoteOpen(false)}
-        selectedDocId={null}
-        onSelectDoc={(docId) => {
-          onNavigate({ type: 'duo_feed', selectedDocId: docId || undefined });
-          setMobileMenuOpen(false);
-        }}
-      />
     </header>
   );
 };

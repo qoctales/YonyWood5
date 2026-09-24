@@ -12,6 +12,7 @@ import { ProtagonistProfileScreen } from './components/ProtagonistProfileScreen'
 import { TransmissionScreen } from './components/TransmissionScreen';
 import { MyForestScreen } from './components/MyForestScreen';
 import { ProfileSettingsScreen } from './components/ProfileSettingsScreen';
+import { PortfolioScreen } from './components/PortfolioScreen';
 import { MessagingScreen } from './components/MessagingScreen';
 import { MarketplaceScreen } from './components/MarketplaceScreen';
 import { SubmitStoryScreen } from './components/SubmitStoryScreen';
@@ -25,12 +26,30 @@ export default function App() {
   // Arrive directly on the Explorer Astrolabe screen
   const [currentScreen, setCurrentScreen] = useState<ViewScreen>({ type: 'home' });
 
-  // User preferences & series filter state
-  const [selectedSeriesFilter, setSelectedSeriesFilter] = useState<string[]>(
-    DOCUMENTARIES.map(d => d.id)
-  );
+  // User preferences & series filter state with localStorage persistence
+  const [selectedSeriesFilter, setSelectedSeriesFilter] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('yonywood_selected_series');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // fallback
+    }
+    return DOCUMENTARIES.map(d => d.id);
+  });
   const [language, setLanguage] = useState<string>('fr');
   const [hideQuestionByDefault, setHideQuestionByDefault] = useState<boolean>(true);
+
+  const handleUpdateDocFilter = (docIds: string[]) => {
+    setSelectedSeriesFilter(docIds);
+    try {
+      localStorage.setItem('yonywood_selected_series', JSON.stringify(docIds));
+    } catch {
+      // ignore
+    }
+  };
 
   // Scroll to top on navigation change
   useEffect(() => {
@@ -67,11 +86,20 @@ export default function App() {
           <ProfileSettingsScreen 
             onNavigate={setCurrentScreen}
             selectedDocFilter={selectedSeriesFilter}
-            onUpdateDocFilter={setSelectedSeriesFilter}
+            onUpdateDocFilter={handleUpdateDocFilter}
             language={language}
             onUpdateLanguage={setLanguage}
             hideQuestionByDefault={hideQuestionByDefault}
             onToggleHideQuestion={setHideQuestionByDefault}
+            returnToDuoId={currentScreen.returnToDuoId}
+            returnToDuoIndex={currentScreen.returnToDuoIndex}
+            returnToDocId={currentScreen.returnToDocId}
+          />
+        )}
+
+        {currentScreen.type === 'portfolio' && (
+          <PortfolioScreen 
+            onNavigate={setCurrentScreen}
             returnToDuoId={currentScreen.returnToDuoId}
             returnToDuoIndex={currentScreen.returnToDuoIndex}
             returnToDocId={currentScreen.returnToDocId}
@@ -117,7 +145,7 @@ export default function App() {
             protagonistId={currentScreen.protagonistId} 
             onNavigate={setCurrentScreen} 
             selectedDocFilter={selectedSeriesFilter}
-            onUpdateDocFilter={setSelectedSeriesFilter}
+            onUpdateDocFilter={handleUpdateDocFilter}
             language={language}
             onUpdateLanguage={setLanguage}
             hideQuestionByDefault={hideQuestionByDefault}

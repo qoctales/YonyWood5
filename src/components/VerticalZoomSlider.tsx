@@ -11,8 +11,8 @@ interface VerticalZoomSliderProps {
 export const VerticalZoomSlider: React.FC<VerticalZoomSliderProps> = ({
   zoomLevel,
   onZoomChange,
-  minZoom = 0.65,
-  maxZoom = 1.45
+  minZoom = 0.5,
+  maxZoom = 1.5
 }) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const isDraggingRef = useRef<boolean>(false);
@@ -59,7 +59,7 @@ export const VerticalZoomSlider: React.FC<VerticalZoomSliderProps> = ({
 
   return (
     <div 
-      className="fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center bg-[#FFFFFF]/95 backdrop-blur-md p-1.5 sm:p-2 rounded-full border border-[#E7E5E4] shadow-lg touch-none select-none transition-all duration-200 hover:border-[#C89B3C]"
+      className="fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center bg-white/95 backdrop-blur-md p-1.5 sm:p-2 rounded-full border border-stone-200 shadow-lg touch-none select-none transition-all duration-200 hover:border-[#A2482B]"
       id="vertical-zoom-slider"
     >
       {/* Bouton Zoom In */}
@@ -67,7 +67,7 @@ export const VerticalZoomSlider: React.FC<VerticalZoomSliderProps> = ({
         type="button"
         onClick={() => stepZoom(0.1)}
         onDoubleClick={resetZoom}
-        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[#8B6845] hover:text-[#C89B3C] hover:bg-[#FAFAF9] transition-colors cursor-pointer"
+        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-stone-700 hover:text-[#A2482B] hover:bg-stone-50 transition-colors cursor-pointer"
         aria-label="Zoomer"
       >
         <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -83,22 +83,22 @@ export const VerticalZoomSlider: React.FC<VerticalZoomSliderProps> = ({
         className="relative w-7 h-28 sm:h-36 flex items-center justify-center cursor-ns-resize py-2 my-1"
       >
         {/* Ligne centrale du rail */}
-        <div className="w-1.5 h-full rounded-full bg-[#E7E5E4] relative overflow-hidden">
-          {/* Remplissage doré selon le niveau de zoom */}
+        <div className="w-1.5 h-full rounded-full bg-stone-200 relative overflow-hidden">
+          {/* Remplissage couleur Terre Cuite selon le niveau de zoom */}
           <div 
-            className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#8B6845] to-[#C89B3C] rounded-full transition-all duration-75"
+            className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#8B3B20] to-[#A2482B] rounded-full transition-all duration-75"
             style={{ height: `${normalized * 100}%` }}
           />
         </div>
 
-        {/* Curseur mobile (Thumb tactile doré) */}
+        {/* Curseur mobile tactile couleur Terre Cuite */}
         <div
-          className="absolute w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#FFFFFF] border-2 border-[#C89B3C] shadow-[0_2px_8px_rgba(139,104,69,0.35)] flex items-center justify-center transition-all duration-75 pointer-events-none"
+          className="absolute w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white border-2 border-[#A2482B] shadow-[0_2px_8px_rgba(162,72,43,0.35)] flex items-center justify-center transition-all duration-75 pointer-events-none"
           style={{
             bottom: `calc(${normalized * 100}% - 10px)`
           }}
         >
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#C89B3C]" />
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#A2482B]" />
         </div>
       </div>
 
@@ -107,7 +107,7 @@ export const VerticalZoomSlider: React.FC<VerticalZoomSliderProps> = ({
         type="button"
         onClick={() => stepZoom(-0.1)}
         onDoubleClick={resetZoom}
-        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[#8B6845] hover:text-[#C89B3C] hover:bg-[#FAFAF9] transition-colors cursor-pointer"
+        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-stone-700 hover:text-[#A2482B] hover:bg-stone-50 transition-colors cursor-pointer"
         aria-label="Dézoomer"
       >
         <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
