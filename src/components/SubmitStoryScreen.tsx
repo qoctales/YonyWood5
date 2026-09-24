@@ -321,17 +321,17 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   }
 
   return (
-    <div className={`max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-3 pb-24 overflow-x-hidden ${step === 3 ? 'min-h-[100dvh] flex flex-col' : 'h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between'} text-[#1C1917]`}>
+    <div className={`max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 pb-20 sm:pb-24 pt-safe pb-safe overflow-x-hidden ${step === 3 ? 'min-h-[100dvh] flex flex-col' : 'h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between'} text-[#1C1917]`}>
       
       {/* En-tête dynamique du Studio : Choix progressifs validés (Porte, Sujet, Format) avec bouton Modifier */}
-      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 min-h-[40px] sm:min-h-[44px] gap-2">
+      <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
         <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 flex-1">
           {step === 1 ? (
-            /* Étape 1 : En-tête épuré et sobre - Juste Studio */
+            /* Étape 1 : En-tête épuré et sobre - Juste Studio strictement calibré sur Coproduction */
             <div className="flex items-center gap-2">
-              <span className="font-editorial text-sm sm:text-base font-bold text-[#1C1917] tracking-tight">
+              <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
                 Studio
-              </span>
+              </h1>
             </div>
           ) : step === 2 ? (
             /* Étape 2 : La porte choisie apparaît ici dans le header avec son bouton Modifier */
@@ -457,8 +457,8 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   />
                 )}
 
-                {/* Voile cinématographique */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/50 pointer-events-none" />
+                {/* Voile cinématographique harmonisé (modèle Coproduction : plus lumineux et clair) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/25 pointer-events-none" />
 
                 {/* HAUT : Cartouche sobre avec l'icône et le nom de la catégorie */}
                 <div className="relative z-10 flex items-center justify-between">
@@ -474,7 +474,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                         e.stopPropagation();
                         setIsDoorMuted(!isDoorMuted);
                       }}
-                      className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                      className="p-1.5 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 hover:border-[#A2482B] transition-colors cursor-pointer"
                       title={isDoorMuted ? 'Activer le son' : 'Couper le son'}
                     >
                       {isDoorMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -667,8 +667,8 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 />
               )}
 
-              {/* Voile cinématographique */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/50 pointer-events-none" />
+              {/* Voile cinématographique harmonisé (modèle Coproduction : plus lumineux et clair) */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/25 pointer-events-none" />
 
               {/* HAUT : Cartouche sobre du sujet & Son discret */}
               <div className="relative z-10 flex items-center justify-between">
@@ -683,7 +683,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       e.stopPropagation();
                       setIsSubjectMuted(!isSubjectMuted);
                     }}
-                    className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                    className="p-1.5 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 hover:border-[#A2482B] transition-colors cursor-pointer"
                     title={isSubjectMuted ? 'Activer le son' : 'Couper le son'}
                   >
                     {isSubjectMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -888,8 +888,8 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     />
                   )}
 
-                  {/* Voile cinématographique */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/50 pointer-events-none" />
+                  {/* Voile cinématographique harmonisé (modèle Coproduction : plus lumineux et clair) */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/25 pointer-events-none" />
 
                   {/* HAUT : Badge du format & Bouton Son */}
                   <div className="relative z-10 flex items-center justify-between">
@@ -913,7 +913,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                           e.stopPropagation();
                           setIsFormatMuted(!isFormatMuted);
                         }}
-                        className="p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                        className="p-2 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 hover:border-[#A2482B] transition-colors cursor-pointer"
                         title={isFormatMuted ? 'Activer le son' : 'Couper le son'}
                       >
                         {isFormatMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}

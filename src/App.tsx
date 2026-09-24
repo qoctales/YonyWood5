@@ -12,6 +12,7 @@ import { ProtagonistProfileScreen } from './components/ProtagonistProfileScreen'
 import { TransmissionScreen } from './components/TransmissionScreen';
 import { MyForestScreen } from './components/MyForestScreen';
 import { ProfileSettingsScreen } from './components/ProfileSettingsScreen';
+import { SettingsScreen } from './components/SettingsScreen';
 import { PortfolioScreen } from './components/PortfolioScreen';
 import { MessagingScreen } from './components/MessagingScreen';
 import { MarketplaceScreen } from './components/MarketplaceScreen';
@@ -94,6 +95,17 @@ export default function App() {
             returnToDuoId={currentScreen.returnToDuoId}
             returnToDuoIndex={currentScreen.returnToDuoIndex}
             returnToDocId={currentScreen.returnToDocId}
+          />
+        )}
+
+        {currentScreen.type === 'settings' && (
+          <SettingsScreen 
+            onNavigate={setCurrentScreen}
+            returnTo={currentScreen.returnTo}
+            selectedDocFilter={selectedSeriesFilter}
+            onUpdateDocFilter={handleUpdateDocFilter}
+            language={language}
+            onUpdateLanguage={setLanguage}
           />
         )}
 

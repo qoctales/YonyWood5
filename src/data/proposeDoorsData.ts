@@ -168,18 +168,18 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
   },
   {
     id: 'sagesses',
-    label: 'Sagesses',
+    label: 'Mémoires',
     icon: Atom,
-    tagline: 'Partagez une philosophie de vie, un enseignement ancestral ou une parole éclairante.',
+    tagline: 'Partagez une mémoire vive, un enseignement ancestral ou une parole éclairante.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     posterUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
-      'Préserver les sagesses orales menacées d’oubli face à la modernité.',
-      'Offrir une boussole morale et philosophique aux générations futures.',
+      'Préserver les mémoires orales menacées d’oubli face à la modernité.',
+      'Offrir une boussole humaine et de transmission aux générations futures.',
       'Mettre en dialogue les cosmogonies ancestrales et les défis d’aujourd’hui.',
       'S’exprimer dans un espace respectueux, propice à l’écoute profonde.',
-      'Rejoindre une bibliothèque vivante d’enseignements universels.'
+      'Rejoindre une bibliothèque vivante de mémoires universelles.'
     ],
     subjects: [
       {
@@ -189,7 +189,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         question: 'Quel enseignement ou signe du Fa vous guide dans les carrefours décisifs de votre existence ?',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
         posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette sagesse'
+        actionLabel: 'Choisir cette mémoire'
       },
       {
         id: 'le-pardon',
@@ -198,7 +198,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         question: 'Quel chemin intérieur avez-vous emprunté pour pardonner ou apaiser une blessure ancienne ?',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         posterUrl: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette sagesse'
+        actionLabel: 'Choisir cette mémoire'
       },
       {
         id: 'pachamama',
@@ -207,7 +207,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         question: 'Comment cultivez-vous une relation de respect sacré avec la nature qui vous entoure ?',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
         posterUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette sagesse'
+        actionLabel: 'Choisir cette mémoire'
       },
       {
         id: 'la-teranga',
@@ -216,7 +216,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         question: 'En quoi l’accueil inconditionnel de l’autre change-t-il la vie de votre communauté ?',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
         posterUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette sagesse'
+        actionLabel: 'Choisir cette mémoire'
       },
       {
         id: 'le-silence',
@@ -225,7 +225,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         question: 'Que découvrez-vous en vous-même lorsque vous vous accordez un temps de silence ?',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
         posterUrl: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette sagesse'
+        actionLabel: 'Choisir cette mémoire'
       }
     ]
   },

@@ -362,6 +362,7 @@ export type ViewScreen =
   | { type: 'transmission_detail'; protagonistId: string; transmissionId: string }
   | { type: 'my_forest' }
   | { type: 'profile'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
+  | { type: 'settings'; returnTo?: 'profile' | 'duo_feed' }
   | { type: 'portfolio'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
   | { type: 'messaging' }
   | { type: 'submit_story'; preselectedDocumentaryId?: string }

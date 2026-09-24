@@ -218,7 +218,7 @@ const VideoTopHeader: React.FC<VideoTopHeaderProps> = ({
         {seriesOrTitle}
       </span>
       {badge && (
-        <span className="ml-1 px-1.5 py-0.5 rounded-md bg-[#FACC15]/20 border border-[#FACC15]/40 text-[#FACC15] font-mono text-[10px] font-bold shrink-0 whitespace-nowrap">
+        <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/20 border border-white/40 text-white font-mono text-[10px] font-bold shrink-0 whitespace-nowrap">
           {badge}
         </span>
       )}
@@ -234,13 +234,13 @@ const VideoTopHeader: React.FC<VideoTopHeaderProps> = ({
             onToggleMute();
           }}
           id="btn-video-top-mute"
-          className="w-9 h-9 rounded-xl bg-black/50 hover:bg-black/70 active:scale-95 backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+          className="w-9 h-9 rounded-xl bg-black/50 hover:bg-[#A2482B] active:scale-95 backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
           title={isMuted ? "Activer le son" : "Couper le son"}
         >
           {isMuted ? (
-            <VolumeX className="w-4 h-4 text-white/90" />
+            <VolumeX className="w-4 h-4 text-white" />
           ) : (
-            <Volume2 className="w-4 h-4 text-[#FACC15]" />
+            <Volume2 className="w-4 h-4 text-white" />
           )}
         </button>
       )}
@@ -252,7 +252,7 @@ const VideoTopHeader: React.FC<VideoTopHeaderProps> = ({
           onShare();
         }}
         id="btn-video-top-share"
-        className="w-9 h-9 rounded-xl bg-black/50 hover:bg-black/70 active:scale-95 backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+        className="w-9 h-9 rounded-xl bg-black/50 hover:bg-[#A2482B] active:scale-95 backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
         title="Partager"
       >
         <ShareIcon className="w-4 h-4 text-white" />
@@ -268,6 +268,7 @@ interface VideoModernPlayerBarProps {
   progressPercent: number;
   onSeek: (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => void;
   formatTime: (sec: number) => string;
+  isPlaying?: boolean;
 }
 
 const VideoModernPlayerBar: React.FC<VideoModernPlayerBarProps> = ({
@@ -276,30 +277,44 @@ const VideoModernPlayerBar: React.FC<VideoModernPlayerBarProps> = ({
   progressPercent,
   onSeek,
   formatTime,
+  isPlaying = false,
 }) => (
-  <div className="pt-2 space-y-1.5">
+  <div className="pt-2 space-y-1.5 select-none">
     {/* Timestamps */}
     <div className="flex items-center justify-between text-[11px] font-mono font-medium text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] px-0.5">
-      <span>{formatTime(videoCurrentTime)}</span>
+      <span className="flex items-center gap-1.5">
+        {isPlaying && (
+          <span className="w-1.5 h-1.5 rounded-full bg-[#A2482B] animate-ping" />
+        )}
+        {formatTime(videoCurrentTime)}
+      </span>
       <span>{formatTime(activeDuration)}</span>
     </div>
 
-    {/* Timeline Scrubber cliquable & déplaçable (Style Image 2) */}
+    {/* Timeline Scrubber cliquable & déplaçable avec liseré onde subtile en cours de lecture */}
     <div 
       onClick={onSeek}
-      className="relative w-full h-3 py-1 flex items-center cursor-pointer group"
+      className="relative w-full h-4 py-1.5 flex items-center cursor-pointer group"
       title="Avancer / reculer dans la lecture"
     >
-      <div className="w-full h-1 bg-white/30 rounded-full overflow-hidden backdrop-blur-xs">
+      <div className="w-full h-1 sm:h-1.5 bg-white/40 rounded-full overflow-hidden backdrop-blur-xs border border-white/20 relative group-hover:h-2 transition-all">
         <div 
-          className="h-full bg-[#E5855E] rounded-full transition-all duration-100"
+          className="h-full bg-[#A2482B] rounded-full transition-all duration-100 relative overflow-hidden"
           style={{ width: `${progressPercent}%` }}
-        />
+        >
+          {isPlaying && (
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse" />
+          )}
+        </div>
       </div>
       <div 
-        className="absolute w-2.5 h-2.5 bg-[#E5855E] border-2 border-white rounded-full shadow-md -translate-x-1/2 transition-transform group-hover:scale-150"
+        className="absolute w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#A2482B] border-2 border-white rounded-full shadow-[0_1px_6px_rgba(0,0,0,0.5)] -translate-x-1/2 transition-transform group-hover:scale-125"
         style={{ left: `${progressPercent}%` }}
-      />
+      >
+        {isPlaying && (
+          <span className="absolute -inset-1 rounded-full border border-[#A2482B]/60 animate-ping opacity-75" />
+        )}
+      </div>
     </div>
   </div>
 );
@@ -420,9 +435,6 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   const [activeCategory, setActiveCategory] = useState<ProfileCategory>(() => mapInitialCategory(initialTab));
   const activeTab = activeCategory;
   const setActiveTab = (tab: DimensionTab) => setActiveCategory(mapInitialCategory(tab));
-
-  // État d'ouverture de la modale Paramètres (accessible uniquement par l'icône dans l'en-tête)
-  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
   const handleToggleSeriesFilter = (docId: string) => {
     let next: string[];
@@ -1448,12 +1460,12 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-6 pb-20 sm:pb-36 space-y-3 sm:space-y-6 text-[#1C1917]">
+    <div className="max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 pb-20 sm:pb-24 pt-safe pb-safe h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between text-[#1C1917]">
       
       {/* ========================================================================= */}
-      {/* 1. EN-TÊTE D'IDENTITÉ UNIFIÉ COMPACT : MODE PROPRIÉTAIRE & VISITEUR        */}
+      {/* 1. EN-TÊTE D'IDENTITÉ UNIFIÉ COMPACT : STRICTEMENT ALIGNÉ SUR COPRODUCTION */}
       {/* ========================================================================= */}
-      <div className="border-b border-stone-200 pb-2 sm:pb-4">
+      <div className="border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0">
         
         {/* LIGNE PRINCIPALE : IDENTITÉ & ACTIONS RAPIDES SANS COLLISION */}
         <div className="flex items-center justify-between gap-1.5 sm:gap-3">
@@ -1581,12 +1593,12 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#A2482B]" />
                 </button>
 
-                {/* Icône Paramètres */}
+                {/* Icône Paramètres & Curateur de Séries -> Navigation vers la vraie page Paramètres */}
                 <button
-                  onClick={() => setIsSettingsOpen(true)}
+                  onClick={() => onNavigate({ type: 'settings', returnTo: 'profile' })}
                   id="btn-profile-settings-gear"
-                  className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-200 text-stone-700 hover:text-[#1C1917] flex items-center justify-center transition-all shadow-xs cursor-pointer"
-                  title="Paramètres du compte"
+                  className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-[#1C1917] flex items-center justify-center transition-all shadow-xs cursor-pointer active:scale-95"
+                  title="Paramètres & Séries du flux"
                 >
                   <Sliders className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
@@ -1629,12 +1641,12 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* 2. VISIONNEUSE VERTICALE 9:16 (AVEC NAVIGATION PAR FLÈCHES ET GESTES)     */}
+      {/* 2. VISIONNEUSE VERTICALE 9:16 (STRICTEMENT ALIGNÉE SUR COPRODUCTION)       */}
       {/* ========================================================================= */}
-      <div className="space-y-4 animate-in fade-in duration-200">
+      <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
 
         {/* Conteneur principal avec vidéo 9:16 épurée */}
-        <div className="relative flex items-center justify-center py-2">
+        <div className="relative w-full h-full flex items-center justify-center">
           
           {/* CARTE FORMAT 9:16 VERTICAL AVEC GESTION DU SWIPE 2D */}
           <div
@@ -1679,15 +1691,15 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     title={label}
                     className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md active:scale-90 ${
                       isActive
-                        ? 'bg-black/75 border border-[#FACC15] text-[#FACC15] scale-105 shadow-[0_2px_12px_rgba(250,204,21,0.3)]'
-                        : 'bg-black/50 hover:bg-black/70 border border-white/20 text-white/85 hover:text-white hover:border-white/40'
+                        ? 'bg-[#A2482B] border border-[#A2482B] text-white scale-105 shadow-[0_2px_12px_rgba(162,72,43,0.45)]'
+                        : 'bg-black/50 hover:bg-[#A2482B] border border-white/20 hover:border-[#A2482B] text-white hover:text-white'
                     }`}
                   >
                     <IconComponent
-                      className={`w-4 h-4 transition-all duration-200 ${
+                      className={`w-4 h-4 transition-all duration-200 text-white ${
                         isActive
-                          ? 'text-[#FACC15] stroke-[2.2]'
-                          : 'text-white/90 stroke-[1.8]'
+                          ? 'stroke-[2.4]'
+                          : 'stroke-[2]'
                       }`}
                     />
                   </button>
@@ -1826,6 +1838,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     progressPercent={progressPercent}
                     onSeek={handleTimelineSeek}
                     formatTime={formatVideoTime}
+                    isPlaying={isPlaying}
                   />
                 </div>
               </div>
@@ -1889,8 +1902,6 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                       <span>{currentProduction.sharesCount} parts</span>
                       <span>•</span>
                       <span>Valeur : {currentProduction.sharesCount * (currentProduction.salePrice || currentProduction.startPrice || 50)} €</span>
-                      <span>•</span>
-                      <span className="text-[#FACC15] font-semibold">+{currentProduction.rsiPercent || 25}% RSI</span>
                     </div>
                   </div>
 
@@ -1920,10 +1931,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                             setSellPriceInput(currentProduction.salePrice || currentProduction.recommendedPrice);
                             setIsSellingShares(true);
                           }}
-                          className="h-7.5 sm:h-8 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-stone-800 border border-white/20 text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm"
+                          className="h-7.5 sm:h-8 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-black/65 hover:bg-[#A2482B] border border-white/20 hover:border-[#A2482B] text-white text-[11px] sm:text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98] backdrop-blur-sm group/sellcard"
                           id="btn-sell-production"
                         >
-                          <Coins className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FACC15]" />
+                          <Coins className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-stone-300 group-hover/sellcard:text-white transition-colors" />
                           <span>Vendre</span>
                         </button>
                       </div>
@@ -1951,10 +1962,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           e.stopPropagation();
                           setIsBuyingSharesModalOpen(true);
                         }}
-                        className="w-full h-8 sm:h-9 px-4 rounded-lg sm:rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                        className="w-full h-7.5 sm:h-8 px-3.5 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-900 hover:text-white border border-stone-200/80 hover:border-[#A2482B] font-bold text-[11px] sm:text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] group/buyshares"
                         id="btn-buy-shares"
                       >
-                        <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917]" />
+                        <Coins className="w-3.5 h-3.5 text-stone-700 group-hover/buyshares:text-white transition-colors" />
                         <span>Acheter des parts</span>
                       </button>
                     </div>
@@ -1967,6 +1978,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     progressPercent={progressPercent}
                     onSeek={handleTimelineSeek}
                     formatTime={formatVideoTime}
+                    isPlaying={isPlaying}
                   />
                 </div>
               </div>
@@ -2023,13 +2035,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 {/* BAS : Titre court, catégorie, prix, actions & lecteur moderne (Style Image 2) */}
                 <div className="relative z-10 space-y-2 sm:space-y-2.5 pr-12 sm:pr-14 pb-0.5">
                   <div>
-                    <div className="text-[10px] sm:text-[11px] font-medium text-[#FACC15] uppercase tracking-wider drop-shadow-sm">
+                    <div className="text-[10px] sm:text-[11px] font-semibold text-[#E5C16C] uppercase tracking-wider drop-shadow-sm">
                       {currentCreation.categoryLabel || 'Offre & Savoir-faire'}
                     </div>
                     <h3 className="font-editorial text-xs sm:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)] mt-0.5" title={currentCreation.title}>
                       {currentCreation.title}
                     </h3>
-                    <p className="font-mono text-sm sm:text-base font-bold text-[#FACC15] pt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
+                    <p className="font-mono text-sm sm:text-base font-bold text-[#E5C16C] pt-0.5 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                       {currentCreation.price}
                     </p>
                   </div>
@@ -2073,10 +2085,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                           setOrderActionType('commander');
                           setIsOrderingCreationModalOpen(true);
                         }}
-                        className="w-full h-8 sm:h-9 px-4 rounded-lg sm:rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                        className="w-full h-7.5 sm:h-8 px-3.5 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-900 hover:text-white border border-stone-200/80 hover:border-[#A2482B] font-bold text-[11px] sm:text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] group/orderbtn"
                         id="btn-order-creation"
                       >
-                        <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917]" />
+                        <ShoppingBag className="w-3.5 h-3.5 text-stone-700 group-hover/orderbtn:text-white transition-colors" />
                         <span>Commander</span>
                       </button>
                     </div>
@@ -2089,6 +2101,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     progressPercent={progressPercent}
                     onSeek={handleTimelineSeek}
                     formatTime={formatVideoTime}
+                    isPlaying={isPlaying}
                   />
                 </div>
               </div>
@@ -2207,10 +2220,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               setInitiativeActionType('contribuer');
                               setIsContributingModalOpen(true);
                             }}
-                            className="w-full h-8 sm:h-9 px-4 rounded-lg sm:rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                            className="w-full h-7.5 sm:h-8 px-3.5 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-900 hover:text-white border border-stone-200/80 hover:border-[#A2482B] font-bold text-[11px] sm:text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] group/contribbtn"
                             id="btn-contribute-initiative"
                           >
-                            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917]" />
+                            <Users className="w-3.5 h-3.5 text-stone-700 group-hover/contribbtn:text-white transition-colors" />
                             <span>Contribuer</span>
                           </button>
                         </div>
@@ -2261,10 +2274,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                               e.stopPropagation();
                               setIsOfferingHelpModalOpen(true);
                             }}
-                            className="w-full h-8 sm:h-9 px-4 rounded-lg sm:rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                            className="w-full h-7.5 sm:h-8 px-3.5 rounded-lg sm:rounded-xl bg-stone-100 hover:bg-[#A2482B] text-stone-900 hover:text-white border border-stone-200/80 hover:border-[#A2482B] font-bold text-[11px] sm:text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98] group/supportbtn"
                             id="btn-reply-appel"
                           >
-                            <Sprout className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#1C1917]" />
+                            <Sprout className="w-3.5 h-3.5 text-stone-700 group-hover/supportbtn:text-white transition-colors" />
                             <span>Soutenir ce projet</span>
                           </button>
                         </div>
@@ -2279,6 +2292,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     progressPercent={progressPercent}
                     onSeek={handleTimelineSeek}
                     formatTime={formatVideoTime}
+                    isPlaying={isPlaying}
                   />
                 </div>
               </div>
@@ -2322,245 +2336,6 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       {/* ========================================================================= */}
       {/* 3. MODALE DES PARAMÈTRES DU COMPTE (Accessible par l'icône dans l'en-tête)  */}
       {/* ========================================================================= */}
-      {isSettingsOpen && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white max-w-lg w-full rounded-3xl p-6 shadow-2xl border border-stone-200 space-y-6 max-h-[90vh] overflow-y-auto">
-            
-            <div className="flex items-center justify-between pb-3 border-b border-stone-200">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-stone-100 text-[#1C1917] flex items-center justify-center">
-                  <Sliders className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
-                    Paramètres du compte
-                  </h3>
-                  <p className="text-xs text-[#8B6845]">
-                    Sécurité, préférences de lecture et identifiants.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsSettingsOpen(false)}
-                className="p-1.5 rounded-full hover:bg-stone-100 text-stone-500 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Email de connexion */}
-            <div className="space-y-3 bg-stone-50 p-4 rounded-2xl border border-stone-200">
-              <label className="text-xs font-bold text-[#1C1917] flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-[#8B6845]" />
-                <span>Adresse email</span>
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="email"
-                  value={userEmail}
-                  onChange={(e) => setUserEmail(e.target.value)}
-                  className="flex-1 px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#A2482B]"
-                />
-                <button
-                  onClick={() => {
-                    setShareToast("Adresse email enregistrée.");
-                    setTimeout(() => setShareToast(null), 2500);
-                  }}
-                  className="h-10 px-4 bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer active:scale-[0.98]"
-                >
-                  Valider
-                </button>
-              </div>
-            </div>
-
-            {/* Mot de passe */}
-            <form 
-              onSubmit={(e) => {
-                e.preventDefault();
-                setShareToast("Mot de passe mis à jour !");
-                setTimeout(() => setShareToast(null), 2500);
-              }} 
-              className="space-y-3 bg-stone-50 p-4 rounded-2xl border border-stone-200"
-            >
-              <label className="text-xs font-bold text-[#1C1917] flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-[#8B6845]" />
-                <span>Modifier le mot de passe</span>
-              </label>
-              <input
-                type="password"
-                placeholder="Nouveau mot de passe"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs bg-white border border-stone-300 rounded-xl focus:outline-none focus:border-[#A2482B]"
-              />
-              <button
-                type="submit"
-                className="w-full h-10 bg-white hover:bg-stone-100 text-[#1C1917] border border-stone-300 text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer active:scale-[0.98]"
-              >
-                Mettre à jour le mot de passe
-              </button>
-            </form>
-
-            {/* Mon expérience & Séries suivies */}
-            <div className="space-y-3 pt-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-xs font-bold text-[#1C1917] uppercase tracking-wider flex items-center gap-1.5">
-                    <Film className="w-3.5 h-3.5 text-[#A2482B]" />
-                    <span>Mon expérience & Séries suivies</span>
-                  </h4>
-                  <p className="text-[11px] text-stone-500 mt-0.5">
-                    Choisissez les séries documentaires à voir dans votre flux Duos.
-                  </p>
-                </div>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={handleSelectAllSeries}
-                    className="text-[11px] font-semibold text-[#A2482B] hover:underline px-1.5 py-0.5 rounded cursor-pointer"
-                  >
-                    Toutes
-                  </button>
-                  <span className="text-stone-300 text-xs">•</span>
-                  <button
-                    type="button"
-                    onClick={handleDeselectAllSeries}
-                    className="text-[11px] font-semibold text-stone-500 hover:text-stone-800 px-1.5 py-0.5 rounded cursor-pointer"
-                  >
-                    Effacer
-                  </button>
-                </div>
-              </div>
-
-              {/* Liste des séries avec toggle clair */}
-              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                {DOCUMENTARIES.map((doc) => {
-                  const isChecked = selectedDocFilter.includes(doc.id);
-                  const duosInDoc = DUOS.filter(d => d.documentaryId === doc.id).length;
-                  return (
-                    <div
-                      key={doc.id}
-                      onClick={() => handleToggleSeriesFilter(doc.id)}
-                      className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer select-none ${
-                        isChecked 
-                          ? 'bg-[#A2482B]/5 border-[#A2482B]/40 hover:border-[#A2482B]' 
-                          : 'bg-stone-50 border-stone-200 opacity-60 hover:opacity-100 hover:bg-stone-100'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <img 
-                          src={doc.posterUrl} 
-                          alt={doc.title} 
-                          className="w-10 h-10 rounded-lg object-cover border border-stone-200 shrink-0" 
-                        />
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-[#1C1917] truncate">
-                            {doc.title}
-                          </p>
-                          <p className="text-[10px] text-stone-500 truncate">
-                            {duosInDoc} duos
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Switch / Checkbox personnalisé */}
-                      <div 
-                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors shrink-0 ${
-                          isChecked 
-                            ? 'bg-[#A2482B] text-white shadow-xs' 
-                            : 'bg-stone-200 text-transparent'
-                        }`}
-                      >
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Raccourci vers le flux */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSettingsOpen(false);
-                  onNavigate({ type: 'duo_feed' });
-                }}
-                className="w-full py-2.5 px-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
-              >
-                <span>Voir mon flux Duos ({selectedDocFilter.length} {selectedDocFilter.length > 1 ? 'séries actives' : 'série active'})</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {/* Préférences */}
-            <div className="space-y-3 pt-2">
-              <h4 className="text-xs font-bold text-[#1C1917] uppercase tracking-wider">
-                Préférences de l'application
-              </h4>
-
-              <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200">
-                <div>
-                  <p className="text-xs font-semibold text-[#1C1917]">Langue des sous-titres</p>
-                  <p className="text-[11px] text-stone-500">Français, Fon, Quechua...</p>
-                </div>
-                <select
-                  value={language}
-                  onChange={(e) => onUpdateLanguage(e.target.value)}
-                  className="px-2.5 py-1.5 rounded-lg border border-stone-300 bg-white text-xs font-medium"
-                >
-                  <option value="fr">Français</option>
-                  <option value="fon">Fongbe</option>
-                  <option value="quz">Quechua</option>
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
-                </select>
-              </div>
-
-              <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200">
-                <div>
-                  <p className="text-xs font-semibold text-[#1C1917]">Masquer la question par défaut</p>
-                  <p className="text-[11px] text-stone-500">Privilégie une immersion totale</p>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={hideQuestionByDefault}
-                  onClick={() => onToggleHideQuestion(!hideQuestionByDefault)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    hideQuestionByDefault ? 'bg-[#A2482B]' : 'bg-stone-200'
-                  }`}
-                  id="toggle-hide-question-default"
-                >
-                  <span
-                    className={`pointer-events-none inline-flex h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out items-center justify-center ${
-                      hideQuestionByDefault ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  >
-                    {hideQuestionByDefault && (
-                      <Check className="w-3 h-3 text-[#A2482B] stroke-[3]" />
-                    )}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <button
-                onClick={() => {
-                  setIsSettingsOpen(false);
-                  onNavigate({ type: 'duo_feed' });
-                }}
-                className="w-full h-11 px-4 rounded-xl border border-red-200 bg-red-50/50 text-red-600 hover:bg-red-50 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Se déconnecter</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
       {/* ========================================================================= */}
       {/* 4. MODALES D'ACTIONS POUR LE VISITEUR                                      */}
       {/* ========================================================================= */}

@@ -133,21 +133,21 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
             className={`w-9 h-9 rounded-full backdrop-blur-md border flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-105 active:scale-95 ${
               resonancePct !== null
                 ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_12px_rgba(162,72,43,0.45)]'
-                : 'bg-black/60 hover:bg-[#A2482B]/80 border-white/20 hover:border-[#A2482B] text-white'
+                : 'bg-black/60 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
             }`}
             title={resonancePct !== null ? `Résonance : ${resonancePct}%` : "Évaluer la résonance"}
           >
-            <Award className="w-4 h-4" />
+            <Award className="w-4 h-4 text-white" />
           </button>
 
           <div className="flex items-center gap-1.5">
             {/* Bouton Muet / Son */}
             <button
               onClick={toggleMute}
-              className="w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center cursor-pointer transition-all shadow-md"
+              className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95"
               title={isMuted ? 'Activer le son' : 'Couper le son'}
             >
-              {isMuted ? <VolumeX className="w-4 h-4 text-white/80" /> : <Volume2 className="w-4 h-4 text-[#C89B3C]" />}
+              {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
             </button>
 
             {/* Bouton Fermer */}
@@ -156,10 +156,10 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
                 e.stopPropagation();
                 onClose();
               }}
-              className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 text-white flex items-center justify-center cursor-pointer transition-all shadow-md ml-1"
+              className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95 ml-1"
               title="Fermer l'aperçu"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
@@ -187,7 +187,7 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
               {protagonist.flag && <span className="text-base">{protagonist.flag}</span>}
             </div>
 
-            <p className="text-xs text-[#C89B3C] font-medium flex items-center gap-1.5">
+            <p className="text-xs text-white/90 font-medium flex items-center gap-1.5">
               <span>{protagonist.role}</span>
               <span className="text-white/40">•</span>
               <span className="text-white/80 flex items-center gap-1">
@@ -205,10 +205,10 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
                 onEnterUniverse(protagonist.id);
               }}
               id={`enter-universe-btn-${protagonist.id}`}
-              className="w-full h-11 px-4 rounded-xl bg-gradient-to-r from-[#C89B3C] to-[#E5C16C] hover:brightness-105 text-[#1C1917] font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+              className="w-full h-11 px-4 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-white font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
             >
               <span>Entrer dans son univers</span>
-              <ArrowRight className="w-4 h-4 text-[#1C1917]" />
+              <ArrowRight className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>

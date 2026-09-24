@@ -86,9 +86,9 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   onSelectDocumentary 
 }) => {
   // 1. NIVEAU DE NAVIGATION DANS LA ROUE :
-  // 'dimensions' (les 8 Portes d'entrée au centre)
+  // 'dimensions' (les 8 Portes d'entrée au centre - PAR DÉFAUT LORSQU'ON ARRIVE SUR CASTING)
   // 'stories' (navigation concentrique double lecture : Anneau 1 Sujets + Anneau 2 16 Voix)
-  const [explorerLevel, setExplorerLevel] = useState<'dimensions' | 'topics' | 'stories'>('stories');
+  const [explorerLevel, setExplorerLevel] = useState<'dimensions' | 'topics' | 'stories'>('dimensions');
   const [activeCategory, setActiveCategory] = useState<ExplorerCategoryType>('countries');
   const [activeTopicId, setActiveTopicId] = useState<string>('benin');
   const [shuffleSeed, setShuffleSeed] = useState<number>(0);
@@ -570,7 +570,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         )}
       </header>
 
-      {/* POP-OVER AÉRÉ DE LA QUESTION (S'affiche uniquement au clic sur la Question pour la catégorie Sagesses) */}
+      {/* POP-OVER AÉRÉ DE LA QUESTION (S'affiche uniquement au clic sur la Question pour la catégorie Mémoires) */}
       {isQuestionModalOpen && activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
         <div 
           id="topic-question-popover"
@@ -1419,9 +1419,9 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             {/* HAUT : Titre du sujet + Commandes */}
             <div className="relative z-20 p-4 flex items-center justify-between pointer-events-auto">
               <div 
-                className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs text-[#F5D88C] font-medium shadow-md tracking-wide max-w-[65%] sm:max-w-[75%] flex items-center gap-1.5"
+                className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs text-white font-medium shadow-md tracking-wide max-w-[65%] sm:max-w-[75%] flex items-center gap-1.5"
               >
-                <span className="truncate block font-semibold">
+                <span className="truncate block font-semibold text-white">
                   {activeTopicItem?.title || modalPerson.universeTag}
                 </span>
               </div>
@@ -1430,13 +1430,13 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 {/* Muet / Son */}
                 <button
                   onClick={toggleMute}
-                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95"
+                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95"
                   title={isMuted ? 'Activer le son' : 'Couper le son'}
                 >
                   {isMuted ? (
-                    <VolumeX className="w-4 h-4 text-white/80" />
+                    <VolumeX className="w-4 h-4 text-white" />
                   ) : (
-                    <Volume2 className="w-4 h-4 text-[#C89B3C]" />
+                    <Volume2 className="w-4 h-4 text-white" />
                   )}
                 </button>
 
@@ -1449,10 +1449,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     setIsResonanceModalOpen(false);
                     setIsPersonQuestionModalOpen(false);
                   }}
-                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-stone-200 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95"
+                  className="w-9 h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white border border-white/20 hover:border-[#A2482B] backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95"
                   title="Fermer"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4 text-white" />
                 </button>
               </div>
             </div>
@@ -1479,11 +1479,11 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full backdrop-blur-md border flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
                     personResonancePct !== null
                       ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_14px_rgba(162,72,43,0.5)]'
-                      : 'bg-white/20 hover:bg-[#A2482B]/80 border-white/25 hover:border-[#A2482B] text-white'
+                      : 'bg-black/50 hover:bg-[#A2482B] border-white/25 hover:border-[#A2482B] text-white'
                   }`}
                   title={personResonancePct !== null ? `Résonance : ${personResonancePct}%` : "Évaluer la résonance"}
                 >
-                  <Award className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </button>
 
                 {/* 2. Question (vignette circulaire assortie avec icône livre ouvert) */}
@@ -1493,7 +1493,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     e.stopPropagation();
                     setIsPersonQuestionModalOpen(true);
                   }}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 shrink-0"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 hover:bg-[#A2482B] backdrop-blur-md border border-white/25 hover:border-[#A2482B] text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 shrink-0"
                   title="Découvrir la question"
                 >
                   <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
@@ -1506,10 +1506,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     e.stopPropagation();
                     handleOpenUniverse(modalPerson);
                   }}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 hover:bg-[#A2482B] backdrop-blur-md border border-white/25 hover:border-[#A2482B] text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
                   title="Découvrir son univers complet"
                 >
-                  <User className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </button>
               </div>
             </div>

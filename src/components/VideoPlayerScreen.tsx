@@ -248,7 +248,7 @@ export const VideoPlayerScreen: React.FC<VideoPlayerScreenProps> = ({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+              className="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#A2482B] flex items-center justify-center text-white transition-colors cursor-pointer"
               title={isPlaying ? 'Pause' : 'Lecture'}
             >
               {isPlaying ? <Pause className="w-5 h-5 fill-white text-white" /> : <Play className="w-5 h-5 fill-white text-white ml-0.5" />}
@@ -256,7 +256,7 @@ export const VideoPlayerScreen: React.FC<VideoPlayerScreenProps> = ({
 
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+              className="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#A2482B] flex items-center justify-center text-white transition-colors cursor-pointer"
               title={isMuted ? 'Activer le son' : 'Couper le son'}
             >
               {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -271,8 +271,8 @@ export const VideoPlayerScreen: React.FC<VideoPlayerScreenProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowSubtitles(!showSubtitles)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border border-white/10 transition-colors flex items-center gap-1.5 ${
-                showSubtitles ? 'bg-[#D9AF52] text-black' : 'bg-white/10 text-white'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1.5 cursor-pointer ${
+                showSubtitles ? 'bg-[#A2482B] border-[#A2482B] text-white' : 'bg-white/10 hover:bg-[#A2482B] border-white/10 text-white'
               }`}
               title="Sous-titres"
             >
@@ -288,7 +288,7 @@ export const VideoPlayerScreen: React.FC<VideoPlayerScreenProps> = ({
                   document.exitFullscreen().catch(() => {});
                 }
               }}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs"
+              className="p-2 rounded-lg bg-white/10 hover:bg-[#A2482B] text-white text-xs cursor-pointer transition-colors"
               title="Plein écran"
             >
               <Maximize className="w-4 h-4" />
