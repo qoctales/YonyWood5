@@ -1,0 +1,230 @@
+// Schéma Prisma — Yonywood Backend
+// Base de données PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =========================================
+// 1. UTILISATEURS
+// =========================================
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  passwordHash      String
+  firstName         String
+  lastName          String?
+  role              String   @default("member") // 'member', 'creator', 'videographer', 'admin'
+  avatarUrl         String?
+  bio               String?
+  country           String?
+  language          String   @default("fr")
+  // Préférences messagerie
+  messagePermission String   @default("all") // 'all', 'invitation', 'none'
+  pushNewMessage    Boolean  @default(true)
+  messagePreview    Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  pledges           CoproductionPledge[]
+  initiatedThreads  MessageThread[] @relation("InitiatorThreads")
+  receivedThreads   MessageThread[] @relation("RecipientThreads")
+  sentMessages      Message[]
+
+  @@map("users")
+}
+
+// =========================================
+// 2. SÉRIES DOCUMENTAIRES
+// =========================================
+model DocumentarySeries {
+  id               String   @id
+  slug             String   @unique
+  title            String
+  subtitle         String?
+  centralQuestion  String
+  shortSynopsis    String?
+  description      String?
+  coverImage       String?
+  posterUrl        String?
+  teaserVideoUrl   String?
+  teaserDuration   String?
+  episodeCount     Int      @default(16)
+  protagonistsCount Int     @default(16)
+  targetFunding    Decimal  @default(50000.00) @db.Decimal(12, 2)
+  currentFunding   Decimal  @default(0.00) @db.Decimal(12, 2)
+  territories      String[] // Array of territory strings
+  universes        Json     // Array of UniverseInfo objects
+  questions        Json     // Array of QuestionItem objects
+  createdAt        DateTime @default(now())
+
+  // Relations
+  protagonists     Protagonist[]
+  duos             Duo[]
+  pledges          CoproductionPledge[]
+
+  @@map("documentary_series")
+}
+
+// =========================================
+// 3. PROTAGONISTES
+// =========================================
+model Protagonist {
+  id             String   @id
+  slug           String   @unique
+  documentaryId  String
+  name           String
+  age            Int?
+  role           String
+  territory      String
+  country        String
+  flag           String?
+  bio            String?
+  photoUrl       String
+  videoAvatarUrl String?
+  teaserVideoUrl String?
+  universeTag    String?
+  quote          String?
+  treeData       Json?    // Contains transmissions, opportunities, offers, projects, parcours, passeurs, heritiers, duos, creations, needs
+  stories        Json?    // Array of ProtagonistStory
+
+  // Relations
+  documentary    DocumentarySeries @relation(fields: [documentaryId], references: [id], onDelete: Cascade)
+  duosAsA        Duo[] @relation("ProtagonistA")
+  duosAsB        Duo[] @relation("ProtagonistB")
+
+  @@map("protagonists")
+}
+
+// =========================================
+// 4. DUOS DOCUMENTAIRES
+// =========================================
+model Duo {
+  id                  String   @id
+  slug                String   @unique
+  documentaryId       String
+  documentaryTitle    String
+  episodeNumber       String?
+  protagonistAId      String
+  protagonistBId      String
+  questionNumber      String?
+  questionTitle       String?
+  centralQuestion     String
+  quoteA              String?
+  quoteB              String?
+  coverImage          String?
+  videoUrlA           String?
+  videoUrlB           String?
+  durationSeconds     Int      @default(90)
+  editorialReflection String?
+  storyAData          Json?    // ProtagonistStory for protagonist A
+  storyBData          Json?    // ProtagonistStory for protagonist B
+  createdAt           DateTime @default(now())
+
+  // Relations
+  documentary    DocumentarySeries @relation(fields: [documentaryId], references: [id], onDelete: Cascade)
+  protagonistA   Protagonist @relation("ProtagonistA", fields: [protagonistAId], references: [id])
+  protagonistB   Protagonist @relation("ProtagonistB", fields: [protagonistBId], references: [id])
+
+  @@map("duos")
+}
+
+// =========================================
+// 5. EXPLORER TOPICS (Astrolabe - 8 portes)
+// =========================================
+model ExplorerTopic {
+  id         String   @id
+  category   String   // 'series', 'countries', 'questions', 'thematics', 'personalities', 'brands', 'projects', 'offers'
+  title      String
+  subtitle   String?
+  question   String?
+  photoUrl   String?
+  flag       String?
+  badge      String?
+  accentColor String?
+  metadata   Json?    // Extra data (accent colors, etc.)
+  createdAt  DateTime @default(now())
+
+  @@map("explorer_topics")
+}
+
+// =========================================
+// 6. COPRODUCTION & PARTS CITOYENNES
+// =========================================
+model CoproductionPledge {
+  id            String   @id @default(cuid())
+  userId        String
+  seriesId      String
+  sharesCount   Int
+  amount        Decimal  @db.Decimal(10, 2)
+  status        String   @default("confirmed") // 'pending', 'confirmed', 'refunded'
+  paymentMethod String?
+  createdAt     DateTime @default(now())
+
+  // Relations
+  user   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  series DocumentarySeries @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@map("coproduction_pledges")
+}
+
+// =========================================
+// 7. MESSAGERIE DIRECTE & INVITATIONS
+// =========================================
+model MessageThread {
+  id           String   @id @default(cuid())
+  initiatorId  String
+  recipientId  String
+  status       String   @default("active") // 'pending_invitation', 'active', 'blocked'
+  badge        String?
+  lastMessage  String?
+  lastActivity DateTime @default(now())
+
+  // Relations
+  initiator User      @relation("InitiatorThreads", fields: [initiatorId], references: [id], onDelete: Cascade)
+  recipient User      @relation("RecipientThreads", fields: [recipientId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@map("message_threads")
+}
+
+model Message {
+  id        String    @id @default(cuid())
+  threadId  String
+  senderId  String
+  content   String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  // Relations
+  thread MessageThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+// =========================================
+// 8. CATÉGORIES EXPLORER (8 grandes portes)
+// =========================================
+model ExplorerCategory {
+  id          String   @id
+  label       String
+  shortLabel  String
+  tagline     String
+  description String
+  badge       String
+  iconName    String
+  accentColor String
+  glowColor   String
+  bgGradient  String
+  coverImage  String?
+  createdAt   DateTime @default(now())
+
+  @@map("explorer_categories")
+}
