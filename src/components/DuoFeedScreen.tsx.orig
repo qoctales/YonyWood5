@@ -15,7 +15,7 @@ import {
   ArrowRightLeft
 } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
-import { apiService } from '../services/api';
+import { DUOS, DOCUMENTARIES } from '../data/mockData';
 import { ViewScreen, Duo, Protagonist } from '../types';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 
@@ -35,37 +35,17 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   allowedSeriesIds
 }) => {
   const [selectedDocId, setSelectedDocId] = useState<string | null>(initialDocId || null);
-  const [DUOS, setDuos] = useState<Duo[]>([]);
-  const [DOCUMENTARIES, setDocumentaries] = useState<any[]>([]);
-  const [loadingData, setLoadingData] = useState(true);
   const [teaserProtagonist, setTeaserProtagonist] = useState<Protagonist | null>(null);
 
   // Compute starting duo index if initialDuoId is provided
   const startingIndex = initialDuoId
-    ? 0 // will update in useEffect
+    ? Math.max(0, DUOS.findIndex(d => d.id === initialDuoId))
     : initialDuoIndex;
 
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'duo' | 'deck'>('duo');
   const [deckActiveSide, setDeckActiveSide] = useState<'A' | 'B'>('A');
-
-  useEffect(() => {
-    const loadData = async () => {
-      const [fetchedDuos, fetchedDocs] = await Promise.all([
-        apiService.getDuos(),
-        apiService.getSeries()
-      ]);
-      setDuos(fetchedDuos);
-      setDocumentaries(fetchedDocs);
-      if (initialDuoId) {
-        const idx = fetchedDuos.findIndex((d: any) => d.id === initialDuoId);
-        if (idx !== -1) setCurrentIndex(idx);
-      }
-      setLoadingData(false);
-    };
-    loadData();
-  }, [initialDuoId]);
 
   // Inline video playback states: videos stay vertical side-by-side
   const [isPlayingA, setIsPlayingA] = useState(false);
@@ -94,10 +74,6 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const filteredDuos = selectedDocId
     ? baseFilteredDuos.filter(d => d.documentaryId === selectedDocId)
     : baseFilteredDuos;
-
-  if (loadingData) {
-    return <div className="min-h-screen bg-[#0E0D0B] text-white flex items-center justify-center">Chargement...</div>;
-  }
 
   const safeIndex = filteredDuos.length > 0 ? (currentIndex % filteredDuos.length) : 0;
   const currentDuo: Duo | undefined = filteredDuos[safeIndex];

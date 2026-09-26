@@ -54,7 +54,6 @@ class YonywoodApiService {
     const data = await this.request<Duo[]>(`/duos${query}`);
     if (data) return data;
 
-    // Fallback local avec filtre
     if (selectedSeriesFilter && selectedSeriesFilter.length > 0) {
       return DUOS.filter(d => selectedSeriesFilter.includes(d.documentaryId));
     }
@@ -93,6 +92,30 @@ class YonywoodApiService {
     return await this.request('/coproduction/pledge', {
       method: 'POST',
       body: JSON.stringify({ seriesId, sharesCount, amount })
+    });
+  }
+
+  // 6. MESSAGERIE
+  async getThreads() {
+    return await this.request('/messaging/threads');
+  }
+  async getInvitations() {
+    return await this.request('/messaging/invitations');
+  }
+  async sendMessage(threadId: string, text: string) {
+    return await this.request(`/messaging/threads/${threadId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ text })
+    });
+  }
+  async acceptInvitation(invitationId: string) {
+    return await this.request(`/messaging/invitations/${invitationId}/accept`, {
+      method: 'POST'
+    });
+  }
+  async declineInvitation(invitationId: string) {
+    return await this.request(`/messaging/invitations/${invitationId}/decline`, {
+      method: 'POST'
     });
   }
 }

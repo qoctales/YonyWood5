@@ -22,7 +22,6 @@ import { ReviewSystemScreen } from './components/ReviewSystemScreen';
 import { EditorialBackOfficeScreen } from './components/EditorialBackOfficeScreen';
 import { NavigationScreen } from './components/NavigationScreen';
 import { BottomMenu } from './components/BottomMenu';
-import { io } from 'socket.io-client';
 
 export default function App() {
   // Arrive directly on the Explorer Astrolabe screen
@@ -57,18 +56,6 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentScreen]);
-
-  // Initialize Socket.IO
-  useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000', {
-      auth: { token: localStorage.getItem('yonywood_auth_token') }
-    });
-    socket.on('connect', () => console.log('Socket.IO connected'));
-    socket.on('message', (msg) => console.log('New message:', msg));
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   const isVideoPlayer = currentScreen.type === 'video_player';
   const isDarkScreen = currentScreen.type === 'video_player';

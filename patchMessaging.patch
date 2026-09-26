@@ -1,0 +1,77 @@
+--- src/components/MessagingScreen.tsx
++++ src/components/MessagingScreen.tsx
+@@ -14,2 +14,3 @@
+ import { ViewScreen } from '../types';
++import { apiService } from '../services/api';
+ 
+@@ -35,3 +36,3 @@
+ export const MessagingScreen: React.FC<MessagingScreenProps> = ({ onNavigate }) => {
+   const [activeTab, setActiveTab] = useState<'threads' | 'invitations'>('threads');
+   const [toastMessage, setToastMessage] = useState<string | null>(null);
+@@ -43,26 +44,3 @@
+ 
+-  const [exchangeRequests, setExchangeRequests] = useState<ExchangeRequest[]>([
+-    {
+-      id: 'req-1',
+-      senderName: 'Amara',
+-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+-      motif: 'Coproduction & Projet',
+-      motifBadge: '🎬 Coproduction',
+-      message: 'Bonjour, je serais très intéressée d\'échanger autour d\'une potentielle coproduction sur la série des Terres Rouges. Je pense que nos visions s\'alignent.',
+-      time: 'Il y a 2h'
+-    },
+-    {
+-      id: 'req-2',
+-      senderName: 'Tierno',
+-      avatar: 'https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=400&q=80',
+-      motif: 'Transmission & Savoir',
+-      motifBadge: '🌱 Transmission',
+-      message: 'J\'ai été touché par ton documentaire. J\'aimerais beaucoup pouvoir discuter des techniques de tissage traditionnel que tu as présentées.',
+-      time: 'Hier'
+-    }
+-  ]);
+-
+-  const [threads, setThreads] = useState<MessageThread[]>([
+-    {
+-      id: 'thread-1',
++  const [exchangeRequests, setExchangeRequests] = useState<ExchangeRequest[]>([]);
++  const [threads, setThreads] = useState<MessageThread[]>([]);
++  const [loadingData, setLoadingData] = useState(true);
++
++  useEffect(() => {
++    const load = async () => {
++      const [resThreads, resInvites] = await Promise.all([
++        apiService.getThreads(),
++        apiService.getInvitations()
++      ]);
++      // Use mock data fallback locally if api returns null/empty
++      setThreads(resThreads || [
++        {
++          id: 'thread-1',
+       senderName: 'Elara (Mentor)',
+@@ -87,2 +65,22 @@
+-  ]);
++      ]);
++      setExchangeRequests(resInvites || [
++        {
++          id: 'req-1',
++          senderName: 'Amara',
++          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
++          motif: 'Coproduction & Projet',
++          motifBadge: '🎬 Coproduction',
++          message: 'Bonjour, je serais très intéressée d\'échanger autour d\'une potentielle coproduction sur la série des Terres Rouges. Je pense que nos visions s\'alignent.',
++          time: 'Il y a 2h'
++        }
++      ]);
++      setLoadingData(false);
++    };
++    load();
++  }, []);
+ 
+@@ -107,2 +105,7 @@
+ 
++  if (loadingData) {
++    return <div className="min-h-screen bg-[#F9F6EE] flex items-center justify-center">Chargement de la messagerie...</div>;
++  }
++
+   const handleSendMessage = (e: React.FormEvent) => {

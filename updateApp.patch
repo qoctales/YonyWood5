@@ -1,0 +1,21 @@
+--- src/App.tsx
++++ src/App.tsx
+@@ -19,2 +19,3 @@
+ import { BottomMenu } from './components/BottomMenu';
++import { io } from 'socket.io-client';
+ 
+@@ -51,2 +52,14 @@
+ 
++  // Initialize Socket.IO
++  useEffect(() => {
++    const socket = io(import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000', {
++      auth: { token: localStorage.getItem('yonywood_auth_token') }
++    });
++    socket.on('connect', () => console.log('Socket.IO connected'));
++    socket.on('message', (msg) => console.log('New message:', msg));
++    return () => {
++      socket.disconnect();
++    };
++  }, []);
++
+   const isVideoPlayer = currentScreen.type === 'video_player';

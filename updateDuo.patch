@@ -1,0 +1,45 @@
+--- src/components/DuoFeedScreen.tsx
++++ src/components/DuoFeedScreen.tsx
+@@ -17,3 +17,3 @@
+ import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
+-import { DUOS, DOCUMENTARIES } from '../data/mockData';
++import { apiService } from '../services/api';
+ import { ViewScreen, Duo, Protagonist } from '../types';
+@@ -36,2 +36,5 @@
+   const [selectedDocId, setSelectedDocId] = useState<string | null>(initialDocId || null);
++  const [DUOS, setDuos] = useState<Duo[]>([]);
++  const [DOCUMENTARIES, setDocumentaries] = useState<any[]>([]);
++  const [loadingData, setLoadingData] = useState(true);
+   const [teaserProtagonist, setTeaserProtagonist] = useState<Protagonist | null>(null);
+@@ -40,3 +43,3 @@
+   const startingIndex = initialDuoId
+-    ? Math.max(0, DUOS.findIndex(d => d.id === initialDuoId))
++    ? 0 // will update in useEffect
+     : initialDuoIndex;
+@@ -46,2 +49,19 @@
+ 
++  useEffect(() => {
++    const loadData = async () => {
++      const [fetchedDuos, fetchedDocs] = await Promise.all([
++        apiService.getDuos(),
++        apiService.getSeries()
++      ]);
++      setDuos(fetchedDuos);
++      setDocumentaries(fetchedDocs);
++      if (initialDuoId) {
++        const idx = fetchedDuos.findIndex((d: any) => d.id === initialDuoId);
++        if (idx !== -1) setCurrentIndex(idx);
++      }
++      setLoadingData(false);
++    };
++    loadData();
++  }, [initialDuoId]);
++
+   // Inline video playback states: videos stay vertical side-by-side
+@@ -73,2 +93,6 @@
+ 
++  if (loadingData) {
++    return <div className="min-h-screen bg-[#0E0D0B] text-white flex items-center justify-center">Chargement...</div>;
++  }
++
+   const safeIndex = Math.min(currentIndex, Math.max(0, filteredDuos.length - 1));

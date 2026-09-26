@@ -1,0 +1,7 @@
+@@ -75,2 +95,6 @@
+ 
++  if (loadingData) {
++    return <div className="min-h-screen bg-[#0E0D0B] text-white flex items-center justify-center">Chargement...</div>;
++  }
++
+   const safeIndex = Math.min(currentIndex, Math.max(0, filteredDuos.length - 1));

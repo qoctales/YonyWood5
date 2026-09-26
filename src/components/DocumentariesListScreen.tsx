@@ -1,17 +1,33 @@
-import React from 'react';
-import { DOCUMENTARIES } from '../data/mockData';
-import { ViewScreen } from '../types';
+import React, { useState, useEffect } from 'react';
+import { apiService } from '../services/api';
+import { ViewScreen, Documentary } from '../types';
 
 interface DocumentariesListScreenProps {
   onNavigate: (screen: ViewScreen) => void;
 }
 
 export const DocumentariesListScreen: React.FC<DocumentariesListScreenProps> = ({ onNavigate }) => {
+  const [documentaries, setDocumentaries] = useState<Documentary[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDocumentaries = async () => {
+      const series = await apiService.getSeries();
+      setDocumentaries(series);
+      setLoading(false);
+    };
+    fetchDocumentaries();
+  }, []);
+
+  if (loading) {
+    return <div className="p-8 text-center text-[#68655D]">Chargement des séries...</div>;
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 text-[#1C1917]">
       {/* Pure series cards grid — No tagline, no button, no arrow */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-        {DOCUMENTARIES.map((doc) => (
+        {documentaries.map((doc) => (
           <div 
             key={doc.id}
             onClick={() => onNavigate({ type: 'duo_feed', selectedDocId: doc.id })}
