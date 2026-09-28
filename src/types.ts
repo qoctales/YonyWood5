@@ -421,7 +421,9 @@ export interface PlatformFinancials {
 }
 
 export type ViewScreen = 
+  | { type: 'landing' }
   | { type: 'home' }
+  | { type: 'matrix_view' }
   | { type: 'duo_feed'; selectedDocId?: string; currentDuoIndex?: number }
   | { type: 'marketplace' }
   | { type: 'documentaries' }

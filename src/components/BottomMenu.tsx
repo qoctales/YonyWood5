@@ -18,7 +18,7 @@ interface BottomMenuProps {
 export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigate }) => {
   // Déterminer l'élément actif selon l'écran en cours
   const isStudioActive = currentScreen.type === 'submit_story' || currentScreen.type === 'request_videographer';
-  const isCastingActive = currentScreen.type === 'home' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
+  const isCastingActive = currentScreen.type === 'home' || currentScreen.type === 'matrix_view' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
   const isDuocumentairesActive = currentScreen.type === 'duo_feed' || currentScreen.type === 'duo_detail';
   const isCoproductionActive = currentScreen.type === 'marketplace';
   const isProfilActive = 
@@ -27,10 +27,12 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     currentScreen.type === 'portfolio' || 
     currentScreen.type === 'protagonist_profile' || 
     currentScreen.type === 'my_forest' || 
-    currentScreen.type === 'messaging';
+    currentScreen.type === 'messaging' ||
+    currentScreen.type === 'admin_dashboard' ||
+    currentScreen.type === 'editorial_backoffice';
 
-  // Ne pas afficher le menu pendant le lecteur vidéo plein écran
-  if (currentScreen.type === 'video_player') {
+  // Ne pas afficher le menu pendant le lecteur vidéo plein écran ou la page d'accueil d'onboarding
+  if (currentScreen.type === 'video_player' || currentScreen.type === 'landing') {
     return null;
   }
 

@@ -98,10 +98,6 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
     ? baseFilteredDuos.filter(d => d.documentaryId === selectedDocId)
     : baseFilteredDuos;
 
-  if (loadingData) {
-    return <div className="min-h-screen bg-[#0E0D0B] text-white flex items-center justify-center">Chargement...</div>;
-  }
-
   const safeIndex = filteredDuos.length > 0 ? (currentIndex % filteredDuos.length) : 0;
   const currentDuo: Duo | undefined = filteredDuos[safeIndex];
 
@@ -144,6 +140,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
   // Handlers for next / prev with direction tracking
   const handleNext = () => {
+    if (filteredDuos.length <= 1) return;
     dragX.set(0);
     setIsPlayingA(false);
     setIsPlayingB(false);
@@ -151,6 +148,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   };
 
   const handlePrev = () => {
+    if (filteredDuos.length <= 1) return;
     dragX.set(0);
     setIsPlayingA(false);
     setIsPlayingB(false);
@@ -173,6 +171,10 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [filteredDuos.length]);
+
+  if (loadingData) {
+    return <div className="min-h-screen bg-[#0E0D0B] text-white flex items-center justify-center">Chargement...</div>;
+  }
 
   if (!currentDuo) {
     return (

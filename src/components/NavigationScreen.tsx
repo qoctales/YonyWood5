@@ -13,7 +13,8 @@ import {
   MapPin, 
   ArrowRight,
   BookOpen,
-  Eye
+  Eye,
+  Crown
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { DOCUMENTARIES, PROTAGONISTS, DUOS } from '../data/mockData';
@@ -26,11 +27,11 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({ onNavigate }
   const screensList = [
     {
       id: '01',
-      title: 'Accueil & Onboarding',
-      desc: "L'introduction pédagogique en 3 étapes, le mantra « Des histoires qui nous relient » et les séries fondatrices.",
-      target: { type: 'home' } as ViewScreen,
+      title: 'Accueil Onboarding YonyWood (3 Vidéos)',
+      desc: "Page d'entrée avec le logo blanc officiel, inscription/connexion et les 3 vidéos explicatives 9:16 de présentation du projet.",
+      target: { type: 'landing' } as ViewScreen,
       icon: TreePine,
-      level: 'Niveau 1 (La Forêt)'
+      level: 'Niveau 0 (Entrée)'
     },
     {
       id: '02',
@@ -141,6 +142,14 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({ onNavigate }
       target: { type: 'editorial_backoffice' } as ViewScreen,
       icon: ShieldCheck,
       level: 'Direction Éditoriale'
+    },
+    {
+      id: '14',
+      title: 'Tableau de Bord Administrateur',
+      desc: 'Supervision globale : catalogue des séries, vidéos 9/16, modération des signalements, rôles utilisateurs et finances.',
+      target: { type: 'admin_dashboard' } as ViewScreen,
+      icon: Crown,
+      level: 'Administration & Studio'
     }
   ];
 

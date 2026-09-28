@@ -78,7 +78,19 @@ interface AuthContextType {
   deleteUser: (userId: string) => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const defaultAuthContext: AuthContextType = {
+  currentUser: null,
+  usersList: INITIAL_DEMO_USERS,
+  isAuthenticated: false,
+  isAdmin: false,
+  login: async () => ({ success: false, message: 'Auth non initialisé' }),
+  register: async () => ({ success: false, message: 'Auth non initialisé' }),
+  logout: () => {},
+  updateUserRole: () => {},
+  deleteUser: () => {}
+};
+
+const AuthContext = createContext<AuthContextType>(defaultAuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Liste des utilisateurs mémorisée
@@ -228,8 +240,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  return context ?? defaultAuthContext;
 };

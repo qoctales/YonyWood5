@@ -1649,46 +1649,6 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   </span>
                 </button>
 
-                {/* BOUTON COURONNE ADMIN : Accès instantané au Dashboard d'administration pour gérer Séries, Modération, Utilisateurs et Finances */}
-                {(isAdmin || currentUser?.role === 'ADMIN' || !currentUser) && (
-                  <button
-                    onClick={() => onNavigate({ type: 'admin_dashboard' })}
-                    id="btn-admin-crown-dashboard"
-                    className="group h-8 sm:h-8.5 px-2.5 sm:px-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-stone-950 font-black text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/25 transition-all cursor-pointer active:scale-95 border border-amber-300 ring-2 ring-amber-400/30"
-                    title="Tableau de bord Administrateur (Séries, Modération, Finances)"
-                  >
-                    <Crown className="w-4 h-4 fill-stone-950 text-stone-950" />
-                    <span className="font-extrabold uppercase text-[11px] tracking-wider">Admin</span>
-                  </button>
-                )}
-
-                {/* Bouton Connexion / Déconnexion */}
-                {isAuthenticated ? (
-                  <button
-                    onClick={() => {
-                      logout();
-                      setUserName('Amina');
-                      setUserFullName('Amina Traoré');
-                      setUserRole('Passeuse de mémoires sonores & artisane');
-                    }}
-                    id="btn-profile-logout"
-                    className="group w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-stone-700 hover:text-red-600 flex items-center justify-center transition-all shadow-xs cursor-pointer active:scale-95"
-                    title="Se déconnecter"
-                  >
-                    <LogOut className="w-3.5 h-3.5 transition-colors" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setIsAuthModalOpen(true)}
-                    id="btn-profile-login-open"
-                    className="group h-8 sm:h-8.5 px-3 rounded-full bg-stone-900 hover:bg-[#A2482B] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
-                    title="Se connecter ou s'inscrire"
-                  >
-                    <LogIn className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Connexion</span>
-                  </button>
-                )}
-
                 {/* Bouton Partager : fond blanc avec icône noire au repos, fond terre cuite avec icône blanche au survol */}
                 <button
                   onClick={handleShareProfile}
@@ -1737,44 +1697,6 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
         </div>
 
       </div>
-
-      {/* BANNIÈRE DE CONNEXION / ESPACE ADMINISTRATEUR */}
-      {!isAuthenticated && isOwner && (
-        <div className="mx-4 sm:mx-6 mt-1 mb-2 p-3 bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-amber-500/10 border border-amber-300/60 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-xs">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0 border border-amber-400/40">
-              <Crown className="w-4 h-4 text-amber-700 fill-amber-700" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-stone-900">
-                Compte Administrateur & Gestionnaire
-              </p>
-              <p className="text-[11px] text-stone-600">
-                Connectez-vous avec <span className="font-semibold text-stone-900">qoctales@gmail.com</span> pour piloter la modération, séries et finances.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => {
-                login('qoctales@gmail.com');
-              }}
-              id="btn-quick-admin-login"
-              className="px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-stone-950 font-black text-xs flex items-center gap-1.5 shadow-xs cursor-pointer transition-all active:scale-95"
-            >
-              <Crown className="w-3.5 h-3.5 fill-stone-950" />
-              <span>Connexion Admin 1-Clic</span>
-            </button>
-            <button
-              onClick={() => setIsAuthModalOpen(true)}
-              id="btn-profile-login-banner"
-              className="px-3 py-1.5 rounded-full bg-white hover:bg-stone-100 text-stone-800 font-semibold text-xs border border-stone-200 shadow-xs cursor-pointer transition-all active:scale-95"
-            >
-              Se connecter
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* TOAST SUCCÈS */}
       {shareToast && (

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 400" fill="none">
+  <g stroke="currentColor" stroke-width="17.5" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- Y -->
+    <path d="M 104 162 C 104 220, 114 242, 158 242 C 158 242, 158 190, 158 162" />
+    <path d="M 158 220 L 158 266 C 158 304, 134 316, 108 316 C 96 316, 88 308, 92 296" />
+
+    <!-- o -->
+    <path d="M 220 212 C 248 212, 260 234, 260 262 C 260 290, 248 308, 220 308 C 192 308, 180 290, 180 262 C 180 234, 192 212, 220 212 Z" />
+
+    <!-- n -->
+    <path d="M 288 214 L 288 308" />
+    <path d="M 288 244 C 298 218, 324 210, 344 210 C 358 210, 368 222, 368 244 L 368 308" />
+
+    <!-- y -->
+    <path d="M 396 214 C 396 250, 406 268, 436 268 L 442 214" />
+    <path d="M 442 250 L 442 334 C 442 368, 418 382, 388 380 C 372 379, 362 366, 374 358" />
+
+    <!-- W (Tall ascenders) -->
+    <path d="M 462 142 L 462 272 C 462 298, 484 310, 508 310 C 532 310, 546 288, 552 248 C 558 288, 574 310, 598 310 C 622 310, 638 296, 638 272 L 638 142" />
+
+    <!-- oo: Retro Dual-Screen TV -->
+    <rect x="656" y="214" width="156" height="92" rx="22" ry="22" />
+    <line x1="734" y1="214" x2="734" y2="306" />
+    <path d="M 696 306 L 674 336" />
+    <path d="M 772 306 L 794 336" />
+  </g>
+
+  <!-- TV Eyes (Solid Dots) -->
+  <circle cx="709" cy="260" r="7.5" fill="currentColor" />
+  <circle cx="759" cy="260" r="7.5" fill="currentColor" />
+
+  <!-- d -->
+  <g stroke="currentColor" stroke-width="17.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 894 290 C 884 306, 866 310, 850 310 C 824 310, 810 290, 810 262 C 810 234, 824 214, 850 214 C 866 214, 884 218, 894 234" />
+    <line x1="894" y1="308" x2="894" y2="142" />
+  </g>
+</svg>

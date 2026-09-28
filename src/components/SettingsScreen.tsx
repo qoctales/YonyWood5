@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { DOCUMENTARIES } from '../data/mockData';
+import { useAuth } from '../services/authContext';
 
 interface SettingsScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -40,6 +41,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   language,
   onUpdateLanguage
 }) => {
+  const { logout } = useAuth();
+
   // 3 onglets thématiques : "Choix des séries", "Messages & Alertes", et "Compte & Sécurité"
   const [activeTab, setActiveTab] = useState<SettingsTab>('series');
 
@@ -202,10 +205,17 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   };
 
   const handleLogout = () => {
+    logout();
+    try {
+      localStorage.removeItem('yonywood_current_user');
+      localStorage.removeItem('yonywood_auth_token');
+    } catch {
+      // ignore
+    }
     showToast('Session terminée.');
     setTimeout(() => {
-      onNavigate({ type: 'duo_feed' });
-    }, 400);
+      onNavigate({ type: 'landing' });
+    }, 350);
   };
 
   const currentSeries = DOCUMENTARIES[activeSeriesIndex] || DOCUMENTARIES[0];
@@ -836,6 +846,22 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                       </div>
                     </div>
                   </form>
+                </div>
+
+                {/* 3. Déconnexion utilisateur */}
+                <div className="pt-4 border-t border-stone-200/80 flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-semibold text-stone-800 block">Session utilisateur</span>
+                    <span className="text-[11px] text-stone-500">Se déconnecter et revenir à l'accueil</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="h-8.5 px-3.5 rounded-xl border border-stone-300 hover:border-red-500 hover:bg-red-50 text-stone-700 hover:text-red-600 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Déconnexion</span>
+                  </button>
                 </div>
 
               </div>

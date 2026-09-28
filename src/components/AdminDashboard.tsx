@@ -287,7 +287,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       effigieName: editEffigies[0]?.name || ''
     };
     setEditQuestions(prev => [...prev, newEpisode]);
-    showToast(`Épisode ${nextNum} ajouté (Format 9/16) !`);
+    showToast(`Épisode ${nextNum} ajouté !`);
   };
 
   // Supprimer un épisode
@@ -406,10 +406,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       const result = event.target?.result as string;
       if (uploadTargetIndex === 'cover') {
         setEditCoverUrl(result);
-        showToast('Affiche 9/16 de la série chargée !');
+        showToast('Affiche de la série chargée !');
       } else if (typeof uploadTargetIndex === 'number') {
         handleUpdateQuestion(uploadTargetIndex, 'posterUrl', result);
-        showToast(`Affiche 9/16 de l'épisode ${uploadTargetIndex + 1} chargée !`);
+        showToast(`Affiche de l'épisode ${uploadTargetIndex + 1} chargée !`);
       }
       setUploadTargetIndex(null);
     };
@@ -443,7 +443,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setSeriesList(updated);
     saveCustomDocumentaries(updated);
     setEditingSeries(null);
-    showToast(`Série "${editTitle}" et ses ${editQuestions.length} mini-vidéos 9/16 enregistrées !`);
+    showToast(`Série "${editTitle}" et ses ${editQuestions.length} épisodes enregistrés !`);
   };
 
   // Réinitialiser le catalogue
@@ -593,7 +593,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                      URL Photo / Portrait 9:16
+                      URL Photo / Portrait de l'Effigie
                     </label>
                     <input
                       type="text"
@@ -606,7 +606,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                   <div>
                     <label className="block text-[11px] font-semibold text-stone-600 mb-1">
-                      URL Vidéo 9:16 de l'Effigie
+                      URL Vidéo de l'Effigie
                     </label>
                     <input
                       type="text"
@@ -670,14 +670,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <Crown className="w-4 h-4 font-black" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-serif font-black text-stone-900 tracking-tight">
-                  Espace Administration
-                </span>
-                <span className="px-1.5 py-0.5 rounded bg-[#A2482B]/10 text-[#A2482B] border border-[#A2482B]/20 text-[9px] font-black uppercase tracking-wider">
-                  Directeur Studio
-                </span>
-              </div>
+              <span className="text-sm font-serif font-black text-stone-900 tracking-tight block">
+                Espace Administration
+              </span>
               <p className="text-[10px] text-stone-500">
                 Connecté en tant que <span className="text-stone-800 font-semibold">{currentUser?.name || 'Romeo Nonvide'}</span>
               </p>
@@ -718,7 +713,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             }`}
           >
             <Film className="w-3.5 h-3.5" />
-            <span>Séries & Vidéos 9/16 ({seriesList.length})</span>
+            <span>Séries & Épisodes ({seriesList.length})</span>
           </button>
 
           <button
@@ -768,62 +763,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <main className="max-w-6xl mx-auto px-4 sm:px-8 pt-6">
 
         {/* ========================================================================= */}
-        {/* ONGLET 1 : SÉRIES, ÉPISODES 9/16, EFFIGIES & MINI-VIDÉOS                  */}
+        {/* ONGLET 1 : SÉRIES, ÉPISODES & EFFIGIES                                    */}
         {/* ========================================================================= */}
         {activeTab === 'series' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-serif font-bold text-stone-900 flex items-center gap-2">
-                  <Clapperboard className="w-5 h-5 text-[#A2482B]" />
-                  <span>Séries, Mini-Vidéos 9/16 & Effigies</span>
-                </h2>
-                <p className="text-xs text-stone-600 mt-0.5">
-                  Toutes les affiches et présentations de questions sont au <strong className="text-[#A2482B]">format vertical 9/16</strong> (vidéos de présentation avec affiches de secours et statut d'effigie).
-                </p>
-              </div>
 
-              <div className="relative w-full sm:w-64">
-                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                <input
-                  type="text"
-                  placeholder="Rechercher une série..."
-                  value={searchSeries}
-                  onChange={(e) => setSearchSeries(e.target.value)}
-                  className="w-full h-9 pl-9 pr-3 rounded-xl bg-white border border-stone-300 text-xs text-stone-900 placeholder:text-stone-400 outline-hidden focus:border-[#A2482B] transition-colors"
-                />
-              </div>
-            </div>
-
-            {/* Accès rapide aux séries : Èṣù < > Jésus, Investors < > Builders, etc. */}
-            <div className="flex items-center gap-2 flex-wrap text-xs">
-              <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider mr-1">
-                Séries au catalogue :
-              </span>
-              {seriesList.map((s) => (
+            {/* Barre de retour et statut si en cours d'édition */}
+            {editingSeries && (
+              <div className="flex items-center justify-between">
                 <button
-                  key={s.id}
-                  onClick={() => startEditSeries(s)}
-                  className={`px-3 py-1.5 rounded-full border transition-all cursor-pointer flex items-center gap-1.5 ${
-                    editingSeries?.id === s.id
-                      ? 'bg-[#A2482B] text-white border-[#A2482B] shadow-sm font-bold'
-                      : 'bg-white text-stone-700 border-stone-200 hover:border-[#A2482B] hover:text-[#A2482B]'
-                  }`}
+                  type="button"
+                  onClick={() => setEditingSeries(null)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600 hover:text-[#A2482B] bg-white hover:bg-stone-50 px-3.5 py-2 rounded-xl border border-stone-200 transition-colors cursor-pointer shadow-xs"
                 >
-                  <Film className="w-3 h-3 text-[#A2482B]" />
-                  <span>{s.title}</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-100 text-stone-600 font-mono">
-                    {s.questions?.length || s.episodeCount || 5} ép. (9/16)
-                  </span>
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Retour au catalogue des séries</span>
                 </button>
-              ))}
-            </div>
+
+                <span className="text-xs text-stone-500">
+                  Édition de : <strong className="text-stone-900">{editingSeries.title}</strong>
+                </span>
+              </div>
+            )}
 
             {/* =================================================================== */}
-            {/* PANNEAU D'ÉDITION D'UNE SÉRIE & FORMAT VERTICAL 9/16                */}
+            {/* PANNEAU D'ÉDITION D'UNE SÉRIE                                       */}
             {/* =================================================================== */}
             {editingSeries && (
-              <div className="p-6 rounded-3xl bg-white border-2 border-[#A2482B]/40 shadow-xl space-y-6 animate-in fade-in">
+              <div className="p-6 rounded-3xl bg-white border border-stone-200 shadow-xl space-y-6 animate-in fade-in">
                 
                 {/* En-tête de l'éditeur */}
                 <div className="flex items-center justify-between pb-4 border-b border-stone-100">
@@ -836,7 +803,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         Édition complète : <span className="text-[#A2482B]">{editingSeries.title}</span>
                       </h3>
                       <p className="text-[11px] text-stone-500">
-                        Affiches verticales 9/16, mini-vidéos de présentation de chaque question et désignation des Effigies.
+                        Affiche officielle, vidéo de présentation de chaque question et désignation des Effigies.
                       </p>
                     </div>
                   </div>
@@ -852,21 +819,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                 <form onSubmit={handleSaveSeries} className="space-y-6">
                   
-                  {/* BLOC 1 : IDENTITÉ GÉNÉRALE DE LA SÉRIE (AFFICHE 9/16 & SYNOPSIS) */}
+                  {/* BLOC 1 : IDENTITÉ GÉNÉRALE DE LA SÉRIE */}
                   <div className="p-5 rounded-2xl bg-[#FAFAF9] border border-stone-200 space-y-4">
                     <div className="flex items-center gap-2">
                       <Layers className="w-4 h-4 text-[#A2482B]" />
                       <h4 className="text-xs font-bold text-stone-900 uppercase tracking-wider">
-                        1. Identité, Slogan & Affiche Officielle 9/16 de la Série
+                        1. Identité, Slogan & Affiche Officielle de la Série
                       </h4>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                       
-                      {/* Aperçu de l'affiche 9/16 de la série */}
+                      {/* Aperçu de l'affiche de la série */}
                       <div className="md:col-span-3 space-y-2">
                         <label className="block text-xs font-bold text-stone-700">
-                          Affiche Série (9/16 Vertical)
+                          Affiche Officielle de la Série
                         </label>
                         
                         <div className="relative aspect-[9/16] w-full max-w-[200px] mx-auto rounded-2xl overflow-hidden border-2 border-stone-300 bg-stone-900 shadow-md group">
@@ -880,7 +847,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-2.5 text-white">
                             <span className="text-[10px] font-mono tracking-widest uppercase bg-[#A2482B] text-white px-2 py-0.5 rounded-full w-fit mb-1">
-                              Format 9/16
+                              Affiche Officielle
                             </span>
                             <span className="text-xs font-bold line-clamp-1">{editTitle}</span>
                           </div>
@@ -948,7 +915,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                           <div>
                             <label className="block text-xs font-semibold text-stone-700 mb-1">
-                              URL de l'affiche 9/16 de la série
+                              URL de l'affiche de la série
                             </label>
                             <input
                               type="text"
@@ -961,14 +928,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           </div>
                         </div>
 
-                        {/* Vidéo teaser / présentation de la série en 9:16 */}
+                        {/* Vidéo teaser / présentation de la série */}
                         <div>
                           <label className="block text-xs font-semibold text-stone-700 mb-1 flex items-center justify-between">
                             <span className="flex items-center gap-1.5">
                               <Video className="w-3.5 h-3.5 text-[#A2482B]" />
-                              <span>URL de la mini-vidéo générale 9/16 de la série</span>
+                              <span>URL de la vidéo teaser de la série</span>
                             </span>
-                            <span className="text-[10px] text-stone-400">Format portrait 9/16</span>
+                            <span className="text-[10px] text-stone-400">Vidéo de présentation</span>
                           </label>
                           <input
                             type="text"
@@ -1094,7 +1061,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
 
                   {/* =================================================================== */}
-                  {/* BLOC 3 : ÉPISODES & QUESTIONS CLÉS EN FORMAT 9/16 VERTICAL          */}
+                  {/* BLOC 3 : ÉPISODES & QUESTIONS CLÉS                                 */}
                   {/* =================================================================== */}
                   <div className="space-y-4 pt-2">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2 border-b border-stone-200">
@@ -1102,11 +1069,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <div className="flex items-center gap-2">
                           <Film className="w-4 h-4 text-[#A2482B]" />
                           <h4 className="text-sm font-bold text-stone-900">
-                            3. Épisodes de la Série & Questions ({editQuestions.length} chapitres 9/16)
+                            3. Épisodes de la Série & Questions ({editQuestions.length} épisodes)
                           </h4>
                         </div>
                         <p className="text-xs text-stone-600 mt-0.5">
-                          Pour chaque épisode : définissez la <strong>mini-vidéo 9/16 où la question est présentée</strong>, l'affiche image de secours et l'effigie qui l'introduit.
+                          Pour chaque épisode : définissez la <strong>vidéo de présentation</strong>, l'affiche image et l'effigie qui l'introduit.
                         </p>
                       </div>
 
@@ -1116,11 +1083,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         className="px-4 py-2 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all active:scale-95"
                       >
                         <Plus className="w-4 h-4" />
-                        <span>Rajouter un épisode (9/16)</span>
+                        <span>Ajouter un épisode</span>
                       </button>
                     </div>
 
-                    {/* Liste des épisodes verticaux 9/16 */}
+                    {/* Liste des épisodes */}
                     <div className="space-y-5">
                       {editQuestions.map((q, idx) => {
                         const isVideoPlaying = playingVideoIndex === idx;
@@ -1137,9 +1104,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 </span>
                                 <span className="text-xs font-bold text-stone-900">
                                   {q.title || `Épisode ${idx + 1}`}
-                                </span>
-                                <span className="hidden sm:inline-block px-2 py-0.5 rounded bg-stone-100 text-stone-600 text-[10px] font-mono">
-                                  Ratio 9:16 Vertical
                                 </span>
                               </div>
 
@@ -1174,17 +1138,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                               </div>
                             </div>
 
-                            {/* Grille : Colonne 9/16 Gauche (Vidéo + Affiche) / Colonne Droite (Question + Effigie) */}
+                            {/* Grille : Colonne Média (Vidéo + Affiche) / Colonne Texte (Question + Effigie) */}
                             <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                               
-                              {/* COLONNE GAUCHE 9:16 VERTICAL (4 colonnes) */}
+                              {/* COLONNE MÉDIA (4 colonnes) */}
                               <div className="md:col-span-4 space-y-2.5">
-                                <div className="flex items-center justify-between text-[11px] font-bold text-stone-700">
-                                  <span>Mini-Vidéo & Affiche 9/16</span>
-                                  <span className="text-[10px] text-[#A2482B] font-mono">9:16</span>
+                                <div className="text-[11px] font-bold text-stone-700">
+                                  <span>Vidéo & Affiche de l'épisode</span>
                                 </div>
 
-                                {/* Lecteur vidéo 9:16 / Carte d'aperçu */}
+                                {/* Lecteur vidéo / Carte d'aperçu */}
                                 <div className="relative aspect-[9/16] w-full max-w-[210px] mx-auto rounded-2xl overflow-hidden border-2 border-stone-300 bg-stone-950 shadow-md group">
                                   {isVideoPlaying && q.videoUrl ? (
                                     <video
@@ -1220,7 +1183,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                         type="button"
                                         onClick={() => setPlayingVideoIndex(isVideoPlaying ? null : idx)}
                                         className="w-12 h-12 rounded-full bg-[#A2482B]/90 hover:bg-[#A2482B] text-white flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95 cursor-pointer border border-white/40"
-                                        title={isVideoPlaying ? "Arrêter la vidéo" : "Tester la mini-vidéo 9/16"}
+                                        title={isVideoPlaying ? "Arrêter la vidéo" : "Tester la vidéo"}
                                       >
                                         {isVideoPlaying ? (
                                           <Pause className="w-5 h-5 fill-white" />
@@ -1244,16 +1207,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                                   <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white pointer-events-none">
                                     <span className="text-[10px] font-medium line-clamp-1">
-                                      {isVideoPlaying ? 'Lecture vidéo 9/16' : 'Aperçu 9/16'}
+                                      {isVideoPlaying ? 'Lecture vidéo' : 'Aperçu'}
                                     </span>
                                   </div>
                                 </div>
 
-                                {/* Champ URL de la mini-vidéo 9/16 */}
+                                {/* Champ URL de la vidéo */}
                                 <div>
                                   <label className="block text-[10px] font-bold text-stone-600 mb-0.5 flex items-center gap-1">
                                     <Video className="w-3 h-3 text-[#A2482B]" />
-                                    <span>URL de la mini-vidéo (9/16)</span>
+                                    <span>URL de la vidéo de présentation</span>
                                   </label>
                                   <input
                                     type="text"
@@ -1264,10 +1227,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                   />
                                 </div>
 
-                                {/* Champ URL de l'image de secours 9/16 */}
+                                {/* Champ URL de l'image de secours */}
                                 <div>
                                   <label className="block text-[10px] font-bold text-stone-600 mb-0.5">
-                                    Affiche miniature de secours (9/16)
+                                    Affiche miniature de l'épisode
                                   </label>
                                   <input
                                     type="text"
@@ -1300,7 +1263,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 </div>
                               </div>
 
-                              {/* COLONNE DROITE : TITRE, QUESTION POSÉE & EFFIGIE DU CHAPITRE (8 colonnes) */}
+                              {/* COLONNE TEXTE : TITRE, QUESTION POSÉE & EFFIGIE DU CHAPITRE (8 colonnes) */}
                               <div className="md:col-span-8 space-y-3.5">
                                 
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -1334,8 +1297,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 {/* Question posée (Prompt de l'épisode) */}
                                 <div>
                                   <label className="block text-[11px] font-semibold text-stone-700 mb-1 flex items-center justify-between">
-                                    <span>Question posée dans l'épisode (Présentée dans la vidéo 9/16)</span>
-                                    <span className="text-[10px] text-[#A2482B] font-medium">Texte prononcé face caméra</span>
+                                    <span>Question posée dans l'épisode (Présentée face caméra)</span>
+                                    <span className="text-[10px] text-[#A2482B] font-medium">Texte prononcé</span>
                                   </label>
                                   <textarea
                                     rows={3}
@@ -1394,7 +1357,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         className="px-5 py-2.5 rounded-full bg-white hover:bg-stone-50 border-2 border-dashed border-[#A2482B]/40 hover:border-[#A2482B] text-[#A2482B] text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
                       >
                         <Plus className="w-4 h-4" />
-                        <span>Rajouter un nouvel épisode 9/16 ({String(editQuestions.length + 1).padStart(2, '0')})</span>
+                        <span>Ajouter un nouvel épisode ({String(editQuestions.length + 1).padStart(2, '0')})</span>
                       </button>
                     </div>
                   </div>
@@ -1414,7 +1377,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       className="px-6 py-2.5 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-xs font-bold text-white flex items-center gap-2 shadow-md shadow-[#A2482B]/20 cursor-pointer transition-all active:scale-95"
                     >
                       <Save className="w-4 h-4" />
-                      <span>Enregistrer la série & les {editQuestions.length} vidéos 9/16</span>
+                      <span>Enregistrer la série & les {editQuestions.length} épisodes</span>
                     </button>
                   </div>
                 </form>
@@ -1422,106 +1385,119 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             )}
 
             {/* =================================================================== */}
-            {/* GRILLE DES SÉRIES DU CATALOGUE (FORMAT 9/16 VERTICAL)                */}
+            {/* CATALOGUE DES SÉRIES (AFFICHE SIMPLE & ACCÈS DIRECT À L'ÉDITION)    */}
             {/* =================================================================== */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredSeries.map((series) => {
-                const epCount = series.questions?.length || series.episodeCount || 5;
-                const effigieCount = series.effigies?.length || 0;
-                return (
-                  <div 
-                    key={series.id}
-                    className="rounded-3xl bg-white border border-stone-200 hover:border-[#A2482B] shadow-xs hover:shadow-lg overflow-hidden flex flex-col group transition-all"
-                  >
-                    {/* Affiche 9/16 Verticale */}
-                    <div className="relative aspect-[9/16] w-full overflow-hidden bg-stone-900">
-                      <img 
-                        src={series.coverImage} 
-                        alt={series.title}
-                        className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/assets/posters/jesus-esu.png';
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/30 pointer-events-none" />
-                      
-                      {/* Badge format 9/16 & territoire */}
-                      <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                        <span className="px-2.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-bold text-white border border-white/20">
-                          🌍 {series.territories && series.territories.length > 0 ? series.territories[0] : 'International'}
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#A2482B] text-white text-[9px] font-mono font-bold">
-                          9:16
-                        </span>
-                      </div>
-
-                      <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-[#C89B3C] text-white text-[10px] font-bold shadow-xs">
-                        {epCount} épisodes
-                      </div>
-
-                      {/* Titre & Slogan en bas de l'affiche 9/16 */}
-                      <div className="absolute bottom-4 left-4 right-4 text-white">
-                        <h4 className="text-xl font-editorial font-bold tracking-tight text-white drop-shadow-md">
-                          {series.title}
-                        </h4>
-                        <p className="text-xs text-stone-200 line-clamp-2 mt-1 italic">
-                          « {series.subtitle} »
-                        </p>
-
-                        {/* Aperçu des vignettes 9/16 des questions de la série */}
-                        <div className="flex items-center gap-1.5 pt-3 overflow-x-auto scrollbar-none">
-                          {series.questions?.slice(0, 5).map((q, qIdx) => (
-                            <div 
-                              key={qIdx}
-                              title={`${q.number}: ${q.title}`}
-                              className="relative w-8 aspect-[9/16] rounded-md overflow-hidden shrink-0 border border-white/40 bg-stone-800"
-                            >
-                              <img 
-                                src={q.posterUrl || series.coverImage} 
-                                alt={q.title}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Détails et actions */}
-                    <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                      <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed">
-                        {series.description}
-                      </p>
-
-                      {effigieCount > 0 && (
-                        <div className="flex items-center gap-1 text-[11px] text-[#8B6845] font-semibold">
-                          <Star className="w-3.5 h-3.5 text-[#C89B3C] fill-[#C89B3C]" />
-                          <span>{effigieCount} Effigie{effigieCount > 1 ? 's' : ''} désignée{effigieCount > 1 ? 's' : ''}</span>
-                        </div>
-                      )}
-
-                      <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
-                        <button
-                          onClick={() => onNavigate({ type: 'documentary_detail', documentaryId: series.id })}
-                          className="text-[11px] font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-1 cursor-pointer transition-colors"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Voir la fiche</span>
-                        </button>
-
-                        <button
-                          onClick={() => startEditSeries(series)}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                          <span>Gérer 9/16 & Effigies</span>
-                        </button>
-                      </div>
-                    </div>
+            {!editingSeries && (
+              <div className="space-y-6 animate-in fade-in">
+                
+                {/* En-tête du catalogue */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-serif font-bold text-stone-900 flex items-center gap-2">
+                      <Clapperboard className="w-5 h-5 text-[#A2482B]" />
+                      <span>Catalogue des Séries</span>
+                    </h2>
+                    <p className="text-xs text-stone-600 mt-0.5">
+                      Cliquez sur une série pour modifier ses informations, ses affiches ou ses épisodes.
+                    </p>
                   </div>
-                );
-              })}
-            </div>
+
+                  <div className="relative w-full sm:w-64">
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <input
+                      type="text"
+                      placeholder="Rechercher une série..."
+                      value={searchSeries}
+                      onChange={(e) => setSearchSeries(e.target.value)}
+                      className="w-full h-9 pl-9 pr-3 rounded-xl bg-white border border-stone-300 text-xs text-stone-900 placeholder:text-stone-400 outline-hidden focus:border-[#A2482B] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Grille des affiches de séries */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredSeries.map((series) => {
+                    const epCount = series.questions?.length || series.episodeCount || 5;
+                    const effigieCount = series.effigies?.length || 0;
+                    return (
+                      <div 
+                        key={series.id}
+                        className="rounded-3xl bg-white border border-stone-200 hover:border-[#A2482B] shadow-xs hover:shadow-xl overflow-hidden flex flex-col group transition-all"
+                      >
+                        {/* Affiche de la série cliquable */}
+                        <div 
+                          onClick={() => startEditSeries(series)}
+                          className="relative aspect-[9/16] w-full overflow-hidden bg-stone-950 cursor-pointer"
+                        >
+                          <img 
+                            src={series.coverImage} 
+                            alt={series.title}
+                            className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/assets/posters/jesus-esu.png';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/40 pointer-events-none" />
+                          
+                          {/* Badges d'information discrets */}
+                          <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                            <span className="px-2.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-bold text-white border border-white/20">
+                              🌍 {series.territories && series.territories.length > 0 ? series.territories[0] : 'International'}
+                            </span>
+                          </div>
+
+                          <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-[#C89B3C] text-white text-[10px] font-bold shadow-xs">
+                            {epCount} épisodes
+                          </div>
+
+                          {/* Titre & Slogan en bas de l'affiche */}
+                          <div className="absolute bottom-4 left-4 right-4 text-white">
+                            <h4 className="text-xl font-editorial font-bold tracking-tight text-white drop-shadow-md">
+                              {series.title}
+                            </h4>
+                            <p className="text-xs text-stone-200 line-clamp-2 mt-1 italic">
+                              « {series.subtitle} »
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Informations & actions */}
+                        <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                          <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed">
+                            {series.description}
+                          </p>
+
+                          {effigieCount > 0 && (
+                            <div className="flex items-center gap-1 text-[11px] text-[#8B6845] font-semibold">
+                              <Star className="w-3.5 h-3.5 text-[#C89B3C] fill-[#C89B3C]" />
+                              <span>{effigieCount} Effigie{effigieCount > 1 ? 's' : ''} associée{effigieCount > 1 ? 's' : ''}</span>
+                            </div>
+                          )}
+
+                          <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
+                            <button
+                              onClick={() => onNavigate({ type: 'documentary_detail', documentaryId: series.id })}
+                              className="text-[11px] font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-1 cursor-pointer transition-colors"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Fiche publique</span>
+                            </button>
+
+                            <button
+                              onClick={() => startEditSeries(series)}
+                              className="px-4 py-2 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                              <span>Modifier la série</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

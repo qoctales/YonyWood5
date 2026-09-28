@@ -20,13 +20,25 @@ import { SubmitStoryScreen } from './components/SubmitStoryScreen';
 import { RequestVideographerScreen } from './components/RequestVideographerScreen';
 import { ReviewSystemScreen } from './components/ReviewSystemScreen';
 import { EditorialBackOfficeScreen } from './components/EditorialBackOfficeScreen';
+import { AdminDashboard } from './components/AdminDashboard';
 import { NavigationScreen } from './components/NavigationScreen';
+import { LandingScreen } from './components/LandingScreen';
 import { BottomMenu } from './components/BottomMenu';
 import { io } from 'socket.io-client';
 
 export default function App() {
-  // Arrive directly on the Explorer Astrolabe screen
-  const [currentScreen, setCurrentScreen] = useState<ViewScreen>({ type: 'home' });
+  // Arrive sur la page d'accueil d'onboarding YonyWood (ou directement aux Duos si déjà connecté)
+  const [currentScreen, setCurrentScreen] = useState<ViewScreen>(() => {
+    try {
+      const savedUser = localStorage.getItem('yonywood_current_user');
+      if (savedUser) {
+        return { type: 'duo_feed' };
+      }
+    } catch {
+      // fallback
+    }
+    return { type: 'landing' };
+  });
 
   // User preferences & series filter state with localStorage persistence
   const [selectedSeriesFilter, setSelectedSeriesFilter] = useState<string[]>(() => {
@@ -60,10 +72,15 @@ export default function App() {
 
   // Initialize Socket.IO
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000', {
-      auth: { token: localStorage.getItem('yonywood_auth_token') }
+    const socketEndpoint = import.meta.env.VITE_API_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+    const socket = io(socketEndpoint, {
+      path: '/socket.io',
+      auth: { token: localStorage.getItem('yonywood_auth_token') },
+      reconnectionAttempts: 3,
+      timeout: 5000,
     });
     socket.on('connect', () => console.log('Socket.IO connected'));
+    socket.on('connect_error', (err) => console.debug('Socket.IO:', err.message));
     socket.on('message', (msg) => console.log('New message:', msg));
     return () => {
       socket.disconnect();
@@ -80,7 +97,11 @@ export default function App() {
       
       {/* Main Content Area - Direct immersion */}
       <main className="flex-1">
-        {currentScreen.type === 'home' && (
+        {currentScreen.type === 'landing' && (
+          <LandingScreen onNavigate={setCurrentScreen} />
+        )}
+
+        {(currentScreen.type === 'home' || currentScreen.type === 'matrix_view') && (
           <MatrixExplorer onNavigate={setCurrentScreen} />
         )}
 
@@ -88,6 +109,7 @@ export default function App() {
           <DuoFeedScreen 
             onNavigate={setCurrentScreen} 
             initialDocId={currentScreen.selectedDocId} 
+            initialDuoIndex={currentScreen.currentDuoIndex}
             allowedSeriesIds={selectedSeriesFilter}
           />
         )}
@@ -210,6 +232,13 @@ export default function App() {
 
         {currentScreen.type === 'editorial_backoffice' && (
           <EditorialBackOfficeScreen onNavigate={setCurrentScreen} />
+        )}
+
+        {currentScreen.type === 'admin_dashboard' && (
+          <AdminDashboard 
+            onNavigate={setCurrentScreen} 
+            initialTab={currentScreen.tab} 
+          />
         )}
 
         {currentScreen.type === 'site_map' && (
