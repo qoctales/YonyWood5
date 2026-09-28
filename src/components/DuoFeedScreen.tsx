@@ -12,12 +12,14 @@ import {
   Film,
   Layers,
   LayoutGrid,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Flag
 } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
 import { apiService } from '../services/api';
 import { ViewScreen, Duo, Protagonist } from '../types';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
+import { ReportModal } from './ReportModal';
 
 interface DuoFeedScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -47,6 +49,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'duo' | 'deck'>('duo');
   const [deckActiveSide, setDeckActiveSide] = useState<'A' | 'B'>('A');
 
@@ -254,8 +257,17 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
           );
         })()}
 
-        {/* Bouton bascule Vue Duo / Vue Deck - STRICTEMENT SUR LA MÊME LIGNE MÉDIANE HORIZONTALE */}
-        <div className="flex items-center justify-end w-16 sm:w-20">
+        {/* Bouton de signalement discret & Bouton bascule Vue Duo / Vue Deck */}
+        <div className="flex items-center justify-end gap-1.5 w-24 sm:w-28">
+          <button
+            onClick={() => setIsReportModalOpen(true)}
+            className="w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-red-50 text-stone-500 hover:text-red-600 border border-stone-200 hover:border-red-200 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+            title="Signaler ce contenu vidéo"
+            id="btn-report-duo-content"
+          >
+            <Flag className="w-3.5 h-3.5" />
+          </button>
+
           <button
             onClick={() => setViewMode(prev => prev === 'duo' ? 'deck' : 'duo')}
             className="flex items-center gap-1 h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-[11px] sm:text-xs font-semibold shadow-xs transition-all cursor-pointer active:scale-95 group/modetoggle"
@@ -923,6 +935,17 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
           onNavigate({ type: 'protagonist_profile', protagonistId: id });
         }}
       />
+
+      {/* Modal de modération et signalement de vidéo */}
+      {currentDuo && (
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => setIsReportModalOpen(false)}
+          targetType="duo"
+          targetId={currentDuo.id}
+          targetTitle={`${currentDuo.documentaryTitle} (${currentDuo.protagonistA.name} <> ${currentDuo.protagonistB.name})`}
+        />
+      )}
     </div>
   );
 };

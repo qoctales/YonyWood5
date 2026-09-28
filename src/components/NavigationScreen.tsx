@@ -43,7 +43,7 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({ onNavigate }
     {
       id: '03',
       title: 'Les Séries Documentaires',
-      desc: 'Les séries éditoriales : JÉSUS × ÈṢÙ, FINAGNON × QOSQORICO, BLACKS ONE × BEYOND EVE, DIXEAT × FIAT LUXE, INVESTORS × BUILDERS.',
+      desc: 'Les séries éditoriales : ÈṢÙ × JÉSUS, FINAGNON × QOSQORICO, BLACKS ONE × BEYOND EVE, E VIVI × FIÂT LUXE, INVESTORS × BUILDERS.',
       target: { type: 'documentaries' } as ViewScreen,
       icon: Film,
       level: 'Niveau 1 (La Forêt)'

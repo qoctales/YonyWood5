@@ -37,7 +37,7 @@ interface PeerOffer {
 const PRODUCTIONS: ProductionPoster[] = [
   {
     id: 'jesus-legba',
-    title: 'Jésus < > Èṣù',
+    title: 'Èṣù < > Jésus',
     posterImage: '/assets/posters/jesus-esu.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
     sharePrice: 45
@@ -58,7 +58,7 @@ const PRODUCTIONS: ProductionPoster[] = [
   },
   {
     id: 'dixeat-fiat-luxe',
-    title: 'Dixeat < > Fiat Luxe',
+    title: 'E Vivi < > Fiât Luxe',
     posterImage: '/assets/posters/dixeat-fiat-luxe.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharePrice: 65
@@ -78,7 +78,7 @@ const INITIAL_PEER_OFFERS: PeerOffer[] = [
     sellerId: 'koffi-tisserand',
     sellerName: 'Koffi',
     sellerPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    seriesTitle: 'Jésus < > Èṣù',
+    seriesTitle: 'Èṣù < > Jésus',
     posterImage: '/assets/posters/jesus-esu.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
     sharesCount: 3,
@@ -111,7 +111,7 @@ const INITIAL_PEER_OFFERS: PeerOffer[] = [
     sellerId: 'koffi-tisserand',
     sellerName: 'Amina',
     sellerPhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    seriesTitle: 'Dixeat < > Fiat Luxe',
+    seriesTitle: 'E Vivi < > Fiât Luxe',
     posterImage: '/assets/posters/dixeat-fiat-luxe.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharesCount: 4,

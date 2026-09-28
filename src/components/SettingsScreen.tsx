@@ -15,7 +15,8 @@ import {
   Tv,
   MessageSquare,
   Users,
-  BellRing
+  BellRing,
+  Crown
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { DOCUMENTARIES } from '../data/mockData';
@@ -267,6 +268,18 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
             }`}
           >
             Compte & Sécurité
+          </button>
+
+          {/* Bouton Dashboard Admin */}
+          <button
+            type="button"
+            onClick={() => onNavigate({ type: 'admin_dashboard' })}
+            className="px-2.5 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-stone-950 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 border border-amber-300 shrink-0"
+            title="Accéder au Tableau de Bord Administrateur"
+            id="btn-settings-admin-crown"
+          >
+            <Crown className="w-3.5 h-3.5 fill-stone-950 text-stone-950" />
+            <span className="font-extrabold uppercase text-[10.5px] tracking-wider">Admin</span>
           </button>
 
           {/* Bouton de déconnexion : fond terre cuite et icône blanche au survol */}

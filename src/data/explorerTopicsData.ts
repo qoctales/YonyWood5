@@ -147,7 +147,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
     {
       id: 'jesus-legba',
       category: 'series',
-      title: 'Jésus < > Èṣù',
+      title: 'Èṣù < > Jésus',
       subtitle: 'Deux traditions. Une même question de foi.',
       question: 'Qu’est-ce qui dans votre foi la plus intime vous relie à ce qui vous dépasse et vous rapproche des autres ?',
       photoUrl: '/assets/posters/jesus-esu.png',
@@ -174,7 +174,7 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
     {
       id: 'dixeat-fiat-luxe',
       category: 'series',
-      title: 'Dixeat < > Fiat Luxe',
+      title: 'E Vivi < > Fiât Luxe',
       subtitle: 'Quand la matière brute devient or, goût et lumière.',
       question: 'À quel instant précis avez-vous compris que transformer la matière brute était un acte de pure alchimie spirituelle ?',
       photoUrl: '/assets/posters/dixeat-fiat-luxe.png',

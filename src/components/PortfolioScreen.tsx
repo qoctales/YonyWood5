@@ -73,7 +73,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
     {
       id: 'prod-2',
       seriesId: 'jesus-legba',
-      seriesTitle: 'Jésus < > Èṣù',
+      seriesTitle: 'Èṣù < > Jésus',
       sharesCount: 5,
       sharesOnSale: 0,
       startPrice: 40,
@@ -111,7 +111,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
     {
       id: 'prod-4',
       seriesId: 'dixeat-fiat-luxe',
-      seriesTitle: 'Dixeat < > Fiat Luxe',
+      seriesTitle: 'E Vivi < > Fiât Luxe',
       sharesCount: 6,
       sharesOnSale: 2,
       startPrice: 45,
@@ -170,7 +170,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
     {
       id: 'tx-2',
       seriesId: 'jesus-legba',
-      seriesTitle: 'Jésus < > Èṣù',
+      seriesTitle: 'Èṣù < > Jésus',
       sharesSold: 1,
       boughtPriceUnit: 40,
       soldPriceUnit: 48,

@@ -4,13 +4,30 @@ export interface QuestionTranslation {
   prompt: string;
 }
 
+export interface SeriesEffigie {
+  id: string;
+  name: string;
+  role?: string;
+  photoUrl?: string;
+  videoUrl?: string;
+  protagonistId?: string;
+  status?: 'EFFIGIE_PRINCIPALE' | 'EFFIGIE_SERIE' | 'PASSEUR';
+}
+
 export interface QuestionItem {
   number: string;
   title: string;
   prompt: string;
-  audioDuration?: string;
+  posterUrl?: string;
+  videoUrl?: string;
   videoAvatarUrl?: string;
+  audioDuration?: string;
   audioVoiceName?: string;
+  effigies?: SeriesEffigie[];
+  effigieName?: string;
+  effigiePhoto?: string;
+  effigieVideoUrl?: string;
+  effigieProtagonistId?: string;
   translations?: QuestionTranslation[];
 }
 
@@ -172,6 +189,7 @@ export interface Documentary {
   episodeCount: number;
   protagonistsCount: number;
   territories: string[];
+  effigies?: SeriesEffigie[];
 }
 
 export interface Duo {
@@ -350,6 +368,58 @@ export interface ExplorerStoryItem {
   universeTag: string;
 }
 
+export type UserRole = 'ADMIN' | 'CREATOR' | 'USER';
+
+export interface UserAccount {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  avatarUrl?: string;
+  bio?: string;
+  territory?: string;
+  country?: string;
+  sharesCount?: number;
+  createdAt: string;
+}
+
+export interface ReportItem {
+  id: string;
+  reason: 'inappropriate' | 'copyright' | 'violence' | 'misinformation' | 'other';
+  reasonLabel: string;
+  details?: string;
+  targetType: 'duo' | 'series' | 'episode';
+  targetId: string;
+  targetTitle: string;
+  reportedBy: string;
+  createdAt: string;
+  status: 'PENDING' | 'RESOLVED' | 'DISMISSED';
+}
+
+export interface CoproductionEarning {
+  id: string;
+  coproducerName: string;
+  coproducerEmail: string;
+  seriesId: string;
+  seriesTitle: string;
+  initialInvestment: number;
+  sharesOwned: number;
+  totalViews: number;
+  audienceMilestone: string;
+  dividendEarned: number;
+  payoutStatus: 'PAID' | 'PENDING' | 'PROCESSING';
+  payoutDate?: string;
+}
+
+export interface PlatformFinancials {
+  platformFeePercentage: number;
+  totalFundsRaised: number;
+  totalPlatformRevenue: number;
+  totalDividendsPaid: number;
+  activeCoproducersCount: number;
+  earnings: CoproductionEarning[];
+}
+
 export type ViewScreen = 
   | { type: 'home' }
   | { type: 'duo_feed'; selectedDocId?: string; currentDuoIndex?: number }
@@ -370,4 +440,5 @@ export type ViewScreen =
   | { type: 'review_system' }
   | { type: 'forest_reviews' }
   | { type: 'site_map' }
-  | { type: 'editorial_backoffice' };
+  | { type: 'editorial_backoffice' }
+  | { type: 'admin_dashboard'; tab?: 'series' | 'moderation' | 'users' | 'finances' };

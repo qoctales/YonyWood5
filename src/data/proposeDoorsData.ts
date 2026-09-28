@@ -53,7 +53,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     subjects: [
       {
         id: 'jesus-legba',
-        title: 'Jésus < > Èṣù',
+        title: 'Èṣù < > Jésus',
         subtitle: 'Deux traditions spirituelles. Une même question de foi face aux épreuves.',
         synopsis: 'Mise en miroir des deux spiritualités chrétienne et vodun face aux tourments du destin. Deux protagonistes sur deux continents explorent la transcendance, la mort, le pardon et la rédemption au-delà des dogmes.',
         question: 'Comment votre foi ou votre rapport au sacré vous aide-t-il à traverser le deuil ou l’épreuve ?',
@@ -83,7 +83,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
       },
       {
         id: 'dixeat-fiat-luxe',
-        title: 'Dixeat < > Fiat Luxe',
+        title: 'E Vivi < > Fiât Luxe',
         subtitle: 'Artisans du goût et haute scénographie d’exception au service du détail.',
         synopsis: 'L’artisanat d’art et la haute gastronomie vus de l’intérieur. La rencontre de deux orfèvres du détail qui consacrent leur existence à la patience de la matière et à l’hospitalité sublime.',
         question: 'Quelle est la noblesse et le sens profond caché dans le geste de votre métier ?',

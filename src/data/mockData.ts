@@ -10,14 +10,14 @@ import {
   AffiliationPerson
 } from '../types';
 
-export const DOCUMENTARIES: Documentary[] = [
+const INITIAL_DOCUMENTARIES: Documentary[] = [
   {
     id: 'jesus-legba',
     slug: 'jesus-legba',
-    title: 'Jésus < > Èṣù',
+    title: 'Èṣù < > Jésus',
     subtitle: 'Deux traditions. Une même question de foi.',
     centralQuestion: 'La foi',
-    shortSynopsis: 'Quand la foi chrétienne et la tradition ancestrale dialoguent d’égal à égal au Bénin face aux grands mystères humains : l’épreuve, le pardon et la réconciliation.',
+    shortSynopsis: 'Quand la tradition ancestrale et la foi chrétienne dialoguent d’égal à égal au Bénin face aux grands mystères humains : l’épreuve, le pardon et la réconciliation.',
     description: 'Au Bénin, berceau du culte des ancêtres et terre de ferveur biblique, deux croyances cohabitent sous le même toit sans jamais s’affronter frontalement. Cette série met en miroir des dévots d’Èṣù — gardien des carrefours, messager de l\'invisible et protecteur des seuils — avec des pasteurs, religieuses et fidèles chrétiens tournés vers Jésus. Face aux grands mystères humains (l\'épreuve de la maladie, le pardon, le deuil, l\'abandon à une puissance supérieure), leurs rituels, louanges et oraisons silencieuses dialoguent d\'égal à égal, révélant la quête universelle d\'une foi incarnée.',
     coverImage: '/assets/posters/jesus-esu.png',
     posterUrl: '/assets/posters/jesus-esu.png',
@@ -25,16 +25,34 @@ export const DOCUMENTARIES: Documentary[] = [
     teaserDuration: '1:15',
     universes: [
       {
-        name: 'Jésus',
-        tagline: 'L’espérance chrétienne et le don de soi',
-        description: 'Parcours de foi ecclésiale, d’oraison silencieuse, d’accueil du prochain et d’engagement au cœur des communautés contemporaines.',
-        territory: 'Bénin (Littoral) & Diaspora'
-      },
-      {
         name: 'Èṣù',
         tagline: 'Le gardien des carrefours et des seuils sacrés',
         description: 'Spiritualité ancestrale où Èṣù ouvre les voies, protège les demeures et relie le monde visible aux forces cosmiques.',
         territory: 'Bénin (Allada, Abomey, Ouidah)'
+      },
+      {
+        name: 'Jésus',
+        tagline: 'L’espérance chrétienne et le don de soi',
+        description: 'Parcours de foi ecclésiale, d’oraison silencieuse, d’accueil du prochain et d’engagement au cœur des communautés contemporaines.',
+        territory: 'Bénin (Littoral) & Diaspora'
+      }
+    ],
+    effigies: [
+      {
+        id: 'eff-1',
+        name: 'Dah Zounon',
+        role: 'Gardien du sanctuaire d’Èṣù (Ouidah)',
+        photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        status: 'EFFIGIE_PRINCIPALE'
+      },
+      {
+        id: 'eff-2',
+        name: 'Père Matthieu Dossou',
+        role: 'Prêtre et théologien du dialogue des mémoires',
+        photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        status: 'EFFIGIE_SERIE'
       }
     ],
     questions: [
@@ -42,6 +60,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '01',
         title: 'La Rencontre',
         prompt: 'Racontez-nous un moment de votre vie où vous avez réellement rencontré votre foi. Que s\'est-il passé ?',
+        posterUrl: 'https://images.unsplash.com/photo-1548625361-195b05a76bb8?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:42',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Dah Zounon & Père Matthieu',
@@ -58,6 +77,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '02',
         title: 'L\'Épreuve',
         prompt: 'Racontez-nous une épreuve ou un moment difficile de votre vie où votre foi a été mise à l\'épreuve. Qu\'avez-vous vécu ?',
+        posterUrl: 'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:38',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Sœur Blandine Dossou',
@@ -73,6 +93,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '03',
         title: 'La Transmission',
         prompt: 'Si vous pouviez transmettre une seule chose de votre foi à quelqu\'un qui cherche aujourd\'hui son chemin, quelle histoire de votre vie lui raconteriez-vous pour lui montrer ce qu\'elle représente pour vous ?',
+        posterUrl: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:45',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Père Matthieu',
@@ -87,6 +108,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '04',
         title: 'La Personne qui vous a Changé',
         prompt: 'Racontez-nous l\'histoire d\'une personne que votre foi a mise sur votre chemin et qui a profondément changé votre manière de voir la vie. Qu\'avez-vous appris d\'elle ?',
+        posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:49',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Dah Zounon',
@@ -99,6 +121,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '05',
         title: 'L\'Héritage',
         prompt: 'Imaginez que dans cent ans, quelqu\'un découvre votre histoire sans jamais vous avoir rencontré. Quelle histoire de votre vie voudriez-vous qu\'il connaisse pour comprendre ce que votre foi vous a appris ?',
+        posterUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:52',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Voix de la Communauté',
@@ -308,24 +331,24 @@ export const DOCUMENTARIES: Documentary[] = [
   {
     id: 'dixeat-fiat-luxe',
     slug: 'dixeat-fiat-luxe',
-    title: 'Dixeat < > Fiat Luxe',
+    title: 'E Vivi < > Fiât Luxe',
     subtitle: 'Ceux qui nourrissent les autres < > ceux qui créent des expériences d\'exception.',
     centralQuestion: 'L\'expérience',
     shortSynopsis: 'Des marmites populaires de Dantokpa aux tables d’exception à Paris et Milan, des artisans de bouche et scénographes révèlent l’art du don, du détail et du souvenir impérissable.',
-    description: 'Dans la fumée des marmites de Dantokpa à Cotonou, Dixeat incarne l\'artisanat nourricier populaire : des femmes et cuisiniers qui se lèvent à 4h du matin pour offrir réconfort et dignité à des centaines de travailleurs avec une sauce gombo ou un igname pilé. En écho, Fiat Luxe explore la haute précision des arts de la table, de la scénographie olfactive et de l\'hospitalité d\'exception à Paris, Marrakech et Milan. Tout les sépare en apparence, sauf l\'essentiel : l\'obsession du détail, la générosité du don et la grâce de transformer un simple repas en un souvenir inoubliable.',
+    description: 'Dans la fumée des marmites de Dantokpa à Cotonou, E Vivi incarne l\'artisanat nourricier populaire : des femmes et cuisiniers qui se lèvent à 4h du matin pour offrir réconfort et dignité à des centaines de travailleurs avec une sauce gombo ou un igname pilé. En écho, Fiât Luxe explore la haute précision des arts de la table, de la scénographie olfactive et de l\'hospitalité d\'exception à Paris, Marrakech et Milan. Tout les sépare en apparence, sauf l\'essentiel : l\'obsession du détail, la générosité du don et la grâce de transformer un simple repas en un souvenir inoubliable.',
     coverImage: '/assets/posters/dixeat-fiat-luxe.png',
     posterUrl: '/assets/posters/dixeat-fiat-luxe.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     teaserDuration: '1:20',
     universes: [
       {
-        name: 'Dixeat',
+        name: 'E Vivi',
         tagline: 'L’artisanat nourricier populaire et la générosité brute',
         description: 'La chaleur des marmites de rue, l’igname pilée au lever du jour, le partage sans fard où chaque repas est un pacte de solidarité.',
         territory: 'Cotonou, Dantokpa & marchés ouest-africains'
       },
       {
-        name: 'Fiat Luxe',
+        name: 'Fiât Luxe',
         tagline: 'La haute scénographie du détail et le temps suspendu',
         description: 'L’orfèvrerie des arts de la table, la scénographie olfactive, la précision du geste qui transforme l’éphémère en mémoire inoubliable.',
         territory: 'Paris, Marrakech, Milan'
@@ -375,7 +398,7 @@ export const DOCUMENTARIES: Documentary[] = [
         prompt: 'Racontez-nous une fois où vous avez voulu surprendre quelqu\'un et où les choses ne se sont pas passées exactement comme prévu. Qu\'avez-vous découvert à ce moment-là ?',
         audioDuration: '0:46',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        audioVoiceName: 'Scénographe Fiat Luxe',
+        audioVoiceName: 'Scénographe Fiât Luxe',
         translations: [
           { lang: 'fr', label: 'Français', prompt: 'Racontez-nous une fois où vous avez voulu surprendre quelqu\'un et où les choses ne se sont pas passées exactement comme prévu.' },
           { lang: 'en', label: 'English', prompt: 'Tell us about a time you wanted to surprise someone and things did not go as planned.' }
@@ -424,11 +447,30 @@ export const DOCUMENTARIES: Documentary[] = [
         territory: 'Cotonou, Kigali, Nairobi, Abidjan'
       }
     ],
+    effigies: [
+      {
+        id: 'eff-inv-1',
+        name: 'Fatou Diallo',
+        role: 'Investisseuse à impact & Mécène (Paris & Dakar)',
+        photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        status: 'EFFIGIE_PRINCIPALE'
+      },
+      {
+        id: 'eff-inv-2',
+        name: 'Kwame Mensah',
+        role: 'Ingénieur & Bâtisseur d’ouvrages (Cotonou & Kigali)',
+        photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        status: 'EFFIGIE_SERIE'
+      }
+    ],
     questions: [
       {
         number: '01',
         title: 'Le Pari Fondateur',
         prompt: 'Racontez-nous le premier projet ou pari décisif où vous avez engagé vos ressources ou vos mains sans certitude de réussir. Que s\'est-il passé ?',
+        posterUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:42',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Fatou Diallo & Kwame Mensah',
@@ -441,6 +483,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '02',
         title: 'Le Risque & La Tempête',
         prompt: 'Racontez-nous une situation critique où tout semblait menacer de s’effondrer. Comment avez-vous tenu le cap ?',
+        posterUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:45',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Kwame Mensah',
@@ -453,6 +496,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '03',
         title: 'La Rencontre Décisive',
         prompt: 'Racontez-nous une rencontre entre financeur et bâtisseur qui a changé votre regard sur la valeur de ce que vous faites.',
+        posterUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:40',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Fatou Diallo',
@@ -465,6 +509,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '04',
         title: 'La Réalité du Terrain',
         prompt: 'Que vous a appris la poussière du chantier ou la confrontation à la matière que les chiffres ne disaient pas ?',
+        posterUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:48',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Bâtisseurs du réel',
@@ -477,6 +522,7 @@ export const DOCUMENTARIES: Documentary[] = [
         number: '05',
         title: 'L\'Héritage Durable',
         prompt: 'Dans cinquante ans, quelle empreinte tangible souhaitez-vous que votre alliance ait laissée dans le tissu humain et économique ?',
+        posterUrl: 'https://images.unsplash.com/photo-1519999482648-25049ddd37b1?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:50',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         audioVoiceName: 'Voix de la Communauté',
@@ -491,6 +537,87 @@ export const DOCUMENTARIES: Documentary[] = [
     territories: ['Dakar', 'Cotonou', 'Abidjan', 'Paris', 'Kigali']
   }
 ];
+
+export const getCustomDocumentaries = (): Documentary[] => {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('yonywood_custom_series');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          let migrated = false;
+          const updated = parsed.map((doc: Documentary) => {
+            if (doc.id === 'jesus-legba' && (doc.title === 'Jésus < > Èṣù' || doc.title !== 'Èṣù < > Jésus')) {
+              migrated = true;
+              return {
+                ...doc,
+                title: 'Èṣù < > Jésus',
+                universes: [
+                  {
+                    name: 'Èṣù',
+                    tagline: 'Le gardien des carrefours et des seuils sacrés',
+                    description: 'Spiritualité ancestrale où Èṣù ouvre les voies, protège les demeures et relie le monde visible aux forces cosmiques.',
+                    territory: 'Bénin (Allada, Abomey, Ouidah)'
+                  },
+                  {
+                    name: 'Jésus',
+                    tagline: 'L’espérance chrétienne et le don de soi',
+                    description: 'Parcours de foi ecclésiale, d’oraison silencieuse, d’accueil du prochain et d’engagement au cœur des communautés contemporaines.',
+                    territory: 'Bénin (Littoral) & Diaspora'
+                  }
+                ] as [Documentary['universes'][0], Documentary['universes'][1]]
+              };
+            }
+            if (doc.id === 'dixeat-fiat-luxe' && (doc.title.includes('Dixeat') || doc.title !== 'E Vivi < > Fiât Luxe')) {
+              migrated = true;
+              return {
+                ...doc,
+                title: 'E Vivi < > Fiât Luxe',
+                description: doc.description ? doc.description.replace(/Dixeat/g, 'E Vivi').replace(/Fiat Luxe/g, 'Fiât Luxe') : doc.description,
+                universes: [
+                  {
+                    name: 'E Vivi',
+                    tagline: 'L’artisanat nourricier populaire et la générosité brute',
+                    description: 'La chaleur des marmites de rue, l’igname pilée au lever du jour, le partage sans fard où chaque repas est un pacte de solidarité.',
+                    territory: 'Cotonou, Dantokpa & marchés ouest-africains'
+                  },
+                  {
+                    name: 'Fiât Luxe',
+                    tagline: 'La haute scénographie du détail et le temps suspendu',
+                    description: 'L’orfèvrerie des arts de la table, la scénographie olfactive, la précision du geste qui transforme l’éphémère en mémoire inoubliable.',
+                    territory: 'Paris, Marrakech, Milan'
+                  }
+                ] as [Documentary['universes'][0], Documentary['universes'][1]]
+              };
+            }
+            return doc;
+          });
+          if (migrated) {
+            localStorage.setItem('yonywood_custom_series', JSON.stringify(updated));
+          }
+          return updated;
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+  return INITIAL_DOCUMENTARIES;
+};
+
+export const DOCUMENTARIES: Documentary[] = getCustomDocumentaries();
+
+export const saveCustomDocumentaries = (newDocs: Documentary[]) => {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('yonywood_custom_series', JSON.stringify(newDocs));
+      DOCUMENTARIES.splice(0, DOCUMENTARIES.length, ...newDocs);
+      window.dispatchEvent(new CustomEvent('yonywood_series_updated', { detail: newDocs }));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+};
 
 export const PROTAGONISTS: Protagonist[] = [
   {
@@ -1273,7 +1400,7 @@ export const PROTAGONISTS: Protagonist[] = [
     bio: 'Au cœur du grand marché de Dantokpa, Koffi cuisine depuis l’aube sur des réchauds à braises. Il sublime l’igname pilée, les sauces gombo aux écrevisses fumées et les bouillons mijotés 14 heures pour nourrir plus de trois cents personnes par jour.',
     photoUrl: '/assets/protagonists/chef-koffi.jpg',
     documentaryId: 'dixeat-fiat-luxe',
-    universeTag: 'Dixeat',
+    universeTag: 'E Vivi',
     quote: '« La cuisine n’a pas besoin d’étoiles : elle a besoin de bras qui n’ont pas peur de la fumée et d’un cœur qui veut rassasier l’âme. »',
     tree: {
       transmissions: [
@@ -1356,7 +1483,7 @@ export const PROTAGONISTS: Protagonist[] = [
     bio: 'Passée par les palaces parisiens et les riads d’exception de Marrakech, Hélène conçoit l’hospitalité comme une dramaturgie invisible. Pour elle, la lumière d’une bougie, l’inclinaison d’un verre ou le silence d’un accueil constituent le véritable luxe.',
     photoUrl: '/assets/protagonists/helene-saint-amand.jpg',
     documentaryId: 'dixeat-fiat-luxe',
-    universeTag: 'Fiat Luxe',
+    universeTag: 'Fiât Luxe',
     quote: '« Le luxe n’est pas ce qui brille : c’est l’attention totale portée à l’instant où quelqu’un pose enfin son fardeau pour se laisser nourrir. »',
     tree: {
       transmissions: [
@@ -1652,18 +1779,18 @@ export const DUOS: Duo[] = [
     id: 'duo-jesus-legba-01',
     slug: 'duo-jesus-legba-01',
     documentaryId: 'jesus-legba',
-    documentaryTitle: 'Jésus < > Èṣù',
+    documentaryTitle: 'Èṣù < > Jésus',
     episodeNumber: 'ÉPISODE 01',
-    protagonistA: PROTAGONISTS.find(p => p.id === 'pere-matthieu') || PROTAGONISTS[3],
-    protagonistB: PROTAGONISTS.find(p => p.id === 'dah-zounon') || PROTAGONISTS[2],
+    protagonistA: PROTAGONISTS.find(p => p.id === 'dah-zounon') || PROTAGONISTS[2],
+    protagonistB: PROTAGONISTS.find(p => p.id === 'pere-matthieu') || PROTAGONISTS[3],
     questionNumber: '01',
     questionTitle: 'La Rencontre',
     centralQuestion: 'Racontez-nous un moment de votre vie où vous avez réellement rencontré votre foi. Que s\'est-il passé ?',
-    quoteA: '« Je suis entré dans la nef déserte de Ouidah pour fuir la brûlure du soleil. Ce n’est pas un miracle qui m’a retenu : c’était la certitude d’être attendu. »',
-    quoteB: '« Legba ne m’a pas parlé dans un coup de tonnerre. C’était la chaleur d’une poignée de terre d’Allada, un jour où je croyais que le monde était mort. »',
+    quoteA: '« Legba ne m’a pas parlé dans un coup de tonnerre. C’était la chaleur d’une poignée de terre d’Allada, un jour où je croyais que le monde était mort. »',
+    quoteB: '« Je suis entré dans la nef déserte de Ouidah pour fuir la brûlure du soleil. Ce n’est pas un miracle qui m’a retenu : c’était la certitude d’être attendu. »',
     coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1600&q=80',
-    storyA: (PROTAGONISTS.find(p => p.id === 'pere-matthieu') || PROTAGONISTS[3]).stories[0],
-    storyB: (PROTAGONISTS.find(p => p.id === 'dah-zounon') || PROTAGONISTS[2]).stories[0],
+    storyA: (PROTAGONISTS.find(p => p.id === 'dah-zounon') || PROTAGONISTS[2]).stories[0],
+    storyB: (PROTAGONISTS.find(p => p.id === 'pere-matthieu') || PROTAGONISTS[3]).stories[0],
     editorialReflection: 'Deux traditions que l’histoire a parfois opposées se découvrent ici une racine commune : l’humilité de l’homme devant ce qui le dépasse et l’impérieuse nécessité de ne pas traverser l’obscurité seul.'
   },
   {
@@ -1706,7 +1833,7 @@ export const DUOS: Duo[] = [
     id: 'duo-dixeat-fiat-luxe-01',
     slug: 'duo-dixeat-fiat-luxe-01',
     documentaryId: 'dixeat-fiat-luxe',
-    documentaryTitle: 'Dixeat < > Fiat Luxe',
+    documentaryTitle: 'E Vivi < > Fiât Luxe',
     episodeNumber: 'ÉPISODE 01',
     protagonistA: PROTAGONISTS.find(p => p.id === 'chef-koffi') || PROTAGONISTS[0],
     protagonistB: PROTAGONISTS.find(p => p.id === 'helene-saint-amand') || PROTAGONISTS[1],
@@ -1951,7 +2078,7 @@ export const BACKOFFICE_APPLICATIONS: BackOfficeApplication[] = [
     candidatePhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     territory: 'Bénin (Porto-Novo)',
     documentaryId: 'jesus-legba',
-    documentaryTitle: 'JÉSUS × ÈṢÙ',
+    documentaryTitle: 'ÈṢÙ × JÉSUS',
     universeGroup: 'Èṣù',
     status: 'CONTROLE_TECHNIQUE',
     submittedDate: '13 Septembre 2026',
@@ -1979,8 +2106,8 @@ export const BACKOFFICE_APPLICATIONS: BackOfficeApplication[] = [
     candidatePhoto: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80',
     territory: 'France (Paris)',
     documentaryId: 'dixeat-fiat-luxe',
-    documentaryTitle: 'DIXEAT × FIAT LUXE',
-    universeGroup: 'Fiat Luxe',
+    documentaryTitle: 'E VIVI × FIÂT LUXE',
+    universeGroup: 'Fiât Luxe',
     status: 'REVISIONS',
     submittedDate: '04 Septembre 2026',
     assignedReviewer: 'Équipe Son/Image',
@@ -1993,7 +2120,7 @@ export const BACKOFFICE_APPLICATIONS: BackOfficeApplication[] = [
     candidatePhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     territory: 'Bénin (Abomey)',
     documentaryId: 'jesus-legba',
-    documentaryTitle: 'JÉSUS × ÈṢÙ',
+    documentaryTitle: 'ÈṢÙ × JÉSUS',
     universeGroup: 'Jésus',
     status: 'APPROUVEES',
     submittedDate: '28 Août 2026',
@@ -2006,7 +2133,7 @@ export const BACKOFFICE_APPLICATIONS: BackOfficeApplication[] = [
 export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
   {
     seriesId: 'jesus-legba',
-    seriesTitle: 'Jésus < > Èṣù',
+    seriesTitle: 'Èṣù < > Jésus',
     subtitle: 'Deux traditions. Une même question de foi.',
     description: 'Comment la rencontre de deux géants de la spiritualité béninoise a ouvert une chaîne vivante d\'initiations, tissant des liens inattendus entre couvents vodoun et monastères chrétiens.',
     centralQuestion: 'La foi',
@@ -2540,7 +2667,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
   },
   {
     seriesId: 'dixeat-fiat-luxe',
-    seriesTitle: 'Dixeat < > Fiat Luxe',
+    seriesTitle: 'E Vivi < > Fiât Luxe',
     subtitle: 'Ceux qui nourrissent les autres < > ceux qui créent des expériences d\'exception.',
     description: 'Le pont inattendu entre les géantes du feu de bois à Cotonou et les orfèvres des réceptions étoilées à Paris et Marrakech : comment chacun s\'est passé le flambeau de la délicatesse.',
     centralQuestion: 'L\'expérience',
@@ -2555,11 +2682,11 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         territory: 'Cotonou',
         country: 'Bénin',
         flag: '🇧🇯',
-        universeTag: 'Dixeat',
+        universeTag: 'E Vivi',
         photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
         isPioneer: true,
         badge: 'Première effigie',
-        invitationStory: 'Première effigie de Dixeat. Ils préparent 400 repas chaque jour dès l\'aurore à Dantokpa avec une dignité royale et le respect absolu de chaque convive.',
+        invitationStory: 'Première effigie de E Vivi. Ils préparent 400 repas chaque jour dès l\'aurore à Dantokpa avec une dignité royale et le respect absolu de chaque convive.',
         duoPartnerName: 'Hélène Saint-Amand',
         duoPartnerPhoto: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
         duoId: 'duo-dixeat-fiat-luxe-01',
@@ -2574,7 +2701,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             territory: 'Bohicon',
             country: 'Bénin',
             flag: '🇧🇯',
-            universeTag: 'Dixeat',
+            universeTag: 'E Vivi',
             photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
             badge: 'Invité(e)',
             invitedById: 'chef-koffi',
@@ -2593,7 +2720,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
                 territory: 'Dassa-Zoumè',
                 country: 'Bénin',
                 flag: '🇧🇯',
-                universeTag: 'Dixeat',
+                universeTag: 'E Vivi',
                 photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
                 badge: 'Invité(e)',
                 invitedById: 'roland-huile',
@@ -2616,11 +2743,11 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         territory: 'Paris / Marrakech',
         country: 'France & Maroc',
         flag: '🇫🇷',
-        universeTag: 'Fiat Luxe',
+        universeTag: 'Fiât Luxe',
         photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
         isPioneer: true,
         badge: 'Première effigie',
-        invitationStory: 'Première effigie de Fiat Luxe. Crée des dîners pour 12 convives où chaque assiette, odeur et bougie est pensée comme une partition théâtrale pour susciter l’émotion pure.',
+        invitationStory: 'Première effigie de Fiât Luxe. Crée des dîners pour 12 convives où chaque assiette, odeur et bougie est pensée comme une partition théâtrale pour susciter l’émotion pure.',
         duoPartnerName: 'Chef Koffi',
         duoPartnerPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
         duoId: 'duo-dixeat-fiat-luxe-01',
@@ -2635,7 +2762,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             territory: 'Paris',
             country: 'France',
             flag: '🇫🇷',
-            universeTag: 'Fiat Luxe',
+            universeTag: 'Fiât Luxe',
             photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
             badge: 'Invité(e)',
             invitedById: 'helene-saint-amand',
@@ -2654,7 +2781,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
                 territory: 'Marrakech',
                 country: 'Maroc',
                 flag: '🇲🇦',
-                universeTag: 'Fiat Luxe',
+                universeTag: 'Fiât Luxe',
                 photoUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80',
                 badge: 'Invité(e)',
                 invitedById: 'marc-antoine-sommelier',
