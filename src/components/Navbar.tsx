@@ -27,15 +27,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentScreen, onNavigate }) => 
         {/* Logo */}
         <div 
           onClick={() => { onNavigate({ type: 'home' }); setMobileMenuOpen(false); }}
-          className="flex items-center gap-2.5 cursor-pointer group select-none"
+          className="flex items-center cursor-pointer group select-none py-1"
           id="nav-logo"
         >
-          <div className="w-8 h-8 rounded-full bg-[#C89B3C]/15 border border-[#C89B3C]/35 flex items-center justify-center text-[#C89B3C] group-hover:scale-105 group-hover:border-[#C89B3C] transition-all shadow-xs">
-            <YonywoodLogoIcon className="w-4 h-4 stroke-[2.2]" />
-          </div>
-          <span className="font-editorial text-lg font-bold tracking-tight text-[#1C1917]">
-            YONYWOOD
-          </span>
+          <img 
+            src="/logo%20YonyWood.png?v=4" 
+            alt="YonyWood" 
+            className="h-7 sm:h-8 w-auto object-contain mix-blend-multiply select-none group-hover:opacity-90 transition-opacity"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = '/logo-yonywood-clean.png?v=4';
+            }}
+          />
         </div>
 
         {/* Essential Navigation Links */}
