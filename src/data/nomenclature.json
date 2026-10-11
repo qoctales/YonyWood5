@@ -1,0 +1,169 @@
+{
+  "version": "1.0",
+  "platform": "YonyWood",
+  "note": "7 portes, 16 entrées chacune. Mémoires renommé en Sagesses.",
+  "doors": [
+    {
+      "id": "personnalites",
+      "label": "Personnalités",
+      "description": "16 figures noires. Des témoins viennent raconter ce que cette figure a changé dans leur vie ou leur art.",
+      "entries": [
+        { "id": "mandela", "label": "Nelson Mandela", "origin": "Afrique du Sud", "group": "afrique", "angle": "Le pardon et la dignité" },
+        { "id": "sankara", "label": "Thomas Sankara", "origin": "Burkina Faso", "group": "afrique", "angle": "L'intégrité, vivre de ce qu'on produit" },
+        { "id": "sagbohan", "label": "Danialou Sagbohan", "origin": "Bénin", "group": "afrique", "angle": "Les rythmes vodoun et la langue fon" },
+        { "id": "kidjo", "label": "Angélique Kidjo", "origin": "Bénin", "group": "afrique", "angle": "La voix béninoise qui porte le monde" },
+        { "id": "hampate-ba", "label": "Amadou Hampâté Bâ", "origin": "Mali", "group": "afrique", "angle": "La parole des anciens" },
+        { "id": "fela-kuti", "label": "Fela Kuti", "origin": "Nigeria", "group": "afrique", "angle": "La musique comme arme de libération" },
+        { "id": "makeba", "label": "Miriam Makeba", "origin": "Afrique du Sud", "group": "afrique", "angle": "Chanter son peuple même en exil" },
+        { "id": "maathai", "label": "Wangari Maathai", "origin": "Kenya", "group": "afrique", "angle": "La révolution par l'arbre" },
+        { "id": "marley", "label": "Bob Marley", "origin": "Jamaïque", "group": "diaspora", "angle": "La foi et l'unité" },
+        { "id": "ali", "label": "Muhammad Ali", "origin": "États-Unis", "group": "diaspora", "angle": "Le courage et la fierté" },
+        { "id": "jackson", "label": "Michael Jackson", "origin": "États-Unis", "group": "diaspora", "angle": "Le dépassement par le travail et le mouvement" },
+        { "id": "cesaire", "label": "Aimé Césaire", "origin": "Martinique", "group": "diaspora", "angle": "La fierté originelle et le verbe qui redresse" },
+        { "id": "glissant", "label": "Édouard Glissant", "origin": "Martinique", "group": "diaspora", "angle": "Le Tout-Monde et la relation" },
+        { "id": "garvey", "label": "Marcus Garvey", "origin": "Jamaïque", "group": "diaspora", "angle": "L'unité et la fierté des peuples noirs" },
+        { "id": "tubman", "label": "Harriet Tubman", "origin": "États-Unis", "group": "diaspora", "angle": "Le courage de libérer les siens" },
+        { "id": "angelou", "label": "Maya Angelou", "origin": "États-Unis", "group": "diaspora", "angle": "La parole qui relève" }
+      ],
+      "reserve_vague_2": ["Nina Simone", "Kwame Nkrumah", "Patrice Lumumba", "Frantz Fanon", "Cheikh Anta Diop", "Cesária Évora", "Youssou N'Dour", "Pelé", "Martin Luther King", "Miles Davis"]
+    },
+    {
+      "id": "sagesses",
+      "label": "Sagesses",
+      "description": "16 thématiques de vie, universelles. Chaque témoin répond à une question face caméra.",
+      "entries": [
+        { "id": "ego", "label": "Ego", "family": "se-vaincre", "question": "Quand avez-vous dû vous effacer pour grandir ?" },
+        { "id": "courage", "label": "Courage", "family": "se-vaincre", "question": "Quelle peur avez-vous traversée ?" },
+        { "id": "lacher-prise", "label": "Lâcher-prise", "family": "se-vaincre", "question": "Qu'avez-vous accepté de ne pas contrôler ?" },
+        { "id": "recommencer", "label": "Recommencer", "family": "se-vaincre", "question": "Comment avez-vous pu renaître après un échec ou une rupture ?" },
+        { "id": "pardon", "label": "Pardon", "family": "se-relier", "question": "Qui avez-vous pardonné, et qu'est-ce que cela a changé ?" },
+        { "id": "amour", "label": "Amour", "family": "se-relier", "question": "Qu'est-ce qui reste quand tout part ?" },
+        { "id": "fraternite", "label": "Fraternité", "family": "se-relier", "question": "Quel inconnu est devenu un frère ?" },
+        { "id": "transmission", "label": "Transmission", "family": "se-relier", "question": "Qu'avez-vous reçu d'un ancien qui ne s'achète pas ?" },
+        { "id": "foi", "label": "Foi", "family": "s-elever", "question": "Qu'est-ce qui vous a tenu quand rien d'autre ne tenait ?" },
+        { "id": "silence", "label": "Silence", "family": "s-elever", "question": "Où trouvez-vous le calme ?" },
+        { "id": "gratitude", "label": "Gratitude", "family": "s-elever", "question": "De quoi êtes-vous profondément reconnaissant ?" },
+        { "id": "joie", "label": "Joie", "family": "s-elever", "question": "D'où vient la joie malgré le manque ?" },
+        { "id": "resilience", "label": "Résilience", "family": "tenir-debout", "question": "Comment êtes-vous resté debout dans l'épreuve ?" },
+        { "id": "deuil", "label": "Deuil", "family": "tenir-debout", "question": "Qu'avez-vous appris en perdant ?" },
+        { "id": "dignite", "label": "Dignité", "family": "tenir-debout", "question": "Quand avez-vous dit non, au risque de tout perdre ?" },
+        { "id": "vocation", "label": "Vocation", "family": "tenir-debout", "question": "À quel moment avez-vous su pourquoi vous étiez là ?" }
+      ]
+    },
+    {
+      "id": "territoires",
+      "label": "Territoires",
+      "description": "16 pays pivots : berceaux africains, diaspora, résonances.",
+      "entries": [
+        { "id": "benin", "label": "Bénin", "group": "afrique" },
+        { "id": "senegal", "label": "Sénégal", "group": "afrique" },
+        { "id": "cote-d-ivoire", "label": "Côte d'Ivoire", "group": "afrique" },
+        { "id": "ghana", "label": "Ghana", "group": "afrique" },
+        { "id": "nigeria", "label": "Nigeria", "group": "afrique" },
+        { "id": "rdc", "label": "RDC", "group": "afrique" },
+        { "id": "ethiopie", "label": "Éthiopie", "group": "afrique" },
+        { "id": "afrique-du-sud", "label": "Afrique du Sud", "group": "afrique" },
+        { "id": "haiti", "label": "Haïti", "group": "diaspora" },
+        { "id": "bresil", "label": "Brésil", "group": "diaspora" },
+        { "id": "cuba", "label": "Cuba", "group": "diaspora" },
+        { "id": "etats-unis", "label": "États-Unis", "group": "diaspora" },
+        { "id": "france", "label": "France", "group": "diaspora" },
+        { "id": "perou", "label": "Pérou", "group": "resonances" },
+        { "id": "japon", "label": "Japon", "group": "resonances" },
+        { "id": "inde", "label": "Inde", "group": "resonances" }
+      ]
+    },
+    {
+      "id": "expertises",
+      "label": "Expertises",
+      "description": "16 savoir-faire. Des praticiens viennent pitcher leur métier en vidéo.",
+      "entries": [
+        { "id": "bois", "label": "Bois", "covers": ["ébénisterie", "charpente", "sculpture"] },
+        { "id": "tissage", "label": "Tissage", "covers": ["soie", "teintures végétales", "textile"] },
+        { "id": "terre", "label": "Terre", "covers": ["poterie", "céramique", "banco"] },
+        { "id": "metal", "label": "Métal", "covers": ["forge", "fonderie", "orfèvrerie"] },
+        { "id": "cuir", "label": "Cuir", "covers": ["maroquinerie", "sellerie"] },
+        { "id": "agroecologie", "label": "Agroécologie", "covers": ["semences paysannes", "maraîchage"] },
+        { "id": "cuisine", "label": "Cuisine", "covers": ["terroir", "fermentations"] },
+        { "id": "apiculture", "label": "Apiculture", "covers": ["abeilles", "miel"] },
+        { "id": "peche", "label": "Pêche", "covers": ["pêche artisanale", "construction de pirogues"] },
+        { "id": "herboristerie", "label": "Herboristerie", "covers": ["plantes médicinales", "tisanes"] },
+        { "id": "soins", "label": "Soins", "covers": ["massage", "pratiques somatiques", "respiration"] },
+        { "id": "musique", "label": "Musique", "covers": ["lutherie", "sonothérapie", "percussion"] },
+        { "id": "construction", "label": "Construction", "covers": ["éco-construction", "architecture bioclimatique"] },
+        { "id": "parole", "label": "Parole", "covers": ["griots", "conteurs", "calligraphie", "écriture"] },
+        { "id": "image", "label": "Image", "covers": ["réalisation", "photo", "documentaire"] },
+        { "id": "pedagogie", "label": "Transmission", "covers": ["pédagogie de la nature", "écoles alternatives"] }
+      ]
+    },
+    {
+      "id": "produits-services",
+      "label": "Produits & Services",
+      "description": "16 catégories pour présenter des offres concrètes en capsules vidéo de 60 à 90 secondes.",
+      "entries": [
+        { "id": "mode", "label": "Mode", "covers": ["vêtements", "wax", "lin", "chaussures", "maroquinerie"] },
+        { "id": "bijoux", "label": "Bijoux", "covers": ["orfèvrerie", "perles", "pièces uniques"] },
+        { "id": "maison", "label": "Maison", "covers": ["mobilier", "vannerie", "luminaires", "décoration"] },
+        { "id": "artisanat", "label": "Artisanat", "covers": ["ustensiles", "couteaux", "outils", "papeterie"] },
+        { "id": "art", "label": "Art", "covers": ["peinture", "sculpture", "photo", "livres", "musique"] },
+        { "id": "beaute", "label": "Beauté", "covers": ["karité", "huiles", "savons", "soins capillaires"] },
+        { "id": "soins-du-corps", "label": "Soins du corps", "covers": ["massages", "spas", "rituels"] },
+        { "id": "plantes", "label": "Plantes", "covers": ["tisanes", "super-aliments", "élixirs"] },
+        { "id": "bien-etre", "label": "Bien-être", "covers": ["coaching", "thérapies brèves", "retraites"] },
+        { "id": "epicerie", "label": "Épicerie", "covers": ["épices", "café", "miel", "chocolat"] },
+        { "id": "terroir", "label": "Terroir", "covers": ["maraîchage", "élevage", "pêche", "circuits courts"] },
+        { "id": "cuisine", "label": "Cuisine", "covers": ["chefs", "traiteurs", "tables d'hôtes", "ateliers"] },
+        { "id": "voyage", "label": "Voyage", "covers": ["écolodges", "séjours d'immersion", "guides"] },
+        { "id": "formation", "label": "Formation", "covers": ["masterclasses", "stages", "apprentissage"] },
+        { "id": "ecologie", "label": "Écologie", "covers": ["éco-construction", "énergie solaire", "réparation"] },
+        { "id": "medias", "label": "Médias", "covers": ["vidéo", "photo", "design", "digital", "événementiel"] }
+      ]
+    },
+    {
+      "id": "marques",
+      "label": "Marques",
+      "description": "16 secteurs de sponsors potentiels, à contacter pour qu'ils accueillent des témoignages de leurs clients.",
+      "entries": [
+        { "id": "beaute", "label": "Beauté" },
+        { "id": "mode", "label": "Mode" },
+        { "id": "technologie", "label": "Technologie" },
+        { "id": "telecoms", "label": "Télécoms" },
+        { "id": "banque", "label": "Banque" },
+        { "id": "gastronomie", "label": "Gastronomie" },
+        { "id": "boissons", "label": "Boissons" },
+        { "id": "voyage", "label": "Voyage" },
+        { "id": "hotellerie", "label": "Hôtellerie" },
+        { "id": "transport", "label": "Transport" },
+        { "id": "sante", "label": "Santé" },
+        { "id": "maison", "label": "Maison" },
+        { "id": "energie", "label": "Énergie" },
+        { "id": "medias", "label": "Médias" },
+        { "id": "education", "label": "Éducation" },
+        { "id": "sport", "label": "Sport" }
+      ]
+    },
+    {
+      "id": "projets",
+      "label": "Projets",
+      "description": "16 catégories de causes, dans l'esprit des plateformes de financement participatif.",
+      "entries": [
+        { "id": "ecologie", "label": "Écologie", "covers": ["forêts sacrées", "mangroves", "biodiversité"] },
+        { "id": "enfance", "label": "Enfance" },
+        { "id": "education", "label": "Éducation", "covers": ["écoles", "bibliothèques"] },
+        { "id": "sante", "label": "Santé" },
+        { "id": "agriculture", "label": "Agriculture", "covers": ["semences", "jardins urbains"] },
+        { "id": "eau", "label": "Eau" },
+        { "id": "energie", "label": "Énergie", "covers": ["solaire"] },
+        { "id": "habitat", "label": "Habitat", "covers": ["construction en terre", "logements"] },
+        { "id": "femmes", "label": "Femmes", "covers": ["autonomie", "tissage", "naissance"] },
+        { "id": "jeunesse", "label": "Jeunesse" },
+        { "id": "culture", "label": "Culture", "covers": ["cinéma", "théâtre", "livres", "festivals", "archives"] },
+        { "id": "musique", "label": "Musique", "covers": ["centre de percussion"] },
+        { "id": "patrimoine", "label": "Patrimoine", "covers": ["vodoun", "langues", "mémoire des anciens"] },
+        { "id": "artisanat", "label": "Artisanat" },
+        { "id": "entrepreneuriat", "label": "Entrepreneuriat" },
+        { "id": "solidarite", "label": "Solidarité", "covers": ["urgence", "handicap", "personnes âgées", "réinsertion"] }
+      ]
+    }
+  ]
+}

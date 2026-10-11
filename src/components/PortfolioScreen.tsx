@@ -144,7 +144,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 29.0,
       liquidityScore: 'Élevée',
       status: 'En production',
-      posterUrl: '/investors-builders.png'
+      posterUrl: '/assets/posters/investors-builders.png'
     },
     {
       id: 'prod-6',

@@ -197,16 +197,25 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const pA = currentDuo.protagonistA;
   const pB = currentDuo.protagonistB;
 
-  // Format title part
-  const formatTitlePart = (raw?: string) => {
+  // Format title to ensure every word (including 2nd word) starts with a capital letter (Title Case)
+  const formatTitleCase = (raw?: string) => {
     if (!raw) return '';
     const trimmed = raw.trim();
     if (!trimmed) return '';
-    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+    return trimmed
+      .split(/(\s+)/)
+      .map(segment => {
+        if (/^\s+$/.test(segment)) return segment;
+        return segment
+          .split('-')
+          .map(sub => sub ? sub.charAt(0).toUpperCase() + sub.slice(1) : '')
+          .join('-');
+      })
+      .join('');
   };
 
-  const themeA = formatTitlePart(pA.universeTag || (activeDoc ? activeDoc.universes[0]?.name : 'Pôle A'));
-  const themeB = formatTitlePart(pB.universeTag || (activeDoc ? activeDoc.universes[1]?.name : 'Pôle B'));
+  const themeA = formatTitleCase(pA.universeTag || (activeDoc ? activeDoc.universes[0]?.name : 'Pôle A'));
+  const themeB = formatTitleCase(pB.universeTag || (activeDoc ? activeDoc.universes[1]?.name : 'Pôle B'));
 
   // Clean quotes helper
   const cleanQuotes = (str?: string) => {
@@ -242,7 +251,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
               key={`duo-series-${currentDuo.id}-${title}`}
               className="inline-flex items-center gap-1.5 sm:gap-2 h-7.5 sm:h-8.5 px-4 sm:px-4.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-sm text-[11px] sm:text-xs animate-in fade-in duration-200 text-white truncate"
             >
-              <span className="font-sans font-bold text-white tracking-tight truncate max-w-[95px] sm:max-w-[180px]">{parts[0].trim()}</span>
+              <span className="font-sans font-bold text-white tracking-tight truncate max-w-[95px] sm:max-w-[180px]">{formatTitleCase(parts[0])}</span>
               <span 
                 className="font-mono text-[9px] sm:text-[10.5px] font-black text-white/90 px-1 sm:px-1.5 select-none shrink-0 tracking-widest flex items-center gap-1.5 sm:gap-2"
                 title="Face à face"
@@ -250,11 +259,11 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                 <span>&lt;</span>
                 <span>&gt;</span>
               </span>
-              <span className="font-sans font-bold text-white tracking-tight truncate max-w-[95px] sm:max-w-[180px]">{parts[1].trim()}</span>
+              <span className="font-sans font-bold text-white tracking-tight truncate max-w-[95px] sm:max-w-[180px]">{formatTitleCase(parts[1])}</span>
             </div>
           ) : (
             <div className="inline-flex items-center h-7.5 sm:h-8.5 px-4 sm:px-4.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-sm text-[11px] sm:text-xs text-white font-bold">
-              {title}
+              {formatTitleCase(title)}
             </div>
           );
         })()}

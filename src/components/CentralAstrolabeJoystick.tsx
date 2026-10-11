@@ -15,6 +15,14 @@ import {
 
 const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
   series: Film,
+  sagesses: Atom,
+  territoires: Mountain,
+  expertises: GraduationCap,
+  personnalites: Star,
+  'produits-services': ShoppingBag,
+  marques: Gem,
+  projets: Sprout,
+  // Rétrocompatibilité
   countries: Mountain,
   questions: Atom,
   thematics: GraduationCap,

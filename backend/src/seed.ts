@@ -484,14 +484,14 @@ const PROTAGONISTS = [
     documentaryId: 'blacks-one-beyond-eve',
     name: 'Malik Diop',
     age: 31,
-    role: 'Chorégraphe de danses urbaines & passeur de mémoires',
+    role: 'Orateur civique & leader pour les droits civiques',
     territory: 'Dakar / Paris',
     country: 'Sénégal & France',
     flag: '🇸🇳',
-    bio: "Formé dans les battles de rue de la Médina de Dakar puis sur les scènes internationales, Malik a fondé le collectif Blacks One.",
+    bio: "Vêtu d’une élégance impeccable, le poing levé et la parole habitée, Malik incarne la force de conviction du mouvement Blacks One. Un orateur passionné luttant pour l’émancipation et la justice.",
     photoUrl: '/assets/protagonists/malik-diop.jpg',
     universeTag: 'Blacks One',
-    quote: "« Ton identité n'est pas une cage qu'on t'assigne : c'est le rythme que tu inventes pour faire vibrer le sol sous tes pas. »",
+    quote: "« L’émancipation commence le jour où l’on lève le poing et où l’on refuse de regarder son histoire avec les yeux de ceux qui l’ont confisquée. »",
     treeData: {
       transmissions: [
         { id: 't-6', title: 'Les pas du sabar royal des Lébous', ancestorOrMentor: 'Son oncle El Hadj Diop', description: "La cadence des pieds nus sur la terre battue qui raconte l'histoire d'un peuple de pêcheurs insoumis." }
@@ -535,14 +535,14 @@ const PROTAGONISTS = [
     documentaryId: 'blacks-one-beyond-eve',
     name: 'Éléonore Vance',
     age: 39,
-    role: 'Artiste plasticienne, tisseuse de récits & curatrice',
+    role: 'Oratrice féministe & leader d’émancipation',
     territory: 'Marseille / Abidjan',
     country: "Côte d'Ivoire & France",
     flag: '🇨🇮',
-    bio: "Entre les ateliers de la Canebière et les teinturières d'Abobo, Éléonore interroge ce que les femmes portent sans jamais l'avoir choisi.",
+    bio: "Parée d’une élégance souveraine, Éléonore porte une parole ardente à la tribune pour la dignité, la puissance et les droits des femmes au sein du mouvement Beyond Eve.",
     photoUrl: '/assets/protagonists/eleonore-vance.jpg',
     universeTag: 'Beyond Eve',
-    quote: "« On hérite de silences aussi lourds que des pierres. Mon travail est de les défaire brin par brin pour en faire une voile. »",
+    quote: "« La liberté des femmes n’attend pas qu’on lui fasse de la place : elle se prend à pleine voix, à la tribune du monde. »",
     treeData: {
       transmissions: [
         { id: 't-7', title: 'Le pagne kita de ma grand-mère Akissi', ancestorOrMentor: 'Akissi Vance', description: "L'art de lire les motifs de royauté qui n'étaient jamais prononcés à voix haute." }
@@ -850,10 +850,10 @@ const DUOS = [
     questionNumber: '03',
     questionTitle: "Ce que l'on Porte",
     centralQuestion: "Racontez-nous quelque chose que vous avez reçu de votre histoire, de votre famille ou de ceux qui vous ont précédé et que vous portez encore aujourd'hui.",
-    quoteA: "« On m'a dit à Paris que ma danse était trop lourde. J'ai compris ce jour-là que cette pesanteur, c'était le sable de mes aïeux que je refusais de secouer. »",
-    quoteB: "« Dans la malle de ma mère, il n'y avait aucun bijou en or, mais trois pagnes de coton usés par le travail. C'est mon manteau de reine. »",
-    coverImage: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=80',
-    editorialReflection: "Ce que l'on porte n'est pas un fardeau qui alourdit le pas : c'est le fil secret qui permet de traverser l'exil sans s'égarer.",
+    quoteA: "« L’émancipation commence le jour où l’on refuse de regarder son histoire avec les yeux de ceux qui l’ont confisquée. La dignité ne se négocie pas. »",
+    quoteB: "« On hérite de blessures et de silences imposés. Mon combat et mon art consistent à les fleurir et à en faire des armures de reine pour les femmes libres. »",
+    coverImage: '/assets/posters/blacks-one-beyond-eve.png',
+    editorialReflection: "Entre la voix ardente d’un leader noir au poing levé luttant pour ses convictions et le discours vibrant d’une oratrice féministe pour les femmes, ce duo célèbre la dignité et la souveraineté intime.",
     durationSeconds: 90,
   },
   {

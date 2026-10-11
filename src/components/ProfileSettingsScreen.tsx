@@ -869,7 +869,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     {
       id: 'prod-5',
       seriesId: 'investors-builders',
-      seriesTitle: 'Investors Builders',
+      seriesTitle: 'Investors < > Builders',
       sharesCount: 12,
       sharesOnSale: isOwner ? 4 : 4,
       startPrice: 50,
@@ -889,7 +889,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     {
       id: 'prod-6',
       seriesId: 'other-eyes-sixth-sense',
-      seriesTitle: 'Other Eyes Sixth Sense',
+      seriesTitle: 'Other Eyes < > Sixth Sense',
       sharesCount: 16,
       sharesOnSale: isOwner ? 6 : 6,
       startPrice: 42,

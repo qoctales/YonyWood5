@@ -66,7 +66,7 @@ const PRODUCTIONS: ProductionPoster[] = [
   {
     id: 'investors-builders',
     title: 'Investors < > Builders',
-    posterImage: '/investors-builders.png',
+    posterImage: '/assets/posters/investors-builders.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     sharePrice: 70
   },
@@ -130,7 +130,7 @@ const INITIAL_PEER_OFFERS: PeerOffer[] = [
     sellerName: 'Benoît',
     sellerPhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
     seriesTitle: 'Investors < > Builders',
-    posterImage: '/investors-builders.png',
+    posterImage: '/assets/posters/investors-builders.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     sharesCount: 3,
     unitPrice: 68

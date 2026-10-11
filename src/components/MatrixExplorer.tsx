@@ -69,9 +69,16 @@ const R_INNER = 145; // Anneau 1 : Sujets de la Porte active (5 séries, 16 drap
 const R_OUTER = 280; // Anneau 2 : 16 Voix / Histoires humaines associées
 const ORBIT_RADII = [145, 280, 385, 490, 595];
 
-// Map d'icônes adaptées et lisibles par catégorie
 const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string }>> = {
   series: Film,
+  sagesses: Atom,
+  territoires: Mountain,
+  expertises: GraduationCap,
+  personnalites: Star,
+  'produits-services': ShoppingBag,
+  marques: Gem,
+  projets: Sprout,
+  // Alias de rétrocompatibilité
   countries: Mountain,
   questions: Atom,
   thematics: GraduationCap,

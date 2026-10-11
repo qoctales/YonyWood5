@@ -20,10 +20,16 @@ router.get('/categories', async (_req: Request, res: Response): Promise<void> =>
 // GET /api/explorer/topics/:category — Les sujets/voix rattachés à une catégorie
 router.get('/topics/:category', async (req: Request, res: Response): Promise<void> => {
   try {
-    const category = req.params.category as string;
+    let category = req.params.category as string;
+    if (category === 'memoires') {
+      category = 'sagesses';
+    }
 
     const validCategories = [
-      'series', 'countries', 'questions', 'thematics',
+      'series', 'sagesses', 'territoires', 'expertises',
+      'personnalites', 'produits-services', 'marques', 'projets',
+      // Alias
+      'countries', 'questions', 'thematics',
       'personalities', 'brands', 'projects', 'offers'
     ];
 

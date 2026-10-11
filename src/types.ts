@@ -332,6 +332,15 @@ export interface StoryResonanceRating {
 
 export type ExplorerCategory = 
   | 'series' 
+  // Portes officielles Nomenclature v1.0
+  | 'sagesses'
+  | 'territoires'
+  | 'expertises'
+  | 'personnalites'
+  | 'produits-services'
+  | 'marques'
+  | 'projets'
+  // Alias de rétrocompatibilité
   | 'countries' 
   | 'thematics' 
   | 'personalities' 

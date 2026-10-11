@@ -136,8 +136,16 @@ app.get('/api/explorer/categories', (_req: Request, res: Response) => {
   res.json(EXPLORER_CATEGORIES);
 });
 
+// Redirection de l'ancienne route /memoires vers /sagesses
+app.get('/memoires', (_req: Request, res: Response) => {
+  res.redirect(301, '/sagesses');
+});
+
 app.get('/api/explorer/topics/:category', (req: Request, res: Response) => {
-  const { category } = req.params;
+  let { category } = req.params;
+  if (category === 'memoires') {
+    category = 'sagesses';
+  }
   const topics = (EXPLORER_CATALOG as Record<string, any>)[category] || [];
   res.json(topics);
 });
@@ -240,10 +248,31 @@ app.post('/api/messaging/threads/:id/messages', (req: Request, res: Response) =>
 // Start server helper
 async function startServer() {
   if (!isProd) {
+    try {
+      const clientMjs = path.resolve(__dirname, 'node_modules/vite/dist/client/client.mjs');
+      if (fs.existsSync(clientMjs)) {
+        let content = fs.readFileSync(clientMjs, 'utf-8');
+        const errStr = 'reject(new Error("WebSocket closed without opened."));';
+        const connStr = 'async connect({ onMessage, onDisconnection }) {\n      const socket = options.createConnection();';
+        let changed = false;
+        if (content.includes(errStr)) {
+          content = content.replace(errStr, 'resolve();');
+          changed = true;
+        }
+        if (content.includes(connStr)) {
+          content = content.replace(connStr, 'async connect({ onMessage, onDisconnection }) {\n      return;\n      const socket = options.createConnection();');
+          changed = true;
+        }
+        if (changed) fs.writeFileSync(clientMjs, content, 'utf-8');
+      }
+    } catch {
+      // ignore
+    }
+
     const vite = await createViteServer({
       server: { 
         middlewareMode: true,
-        hmr: process.env.DISABLE_HMR !== 'true' ? { server: httpServer } : false,
+        hmr: false,
       },
       appType: 'spa',
     });

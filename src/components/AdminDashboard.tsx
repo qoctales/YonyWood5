@@ -144,6 +144,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editQuestions, setEditQuestions] = useState<QuestionItem[]>([]);
   const [editEffigies, setEditEffigies] = useState<SeriesEffigie[]>([]);
   const [searchSeries, setSearchSeries] = useState('');
+  const [seriesViewMode, setSeriesViewMode] = useState<'swipe' | 'grid'>('swipe');
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Format title to ensure every word (including 2nd word) starts with a capital letter
+  const formatTitleCase = (raw?: string) => {
+    if (!raw) return '';
+    const trimmed = raw.trim();
+    if (!trimmed) return '';
+    return trimmed
+      .split(/(\s+)/)
+      .map(segment => {
+        if (/^\s+$/.test(segment)) return segment;
+        return segment
+          .split('-')
+          .map(sub => sub ? sub.charAt(0).toUpperCase() + sub.slice(1) : '')
+          .join('-');
+      })
+      .join('');
+  };
+
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (!carouselRef.current) return;
+    const cardWidth = 320;
+    carouselRef.current.scrollBy({
+      left: direction === 'left' ? -cardWidth : cardWidth,
+      behavior: 'smooth'
+    });
+  };
 
   // Modale pour ajouter une effigie
   const [isAddingEffigieModalOpen, setIsAddingEffigieModalOpen] = useState(false);
@@ -713,7 +741,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             }`}
           >
             <Film className="w-3.5 h-3.5" />
-            <span>Séries & Épisodes ({seriesList.length})</span>
+            <span>Séries</span>
           </button>
 
           <button
@@ -1390,106 +1418,92 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {!editingSeries && (
               <div className="space-y-6 animate-in fade-in">
                 
-                {/* En-tête du catalogue */}
+                {/* En-tête épuré du catalogue */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <h2 className="text-xl font-serif font-bold text-stone-900 flex items-center gap-2">
                       <Clapperboard className="w-5 h-5 text-[#A2482B]" />
-                      <span>Catalogue des Séries</span>
+                      <span>Séries Documentaires</span>
                     </h2>
-                    <p className="text-xs text-stone-600 mt-0.5">
-                      Cliquez sur une série pour modifier ses informations, ses affiches ou ses épisodes.
+                    <p className="text-xs text-stone-500 mt-0.5">
+                      Glissez entre les affiches et cliquez sur une série pour la gérer.
                     </p>
                   </div>
 
-                  <div className="relative w-full sm:w-64">
-                    <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                    <input
-                      type="text"
-                      placeholder="Rechercher une série..."
-                      value={searchSeries}
-                      onChange={(e) => setSearchSeries(e.target.value)}
-                      className="w-full h-9 pl-9 pr-3 rounded-xl bg-white border border-stone-300 text-xs text-stone-900 placeholder:text-stone-400 outline-hidden focus:border-[#A2482B] transition-colors"
-                    />
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <div className="relative flex-1 sm:w-60">
+                      <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                      <input
+                        type="text"
+                        placeholder="Rechercher une série..."
+                        value={searchSeries}
+                        onChange={(e) => setSearchSeries(e.target.value)}
+                        className="w-full h-9 pl-9 pr-3 rounded-xl bg-white border border-stone-300 text-xs text-stone-900 placeholder:text-stone-400 outline-hidden focus:border-[#A2482B] transition-colors"
+                      />
+                    </div>
+
+                    {/* Flèches de défilement rapide */}
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => scrollCarousel('left')}
+                        className="w-9 h-9 rounded-xl bg-white border border-stone-200 hover:border-stone-400 text-stone-700 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+                        title="Affiche précédente"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => scrollCarousel('right')}
+                        className="w-9 h-9 rounded-xl bg-white border border-stone-200 hover:border-stone-400 text-stone-700 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+                        title="Affiche suivante"
+                      >
+                        <ChevronLeft className="w-4 h-4 rotate-180" />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                {/* Grille des affiches de séries */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Galerie épurée d'affiches avec défilement / glissement fluide */}
+                <div 
+                  ref={carouselRef}
+                  className="flex gap-5 sm:gap-6 overflow-x-auto pb-4 pt-1 px-1 scrollbar-thin scroll-smooth snap-x snap-mandatory"
+                  style={{ scrollSnapType: 'x mandatory' }}
+                >
                   {filteredSeries.map((series) => {
-                    const epCount = series.questions?.length || series.episodeCount || 5;
-                    const effigieCount = series.effigies?.length || 0;
+                    const formattedTitle = formatTitleCase(series.title);
                     return (
                       <div 
                         key={series.id}
-                        className="rounded-3xl bg-white border border-stone-200 hover:border-[#A2482B] shadow-xs hover:shadow-xl overflow-hidden flex flex-col group transition-all"
+                        onClick={() => startEditSeries(series)}
+                        className="snap-start shrink-0 w-[240px] sm:w-[280px] md:w-[300px] rounded-3xl bg-white border border-stone-200 hover:border-[#A2482B] shadow-md hover:shadow-2xl overflow-hidden flex flex-col group transition-all duration-300 cursor-pointer select-none"
                       >
-                        {/* Affiche de la série cliquable */}
-                        <div 
-                          onClick={() => startEditSeries(series)}
-                          className="relative aspect-[9/16] w-full overflow-hidden bg-stone-950 cursor-pointer"
-                        >
+                        {/* Affiche cinématographique épurée */}
+                        <div className="relative aspect-[9/16] w-full overflow-hidden bg-stone-950">
                           <img 
                             src={series.coverImage} 
-                            alt={series.title}
-                            className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500"
+                            alt={formattedTitle}
+                            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/assets/posters/jesus-esu.png';
                             }}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/40 pointer-events-none" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
                           
-                          {/* Badges d'information discrets */}
-                          <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                            <span className="px-2.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-bold text-white border border-white/20">
-                              🌍 {series.territories && series.territories.length > 0 ? series.territories[0] : 'International'}
-                            </span>
-                          </div>
-
-                          <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-[#C89B3C] text-white text-[10px] font-bold shadow-xs">
-                            {epCount} épisodes
-                          </div>
-
-                          {/* Titre & Slogan en bas de l'affiche */}
-                          <div className="absolute bottom-4 left-4 right-4 text-white">
-                            <h4 className="text-xl font-editorial font-bold tracking-tight text-white drop-shadow-md">
-                              {series.title}
+                          {/* Titre cinématographique & Action au bas de l'affiche */}
+                          <div className="absolute bottom-0 inset-x-0 p-5 text-white flex flex-col gap-2">
+                            <h4 className="text-xl sm:text-2xl font-editorial font-bold tracking-tight text-white drop-shadow-md leading-tight group-hover:text-[#D9AF52] transition-colors">
+                              {formattedTitle}
                             </h4>
-                            <p className="text-xs text-stone-200 line-clamp-2 mt-1 italic">
-                              « {series.subtitle} »
-                            </p>
-                          </div>
-                        </div>
 
-                        {/* Informations & actions */}
-                        <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                          <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed">
-                            {series.description}
-                          </p>
-
-                          {effigieCount > 0 && (
-                            <div className="flex items-center gap-1 text-[11px] text-[#8B6845] font-semibold">
-                              <Star className="w-3.5 h-3.5 text-[#C89B3C] fill-[#C89B3C]" />
-                              <span>{effigieCount} Effigie{effigieCount > 1 ? 's' : ''} associée{effigieCount > 1 ? 's' : ''}</span>
+                            <div className="pt-2 flex items-center justify-between border-t border-white/20">
+                              <span className="text-[11px] font-semibold text-stone-300 group-hover:text-white transition-colors">
+                                Gérer la série →
+                              </span>
+                              <div className="w-7 h-7 rounded-full bg-white/20 group-hover:bg-[#A2482B] backdrop-blur-xs flex items-center justify-center transition-colors">
+                                <Edit3 className="w-3.5 h-3.5 text-white" />
+                              </div>
                             </div>
-                          )}
-
-                          <div className="pt-2 border-t border-stone-100 flex items-center justify-between">
-                            <button
-                              onClick={() => onNavigate({ type: 'documentary_detail', documentaryId: series.id })}
-                              className="text-[11px] font-semibold text-stone-600 hover:text-stone-900 flex items-center gap-1 cursor-pointer transition-colors"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                              <span>Fiche publique</span>
-                            </button>
-
-                            <button
-                              onClick={() => startEditSeries(series)}
-                              className="px-4 py-2 rounded-xl bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
-                            >
-                              <Edit3 className="w-3.5 h-3.5" />
-                              <span>Modifier la série</span>
-                            </button>
                           </div>
                         </div>
                       </div>

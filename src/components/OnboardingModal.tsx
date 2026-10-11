@@ -43,7 +43,7 @@ const SLIDES: SlideData[] = [
     features: [
       'Documentaires en chapitres immersifs',
       'Portraits authentiques de passeurs de savoirs',
-      'Archives visuelles et mémoires vivantes'
+      'Archives visuelles et récits vivants'
     ]
   },
   {
@@ -52,7 +52,7 @@ const SLIDES: SlideData[] = [
     badgeIcon: Compass,
     title: "L'Astrolabe",
     highlight: '& les Duos',
-    subtitle: 'Une cartographie interactive des mémoires',
+    subtitle: 'Une cartographie interactive des sagesses & savoirs',
     description: "Parcourez les 8 portes thématiques de l'Astrolabe et vivez l'expérience inédite des Duos : deux regards, deux voix mises en diptyque vertical 9:16.",
     bgImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1400&q=80',
     features: [

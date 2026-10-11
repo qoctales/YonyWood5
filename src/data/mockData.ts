@@ -239,8 +239,8 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     title: 'Blacks One < > Beyond Eve',
     subtitle: 'Deux expériences collectives. Une exploration de l\'identité et de ce que nous devenons.',
     centralQuestion: 'L\'identité',
-    shortSynopsis: 'Entre la vitalité urbaine des collectifs de hip-hop à Dakar et les cercles de femmes créatrices d’Abidjan et d’Europe, une quête collective pour réinventer notre souveraineté intime.',
-    description: 'À Dakar, la jeunesse se réapproprie l\'espace public par le verbe, le hip-hop et la fraternité des rues (Blacks One), transformant la précarité en dignité collective. En miroir, entre Abidjan, Marseille et Bruxelles, des cercles de femmes créatrices, artisanes et chercheuses (Beyond Eve) dénouent les carcans patriarcaux pour réinventer la filiation et la puissance du matrimoine. Deux mouvements d\'émancipation qui posent la question cruciale : comment s\'affranchir du regard imposé par l\'histoire pour forger, ensemble, notre propre identité ?',
+    shortSynopsis: 'D’un côté, la voix passionnée et le poing levé d’un leader noir en lutte pour ses convictions ; de l’autre, le discours vibrant d’une femme noire engagée pour la souveraineté des femmes. Deux orateurs d’exception.',
+    description: 'D’un côté, la force de conviction, l’éloquence tranchante et le poing levé de Malik Diop, orateur noir élégamment vêtu, portant haut le verbe de la liberté, de la justice et de l’émancipation civique (Blacks One). De l’autre côté, le discours vibrant et passionné d’Éléonore Vance, leader et oratrice noire se battant avec dignité et ferveur pour les droits et la souveraineté des femmes (Beyond Eve). Deux voix d’une rare élégance, deux combats fraternels qui s’unissent pour affirmer nos souverainetés.',
     coverImage: '/assets/posters/blacks-one-beyond-eve.png',
     posterUrl: '/assets/posters/blacks-one-beyond-eve.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
@@ -248,15 +248,33 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     universes: [
       {
         name: 'Blacks One',
-        tagline: 'L’affirmation par le rythme, le verbe et la fraternité',
-        description: 'Collectifs artistiques et urbains forgeant des espaces de dignité, de création partagée et de reconquête des récits d’émancipation.',
-        territory: 'Dakar & banlieues francophones'
+        tagline: 'Le verbe souverain, le poing levé et le combat pour la justice',
+        description: 'Un mouvement d’émancipation civique et de dignité historique, incarné par une parole ardente et le courage des convictions.',
+        territory: 'Dakar & Diaspora'
       },
       {
         name: 'Beyond Eve',
-        tagline: 'La réinvention de la lignée féminine et du devenir',
-        description: 'Cercles de transmission intergénérationnelle où femmes artistes, chercheuses et artisanes dénouent les stéréotypes pour tisser un futur souverain.',
+        tagline: 'La parole libérée, la dignité et la lutte pour les droits des femmes',
+        description: 'Une tribune vibrante où résonne le plaidoyer pour la souveraineté des femmes, la sororité et l’émancipation collective.',
         territory: 'Abidjan, Marseille & Bruxelles'
+      }
+    ],
+    effigies: [
+      {
+        id: 'eff-bo-1',
+        name: 'Malik Diop',
+        role: 'Penseur civique, orateur & passeur de mémoires',
+        photoUrl: '/assets/protagonists/malik-diop.jpg',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+        status: 'EFFIGIE_PRINCIPALE'
+      },
+      {
+        id: 'eff-be-2',
+        name: 'Éléonore Vance',
+        role: 'Artiste peintre visionnaire & icône féministe',
+        photoUrl: '/assets/protagonists/eleonore-vance.jpg',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+        status: 'EFFIGIE_SERIE'
       }
     ],
     questions: [
@@ -652,6 +670,21 @@ export const getCustomDocumentaries = (): Documentary[] => {
                   }
                 ] as [Documentary['universes'][0], Documentary['universes'][1]]
               };
+            }
+            if (doc.id === 'blacks-one-beyond-eve') {
+              const baseDoc = INITIAL_DOCUMENTARIES.find(d => d.id === 'blacks-one-beyond-eve');
+              if (baseDoc && (!doc.effigies || doc.posterUrl !== baseDoc.posterUrl || doc.coverImage !== baseDoc.coverImage || doc.shortSynopsis !== baseDoc.shortSynopsis)) {
+                migrated = true;
+                return {
+                  ...doc,
+                  shortSynopsis: baseDoc.shortSynopsis,
+                  description: baseDoc.description,
+                  posterUrl: baseDoc.posterUrl,
+                  coverImage: baseDoc.coverImage,
+                  universes: baseDoc.universes,
+                  effigies: baseDoc.effigies
+                };
+              }
             }
             return doc;
           });
@@ -1298,15 +1331,15 @@ export const PROTAGONISTS: Protagonist[] = [
     slug: 'malik-diop',
     name: 'Malik Diop',
     age: 31,
-    role: 'Chorégraphe de danses urbaines & passeur de mémoires',
+    role: 'Orateur civique & leader pour les droits civiques',
     territory: 'Dakar / Paris',
     country: 'Sénégal & France',
     flag: '🇸🇳',
-    bio: 'Formé dans les battles de rue de la Médina de Dakar puis sur les scènes internationales, Malik a fondé le collectif Blacks One pour donner à la jeunesse un langage corporel où l’héritage sabar irrigue le krump et le hip-hop contemporain.',
+    bio: 'Vêtu d’une élégance impeccable, le poing levé et la parole habitée, Malik incarne la force de conviction du mouvement Blacks One. Un orateur passionné luttant pour l’émancipation, la justice et la souveraineté des récits afro-descendants.',
     photoUrl: '/assets/protagonists/malik-diop.jpg',
     documentaryId: 'blacks-one-beyond-eve',
     universeTag: 'Blacks One',
-    quote: '« Ton identité n’est pas une cage qu’on t’assigne : c’est le rythme que tu inventes pour faire vibrer le sol sous tes pas. »',
+    quote: '« L’émancipation commence le jour où l’on lève le poing et où l’on refuse de regarder son histoire avec les yeux de ceux qui l’ont confisquée. »',
     tree: {
       transmissions: [
         {
@@ -1381,15 +1414,15 @@ export const PROTAGONISTS: Protagonist[] = [
     slug: 'eleonore-vance',
     name: 'Éléonore Vance',
     age: 39,
-    role: 'Artiste plasticienne, tisseuse de récits & curatrice',
+    role: 'Oratrice féministe & leader d’émancipation',
     territory: 'Marseille / Abidjan',
     country: 'Côte d’Ivoire & France',
     flag: '🇨🇮',
-    bio: 'Entre les ateliers de la Canebière et les teinturières d’Abobo, Éléonore interroge ce que les femmes portent sans jamais l’avoir choisi. Elle recompose des tapisseries monumentales à partir de pagnes de deuil, de lin brut et de fils d’or.',
+    bio: 'Parée d’une élégance souveraine, Éléonore porte une parole ardente à la tribune pour la dignité, la puissance et les droits des femmes. À travers le mouvement Beyond Eve, elle livre des discours vibrants qui forgent des boucliers de liberté et de sororité.',
     photoUrl: '/assets/protagonists/eleonore-vance.jpg',
     documentaryId: 'blacks-one-beyond-eve',
     universeTag: 'Beyond Eve',
-    quote: '« On hérite de silences aussi lourds que des pierres. Mon travail est de les défaire brin par brin pour en faire une voile. »',
+    quote: '« La liberté des femmes n’attend pas qu’on lui fasse de la place : elle se prend à pleine voix, à la tribune du monde. »',
     tree: {
       transmissions: [
         {
@@ -2075,12 +2108,12 @@ export const DUOS: Duo[] = [
     questionNumber: '01',
     questionTitle: 'Ce que l’on Porte',
     centralQuestion: 'Racontez-nous quelque chose que vous avez reçu de votre histoire, de votre famille ou de ceux qui vous ont précédé et que vous portez encore aujourd\'hui. Qu\'est-ce que cela représente pour vous ?',
-    quoteA: '« On m’a dit à Paris que ma danse était trop lourde. J’ai compris ce jour-là que cette pesanteur, c’était le sable de mes aïeux que je refusais de secouer. »',
-    quoteB: '« Dans la malle de ma mère, il n’y avait aucun bijou en or, mais trois pagnes de coton usés par le travail. C’est mon manteau de reine. »',
+    quoteA: '« L’émancipation commence le jour où l’on refuse de regarder son histoire avec les yeux de ceux qui l’ont confisquée. La dignité ne se négocie pas. »',
+    quoteB: '« On hérite de blessures et de silences imposés. Mon combat et mon art consistent à les fleurir et à en faire des armures de reine pour les femmes libres. »',
     coverImage: '/assets/posters/blacks-one-beyond-eve.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'malik-diop') || PROTAGONISTS[4]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'eleonore-vance') || PROTAGONISTS[5]).stories[0],
-    editorialReflection: 'Ce que l’on porte n’est pas un fardeau qui alourdit le pas : c’est le fil secret qui permet de traverser l’exil sans s’égarer.'
+    editorialReflection: 'Entre la voix ardente d’un leader noir au poing levé luttant pour ses convictions et le discours vibrant d’une oratrice féministe pour les femmes, ce duo célèbre la dignité et la souveraineté intime.'
   },
   {
     id: 'duo-dixeat-fiat-luxe-01',
@@ -2778,17 +2811,17 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         id: 'malik-barou',
         name: 'Malik Diop',
         age: 32,
-        role: 'Danseur & chorégraphe urbain',
+        role: 'Orateur civique & leader pour les droits civiques',
         territory: 'Dakar',
         country: 'Sénégal',
         flag: '🇸🇳',
         universeTag: 'Blacks One',
-        photoUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80',
+        photoUrl: '/assets/protagonists/malik-diop.jpg',
         isPioneer: true,
         badge: 'Première effigie',
-        invitationStory: 'Pionnier fondateur de Blacks One. A refusé de danser pour complaire à l\'Europe et a rassemblé la jeunesse de Dakar autour du rythme du sabar revisité.',
+        invitationStory: 'Pionnier fondateur de Blacks One, orateur au poing levé et verbe habité, luttant pour l’émancipation civique et la souveraineté des mémoires.',
         duoPartnerName: 'Éléonore Vance',
-        duoPartnerPhoto: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80',
+        duoPartnerPhoto: '/assets/protagonists/eleonore-vance.jpg',
         duoId: 'duo-blacks-one-beyond-eve-01',
         episodeQuestion: '03 — Ce que l’on porte : Ce que l’on a reçu et qu’on refuse de poser.',
         protagonistIdRef: 'malik-barou',
@@ -2858,17 +2891,17 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         id: 'eleonore-saint-cloud',
         name: 'Éléonore Vance',
         age: 39,
-        role: 'Artiste plasticienne, tisseuse de récits & curatrice',
+        role: 'Oratrice féministe & leader d’émancipation',
         territory: 'Marseille / Abidjan',
         country: 'Côte d’Ivoire & France',
         flag: '🇨🇮',
         universeTag: 'Beyond Eve',
-        photoUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80',
+        photoUrl: '/assets/protagonists/eleonore-vance.jpg',
         isPioneer: true,
         badge: 'Première effigie',
-        invitationStory: 'Première effigie de Beyond Eve. A réuni les premières malles de pagnes de deuil pour questionner ce que les femmes portent sans l’avoir choisi.',
+        invitationStory: 'Première effigie de Beyond Eve, oratrice portant à la tribune le combat vibrant pour la souveraineté, la dignité et les droits des femmes.',
         duoPartnerName: 'Malik Diop',
-        duoPartnerPhoto: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80',
+        duoPartnerPhoto: '/assets/protagonists/malik-diop.jpg',
         duoId: 'duo-blacks-one-beyond-eve-01',
         episodeQuestion: '03 — Racontez-nous ce que vous portez encore de votre histoire.',
         protagonistIdRef: 'eleonore-saint-cloud',

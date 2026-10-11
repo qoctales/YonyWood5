@@ -9,7 +9,7 @@ import {
   Sprout, 
   ShoppingBag 
 } from 'lucide-react';
-import { ExplorerCategoryType } from './explorerTopicsData';
+import { NOMENCLATURE } from './nomenclature';
 
 export interface ProposeSubject {
   id: string;
@@ -20,6 +20,13 @@ export interface ProposeSubject {
   videoUrl: string;
   posterUrl: string;
   actionLabel: string;
+  // Métadonnées Nomenclature v1.0
+  doorId?: string;
+  origin?: string;
+  group?: string;
+  angle?: string;
+  family?: string;
+  covers?: string[];
 }
 
 export interface ProposeDoor {
@@ -34,13 +41,22 @@ export interface ProposeDoor {
   subjects: ProposeSubject[];
 }
 
+const STOCK_VIDEOS = [
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'
+];
+
 export const PROPOSE_DOORS: ProposeDoor[] = [
+  // PORTE 0 : SÉRIES FONDATRICES
   {
     id: 'series',
     label: 'Séries',
     icon: Film,
     tagline: 'Racontez votre histoire face à un alter ego d’un autre continent.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    videoUrl: STOCK_VIDEOS[0],
     posterUrl: '/assets/doors/door-series.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
@@ -57,7 +73,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         subtitle: 'Deux traditions spirituelles. Une même question de foi face aux épreuves.',
         synopsis: 'Mise en miroir des deux spiritualités chrétienne et vodun face aux tourments du destin. Deux protagonistes sur deux continents explorent la transcendance, la mort, le pardon et la rédemption au-delà des dogmes.',
         question: 'Comment votre foi ou votre rapport au sacré vous aide-t-il à traverser le deuil ou l’épreuve ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        videoUrl: STOCK_VIDEOS[0],
         posterUrl: '/assets/posters/jesus-esu.png',
         actionLabel: 'Choisir cette série'
       },
@@ -67,7 +83,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         subtitle: 'Bénin < > Pérou. Pêcheurs toffinou et paysans quechuas reliés à la terre.',
         synopsis: 'Des cités lacustres de Ganvié aux terrasses sacrées des Andes péruviennes. Le dialogue sensible entre deux gardiens de l’eau et de la Pachamama qui protègent la mémoire vitale de leurs communautés.',
         question: 'Quel est votre lien intime avec la terre ou l’eau qui nourrit votre communauté ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        videoUrl: STOCK_VIDEOS[1],
         posterUrl: '/assets/posters/finagnon-qosqorico.png',
         actionLabel: 'Choisir cette série'
       },
@@ -77,7 +93,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         subtitle: 'Deux expériences collectives. L’identité, le hip-hop et la souveraineté intime.',
         synopsis: 'Entre banlieues parisiennes et scènes urbaines de Cotonou, deux collectifs de créateurs transforment les blessures en poésie et le hip-hop en levier de dignité et d’autonomie pour la jeunesse.',
         question: 'Quelle voix singulière et quel message d’émancipation souhaitez-vous transmettre à la jeunesse ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+        videoUrl: STOCK_VIDEOS[2],
         posterUrl: '/assets/posters/blacks-one-beyond-eve.png',
         actionLabel: 'Choisir cette série'
       },
@@ -87,7 +103,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         subtitle: 'Artisans du goût et haute scénographie d’exception au service du détail.',
         synopsis: 'L’artisanat d’art et la haute gastronomie vus de l’intérieur. La rencontre de deux orfèvres du détail qui consacrent leur existence à la patience de la matière et à l’hospitalité sublime.',
         question: 'Quelle est la noblesse et le sens profond caché dans le geste de votre métier ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+        videoUrl: STOCK_VIDEOS[3],
         posterUrl: '/assets/posters/dixeat-fiat-luxe.png',
         actionLabel: 'Choisir cette série'
       },
@@ -97,461 +113,1693 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         subtitle: 'Ceux qui financent le futur < > ceux qui bâtissent le réel.',
         synopsis: 'La confrontation constructive entre visionnaires du capital et bâtisseurs de terrain. Comment aligner la souveraineté économique, le courage d’entreprendre et l’impact écologique concret.',
         question: 'Comment concilier la vision économique d’avenir et l’impact réel sur le terrain ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        posterUrl: '/investors-builders.png',
+        videoUrl: STOCK_VIDEOS[0],
+        posterUrl: '/assets/posters/investors-builders.png',
         actionLabel: 'Choisir cette série'
       },
       {
         id: 'other-eyes-sixth-sense',
         title: 'Other Eyes < > Sixth Sense',
-        subtitle: 'Voir autrement < > ressentir l’invisible. Le dialogue des perceptions.',
-        synopsis: 'La confrontation sensible entre ceux qui traversent l’existence avec d’autres sens (non-voyance, acuité vibratoire et spatiale) et ceux qui communiquent avec l’invisible (médiums, clairvoyance, écoute des auras).',
-        question: 'Que percevez-vous quand le monde ferme les yeux ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        subtitle: 'L’écoute vibratoire et la clairvoyance transcendent les limites du visible.',
+        synopsis: 'Le dialogue sensible entre non-voyants d’exception et médiums de Ouidah. Percevoir les énergies subtiles, les présences et les mémoires des lieux au-delà du visible.',
+        question: 'Comment percevez-vous les dimensions subtiles qui échappent aux yeux ordinaires ?',
+        videoUrl: STOCK_VIDEOS[1],
         posterUrl: '/assets/posters/other-eyes-sixth-sense.png',
         actionLabel: 'Choisir cette série'
       }
     ]
   },
+
+  // PORTE 1 : SAGESSES (anciennement Mémoires - 16 sagesses universelles)
+  {
+    id: 'sagesses',
+    label: 'Sagesses',
+    icon: Atom,
+    tagline: '16 thématiques de vie, universelles. Chaque témoin répond à une question face caméra.',
+    videoUrl: STOCK_VIDEOS[3],
+    posterUrl: '/assets/doors/door-sagesses.jpg',
+    actionDoorLabel: 'Choisir cette porte',
+    advantages: [
+      'Témoigner avec authenticité face caméra sur une question existentielle majeure.',
+      'Partager les enseignements intimes reçus des épreuves et des victoires.',
+      'Mettre en dialogue les sagesses ancestrales et les défis d’aujourd’hui.',
+      'S’exprimer dans un espace respectueux, propice à l’écoute profonde.',
+      'Rejoindre une bibliothèque vivante de sagesses universelles.'
+    ],
+    subjects: [
+      {
+            "id": "ego",
+            "title": "Ego",
+            "subtitle": "Famille : Se vaincre",
+            "question": "Quand avez-vous dû vous effacer pour grandir ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Ego » (Se vaincre). Question : « Quand avez-vous dû vous effacer pour grandir ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "se-vaincre"
+      },
+      {
+            "id": "courage",
+            "title": "Courage",
+            "subtitle": "Famille : Se vaincre",
+            "question": "Quelle peur avez-vous traversée ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Courage » (Se vaincre). Question : « Quelle peur avez-vous traversée ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "se-vaincre"
+      },
+      {
+            "id": "lacher-prise",
+            "title": "Lâcher-prise",
+            "subtitle": "Famille : Se vaincre",
+            "question": "Qu'avez-vous accepté de ne pas contrôler ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Lâcher-prise » (Se vaincre). Question : « Qu'avez-vous accepté de ne pas contrôler ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "se-vaincre"
+      },
+      {
+            "id": "recommencer",
+            "title": "Recommencer",
+            "subtitle": "Famille : Se vaincre",
+            "question": "Comment avez-vous pu renaître après un échec ou une rupture ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Recommencer » (Se vaincre). Question : « Comment avez-vous pu renaître après un échec ou une rupture ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "se-vaincre"
+      },
+      {
+            "id": "pardon",
+            "title": "Pardon",
+            "subtitle": "Famille : Se relier",
+            "question": "Qui avez-vous pardonné, et qu'est-ce que cela a changé ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Pardon » (Se relier). Question : « Qui avez-vous pardonné, et qu'est-ce que cela a changé ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "se-relier"
+      },
+      {
+            "id": "amour",
+            "title": "Amour",
+            "subtitle": "Famille : Se relier",
+            "question": "Qu'est-ce qui reste quand tout part ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Amour » (Se relier). Question : « Qu'est-ce qui reste quand tout part ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "se-relier"
+      },
+      {
+            "id": "fraternite",
+            "title": "Fraternité",
+            "subtitle": "Famille : Se relier",
+            "question": "Quel inconnu est devenu un frère ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Fraternité » (Se relier). Question : « Quel inconnu est devenu un frère ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "se-relier"
+      },
+      {
+            "id": "transmission",
+            "title": "Transmission",
+            "subtitle": "Famille : Se relier",
+            "question": "Qu'avez-vous reçu d'un ancien qui ne s'achète pas ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Transmission » (Se relier). Question : « Qu'avez-vous reçu d'un ancien qui ne s'achète pas ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "se-relier"
+      },
+      {
+            "id": "foi",
+            "title": "Foi",
+            "subtitle": "Famille : S’élever",
+            "question": "Qu'est-ce qui vous a tenu quand rien d'autre ne tenait ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Foi » (S’élever). Question : « Qu'est-ce qui vous a tenu quand rien d'autre ne tenait ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "s-elever"
+      },
+      {
+            "id": "silence",
+            "title": "Silence",
+            "subtitle": "Famille : S’élever",
+            "question": "Où trouvez-vous le calme ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Silence » (S’élever). Question : « Où trouvez-vous le calme ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "s-elever"
+      },
+      {
+            "id": "gratitude",
+            "title": "Gratitude",
+            "subtitle": "Famille : S’élever",
+            "question": "De quoi êtes-vous profondément reconnaissant ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Gratitude » (S’élever). Question : « De quoi êtes-vous profondément reconnaissant ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "s-elever"
+      },
+      {
+            "id": "joie",
+            "title": "Joie",
+            "subtitle": "Famille : S’élever",
+            "question": "D'où vient la joie malgré le manque ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Joie » (S’élever). Question : « D'où vient la joie malgré le manque ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "s-elever"
+      },
+      {
+            "id": "resilience",
+            "title": "Résilience",
+            "subtitle": "Famille : Tenir debout",
+            "question": "Comment êtes-vous resté debout dans l'épreuve ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Résilience » (Tenir debout). Question : « Comment êtes-vous resté debout dans l'épreuve ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "tenir-debout"
+      },
+      {
+            "id": "deuil",
+            "title": "Deuil",
+            "subtitle": "Famille : Tenir debout",
+            "question": "Qu'avez-vous appris en perdant ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Deuil » (Tenir debout). Question : « Qu'avez-vous appris en perdant ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "tenir-debout"
+      },
+      {
+            "id": "dignite",
+            "title": "Dignité",
+            "subtitle": "Famille : Tenir debout",
+            "question": "Quand avez-vous dit non, au risque de tout perdre ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Dignité » (Tenir debout). Question : « Quand avez-vous dit non, au risque de tout perdre ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "tenir-debout"
+      },
+      {
+            "id": "vocation",
+            "title": "Vocation",
+            "subtitle": "Famille : Tenir debout",
+            "question": "À quel moment avez-vous su pourquoi vous étiez là ?",
+            "synopsis": "Témoignage face caméra sur la sagesse « Vocation » (Tenir debout). Question : « À quel moment avez-vous su pourquoi vous étiez là ? »",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette sagesse",
+            "doorId": "sagesses",
+            "family": "tenir-debout"
+      }
+]
+  },
+
+  // PORTE 2 : TERRITOIRES (16 pays pivots)
   {
     id: 'territoires',
     label: 'Territoires',
     icon: Mountain,
-    tagline: 'Faites rayonner l’âme, les savoirs et la géographie sacrée de votre terre.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    tagline: '16 pays pivots : berceaux africains, diaspora, résonances.',
+    videoUrl: STOCK_VIDEOS[1],
     posterUrl: '/assets/doors/door-territoires.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
-      'Mettre en lumière les sanctuaires et mémoires méconnues de votre pays.',
+      'Mettre en lumière les sanctuaires, terroirs et traditions de votre pays.',
       'Transmettre l’histoire locale racontée par ses propres enfants.',
       'Créer des ponts vivants avec la diaspora et les voyageurs en quête de sens.',
       'Archiver la beauté de vos paysages en format cinématographique 9:16.',
-      'Valoriser l’hospitalité et la sagesse territoriale de votre terroir.'
+      'Valoriser l’hospitalité et la force tellurique de votre terroir.'
     ],
     subjects: [
       {
-        id: 'benin',
-        title: 'Bénin',
-        subtitle: 'Berceau du Vodun, royaumes historiques d’Abomey et cité lacustre de Ganvié.',
-        question: 'Quelle tradition ou mémoire du Bénin a profondément forgé votre regard sur le monde ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce territoire'
+            "id": "benin",
+            "title": "Bénin",
+            "subtitle": "Berceau africain 🇧🇯",
+            "question": "Quelle tradition ou force tellurique de Bénin a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Bénin. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "afrique"
       },
       {
-        id: 'senegal',
-        title: 'Sénégal',
-        subtitle: 'Terre de la Teranga, mémoire de Gorée et poésie des nuits de Saint-Louis.',
-        question: 'Comment vivez-vous l’esprit de la Teranga et l’hospitalité dans vos actes quotidiens ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce territoire'
+            "id": "senegal",
+            "title": "Sénégal",
+            "subtitle": "Berceau africain 🇸🇳",
+            "question": "Quelle tradition ou force tellurique de Sénégal a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Sénégal. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "afrique"
       },
       {
-        id: 'cote-divoire',
-        title: 'Côte d’Ivoire',
-        subtitle: 'Richesse des lagunes, ferveur des masques sacrés et énergie créative d’Abidjan.',
-        question: 'Quel rituel ou lieu emblématique ivoirien incarne le mieux votre sentiment d’appartenance ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce territoire'
+            "id": "cote-d-ivoire",
+            "title": "Côte d'Ivoire",
+            "subtitle": "Berceau africain 🇨🇮",
+            "question": "Quelle tradition ou force tellurique de Côte d'Ivoire a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Côte d'Ivoire. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "afrique"
       },
       {
-        id: 'nigeria',
-        title: 'Nigéria',
-        subtitle: 'Gigantisme culturel, héritage yoruba et effervescence contemporaine.',
-        question: 'Quelle énergie créative ou héritage rituel puisez-vous dans la terre nigériane ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce territoire'
+            "id": "ghana",
+            "title": "Ghana",
+            "subtitle": "Berceau africain 🇬🇭",
+            "question": "Quelle tradition ou force tellurique de Ghana a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Ghana. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1575881875475-31024b476d38?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "afrique"
       },
       {
-        id: 'cameroun',
-        title: 'Cameroun',
-        subtitle: 'Afrique en miniature, hautes terres de l’Ouest et mémoires des chefferies.',
-        question: 'Quelle force tirez-vous des chefferies ou des récits des aînés de votre terroir ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce territoire'
+            "id": "nigeria",
+            "title": "Nigeria",
+            "subtitle": "Berceau africain 🇳🇬",
+            "question": "Quelle tradition ou force tellurique de Nigeria a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Nigeria. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "afrique"
+      },
+      {
+            "id": "rdc",
+            "title": "RDC",
+            "subtitle": "Berceau africain 🇨🇩",
+            "question": "Quelle tradition ou force tellurique de RDC a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans RDC. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "afrique"
+      },
+      {
+            "id": "ethiopie",
+            "title": "Éthiopie",
+            "subtitle": "Berceau africain 🇪🇹",
+            "question": "Quelle tradition ou force tellurique de Éthiopie a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Éthiopie. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "afrique"
+      },
+      {
+            "id": "afrique-du-sud",
+            "title": "Afrique du Sud",
+            "subtitle": "Berceau africain 🇿🇦",
+            "question": "Quelle tradition ou force tellurique de Afrique du Sud a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Afrique du Sud. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "afrique"
+      },
+      {
+            "id": "haiti",
+            "title": "Haïti",
+            "subtitle": "Diaspora 🇭🇹",
+            "question": "Quelle tradition ou force tellurique de Haïti a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Haïti. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1584646098378-0874589d76b1?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "diaspora"
+      },
+      {
+            "id": "bresil",
+            "title": "Brésil",
+            "subtitle": "Diaspora 🇧🇷",
+            "question": "Quelle tradition ou force tellurique de Brésil a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Brésil. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "diaspora"
+      },
+      {
+            "id": "cuba",
+            "title": "Cuba",
+            "subtitle": "Diaspora 🇨🇺",
+            "question": "Quelle tradition ou force tellurique de Cuba a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Cuba. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1500759285222-a95626b934cb?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "diaspora"
+      },
+      {
+            "id": "etats-unis",
+            "title": "États-Unis",
+            "subtitle": "Diaspora 🇺🇸",
+            "question": "Quelle tradition ou force tellurique de États-Unis a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans États-Unis. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "diaspora"
+      },
+      {
+            "id": "france",
+            "title": "France",
+            "subtitle": "Diaspora 🇫🇷",
+            "question": "Quelle tradition ou force tellurique de France a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans France. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "diaspora"
+      },
+      {
+            "id": "perou",
+            "title": "Pérou",
+            "subtitle": "Résonance universelle 🇵🇪",
+            "question": "Quelle tradition ou force tellurique de Pérou a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Pérou. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "resonances"
+      },
+      {
+            "id": "japon",
+            "title": "Japon",
+            "subtitle": "Résonance universelle 🇯🇵",
+            "question": "Quelle tradition ou force tellurique de Japon a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Japon. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "resonances"
+      },
+      {
+            "id": "inde",
+            "title": "Inde",
+            "subtitle": "Résonance universelle 🇮🇳",
+            "question": "Quelle tradition ou force tellurique de Inde a profondément forgé votre regard sur le monde ?",
+            "synopsis": "Récit territorial enraciné dans Inde. Découverte des savoirs, paysages et communautés locales.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce territoire",
+            "doorId": "territoires",
+            "group": "resonances"
       }
-    ]
+]
   },
+
+  // PORTE 3 : EXPERTISES (16 savoir-faire d'excellence)
   {
-    id: 'sagesses',
-    label: 'Mémoires',
-    icon: Atom,
-    tagline: 'Partagez une mémoire vive, un enseignement ancestral ou une parole éclairante.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-    posterUrl: '/assets/doors/door-memoires.jpg',
-    actionDoorLabel: 'Choisir cette porte',
-    advantages: [
-      'Préserver les mémoires orales menacées d’oubli face à la modernité.',
-      'Offrir une boussole humaine et de transmission aux générations futures.',
-      'Mettre en dialogue les cosmogonies ancestrales et les défis d’aujourd’hui.',
-      'S’exprimer dans un espace respectueux, propice à l’écoute profonde.',
-      'Rejoindre une bibliothèque vivante de mémoires universelles.'
-    ],
-    subjects: [
-      {
-        id: 'le-fa',
-        title: 'Le Fa & Géomancie',
-        subtitle: 'Science oraculaire brito-béninoise, lecture des signes et harmonie cosmique.',
-        question: 'Quel enseignement ou signe du Fa vous guide dans les carrefours décisifs de votre existence ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette mémoire'
-      },
-      {
-        id: 'le-pardon',
-        title: 'Le Devoir de Réconciliation',
-        subtitle: 'Guérir les lignées, dépasser les fractures et retrouver la paix intérieure.',
-        question: 'Quel chemin intérieur avez-vous emprunté pour pardonner ou apaiser une blessure ancienne ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette mémoire'
-      },
-      {
-        id: 'pachamama',
-        title: 'L’Alliance avec la Terre',
-        subtitle: 'Respect sacré de la nature, écoute du vivant et humilité de l’humain.',
-        question: 'Comment cultivez-vous une relation de respect sacré avec la nature qui vous entoure ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette mémoire'
-      },
-      {
-        id: 'la-teranga',
-        title: 'L’Hospitalité du Cœur',
-        subtitle: 'Accueillir l’étranger comme un parent, partager le bol et la bénédiction.',
-        question: 'En quoi l’accueil inconditionnel de l’autre change-t-il la vie de votre communauté ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette mémoire'
-      },
-      {
-        id: 'le-silence',
-        title: 'L’Écoute et le Silence',
-        subtitle: 'La parole mesurée des anciens, la puissance du recueillement intérieur.',
-        question: 'Que découvrez-vous en vous-même lorsque vous vous accordez un temps de silence ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette mémoire'
-      }
-    ]
-  },
-  {
-    id: 'emplois',
-    label: 'Compétences',
+    id: 'expertises',
+    label: 'Expertises',
     icon: GraduationCap,
-    tagline: 'Transmettez la passion de votre métier, vos gestes d’artisan et vos compétences d’excellence.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+    tagline: '16 savoir-faire. Des praticiens viennent pitcher leur métier en vidéo.',
+    videoUrl: STOCK_VIDEOS[4],
     posterUrl: '/assets/doors/door-competences.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Inspirer des vocations authentiques auprès des jeunes générations.',
-      'Valoriser la dignité et la technicité des métiers manuels et créatifs.',
+      'Valoriser la noblesse du geste et la technicité des métiers manuels et créatifs.',
       'Faciliter la rencontre entre talents de terrain et mentors d’expérience.',
       'Montrer la réalité d’un métier sans artifice ni filtre trompeur.',
       'Renforcer la transmission intergénérationnelle des savoir-faire d’excellence.'
     ],
     subjects: [
       {
-        id: 'cinema',
-        title: 'Cinéma & Image',
-        subtitle: 'Réalisateurs, cadreurs 9:16, preneurs de son et monteurs du continent.',
-        question: 'Quelle histoire humaine essentielle souhaitez-vous capter et révéler par l’image ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette filière'
+            "id": "bois",
+            "title": "Bois",
+            "subtitle": "ébénisterie • charpente • sculpture",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Bois » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Bois (ébénisterie, charpente, sculpture).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "ébénisterie",
+                  "charpente",
+                  "sculpture"
+            ]
       },
       {
-        id: 'artisanat',
-        title: 'Artisanat d’Art',
-        subtitle: 'Tisserands traditionnels, potières, sculpteurs sur bois et ferronniers.',
-        question: 'Quel geste de la main ou matière noble avez-vous mis des années à apprivoiser ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette filière'
+            "id": "tissage",
+            "title": "Tissage",
+            "subtitle": "soie • teintures végétales • textile",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Tissage » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Tissage (soie, teintures végétales, textile).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1528458909336-e7a0adfed0a5?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "soie",
+                  "teintures végétales",
+                  "textile"
+            ]
       },
       {
-        id: 'agroecologie',
-        title: 'Agroécologie & Terroir',
-        subtitle: 'Pépiniéristes, maraîchers bio, régénérateurs de sols et transformateurs.',
-        question: 'Comment votre travail de la terre nourrit-il à la fois les corps et l’écosystème ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette filière'
+            "id": "terre",
+            "title": "Terre",
+            "subtitle": "poterie • céramique • banco",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Terre » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Terre (poterie, céramique, banco).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "poterie",
+                  "céramique",
+                  "banco"
+            ]
       },
       {
-        id: 'education',
-        title: 'Éducation & Transmission',
-        subtitle: 'Enseignants, éducateurs communautaires et bâtisseurs d’écoles vivantes.',
-        question: 'Quelle étincelle fondamentale cherchez-vous à allumer chez vos élèves ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette filière'
+            "id": "metal",
+            "title": "Métal",
+            "subtitle": "forge • fonderie • orfèvrerie",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Métal » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Métal (forge, fonderie, orfèvrerie).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "forge",
+                  "fonderie",
+                  "orfèvrerie"
+            ]
       },
       {
-        id: 'communication',
-        title: 'Récits & Médias Numériques',
-        subtitle: 'Journalistes indépendants, podcasteurs et conteurs contemporains.',
-        question: 'Comment racontez-vous les récits qui méritent d’être entendus avec vérité et éthique ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette filière'
+            "id": "cuir",
+            "title": "Cuir",
+            "subtitle": "maroquinerie • sellerie",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Cuir » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Cuir (maroquinerie, sellerie).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "maroquinerie",
+                  "sellerie"
+            ]
+      },
+      {
+            "id": "agroecologie",
+            "title": "Agroécologie",
+            "subtitle": "semences paysannes • maraîchage",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Agroécologie » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Agroécologie (semences paysannes, maraîchage).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "semences paysannes",
+                  "maraîchage"
+            ]
+      },
+      {
+            "id": "cuisine",
+            "title": "Cuisine",
+            "subtitle": "terroir • fermentations",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Cuisine » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Cuisine (terroir, fermentations).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "terroir",
+                  "fermentations"
+            ]
+      },
+      {
+            "id": "apiculture",
+            "title": "Apiculture",
+            "subtitle": "abeilles • miel",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Apiculture » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Apiculture (abeilles, miel).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "abeilles",
+                  "miel"
+            ]
+      },
+      {
+            "id": "peche",
+            "title": "Pêche",
+            "subtitle": "pêche artisanale • construction de pirogues",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Pêche » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Pêche (pêche artisanale, construction de pirogues).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "pêche artisanale",
+                  "construction de pirogues"
+            ]
+      },
+      {
+            "id": "herboristerie",
+            "title": "Herboristerie",
+            "subtitle": "plantes médicinales • tisanes",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Herboristerie » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Herboristerie (plantes médicinales, tisanes).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "plantes médicinales",
+                  "tisanes"
+            ]
+      },
+      {
+            "id": "soins",
+            "title": "Soins",
+            "subtitle": "massage • pratiques somatiques • respiration",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Soins » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Soins (massage, pratiques somatiques, respiration).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "massage",
+                  "pratiques somatiques",
+                  "respiration"
+            ]
+      },
+      {
+            "id": "musique",
+            "title": "Musique",
+            "subtitle": "lutherie • sonothérapie • percussion",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Musique » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Musique (lutherie, sonothérapie, percussion).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "lutherie",
+                  "sonothérapie",
+                  "percussion"
+            ]
+      },
+      {
+            "id": "construction",
+            "title": "Construction",
+            "subtitle": "éco-construction • architecture bioclimatique",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Construction » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Construction (éco-construction, architecture bioclimatique).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "éco-construction",
+                  "architecture bioclimatique"
+            ]
+      },
+      {
+            "id": "parole",
+            "title": "Parole",
+            "subtitle": "griots • conteurs • calligraphie • écriture",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Parole » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Parole (griots, conteurs, calligraphie, écriture).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "griots",
+                  "conteurs",
+                  "calligraphie",
+                  "écriture"
+            ]
+      },
+      {
+            "id": "image",
+            "title": "Image",
+            "subtitle": "réalisation • photo • documentaire",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Image » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Image (réalisation, photo, documentaire).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "réalisation",
+                  "photo",
+                  "documentaire"
+            ]
+      },
+      {
+            "id": "pedagogie",
+            "title": "Transmission",
+            "subtitle": "pédagogie de la nature • écoles alternatives",
+            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Transmission » ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Transmission (pédagogie de la nature, écoles alternatives).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "pédagogie de la nature",
+                  "écoles alternatives"
+            ]
       }
-    ]
+]
   },
+
+  // PORTE 4 : PERSONNALITÉS (16 figures noires inspirantes)
   {
-    id: 'stars',
+    id: 'personnalites',
     label: 'Personnalités',
     icon: Star,
-    tagline: 'Célébrez les grandes voix, artistes et figures inspirantes qui ouvrent la voie.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    tagline: '16 figures noires. Des témoins viennent raconter ce que cette figure a changé dans leur vie ou leur art.',
+    videoUrl: STOCK_VIDEOS[2],
     posterUrl: '/assets/doors/door-personnalites.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Témoigner de l’impact direct d’une grande figure sur votre parcours personnel.',
-      'Célébrer la grandeur de nos icônes à travers le regard de leurs pairs.',
-      'Dépasser les clichés pour révéler la vulnérabilité et l’éthique des artistes.',
+      'Célébrer la grandeur de nos icônes à travers le regard de témoins vivants.',
+      'Dépasser les clichés pour révéler la vulnérabilité et l’éthique de la figure.',
       'Faire dialoguer créateurs africains et voix de la diaspora mondiale.',
-      'Inscrire vos réflexions dans un panthéon vivant de la culture panafricaine.'
+      'Inscrire vos réflexions dans un panthéon vivant de la culture noire universelle.'
     ],
     subjects: [
       {
-        id: 'angelique-kidjo',
-        title: 'Angélique Kidjo',
-        subtitle: 'Voix universelle du Bénin, quintuple lauréate des Grammy Awards et militante.',
-        question: 'En quoi la voix, la liberté et les combats d’Angélique Kidjo résonnent-ils avec votre parcours ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette personnalité'
+            "id": "mandela",
+            "title": "Nelson Mandela",
+            "subtitle": "Afrique du Sud • Angle : Le pardon et la dignité",
+            "question": "En quoi l'héritage de Nelson Mandela et son combat pour « Le pardon et la dignité » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Nelson Mandela (Afrique du Sud). Thématique centrale : Le pardon et la dignité.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Afrique du Sud",
+            "group": "afrique",
+            "angle": "Le pardon et la dignité"
       },
       {
-        id: 'fela-kuti',
-        title: 'Fela Kuti',
-        subtitle: 'Pionnier de l’Afrobeat, insurgé politique et icône immortelle de Lagos.',
-        question: 'Comment l’esprit d’insoumission et la musique de Fela inspirent-ils vos actes de création ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette personnalité'
+            "id": "sankara",
+            "title": "Thomas Sankara",
+            "subtitle": "Burkina Faso • Angle : L'intégrité, vivre de ce qu'on produit",
+            "question": "En quoi l'héritage de Thomas Sankara et son combat pour « L'intégrité, vivre de ce qu'on produit » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Thomas Sankara (Burkina Faso). Thématique centrale : L'intégrité, vivre de ce qu'on produit.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Burkina Faso",
+            "group": "afrique",
+            "angle": "L'intégrité, vivre de ce qu'on produit"
       },
       {
-        id: 'miriam-makeba',
-        title: 'Miriam Makeba (Mama Africa)',
-        subtitle: 'Légende sud-africaine, hymne à la liberté contre l’Apartheid et voix de Pata Pata.',
-        question: 'Quel combat pour la dignité et contre l’injustice portez-vous avec force aujourd’hui ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette personnalité'
+            "id": "sagbohan",
+            "title": "Danialou Sagbohan",
+            "subtitle": "Bénin • Angle : Les rythmes vodoun et la langue fon",
+            "question": "En quoi l'héritage de Danialou Sagbohan et son combat pour « Les rythmes vodoun et la langue fon » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Danialou Sagbohan (Bénin). Thématique centrale : Les rythmes vodoun et la langue fon.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Bénin",
+            "group": "afrique",
+            "angle": "Les rythmes vodoun et la langue fon"
       },
       {
-        id: 'janelle-monae',
-        title: 'Janelle Monáe',
-        subtitle: 'Créatrice afrofuturiste américaine, compositrice visionnaire et actrice.',
-        question: 'Quelle vision afrofuturiste ou émancipation audacieuse nourrit vos projets d’avenir ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette personnalité'
+            "id": "kidjo",
+            "title": "Angélique Kidjo",
+            "subtitle": "Bénin • Angle : La voix béninoise qui porte le monde",
+            "question": "En quoi l'héritage de Angélique Kidjo et son combat pour « La voix béninoise qui porte le monde » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Angélique Kidjo (Bénin). Thématique centrale : La voix béninoise qui porte le monde.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Bénin",
+            "group": "afrique",
+            "angle": "La voix béninoise qui porte le monde"
       },
       {
-        id: 'dah-zounon',
-        title: 'Dah Zounon',
-        subtitle: 'Grand dignitaire traditionnel béninois, mémoire des rites et gardien des pactes sacrés.',
-        question: 'Quelle sagesse rituelle ou lien avec les ancêtres guide vos décisions les plus importantes ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette personnalité'
+            "id": "hampate-ba",
+            "title": "Amadou Hampâté Bâ",
+            "subtitle": "Mali • Angle : La parole des anciens",
+            "question": "En quoi l'héritage de Amadou Hampâté Bâ et son combat pour « La parole des anciens » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Amadou Hampâté Bâ (Mali). Thématique centrale : La parole des anciens.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Mali",
+            "group": "afrique",
+            "angle": "La parole des anciens"
+      },
+      {
+            "id": "fela-kuti",
+            "title": "Fela Kuti",
+            "subtitle": "Nigeria • Angle : La musique comme arme de libération",
+            "question": "En quoi l'héritage de Fela Kuti et son combat pour « La musique comme arme de libération » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Fela Kuti (Nigeria). Thématique centrale : La musique comme arme de libération.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Nigeria",
+            "group": "afrique",
+            "angle": "La musique comme arme de libération"
+      },
+      {
+            "id": "makeba",
+            "title": "Miriam Makeba",
+            "subtitle": "Afrique du Sud • Angle : Chanter son peuple même en exil",
+            "question": "En quoi l'héritage de Miriam Makeba et son combat pour « Chanter son peuple même en exil » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Miriam Makeba (Afrique du Sud). Thématique centrale : Chanter son peuple même en exil.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Afrique du Sud",
+            "group": "afrique",
+            "angle": "Chanter son peuple même en exil"
+      },
+      {
+            "id": "maathai",
+            "title": "Wangari Maathai",
+            "subtitle": "Kenya • Angle : La révolution par l'arbre",
+            "question": "En quoi l'héritage de Wangari Maathai et son combat pour « La révolution par l'arbre » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Wangari Maathai (Kenya). Thématique centrale : La révolution par l'arbre.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Kenya",
+            "group": "afrique",
+            "angle": "La révolution par l'arbre"
+      },
+      {
+            "id": "marley",
+            "title": "Bob Marley",
+            "subtitle": "Jamaïque • Angle : La foi et l'unité",
+            "question": "En quoi l'héritage de Bob Marley et son combat pour « La foi et l'unité » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Bob Marley (Jamaïque). Thématique centrale : La foi et l'unité.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Jamaïque",
+            "group": "diaspora",
+            "angle": "La foi et l'unité"
+      },
+      {
+            "id": "ali",
+            "title": "Muhammad Ali",
+            "subtitle": "États-Unis • Angle : Le courage et la fierté",
+            "question": "En quoi l'héritage de Muhammad Ali et son combat pour « Le courage et la fierté » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Muhammad Ali (États-Unis). Thématique centrale : Le courage et la fierté.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "États-Unis",
+            "group": "diaspora",
+            "angle": "Le courage et la fierté"
+      },
+      {
+            "id": "jackson",
+            "title": "Michael Jackson",
+            "subtitle": "États-Unis • Angle : Le dépassement par le travail et le mouvement",
+            "question": "En quoi l'héritage de Michael Jackson et son combat pour « Le dépassement par le travail et le mouvement » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Michael Jackson (États-Unis). Thématique centrale : Le dépassement par le travail et le mouvement.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "États-Unis",
+            "group": "diaspora",
+            "angle": "Le dépassement par le travail et le mouvement"
+      },
+      {
+            "id": "cesaire",
+            "title": "Aimé Césaire",
+            "subtitle": "Martinique • Angle : La fierté originelle et le verbe qui redresse",
+            "question": "En quoi l'héritage de Aimé Césaire et son combat pour « La fierté originelle et le verbe qui redresse » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Aimé Césaire (Martinique). Thématique centrale : La fierté originelle et le verbe qui redresse.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Martinique",
+            "group": "diaspora",
+            "angle": "La fierté originelle et le verbe qui redresse"
+      },
+      {
+            "id": "glissant",
+            "title": "Édouard Glissant",
+            "subtitle": "Martinique • Angle : Le Tout-Monde et la relation",
+            "question": "En quoi l'héritage de Édouard Glissant et son combat pour « Le Tout-Monde et la relation » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Édouard Glissant (Martinique). Thématique centrale : Le Tout-Monde et la relation.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Martinique",
+            "group": "diaspora",
+            "angle": "Le Tout-Monde et la relation"
+      },
+      {
+            "id": "garvey",
+            "title": "Marcus Garvey",
+            "subtitle": "Jamaïque • Angle : L'unité et la fierté des peuples noirs",
+            "question": "En quoi l'héritage de Marcus Garvey et son combat pour « L'unité et la fierté des peuples noirs » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Marcus Garvey (Jamaïque). Thématique centrale : L'unité et la fierté des peuples noirs.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "Jamaïque",
+            "group": "diaspora",
+            "angle": "L'unité et la fierté des peuples noirs"
+      },
+      {
+            "id": "tubman",
+            "title": "Harriet Tubman",
+            "subtitle": "États-Unis • Angle : Le courage de libérer les siens",
+            "question": "En quoi l'héritage de Harriet Tubman et son combat pour « Le courage de libérer les siens » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Harriet Tubman (États-Unis). Thématique centrale : Le courage de libérer les siens.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "États-Unis",
+            "group": "diaspora",
+            "angle": "Le courage de libérer les siens"
+      },
+      {
+            "id": "angelou",
+            "title": "Maya Angelou",
+            "subtitle": "États-Unis • Angle : La parole qui relève",
+            "question": "En quoi l'héritage de Maya Angelou et son combat pour « La parole qui relève » résonnent-ils avec votre parcours personnel ou votre art ?",
+            "synopsis": "Témoignage sur l'impact de Maya Angelou (États-Unis). Thématique centrale : La parole qui relève.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette personnalité",
+            "doorId": "personnalites",
+            "origin": "États-Unis",
+            "group": "diaspora",
+            "angle": "La parole qui relève"
       }
-    ]
+]
   },
+
+  // PORTE 5 : PRODUITS & SERVICES (16 catégories d'offres)
+  {
+    id: 'produits-services',
+    label: 'Produits & Services',
+    icon: ShoppingBag,
+    tagline: '16 catégories pour présenter des offres concrètes en capsules vidéo de 60 à 90 secondes.',
+    videoUrl: STOCK_VIDEOS[3],
+    posterUrl: '/assets/doors/door-offres.jpg',
+    actionDoorLabel: 'Choisir cette porte',
+    advantages: [
+      'Présenter vos créations concrètes en capsule vidéo percutante de 60 à 90 secondes.',
+      'Expliquer l’histoire de fabrication, l’origine des matières et le prix juste.',
+      'Remplacer les algorithmes de vente impersonnels par une véritable rencontre humaine.',
+      'Fédérer une clientèle attachée à la qualité, l’éthique et l’artisanat.',
+      'Permettre la commande directe, l’abonnement ou la collaboration sur-mesure.'
+    ],
+    subjects: [
+      {
+            "id": "mode",
+            "title": "Mode",
+            "subtitle": "vêtements • wax • lin • chaussures • maroquinerie",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Mode » ?",
+            "synopsis": "Offre concrète dans la catégorie Mode. Domaines couverts : vêtements, wax, lin, chaussures, maroquinerie.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "vêtements",
+                  "wax",
+                  "lin",
+                  "chaussures",
+                  "maroquinerie"
+            ]
+      },
+      {
+            "id": "bijoux",
+            "title": "Bijoux",
+            "subtitle": "orfèvrerie • perles • pièces uniques",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Bijoux » ?",
+            "synopsis": "Offre concrète dans la catégorie Bijoux. Domaines couverts : orfèvrerie, perles, pièces uniques.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "orfèvrerie",
+                  "perles",
+                  "pièces uniques"
+            ]
+      },
+      {
+            "id": "maison",
+            "title": "Maison",
+            "subtitle": "mobilier • vannerie • luminaires • décoration",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Maison » ?",
+            "synopsis": "Offre concrète dans la catégorie Maison. Domaines couverts : mobilier, vannerie, luminaires, décoration.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "mobilier",
+                  "vannerie",
+                  "luminaires",
+                  "décoration"
+            ]
+      },
+      {
+            "id": "artisanat",
+            "title": "Artisanat",
+            "subtitle": "ustensiles • couteaux • outils • papeterie",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Artisanat » ?",
+            "synopsis": "Offre concrète dans la catégorie Artisanat. Domaines couverts : ustensiles, couteaux, outils, papeterie.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1528458909336-e7a0adfed0a5?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "ustensiles",
+                  "couteaux",
+                  "outils",
+                  "papeterie"
+            ]
+      },
+      {
+            "id": "art",
+            "title": "Art",
+            "subtitle": "peinture • sculpture • photo • livres • musique",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Art » ?",
+            "synopsis": "Offre concrète dans la catégorie Art. Domaines couverts : peinture, sculpture, photo, livres, musique.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "peinture",
+                  "sculpture",
+                  "photo",
+                  "livres",
+                  "musique"
+            ]
+      },
+      {
+            "id": "beaute",
+            "title": "Beauté",
+            "subtitle": "karité • huiles • savons • soins capillaires",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Beauté » ?",
+            "synopsis": "Offre concrète dans la catégorie Beauté. Domaines couverts : karité, huiles, savons, soins capillaires.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1608248597359-33513476d05f?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "karité",
+                  "huiles",
+                  "savons",
+                  "soins capillaires"
+            ]
+      },
+      {
+            "id": "soins-du-corps",
+            "title": "Soins du corps",
+            "subtitle": "massages • spas • rituels",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Soins du corps » ?",
+            "synopsis": "Offre concrète dans la catégorie Soins du corps. Domaines couverts : massages, spas, rituels.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "massages",
+                  "spas",
+                  "rituels"
+            ]
+      },
+      {
+            "id": "plantes",
+            "title": "Plantes",
+            "subtitle": "tisanes • super-aliments • élixirs",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Plantes » ?",
+            "synopsis": "Offre concrète dans la catégorie Plantes. Domaines couverts : tisanes, super-aliments, élixirs.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "tisanes",
+                  "super-aliments",
+                  "élixirs"
+            ]
+      },
+      {
+            "id": "bien-etre",
+            "title": "Bien-être",
+            "subtitle": "coaching • thérapies brèves • retraites",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Bien-être » ?",
+            "synopsis": "Offre concrète dans la catégorie Bien-être. Domaines couverts : coaching, thérapies brèves, retraites.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "coaching",
+                  "thérapies brèves",
+                  "retraites"
+            ]
+      },
+      {
+            "id": "epicerie",
+            "title": "Épicerie",
+            "subtitle": "épices • café • miel • chocolat",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Épicerie » ?",
+            "synopsis": "Offre concrète dans la catégorie Épicerie. Domaines couverts : épices, café, miel, chocolat.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "épices",
+                  "café",
+                  "miel",
+                  "chocolat"
+            ]
+      },
+      {
+            "id": "terroir",
+            "title": "Terroir",
+            "subtitle": "maraîchage • élevage • pêche • circuits courts",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Terroir » ?",
+            "synopsis": "Offre concrète dans la catégorie Terroir. Domaines couverts : maraîchage, élevage, pêche, circuits courts.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "maraîchage",
+                  "élevage",
+                  "pêche",
+                  "circuits courts"
+            ]
+      },
+      {
+            "id": "cuisine",
+            "title": "Cuisine",
+            "subtitle": "chefs • traiteurs • tables d'hôtes • ateliers",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Cuisine » ?",
+            "synopsis": "Offre concrète dans la catégorie Cuisine. Domaines couverts : chefs, traiteurs, tables d'hôtes, ateliers.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "chefs",
+                  "traiteurs",
+                  "tables d'hôtes",
+                  "ateliers"
+            ]
+      },
+      {
+            "id": "voyage",
+            "title": "Voyage",
+            "subtitle": "écolodges • séjours d'immersion • guides",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Voyage » ?",
+            "synopsis": "Offre concrète dans la catégorie Voyage. Domaines couverts : écolodges, séjours d'immersion, guides.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "écolodges",
+                  "séjours d'immersion",
+                  "guides"
+            ]
+      },
+      {
+            "id": "formation",
+            "title": "Formation",
+            "subtitle": "masterclasses • stages • apprentissage",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Formation » ?",
+            "synopsis": "Offre concrète dans la catégorie Formation. Domaines couverts : masterclasses, stages, apprentissage.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "masterclasses",
+                  "stages",
+                  "apprentissage"
+            ]
+      },
+      {
+            "id": "ecologie",
+            "title": "Écologie",
+            "subtitle": "éco-construction • énergie solaire • réparation",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Écologie » ?",
+            "synopsis": "Offre concrète dans la catégorie Écologie. Domaines couverts : éco-construction, énergie solaire, réparation.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "éco-construction",
+                  "énergie solaire",
+                  "réparation"
+            ]
+      },
+      {
+            "id": "medias",
+            "title": "Médias",
+            "subtitle": "vidéo • photo • design • digital • événementiel",
+            "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Médias » ?",
+            "synopsis": "Offre concrète dans la catégorie Médias. Domaines couverts : vidéo, photo, design, digital, événementiel.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette catégorie",
+            "doorId": "produits-services",
+            "covers": [
+                  "vidéo",
+                  "photo",
+                  "design",
+                  "digital",
+                  "événementiel"
+            ]
+      }
+]
+  },
+
+  // PORTE 6 : MARQUES (16 secteurs de sponsors)
   {
     id: 'marques',
     label: 'Marques',
     icon: Gem,
-    tagline: 'Révélez l’authenticité de votre entreprise, son utilité réelle et ses racines.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    tagline: '16 secteurs de sponsors potentiels, à contacter pour qu’ils accueillent des témoignages de leurs clients.',
+    videoUrl: STOCK_VIDEOS[0],
     posterUrl: '/assets/doors/door-marques.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
-      'Éloigner votre communication du bruit publicitaire pour bâtir une confiance intime.',
-      'Donner un visage humain et des valeurs tangibles à votre marque.',
-      'Prouver votre ancrage territorial et votre engagement envers les communautés.',
-      'Valoriser la transparence de vos chaînes d’approvisionnement et ateliers.',
-      'Rencontrer des consommateurs éclairés qui recherchent du sens avant le produit.'
+      'Connecter les marques à des témoignages authentiques et sincères de clients.',
+      'Éloigner la communication d’entreprise du bruit publicitaire trompeur.',
+      'Valoriser l’utilité réelle, l’éthique de production et la relation de confiance.',
+      'Fédérer des partenariats vertueux entre créateurs, artisans et sponsors.',
+      'Créer des capsules de sponsorisation respectueuses de l’intelligence du public.'
     ],
     subjects: [
       {
-        id: 'celtis',
-        title: 'Celtis Bénin',
-        subtitle: 'Opérateur télécom national béninois, symbole de souveraineté numérique.',
-        question: 'Comment la souveraineté technologique peut-elle servir directement l’autonomie du peuple ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette marque'
+            "id": "beaute",
+            "title": "Beauté",
+            "subtitle": "Secteur sponsor & partenaires : Beauté",
+            "question": "Comment votre entreprise du secteur « Beauté » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Beauté.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1608248597359-33513476d05f?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
       },
       {
-        id: 'mtn',
-        title: 'MTN Bénin',
-        subtitle: 'Acteur majeur de la connectivité mobile et de l’inclusion digitale en Afrique.',
-        question: 'Comment votre projet utilise-t-il la connectivité pour créer du lien humain durable ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette marque'
+            "id": "mode",
+            "title": "Mode",
+            "subtitle": "Secteur sponsor & partenaires : Mode",
+            "question": "Comment votre entreprise du secteur « Mode » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Mode.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
       },
       {
-        id: 'moov-africa',
-        title: 'Moov Africa',
-        subtitle: 'Réseau panafricain de télécommunications et services financiers de proximité.',
-        question: 'Comment les services de proximité transforment-ils le quotidien des familles modestes ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1556742049-0a67e557224f?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette marque'
+            "id": "technologie",
+            "title": "Technologie",
+            "subtitle": "Secteur sponsor & partenaires : Technologie",
+            "question": "Comment votre entreprise du secteur « Technologie » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Technologie.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
       },
       {
-        id: 'ateliers-cuir',
-        title: 'Maroquinerie du Sahel',
-        subtitle: 'Artisanat du cuir végétal, teinture naturelle et finitions d’exception.',
-        question: 'Quelle est la valeur du temps long et de la matière noble dans vos créations ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette marque'
+            "id": "telecoms",
+            "title": "Télécoms",
+            "subtitle": "Secteur sponsor & partenaires : Télécoms",
+            "question": "Comment votre entreprise du secteur « Télécoms » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Télécoms.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
       },
       {
-        id: 'cosmetiques-bio',
-        title: 'Karité & Essences Tropicales',
-        subtitle: 'Coopératives de femmes productrices de beurre de karité pur et huiles sacrées.',
-        question: 'Comment vos produits de terroir honorent-ils la santé naturelle et la dignité des productrices ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1608248597359-33513476d05f?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette marque'
+            "id": "banque",
+            "title": "Banque",
+            "subtitle": "Secteur sponsor & partenaires : Banque",
+            "question": "Comment votre entreprise du secteur « Banque » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Banque.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "gastronomie",
+            "title": "Gastronomie",
+            "subtitle": "Secteur sponsor & partenaires : Gastronomie",
+            "question": "Comment votre entreprise du secteur « Gastronomie » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Gastronomie.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "boissons",
+            "title": "Boissons",
+            "subtitle": "Secteur sponsor & partenaires : Boissons",
+            "question": "Comment votre entreprise du secteur « Boissons » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Boissons.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "voyage",
+            "title": "Voyage",
+            "subtitle": "Secteur sponsor & partenaires : Voyage",
+            "question": "Comment votre entreprise du secteur « Voyage » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Voyage.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "hotellerie",
+            "title": "Hôtellerie",
+            "subtitle": "Secteur sponsor & partenaires : Hôtellerie",
+            "question": "Comment votre entreprise du secteur « Hôtellerie » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Hôtellerie.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "transport",
+            "title": "Transport",
+            "subtitle": "Secteur sponsor & partenaires : Transport",
+            "question": "Comment votre entreprise du secteur « Transport » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Transport.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "sante",
+            "title": "Santé",
+            "subtitle": "Secteur sponsor & partenaires : Santé",
+            "question": "Comment votre entreprise du secteur « Santé » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Santé.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "maison",
+            "title": "Maison",
+            "subtitle": "Secteur sponsor & partenaires : Maison",
+            "question": "Comment votre entreprise du secteur « Maison » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Maison.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "energie",
+            "title": "Énergie",
+            "subtitle": "Secteur sponsor & partenaires : Énergie",
+            "question": "Comment votre entreprise du secteur « Énergie » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Énergie.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "medias",
+            "title": "Médias",
+            "subtitle": "Secteur sponsor & partenaires : Médias",
+            "question": "Comment votre entreprise du secteur « Médias » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Médias.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "education",
+            "title": "Éducation",
+            "subtitle": "Secteur sponsor & partenaires : Éducation",
+            "question": "Comment votre entreprise du secteur « Éducation » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Éducation.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
+      },
+      {
+            "id": "sport",
+            "title": "Sport",
+            "subtitle": "Secteur sponsor & partenaires : Sport",
+            "question": "Comment votre entreprise du secteur « Sport » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
+            "synopsis": "Sponsorisation et témoignages clients dans le secteur Sport.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir ce secteur",
+            "doorId": "marques"
       }
-    ]
+]
   },
+
+  // PORTE 7 : PROJETS (16 catégories de causes participatives)
   {
     id: 'projets',
     label: 'Projets',
     icon: Sprout,
-    tagline: 'Portez un projet collectif, une initiative citoyenne ou une vision d’intérêt général.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    tagline: '16 catégories de causes, dans l’esprit des plateformes de financement participatif.',
+    videoUrl: STOCK_VIDEOS[1],
     posterUrl: '/assets/doors/door-projets.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
-      'Présenter votre initiative à une communauté engagée prête à se mobiliser.',
-      'Expliquer l’impact concret de vos actions sur le terrain avec authenticité.',
-      'Nouer des partenariats éthiques avec des porteurs de projets complémentaires.',
-      'Lever des soutiens et des adhésions sans intermédiaire déformant.',
-      'Prouver par l’exemple qu’un changement durable est déjà à l’œuvre.'
+      'Présenter votre cause ou projet collectif à une communauté engagée.',
+      'Expliquer l’impact concret de vos actions sur le terrain avec vérité.',
+      'Mobiliser du soutien citoyen, du mécénat et du financement participatif.',
+      'Nouer des synergies avec d’autres bâtisseurs engagés pour le bien commun.',
+      'Documenter en vidéo l’avancement et les victoires tangibles de votre cause.'
     ],
     subjects: [
       {
-        id: 'forets-sacrees',
-        title: 'Sanctuarisation des Forêts Sacrées',
-        subtitle: 'Protection des îlots de biodiversité et sanctuaires rituels menacés.',
-        question: 'Comment protégez-vous les sanctuaires naturels face aux pressions modernes d’exploitation ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce projet'
+            "id": "ecologie",
+            "title": "Écologie",
+            "subtitle": "forêts sacrées • mangroves • biodiversité",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Écologie » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Écologie (forêts sacrées, mangroves, biodiversité).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "forêts sacrées",
+                  "mangroves",
+                  "biodiversité"
+            ]
       },
       {
-        id: 'ecoles-nomades',
-        title: 'Bibliothèques & Écoles Nomades',
-        subtitle: 'Apporter le livre et la culture orale aux enfants des campements pastoraux.',
-        question: 'Comment faire voyager les livres et le savoir là où ils manquent le plus ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce projet'
+            "id": "enfance",
+            "title": "Enfance",
+            "subtitle": "Cause collective & bien commun",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Enfance » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Enfance.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets"
       },
       {
-        id: 'semences-paysannes',
-        title: 'Banque de Semences Paysannes',
-        subtitle: 'Conservation des variétés anciennes de mil, sorgho et maïs face aux OGM.',
-        question: 'Pourquoi la sauvegarde des semences traditionnelles est-elle vitale pour la souveraineté alimentaire ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1592417817098-8f3d69109853?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce projet'
+            "id": "education",
+            "title": "Éducation",
+            "subtitle": "écoles • bibliothèques",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Éducation » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Éducation (écoles, bibliothèques).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "écoles",
+                  "bibliothèques"
+            ]
       },
       {
-        id: 'ateliers-tissage',
-        title: 'Coopérative de Tissage Kanvô',
-        subtitle: 'Préservation du pagne tissé béninois et émancipation économique des artisanes.',
-        question: 'Comment l’artisanat traditionnel renforce-t-il l’autonomie économique des femmes ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce projet'
+            "id": "sante",
+            "title": "Santé",
+            "subtitle": "Cause collective & bien commun",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Santé » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Santé.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets"
       },
       {
-        id: 'plantes-medicinales',
-        title: 'Conservatoire des Plantes Médicinales',
-        subtitle: 'Documentation des remèdes traditionnels de nos forêts et validation scientifique.',
-        question: 'Quelle plante ou remède ancestral a prouvé sa sagesse et son efficacité auprès des vôtres ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir ce projet'
+            "id": "agriculture",
+            "title": "Agriculture",
+            "subtitle": "semences • jardins urbains",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Agriculture » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Agriculture (semences, jardins urbains).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "semences",
+                  "jardins urbains"
+            ]
+      },
+      {
+            "id": "eau",
+            "title": "Eau",
+            "subtitle": "Cause collective & bien commun",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Eau » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Eau.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets"
+      },
+      {
+            "id": "energie",
+            "title": "Énergie",
+            "subtitle": "solaire",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Énergie » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Énergie (solaire).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "solaire"
+            ]
+      },
+      {
+            "id": "habitat",
+            "title": "Habitat",
+            "subtitle": "construction en terre • logements",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Habitat » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Habitat (construction en terre, logements).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "construction en terre",
+                  "logements"
+            ]
+      },
+      {
+            "id": "femmes",
+            "title": "Femmes",
+            "subtitle": "autonomie • tissage • naissance",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Femmes » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Femmes (autonomie, tissage, naissance).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "autonomie",
+                  "tissage",
+                  "naissance"
+            ]
+      },
+      {
+            "id": "jeunesse",
+            "title": "Jeunesse",
+            "subtitle": "Cause collective & bien commun",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Jeunesse » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Jeunesse.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets"
+      },
+      {
+            "id": "culture",
+            "title": "Culture",
+            "subtitle": "cinéma • théâtre • livres • festivals • archives",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Culture » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Culture (cinéma, théâtre, livres, festivals, archives).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "cinéma",
+                  "théâtre",
+                  "livres",
+                  "festivals",
+                  "archives"
+            ]
+      },
+      {
+            "id": "musique",
+            "title": "Musique",
+            "subtitle": "centre de percussion",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Musique » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Musique (centre de percussion).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "centre de percussion"
+            ]
+      },
+      {
+            "id": "patrimoine",
+            "title": "Patrimoine",
+            "subtitle": "vodoun • langues • mémoire des anciens",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Patrimoine » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Patrimoine (vodoun, langues, mémoire des anciens).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "vodoun",
+                  "langues",
+                  "mémoire des anciens"
+            ]
+      },
+      {
+            "id": "artisanat",
+            "title": "Artisanat",
+            "subtitle": "Cause collective & bien commun",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Artisanat » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Artisanat.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1528458909336-e7a0adfed0a5?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets"
+      },
+      {
+            "id": "entrepreneuriat",
+            "title": "Entrepreneuriat",
+            "subtitle": "Cause collective & bien commun",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Entrepreneuriat » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Entrepreneuriat.",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets"
+      },
+      {
+            "id": "solidarite",
+            "title": "Solidarité",
+            "subtitle": "urgence • handicap • personnes âgées • réinsertion",
+            "question": "Quel impact direct et transformation concrète votre projet dans la cause « Solidarité » apporte-t-il sur le terrain ?",
+            "synopsis": "Projet citoyen et cause d'intérêt général : Solidarité (urgence, handicap, personnes âgées, réinsertion).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette cause",
+            "doorId": "projets",
+            "covers": [
+                  "urgence",
+                  "handicap",
+                  "personnes âgées",
+                  "réinsertion"
+            ]
       }
-    ]
-  },
-  {
-    id: 'offres',
-    label: 'Produits & Services',
-    icon: ShoppingBag,
-    tagline: 'Proposez vos créations artisanales, pièces uniques ou services d’exception.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-    posterUrl: '/assets/doors/door-offres.jpg',
-    actionDoorLabel: 'Choisir cette porte',
-    advantages: [
-      'Vendre vos créations en expliquant directement l’histoire de leur fabrication.',
-      'S’adresser à un public qui valorise le travail bien fait et le prix juste.',
-      'Remplacer les algorithmes de vente agressifs par une rencontre humaine.',
-      'Créer une communauté de clients fidèles et attachés à votre savoir-faire.',
-      'Permettre le troc, la commande sur-mesure et l’échange direct.'
-    ],
-    subjects: [
-      {
-        id: 'masterclasses',
-        title: 'Masterclass Écriture & Scénario 9:16',
-        subtitle: 'Formation pratique dispensée par les scénaristes et réalisateurs Yonywood.',
-        question: 'Quel secret d’écriture ou geste d’excellence souhaitez-vous transmettre en atelier ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette offre'
-      },
-      {
-        id: 'pieces-tissees',
-        title: 'Pièces Uniques de Pagne Tissé',
-        subtitle: 'Étoffes en coton pur filé main par les maîtres tisserands de Bohicon.',
-        question: 'Quelle histoire sacrée ou symbolique est tissée dans les motifs de vos étoffes ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1528458909336-e7a0adfed0a5?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette offre'
-      },
-      {
-        id: 'residences',
-        title: 'Résidence d’Artistes à Ganvié',
-        subtitle: 'Immersion sur pilotis pour musiciens, peintres et écrivains du monde entier.',
-        question: 'Quelle transformation créative proposez-vous à ceux qui viennent séjourner dans votre lieu ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette offre'
-      },
-      {
-        id: 'ateliers-tournage',
-        title: 'Atelier de Tournage & Cadrage Téléphone',
-        subtitle: 'Maîtriser la lumière naturelle et le son direct pour filmer des récits vivants.',
-        question: 'Comment apprenez-vous aux créateurs débutants à filmer avec le cœur et sans artifice ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette offre'
-      },
-      {
-        id: 'forge-fer',
-        title: 'Objets Rituels en Fer Forgé',
-        subtitle: 'Créations inspirées du culte d’Ogoun par les forgerons de Ouidah.',
-        question: 'Que vous a enseigné l’épreuve du feu et du fer sur la maîtrise de vos émotions ?',
-        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-        posterUrl: 'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80',
-        actionLabel: 'Choisir cette offre'
-      }
-    ]
+]
   }
 ];
+
+export function getDoorById(id: string): ProposeDoor | undefined {
+  return PROPOSE_DOORS.find(d => d.id === id);
+}
+
+export function getSubjectByDoorAndId(doorId: string, subjectId: string): ProposeSubject | undefined {
+  const door = getDoorById(doorId);
+  if (!door) return undefined;
+  return door.subjects.find(s => s.id === subjectId);
+}
