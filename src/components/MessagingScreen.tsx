@@ -56,8 +56,8 @@ export const MessagingScreen: React.FC<MessagingScreenProps> = ({ onNavigate }) 
       id: 'req-1',
       senderName: 'Amara',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
-      motif: 'Coproduction & Projet',
-      motifBadge: '🎬 Coproduction',
+      motif: 'Marché & Projet',
+      motifBadge: '🎬 Marché',
       message: 'Bonjour Amina, j’ai découvert votre travail dans le documentaire Finagnon. Je prépare une création mariant bois de kora et tissage traditionnel, et j’aimerais vous inviter à collaborer.',
       time: 'Aujourd’hui à 10:15'
     },

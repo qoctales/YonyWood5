@@ -19,8 +19,8 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     centralQuestion: 'La foi',
     shortSynopsis: 'Quand la tradition ancestrale et la foi chrétienne dialoguent d’égal à égal au Bénin face aux grands mystères humains : l’épreuve, le pardon et la réconciliation.',
     description: 'Au Bénin, berceau du culte des ancêtres et terre de ferveur biblique, deux croyances cohabitent sous le même toit sans jamais s’affronter frontalement. Cette série met en miroir des dévots d’Èṣù — gardien des carrefours, messager de l\'invisible et protecteur des seuils — avec des pasteurs, religieuses et fidèles chrétiens tournés vers Jésus. Face aux grands mystères humains (l\'épreuve de la maladie, le pardon, le deuil, l\'abandon à une puissance supérieure), leurs rituels, louanges et oraisons silencieuses dialoguent d\'égal à égal, révélant la quête universelle d\'une foi incarnée.',
-    coverImage: '/assets/posters/jesus-esu.png',
-    posterUrl: '/assets/posters/jesus-esu.png',
+    coverImage: '/assets/posters/Esu < > Jesus.png',
+    posterUrl: '/assets/posters/Esu < > Jesus.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     teaserDuration: '1:15',
     universes: [
@@ -143,8 +143,8 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     centralQuestion: 'Le territoire',
     shortSynopsis: 'Des cités lacustres de Ganvié aux cimes sacrées de Cusco et Pisac, pêcheurs et paysans dialoguent sur l’enracinement, l’eau, la montagne et l’amour inconditionnel d’une terre.',
     description: 'Des cités lacustres de Ganvié, bâties sur pilotis pour échapper aux razzias du Dahomey, jusqu\'aux terrasses millénaires de Pisac et Cusco au Pérou, perchées à 3 400 mètres d\'altitude. Finagnon < > Qosqorico réunit des pêcheurs toffinou et des paysans quechuas gardiens de la Pachamama. Comment habite-t-on l\'eau ou la roche sacrée ? Que ressent-on lorsqu\'il faut quitter sa lagune ou sa cordillère, et que retrouve-t-on en revenant ? Une épopée intime sur la mémoire des terres nourricières et la résistance poétique des peuples autochtones face à l\'exil.',
-    coverImage: '/assets/posters/finagnon-qosqorico.png',
-    posterUrl: '/assets/posters/finagnon-qosqorico.png',
+    coverImage: '/assets/posters/Finagnon < > Qosqorico.png',
+    posterUrl: '/assets/posters/Finagnon < > Qosqorico.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     teaserDuration: '1:45',
     universes: [
@@ -241,8 +241,8 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     centralQuestion: 'L\'identité',
     shortSynopsis: 'D’un côté, la voix passionnée et le poing levé d’un leader noir en lutte pour ses convictions ; de l’autre, le discours vibrant d’une femme noire engagée pour la souveraineté des femmes. Deux orateurs d’exception.',
     description: 'D’un côté, la force de conviction, l’éloquence tranchante et le poing levé de Malik Diop, orateur noir élégamment vêtu, portant haut le verbe de la liberté, de la justice et de l’émancipation civique (Blacks One). De l’autre côté, le discours vibrant et passionné d’Éléonore Vance, leader et oratrice noire se battant avec dignité et ferveur pour les droits et la souveraineté des femmes (Beyond Eve). Deux voix d’une rare élégance, deux combats fraternels qui s’unissent pour affirmer nos souverainetés.',
-    coverImage: '/assets/posters/blacks-one-beyond-eve.png',
-    posterUrl: '/assets/posters/blacks-one-beyond-eve.png',
+    coverImage: '/assets/posters/Blacks One < > Beyond Eve.png',
+    posterUrl: '/assets/posters/Blacks One < > Beyond Eve.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
     teaserDuration: '1:30',
     universes: [
@@ -354,8 +354,8 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     centralQuestion: 'L\'expérience',
     shortSynopsis: 'Des marmites populaires de Dantokpa aux tables d’exception à Paris et Milan, des artisans de bouche et scénographes révèlent l’art du don, du détail et du souvenir impérissable.',
     description: 'Dans la fumée des marmites de Dantokpa à Cotonou, E Vivi incarne l\'artisanat nourricier populaire : des femmes et cuisiniers qui se lèvent à 4h du matin pour offrir réconfort et dignité à des centaines de travailleurs avec une sauce gombo ou un igname pilé. En écho, Fiât Luxe explore la haute précision des arts de la table, de la scénographie olfactive et de l\'hospitalité d\'exception à Paris, Marrakech et Milan. Tout les sépare en apparence, sauf l\'essentiel : l\'obsession du détail, la générosité du don et la grâce de transformer un simple repas en un souvenir inoubliable.',
-    coverImage: '/assets/posters/dixeat-fiat-luxe.png',
-    posterUrl: '/assets/posters/dixeat-fiat-luxe.png',
+    coverImage: '/assets/posters/E Vivi < > Fiat Luxe.png',
+    posterUrl: '/assets/posters/E Vivi < > Fiat Luxe.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     teaserDuration: '1:20',
     universes: [
@@ -447,8 +447,8 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     centralQuestion: 'L\'alliance',
     shortSynopsis: 'Entre l’audace du capital patient et la rigueur du terrain, une rencontre sans filtre entre investisseurs d’impact et bâtisseurs d’infrastructures.',
     description: 'D’un côté, ceux qui allouent des capitaux, évaluent les risques et parient sur des visions à long terme. De l’autre, ceux qui conçoivent, bâtissent et transforment la matière au quotidien. Investors < > Builders explore l’alliance féconde et la confiance nécessaire entre investisseurs d’impact et bâtisseurs de terrain. Comment accorder le temps long du capital avec l’urgence de la matière ? Une réflexion profonde sur la création de valeur partagée et la souveraineté économique.',
-    coverImage: '/investors-builders.png',
-    posterUrl: '/investors-builders.png',
+    coverImage: '/assets/posters/Investors < > Builders.png',
+    posterUrl: '/assets/posters/Investors < > Builders.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     teaserDuration: '1:35',
     universes: [
@@ -671,16 +671,22 @@ export const getCustomDocumentaries = (): Documentary[] => {
                 ] as [Documentary['universes'][0], Documentary['universes'][1]]
               };
             }
+            const baseDoc = INITIAL_DOCUMENTARIES.find(b => b.id === doc.id);
+            if (baseDoc && (doc.posterUrl !== baseDoc.posterUrl || doc.coverImage !== baseDoc.coverImage)) {
+              migrated = true;
+              doc = {
+                ...doc,
+                posterUrl: baseDoc.posterUrl,
+                coverImage: baseDoc.coverImage
+              };
+            }
             if (doc.id === 'blacks-one-beyond-eve') {
-              const baseDoc = INITIAL_DOCUMENTARIES.find(d => d.id === 'blacks-one-beyond-eve');
-              if (baseDoc && (!doc.effigies || doc.posterUrl !== baseDoc.posterUrl || doc.coverImage !== baseDoc.coverImage || doc.shortSynopsis !== baseDoc.shortSynopsis)) {
+              if (baseDoc && (!doc.effigies || doc.shortSynopsis !== baseDoc.shortSynopsis)) {
                 migrated = true;
                 return {
                   ...doc,
                   shortSynopsis: baseDoc.shortSynopsis,
                   description: baseDoc.description,
-                  posterUrl: baseDoc.posterUrl,
-                  coverImage: baseDoc.coverImage,
                   universes: baseDoc.universes,
                   effigies: baseDoc.effigies
                 };
@@ -2074,7 +2080,7 @@ export const DUOS: Duo[] = [
     centralQuestion: 'Racontez-nous un moment de votre vie où vous avez réellement rencontré votre foi. Que s\'est-il passé ?',
     quoteA: '« Legba ne m’a pas parlé dans un coup de tonnerre. C’était la chaleur d’une poignée de terre d’Allada, un jour où je croyais que le monde était mort. »',
     quoteB: '« Je suis entré dans la nef déserte de Ouidah pour fuir la brûlure du soleil. Ce n’est pas un miracle qui m’a retenu : c’était la certitude d’être attendu. »',
-    coverImage: '/assets/posters/jesus-esu.png',
+    coverImage: '/assets/posters/Esu < > Jesus.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'dah-zounon') || PROTAGONISTS[2]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'pere-matthieu') || PROTAGONISTS[3]).stories[0],
     editorialReflection: 'Deux traditions que l’histoire a parfois opposées se découvrent ici une racine commune : l’humilité de l’homme devant ce qui le dépasse et l’impérieuse nécessité de ne pas traverser l’obscurité seul.'
@@ -2092,7 +2098,7 @@ export const DUOS: Duo[] = [
     centralQuestion: 'Racontez-nous un moment où vous avez compris que vous étiez vraiment chez vous. Où étiez-vous et que s\'est-il passé ?',
     quoteA: '« Le jour où la pirogue a glissé dans la brume sans que j’aie besoin de regarder le rivage. Ganvié n’est pas sur la terre, mais elle est dans mon sang. »',
     quoteB: '« Quand les pieds nus touchent la roche glacée de Pisac à l’aube et que la montagne souffle son premier vent. Là, tu sais que tu n’es pas un étranger. »',
-    coverImage: '/assets/posters/finagnon-qosqorico.png',
+    coverImage: '/assets/posters/Finagnon < > Qosqorico.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'tobi-houndegla') || PROTAGONISTS[0]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'sayri-quispe') || PROTAGONISTS[1]).stories[0],
     editorialReflection: 'Des pilotis de Ganvié aux terrasses de Pisac, le chez-soi n’est pas une propriété cadastrale : c’est une fidélité organique au rythme d’un élément — l’eau vive ou la pierre d’altitude.'
@@ -2110,7 +2116,7 @@ export const DUOS: Duo[] = [
     centralQuestion: 'Racontez-nous quelque chose que vous avez reçu de votre histoire, de votre famille ou de ceux qui vous ont précédé et que vous portez encore aujourd\'hui. Qu\'est-ce que cela représente pour vous ?',
     quoteA: '« L’émancipation commence le jour où l’on refuse de regarder son histoire avec les yeux de ceux qui l’ont confisquée. La dignité ne se négocie pas. »',
     quoteB: '« On hérite de blessures et de silences imposés. Mon combat et mon art consistent à les fleurir et à en faire des armures de reine pour les femmes libres. »',
-    coverImage: '/assets/posters/blacks-one-beyond-eve.png',
+    coverImage: '/assets/posters/Blacks One < > Beyond Eve.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'malik-diop') || PROTAGONISTS[4]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'eleonore-vance') || PROTAGONISTS[5]).stories[0],
     editorialReflection: 'Entre la voix ardente d’un leader noir au poing levé luttant pour ses convictions et le discours vibrant d’une oratrice féministe pour les femmes, ce duo célèbre la dignité et la souveraineté intime.'
@@ -2128,7 +2134,7 @@ export const DUOS: Duo[] = [
     centralQuestion: 'Racontez-nous un moment où vous avez créé quelque chose pour quelqu\'un et où vous avez compris, à sa réaction, que vous lui aviez vraiment fait plaisir. Qu\'est-ce qui s\'est passé ?',
     quoteA: '« Quand l’homme s’est assis dans la fumée et a fermé les yeux à la première cuillerée d’igname, ses larmes m’ont dit que je n’étais pas un marchand, mais un frère. »',
     quoteB: '« Ce n’est pas la coupe de cristal qui a touché cette femme, mais le fait que quelqu’un avait remarqué son angoisse et lui offrait un refuge invisible. »',
-    coverImage: '/assets/posters/dixeat-fiat-luxe.png',
+    coverImage: '/assets/posters/E Vivi < > Fiat Luxe.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'chef-koffi') || PROTAGONISTS[0]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'helene-saint-amand') || PROTAGONISTS[1]).stories[0],
     editorialReflection: 'Entre la marmite populaire et le salon d’apparat, la grandeur de l’expérience ne réside jamais dans le prix facturé, mais dans l’intensité du soin offert à l’autre.'
@@ -2146,7 +2152,7 @@ export const DUOS: Duo[] = [
     centralQuestion: '« Racontez-nous le premier pari où vous avez engagé vos ressources ou vos mains sans certitude de réussir. »',
     quoteA: '« Le jour où j’ai signé ce premier financement pour l’atelier sans garantie bancaire, j’ai compris que ma responsabilité n’était pas de me protéger, mais de faire confiance. »',
     quoteB: '« Quand la voûte en terre crue a résisté à la première tornade, j’ai su que nos mains portaient une force que nulle machine ne peut remplacer. »',
-    coverImage: '/investors-builders.png',
+    coverImage: '/assets/posters/Investors < > Builders.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'fatou-diallo') || PROTAGONISTS[0]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'kwame-mensah') || PROTAGONISTS[1]).stories[0],
     editorialReflection: 'Entre l’encre des contrats et la poussière des chantiers, la véritable valeur ne naît pas dans le calcul du profit, mais dans l’engagement réciproque de bâtir ce qui perdure.'

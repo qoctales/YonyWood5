@@ -9,9 +9,9 @@ import {
   GraduationCap,
   Star,
   Gem,
-  Sprout,
-  ShoppingBag
+  Sprout
 } from 'lucide-react';
+import { SingleAlveoleIcon } from './YonywoodBrandIcons';
 
 const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
   series: Film,
@@ -19,7 +19,7 @@ const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
   territoires: Mountain,
   expertises: GraduationCap,
   personnalites: Star,
-  'produits-services': ShoppingBag,
+  'produits-services': SingleAlveoleIcon,
   marques: Gem,
   projets: Sprout,
   // Rétrocompatibilité
@@ -29,7 +29,7 @@ const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
   personalities: Star,
   brands: Gem,
   projects: Sprout,
-  offers: ShoppingBag,
+  offers: SingleAlveoleIcon,
 };
 
 interface CentralAstrolabeJoystickProps {

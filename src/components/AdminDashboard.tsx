@@ -870,7 +870,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             alt={editTitle}
                             className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = '/assets/posters/jesus-esu.png';
+                              (e.target as HTMLImageElement).src = '/assets/posters/Esu < > Jesus.png';
                             }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-2.5 text-white">
@@ -1192,7 +1192,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                       alt={q.title} 
                                       className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
                                       onError={(e) => {
-                                        (e.target as HTMLImageElement).src = '/assets/posters/jesus-esu.png';
+                                        (e.target as HTMLImageElement).src = '/assets/posters/Esu < > Jesus.png';
                                       }}
                                     />
                                   )}
@@ -1485,7 +1485,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             alt={formattedTitle}
                             className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = '/assets/posters/jesus-esu.png';
+                              (e.target as HTMLImageElement).src = '/assets/posters/Esu < > Jesus.png';
                             }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
@@ -1728,7 +1728,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="text-2xl font-bold font-serif text-stone-900">
                   {totalInvested.toLocaleString('fr-FR')} €
                 </div>
-                <p className="text-[10px] text-stone-400 mt-1">Fonds de coproduction levés</p>
+                <p className="text-[10px] text-stone-400 mt-1">Fonds du marché levés</p>
               </div>
 
               <div className="p-5 rounded-3xl bg-white border border-[#A2482B]/30 shadow-xs">

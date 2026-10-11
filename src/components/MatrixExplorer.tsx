@@ -49,6 +49,8 @@ import {
 } from '../data/explorerTopicsData';
 import { celestialAudio } from '../utils/celestialAudio';
 
+import { SingleAlveoleIcon } from './YonywoodBrandIcons';
+
 interface MatrixExplorerProps {
   onNavigate: (screen: ViewScreen | any) => void;
   onSelectDocumentary?: (docId: string) => void;
@@ -66,8 +68,20 @@ function countDescendants(person: AffiliationPerson): number {
 
 // Rayons des orbites concentriques
 const R_INNER = 145; // Anneau 1 : Sujets de la Porte active (5 séries, 16 drapeaux, etc.)
-const R_OUTER = 280; // Anneau 2 : 16 Voix / Histoires humaines associées
 const ORBIT_RADII = [145, 280, 385, 490, 595];
+
+// Helpers pour calculer la géométrie des alvéoles hexagonales (Rayon de miel)
+const getHexagonPoints = (cx: number, cy: number, r: number): string => {
+  const dx = Number((r * 0.866025).toFixed(2));
+  const dy = Number((r * 0.5).toFixed(2));
+  return `${cx},${cy - r} ${cx + dx},${cy - dy} ${cx + dx},${cy + dy} ${cx},${cy + r} ${cx - dx},${cy + dy} ${cx - dx},${cy - dy}`;
+};
+
+const getHexagonPosterPoints = (cx: number, cy: number, halfW: number = 22, halfH: number = 33): string => {
+  const peakY = halfH;
+  const shoulderY = Math.round(halfH * 0.55);
+  return `${cx},${cy - peakY} ${cx + halfW},${cy - shoulderY} ${cx + halfW},${cy + shoulderY} ${cx},${cy + peakY} ${cx - halfW},${cy + shoulderY} ${cx - halfW},${cy - shoulderY}`;
+};
 
 const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string }>> = {
   series: Film,
@@ -75,7 +89,7 @@ const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string
   territoires: Mountain,
   expertises: GraduationCap,
   personnalites: Star,
-  'produits-services': ShoppingBag,
+  'produits-services': SingleAlveoleIcon,
   marques: Gem,
   projets: Sprout,
   // Alias de rétrocompatibilité
@@ -85,7 +99,7 @@ const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string
   personalities: Star,
   brands: Gem,
   projects: Sprout,
-  offers: ShoppingBag
+  offers: SingleAlveoleIcon
 };
 
 export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ 
@@ -93,7 +107,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   onSelectDocumentary 
 }) => {
   // 1. NIVEAU DE NAVIGATION DANS LA ROUE :
-  // 'dimensions' (les 8 Portes d'entrée au centre - PAR DÉFAUT LORSQU'ON ARRIVE SUR CASTING)
+  // 'dimensions' (les 8 Portes d'entrée au centre - PAR DÉFAUT LORSQU'ON ARRIVE SUR AGORA)
   // 'stories' (navigation concentrique double lecture : Anneau 1 Sujets + Anneau 2 16 Voix)
   const [explorerLevel, setExplorerLevel] = useState<'dimensions' | 'topics' | 'stories'>('dimensions');
   const [activeCategory, setActiveCategory] = useState<ExplorerCategoryType>('countries');
@@ -658,14 +672,17 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 <stop offset="100%" stopColor="#C89B3C" stopOpacity="0" />
               </radialGradient>
 
-              {/* ClipPaths circulaires pour les personnes sur l'anneau extérieur */}
-              {nodesByGeneration.flatMap(nodes => nodes).map(node => (
-                <clipPath key={`clip-${node.person.id}`} id={`clip-${node.person.id}`}>
-                  <circle cx={node.x} cy={node.y} r={node.gen === 1 ? 22 : 19} />
-                </clipPath>
-              ))}
+              {/* ClipPaths alvéolaires hexagonaux pour les personnes sur l'anneau extérieur */}
+              {nodesByGeneration.flatMap(nodes => nodes).map(node => {
+                const radius = node.gen === 1 ? 23 : 20;
+                return (
+                  <clipPath key={`clip-${node.person.id}`} id={`clip-${node.person.id}`}>
+                    <polygon points={getHexagonPoints(node.x, node.y, radius)} />
+                  </clipPath>
+                );
+              })}
 
-              {/* ClipPaths pour les sujets sur l'anneau intérieur (affiches verticales 44x64 pour séries, disques r=20 pour autres) */}
+              {/* ClipPaths alvéolaires pour les sujets sur l'anneau intérieur (affiches alvéolaires pour séries, alvéoles r=21 pour autres) */}
               {topicsForCategory.map((topic, idx) => {
                 const angle = -90 + idx * (360 / topicsForCategory.length);
                 const rad = (angle * Math.PI) / 180;
@@ -674,13 +691,13 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 if (activeCategory === 'series') {
                   return (
                     <clipPath key={`clip-poster-${topic.id}`} id={`clip-poster-${topic.id}`}>
-                      <rect x={x - 22} y={y - 32} width="44" height="64" rx="6" />
+                      <polygon points={getHexagonPosterPoints(x, y, 22, 33)} />
                     </clipPath>
                   );
                 }
                 return (
                   <clipPath key={`clip-inner-circle-${topic.id}`} id={`clip-inner-circle-${topic.id}`}>
-                    <circle cx={x} cy={y} r={20} />
+                    <polygon points={getHexagonPoints(x, y, 21)} />
                   </clipPath>
                 );
               })}

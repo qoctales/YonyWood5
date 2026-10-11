@@ -10,13 +10,16 @@ interface IconProps {
  * Symbole Explorer inspiré d'un œuf ouvert en haut et en bas,
  * formant deux parenthèses ouvertes face à face qui ne se touchent pas.
  */
-export const ExplorerEggIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const ExplorerEggIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.5 
+}) => {
   return (
     <svg 
       viewBox="0 0 24 24" 
       fill="none" 
       stroke="currentColor" 
-      strokeWidth="2" 
+      strokeWidth={strokeWidth} 
       strokeLinecap="round" 
       strokeLinejoin="round" 
       className={className}
@@ -36,13 +39,16 @@ export const ExplorerEggIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) 
  * renfermant les symboles inférieur (<) et supérieur (>) qui ne se touchent pas,
  * avec les barres centrales en vis-à-vis qui ne se touchent pas.
  */
-export const YonywoodLogoIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const YonywoodLogoIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.5 
+}) => {
   return (
     <svg 
       viewBox="0 0 24 24" 
       fill="none" 
       stroke="currentColor" 
-      strokeWidth="2" 
+      strokeWidth={strokeWidth} 
       strokeLinecap="round" 
       strokeLinejoin="round" 
       className={className}
@@ -65,13 +71,16 @@ export const YonywoodLogoIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' })
  * Symbole « Cercle » : un cercle central entouré d'une couronne de petits points en cercle,
  * symbolisant l'assemblée, le groupe réuni, la communauté chorale et l'astrolabe.
  */
-export const CircleDotsIcon: React.FC<IconProps> = ({ className = 'w-5 h-5' }) => {
+export const CircleDotsIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.5 
+}) => {
   return (
     <svg 
       viewBox="0 0 24 24" 
       fill="none" 
       stroke="currentColor" 
-      strokeWidth="2" 
+      strokeWidth={strokeWidth} 
       strokeLinecap="round" 
       strokeLinejoin="round" 
       className={className}
@@ -161,13 +170,102 @@ export const LaurelNominationsIcon: React.FC<IconProps> = ({ className = 'w-5 h-
 };
 
 /**
+ * AgoraAlveolesIcon:
+ * Symbole « Agora » : Les trois alvéoles partageant leurs arêtes en rayon de miel,
+ * trait fin 1.5, bouts et angles arrondis, sans traits intérieurs superflus.
+ */
+export const AgoraAlveolesIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.5 
+}) => {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Contour extérieur des 3 alvéoles */}
+      <path d="M 12 3.6 L 16.16 6.0 L 16.16 10.8 L 20.32 13.2 L 20.32 18.0 L 16.16 20.4 L 12 18.0 L 7.84 20.4 L 3.68 18.0 L 3.68 13.2 L 7.84 10.8 L 7.84 6.0 Z" />
+      {/* Les 3 arêtes partagées rayonnant depuis la jonction centrale (12, 13.2) */}
+      <path d="M 12 13.2 L 16.16 10.8 M 12 13.2 L 7.84 10.8 M 12 13.2 L 12 18.0" />
+    </svg>
+  );
+};
+
+// Rétrocompatibilité
+export const AgoraAssemblyIcon = AgoraAlveolesIcon;
+
+/**
+ * MarcheCloverIcon:
+ * Symbole « Marché » : Un trèfle à quatre feuilles stylisé et équilibré,
+ * composé de 4 folioles en forme de cœur partageant le centre et d'une tige descendante délicate,
+ * même trait fin 1.5 et bouts arrondis partout, symbolisant la chance, l'abondance et la prospérité.
+ */
+export const MarcheCloverIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.5 
+}) => {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      aria-hidden="true"
+    >
+      {/* 4 folioles en forme de cœur (trèfle à 4 feuilles) */}
+      <g transform="translate(12, 10) scale(0.82) rotate(45) translate(-12, -12)">
+        <path d="M4.02 12a2.83 2.83 0 1 1 3.81-4.17A2.83 2.83 0 1 1 12 4.02a2.83 2.83 0 1 1 4.17 3.81A2.83 2.83 0 1 1 19.98 12a2.83 2.83 0 1 1-3.81 4.17A2.83 2.83 0 1 1 12 19.98a2.83 2.83 0 1 1-4.17-3.81A2.83 2.83 0 1 1 4.02 12Z" />
+      </g>
+      {/* Tige descendante naturelle et fluide */}
+      <path d="M 12 11.5 C 12 15.5 11 18.5 8.5 21" />
+    </svg>
+  );
+};
+
+// Rétrocompatibilité
+export const MarcheSproutIcon = MarcheCloverIcon;
+
+/**
+ * SingleAlveoleIcon:
+ * Alvéole pour remplacer les sacs sur la page Agora / Matrice.
+ */
+export const SingleAlveoleIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.5 
+}) => {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M 12 3 L 19.5 7.3 L 19.5 16.7 L 12 21 L 4.5 16.7 L 4.5 7.3 Z" />
+    </svg>
+  );
+};
+
+/**
  * CastingSearchIcon:
  * Symbole « Casting » : loupe de recherche entourant la silhouette d'un profil/personnage,
  * symbolisant la détection des talents, la sélection et le casting.
  */
 export const CastingSearchIcon: React.FC<IconProps> = ({ 
   className = 'w-5 h-5',
-  strokeWidth = 1.6 
+  strokeWidth = 1.5 
 }) => {
   return (
     <svg 
@@ -199,7 +297,7 @@ export const CastingSearchIcon: React.FC<IconProps> = ({
  */
 export const CoproduireRingsIcon: React.FC<IconProps> = ({ 
   className = 'w-5 h-5',
-  strokeWidth = 1.35 
+  strokeWidth = 1.5 
 }) => {
   return (
     <svg 
@@ -228,7 +326,7 @@ export const CoproduireRingsIcon: React.FC<IconProps> = ({
  */
 export const DuocumentairesTvIcon: React.FC<IconProps> = ({ 
   className = 'w-5 h-5',
-  strokeWidth = 1.35 
+  strokeWidth = 1.5 
 }) => {
   return (
     <svg 

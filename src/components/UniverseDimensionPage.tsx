@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   ArrowLeft, 
-  ShoppingBag, 
   Compass, 
   Video, 
   FolderKanban, 
@@ -21,9 +20,11 @@ import {
   Eye,
   Clock,
   Coins,
-  CheckCircle2
+  CheckCircle2,
+  ShoppingBag
 } from 'lucide-react';
 import { ShareIcon } from './ShareIcon';
+import { SingleAlveoleIcon } from './YonywoodBrandIcons';
 import { ViewScreen } from '../types';
 import { DUOS, DOCUMENTARIES, PROTAGONISTS } from '../data/mockData';
 
@@ -115,7 +116,7 @@ export const UniverseDimensionPage: React.FC<UniverseDimensionPageProps> = ({
   const DIMENSIONS = [
     { key: 'histoire' as DimensionKey, label: 'Histoire', icon: Video, subtitle: 'Productions & Séries' },
     { key: 'projects' as DimensionKey, label: 'Projets', icon: FolderKanban, subtitle: 'Financement participatif' },
-    { key: 'offers' as DimensionKey, label: 'Offres', icon: ShoppingBag, subtitle: 'Savoir-faire & Pièces' },
+    { key: 'offers' as DimensionKey, label: 'Offres', icon: SingleAlveoleIcon, subtitle: 'Savoir-faire & Pièces' },
     { key: 'parcours' as DimensionKey, label: 'Parcours', icon: Compass, subtitle: 'Mon parcours en vidéo' },
     { key: 'needs' as DimensionKey, label: 'Besoins', icon: HeartHandshake, subtitle: 'Appels à la communauté' },
     { key: 'transmissions' as DimensionKey, label: 'Transmission', icon: BookOpen, subtitle: 'Frise de filiation' }

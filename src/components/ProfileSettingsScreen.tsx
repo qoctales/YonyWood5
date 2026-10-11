@@ -55,7 +55,7 @@ import {
 import { useAuth } from '../services/authContext';
 import { AuthModal } from './AuthModal';
 import { ShareIcon } from './ShareIcon';
-import { CoproduireRingsIcon } from './YonywoodBrandIcons';
+import { MarcheCloverIcon } from './YonywoodBrandIcons';
 import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
 import { PROTAGONISTS, DOCUMENTARIES, DUOS } from '../data/mockData';
 import { MATRIX_SERIES_DATA } from '../data/matrixData';
@@ -753,7 +753,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
         viewsCount: 1420,
         duration: '4:18',
         videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-        posterUrl: '/assets/posters/finagnon-qosqorico.png'
+        posterUrl: '/assets/posters/Finagnon < > Qosqorico.png'
       },
       {
         id: 'ep-2',
@@ -765,7 +765,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
         viewsCount: 680,
         duration: '3:45',
         videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
-        posterUrl: '/assets/posters/jesus-esu.png'
+        posterUrl: '/assets/posters/Esu < > Jesus.png'
       },
       {
         id: 'ep-3',
@@ -777,7 +777,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
         viewsCount: 230,
         duration: '5:10',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-        posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
+        posterUrl: '/assets/posters/Blacks One < > Beyond Eve.png'
       }
     ];
   });
@@ -804,7 +804,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       liquidityScore: 'Élevée',
       status: 'Diffusion internationale',
       videoUrl: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-      posterUrl: '/assets/posters/finagnon-qosqorico.png'
+      posterUrl: '/assets/posters/Finagnon < > Qosqorico.png'
     },
     {
       id: 'prod-2',
@@ -824,7 +824,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       liquidityScore: 'Moyenne',
       status: 'Post-production active',
       videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
-      posterUrl: '/assets/posters/jesus-esu.png'
+      posterUrl: '/assets/posters/Esu < > Jesus.png'
     },
     {
       id: 'prod-3',
@@ -844,7 +844,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       liquidityScore: 'Élevée',
       status: 'En diffusion',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
+      posterUrl: '/assets/posters/Blacks One < > Beyond Eve.png'
     },
     {
       id: 'prod-4',
@@ -864,7 +864,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       liquidityScore: 'Moyenne',
       status: 'En tournage',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      posterUrl: '/assets/posters/dixeat-fiat-luxe.png'
+      posterUrl: '/assets/posters/E Vivi < > Fiat Luxe.png'
     },
     {
       id: 'prod-5',
@@ -884,7 +884,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       liquidityScore: 'Élevée',
       status: 'En production',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      posterUrl: '/assets/posters/investors-builders.png'
+      posterUrl: '/assets/posters/Investors < > Builders.png'
     },
     {
       id: 'prod-6',
@@ -1005,7 +1005,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       daysRemaining: 18,
       description: 'Financement d’un studio d’enregistrement flottant à Ganvié pour sauvegarder les oraisons et contes aquatiques.',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-      posterUrl: '/assets/posters/finagnon-qosqorico.png'
+      posterUrl: '/assets/posters/Finagnon < > Qosqorico.png'
     },
     {
       id: 'init-2',
@@ -1018,7 +1018,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       daysRemaining: 34,
       description: 'Reconstruction d’un métier à tisser en bois d’iroko pour former 8 jeunes apprenties.',
       videoUrl: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
-      posterUrl: '/assets/posters/jesus-esu.png'
+      posterUrl: '/assets/posters/Esu < > Jesus.png'
     }
   ]);
 
@@ -1044,7 +1044,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       description: 'Pour capturer les voix des anciens sur les berges sans distorsion avec microphone stéréo XY.',
       impact: 'Permettra d’archiver 25 entretiens avant la saison des pluies.',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
+      posterUrl: '/assets/posters/Blacks One < > Beyond Eve.png'
     }
   ]);
 
@@ -1192,7 +1192,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   const CATEGORIES: { key: ProfileCategory; label: string; icon: React.FC<{ className?: string }> }[] = [
     { key: 'recit', label: 'Récits & Épisodes', icon: Film },
-    { key: 'production', label: 'Productions', icon: CoproduireRingsIcon },
+    { key: 'production', label: 'Productions', icon: MarcheCloverIcon },
     { key: 'offre', label: 'Offre', icon: ShoppingBag },
     { key: 'appel', label: 'Projet', icon: Sprout },
   ];
@@ -1646,7 +1646,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   })}
                   id="btn-profile-portfolio-header"
                   className="group w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-[#1C1917] hover:text-white flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative"
-                  title="Voir mes parts de coproduction"
+                  title="Voir mes parts de marché"
                 >
                   <Wallet className="w-3.5 h-3.5 text-stone-700 group-hover:text-white transition-colors" />
                   <span className="hidden sm:inline">Mes parts</span>
@@ -2461,7 +2461,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             <button
               onClick={() => {
                 setIsBuyingSharesModalOpen(false);
-                setShareToast(`Félicitations ! Vous avez acquis vos parts de coproduction auprès de ${userName}.`);
+                setShareToast(`Félicitations ! Vous avez acquis vos parts de marché auprès de ${userName}.`);
                 setTimeout(() => setShareToast(null), 3500);
               }}
               className="w-full h-11 px-4 rounded-xl bg-[#C89B3C] hover:bg-[#B78A2E] text-[#1C1917] font-bold text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer active:scale-[0.98]"
@@ -2809,7 +2809,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 </div>
                 <div>
                   <h3 className="font-editorial text-lg sm:text-xl font-bold text-[#1C1917] leading-tight">
-                    Portefeuille de coproduction
+                    Portefeuille du marché
                   </h3>
                   <p className="text-[11px] text-stone-500">
                     Acquisition, gestion et revente de parts valorisées de séries documentaires
@@ -3904,7 +3904,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { id: 'coprod', label: 'Coproduction & Projet', icon: '🎬' },
+                    { id: 'coprod', label: 'Marché & Projet', icon: '🎬' },
                     { id: 'savoir_faire', label: 'Savoir-faire & Métier', icon: '🌿' },
                     { id: 'collab', label: 'Collaboration artistique', icon: '🤝' },
                     { id: 'question', label: 'Question sur une œuvre', icon: '💬' }
@@ -4414,7 +4414,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                       daysRemaining: addFormProjectDays,
                       description: 'Projet solidaire et participatif pour valoriser et transmettre nos savoir-faire.',
                       videoUrl: addFormVideoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-                      posterUrl: '/assets/posters/finagnon-qosqorico.png'
+                      posterUrl: '/assets/posters/Finagnon < > Qosqorico.png'
                     };
                     setInitiatives(prev => [newInit, ...prev]);
                     setCategoryIndices(prev => ({ ...prev, appel: 0 }));
@@ -4452,7 +4452,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                     </h3>
                     <p className="text-xs text-[#8B6845]">
                       {activeCategory === 'recit' && 'Récit personnel ou épisode documentaire'}
-                      {activeCategory === 'production' && 'Série ouverte en coproduction'}
+                      {activeCategory === 'production' && 'Série ouverte sur le marché'}
                     </p>
                   </div>
                 </div>

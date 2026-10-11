@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { UserProductionShare } from './ProfileSettingsScreen';
-import { CoproduireRingsIcon } from './YonywoodBrandIcons';
+import { MarcheCloverIcon } from './YonywoodBrandIcons';
 
 export interface PortfolioTransactionItem {
   id: string;
@@ -68,7 +68,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 24.5,
       liquidityScore: 'Élevée',
       status: 'En diffusion',
-      posterUrl: '/assets/posters/finagnon-qosqorico.png'
+      posterUrl: '/assets/posters/Finagnon < > Qosqorico.png'
     },
     {
       id: 'prod-2',
@@ -87,7 +87,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 15.2,
       liquidityScore: 'Moyenne',
       status: 'En post-production',
-      posterUrl: '/assets/posters/jesus-esu.png'
+      posterUrl: '/assets/posters/Esu < > Jesus.png'
     },
     {
       id: 'prod-3',
@@ -106,7 +106,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 18.0,
       liquidityScore: 'Élevée',
       status: 'En diffusion',
-      posterUrl: '/assets/posters/blacks-one-beyond-eve.png'
+      posterUrl: '/assets/posters/Blacks One < > Beyond Eve.png'
     },
     {
       id: 'prod-4',
@@ -125,7 +125,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 11.8,
       liquidityScore: 'Moyenne',
       status: 'En tournage',
-      posterUrl: '/assets/posters/dixeat-fiat-luxe.png'
+      posterUrl: '/assets/posters/E Vivi < > Fiat Luxe.png'
     },
     {
       id: 'prod-5',
@@ -144,7 +144,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       growthRatePercent: 29.0,
       liquidityScore: 'Élevée',
       status: 'En production',
-      posterUrl: '/assets/posters/investors-builders.png'
+      posterUrl: '/assets/posters/Investors < > Builders.png'
     },
     {
       id: 'prod-6',
@@ -184,7 +184,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       buyerPhoto: '/assets/protagonists/sayri-quispe.jpg',
       buyerProtagonistId: 'sayri-quispe',
       buyerRole: 'Cultivateur & tisseur andin (Cusco)',
-      posterUrl: '/assets/posters/finagnon-qosqorico.png'
+      posterUrl: '/assets/posters/Finagnon < > Qosqorico.png'
     },
     {
       id: 'tx-2',
@@ -201,7 +201,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       buyerPhoto: '/assets/protagonists/dah-zounon.jpg',
       buyerProtagonistId: 'dah-zounon',
       buyerRole: 'Dignitaire du culte Èṣù (Porto-Novo)',
-      posterUrl: '/assets/posters/jesus-esu.png'
+      posterUrl: '/assets/posters/Esu < > Jesus.png'
     },
     {
       id: 'tx-3',
@@ -218,7 +218,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       buyerPhoto: '/assets/protagonists/koffi-tisserand.jpg',
       buyerProtagonistId: 'koffi-tisserand',
       buyerRole: 'Tisserand traditionnel (Porto-Novo)',
-      posterUrl: '/investors-builders.png'
+      posterUrl: '/assets/posters/Investors < > Builders.png'
     }
   ]);
 
@@ -469,7 +469,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
               <div className="flex items-start justify-between gap-3 pb-2.5 border-b border-stone-100">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#A2482B] block">
-                    Coproduction active
+                    Marché actif
                   </span>
                   <h2 className="font-editorial text-2xl sm:text-3xl font-bold text-stone-900 leading-tight">
                     {currentProd?.seriesTitle}
@@ -589,7 +589,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
                   onClick={() => setIsQuickSellOpen(true)}
                   className="w-full h-11 sm:h-12 rounded-2xl bg-[#A2482B] hover:bg-[#8B3A20] text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2.5"
                 >
-                  <CoproduireRingsIcon className="w-5 h-5 text-white" />
+                  <MarcheCloverIcon className="w-5 h-5 text-white" />
                   <span>Vendre des parts</span>
                 </button>
               </div>
@@ -764,7 +764,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
             </div>
 
             <p className="text-xs text-stone-600 leading-relaxed">
-              Fixez le nombre de parts et le prix unitaire auquel vous souhaitez les céder sur la bourse des coproductions.
+              Fixez le nombre de parts et le prix unitaire auquel vous souhaitez les céder sur la place de marché.
             </p>
 
             {/* Sélecteur de quantité */}

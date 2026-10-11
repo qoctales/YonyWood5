@@ -277,7 +277,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
       <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
         <div>
           <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
-            Coproduction
+            Marché
           </h1>
         </div>
 
@@ -592,7 +592,7 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#8B6845]">
-                  Coproduction
+                  Marché
                 </span>
                 <h3 className="text-lg font-editorial font-bold text-[#1C1917]">
                   {selectedProduction.title}

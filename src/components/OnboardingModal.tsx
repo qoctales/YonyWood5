@@ -65,13 +65,13 @@ const SLIDES: SlideData[] = [
     id: 3,
     badge: 'ÉCONOMIE DU PARTAGE',
     badgeIcon: Coins,
-    title: 'Coproduction',
+    title: 'Marché',
     highlight: 'à Impact',
     subtitle: 'Participez à la création et gagnez avec le film',
-    description: 'Devenez coproducteur des documentaires dès 10 €. Suivez les audiences, touchez des dividendes culturels et soutenez durablement les créateurs.',
+    description: 'Participez au marché des documentaires dès 10 €. Suivez les audiences, touchez des dividendes culturels et soutenez durablement les créateurs.',
     bgImage: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1400&q=80',
     features: [
-      'Acquisition de parts de coproduction transparentes',
+      'Acquisition de parts de marché transparentes',
       "Paliers d'audience et retour sur investissement",
       'Suivi de portefeuille en temps réel'
     ]

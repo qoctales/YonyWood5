@@ -97,7 +97,7 @@ export const DocumentaryDetailScreen: React.FC<DocumentaryDetailScreenProps> = (
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = '/assets/posters/jesus-esu.png';
+              (e.target as HTMLImageElement).src = '/assets/posters/Esu < > Jesus.png';
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />

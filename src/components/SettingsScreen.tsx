@@ -606,7 +606,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
                 <div>
                   <h2 className="text-xs sm:text-sm font-bold text-[#1C1917] uppercase tracking-wider mb-3 flex items-center gap-2">
                     <Bell className="w-3.5 h-3.5 text-[#A2482B]" />
-                    <span>Coproduction & Projets</span>
+                    <span>Marché & Projets</span>
                   </h2>
 
                   <div className="space-y-3 bg-stone-50/60 p-3.5 rounded-2xl border border-stone-200/70">

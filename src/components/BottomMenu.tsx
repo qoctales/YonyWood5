@@ -5,9 +5,9 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { 
-  CastingSearchIcon,
+  AgoraAlveolesIcon,
   DuocumentairesTvIcon,
-  CoproduireRingsIcon 
+  MarcheCloverIcon 
 } from './YonywoodBrandIcons';
 
 interface BottomMenuProps {
@@ -18,9 +18,9 @@ interface BottomMenuProps {
 export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigate }) => {
   // Déterminer l'élément actif selon l'écran en cours
   const isStudioActive = currentScreen.type === 'submit_story' || currentScreen.type === 'request_videographer';
-  const isCastingActive = currentScreen.type === 'home' || currentScreen.type === 'matrix_view' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
+  const isAgoraActive = currentScreen.type === 'home' || currentScreen.type === 'matrix_view' || currentScreen.type === 'documentaries' || currentScreen.type === 'documentary_detail';
   const isDuocumentairesActive = currentScreen.type === 'duo_feed' || currentScreen.type === 'duo_detail';
-  const isCoproductionActive = currentScreen.type === 'marketplace';
+  const isMarcheActive = currentScreen.type === 'marketplace';
   const isProfilActive = 
     currentScreen.type === 'profile' || 
     currentScreen.type === 'settings' || 
@@ -46,12 +46,12 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       screenId: 'menu-item-studio'
     },
     {
-      id: 'casting',
-      label: 'Casting',
-      icon: CastingSearchIcon,
-      isActive: isCastingActive,
+      id: 'agora',
+      label: 'Agora',
+      icon: AgoraAlveolesIcon,
+      isActive: isAgoraActive,
       onClick: () => onNavigate({ type: 'home' }),
-      screenId: 'menu-item-casting'
+      screenId: 'menu-item-agora'
     },
     {
       id: 'duocumentaires',
@@ -62,12 +62,12 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       screenId: 'menu-item-duocumentaires'
     },
     {
-      id: 'coproduction',
-      label: 'Coproduction',
-      icon: CoproduireRingsIcon,
-      isActive: isCoproductionActive,
+      id: 'marche',
+      label: 'Marché',
+      icon: MarcheCloverIcon,
+      isActive: isMarcheActive,
       onClick: () => onNavigate({ type: 'marketplace' }),
-      screenId: 'menu-item-coproduction'
+      screenId: 'menu-item-marche'
     },
     {
       id: 'profil',
@@ -110,14 +110,8 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
                 }`}
               >
                 <Icon 
-                  className={`${
-                    item.id === 'casting' 
-                      ? 'w-[21.5px] h-[21.5px]' 
-                      : item.id === 'profil'
-                      ? 'w-[19px] h-[19px]'
-                      : 'w-5 h-5'
-                  } transition-transform duration-200`} 
-                  strokeWidth={item.id === 'casting' ? 1.6 : item.id === 'profil' ? 1.7 : 1.35} 
+                  className="w-5 h-5 transition-transform duration-200" 
+                  strokeWidth={1.5} 
                 />
               </div>
 

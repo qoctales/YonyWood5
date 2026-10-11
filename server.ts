@@ -245,6 +245,19 @@ app.post('/api/messaging/threads/:id/messages', (req: Request, res: Response) =>
   res.status(201).json(message);
 });
 
+app.post('/api/messaging/invitations/:id/accept', (req: Request, res: Response) => {
+  res.json({ success: true, invitationId: req.params.id, status: 'accepted' });
+});
+
+app.post('/api/messaging/invitations/:id/decline', (req: Request, res: Response) => {
+  res.json({ success: true, invitationId: req.params.id, status: 'declined' });
+});
+
+// User preferences
+app.put('/api/auth/preferences', (req: Request, res: Response) => {
+  res.json({ success: true, preferences: req.body });
+});
+
 // Start server helper
 async function startServer() {
   if (!isProd) {
