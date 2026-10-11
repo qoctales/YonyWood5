@@ -40,17 +40,17 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     effigies: [
       {
         id: 'eff-1',
-        name: 'Dah Zounon',
+        name: 'Mahougnon Zounon',
         role: 'Gardien du sanctuaire d’Èṣù (Ouidah)',
-        photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+        photoUrl: '/assets/duos/dah-zounon.jpg',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         status: 'EFFIGIE_PRINCIPALE'
       },
       {
         id: 'eff-2',
-        name: 'Père Matthieu Dossou',
+        name: 'Dieudonné Dossou',
         role: 'Prêtre et théologien du dialogue des mémoires',
-        photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+        photoUrl: '/assets/duos/pere-matthieu.jpg',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         status: 'EFFIGIE_SERIE'
       }
@@ -63,7 +63,7 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
         posterUrl: 'https://images.unsplash.com/photo-1548625361-195b05a76bb8?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:42',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        audioVoiceName: 'Dah Zounon & Père Matthieu',
+        audioVoiceName: 'Mahougnon & Dieudonné',
         translations: [
           { lang: 'fr', label: 'Français', prompt: 'Racontez-nous un moment de votre vie où vous avez réellement rencontré votre foi. Que s\'est-il passé ?' },
           { lang: 'fon', label: 'Fongbe', prompt: 'Mǐ ɖɔ xó dó hwenu e a mɔ nùɖiɖi towe nugbó nugbó é wú. Etɛ ka jɛ ?' },
@@ -96,7 +96,7 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
         posterUrl: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:45',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        audioVoiceName: 'Père Matthieu',
+        audioVoiceName: 'Dieudonné',
         translations: [
           { lang: 'fr', label: 'Français', prompt: 'Si vous pouviez transmettre une seule chose de votre foi à quelqu\'un qui cherche aujourd\'hui son chemin, quelle histoire de votre vie lui raconteriez-vous ?' },
           { lang: 'fon', label: 'Fongbe', prompt: 'Enyi a sixú na nùɖé mɛɖé dó nùɖiɖi towe mɛ, tan tɛ a na ɖɔ n\'i ?' },
@@ -111,7 +111,7 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
         posterUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80',
         audioDuration: '0:49',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-        audioVoiceName: 'Dah Zounon',
+        audioVoiceName: 'Mahougnon',
         translations: [
           { lang: 'fr', label: 'Français', prompt: 'Racontez-nous l\'histoire d\'une personne que votre foi a mise sur votre chemin et qui a profondément changé votre manière de voir la vie.' },
           { lang: 'en', label: 'English', prompt: 'Tell us about someone your faith brought into your life who deeply changed the way you see the world.' }
@@ -452,7 +452,7 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
         id: 'eff-inv-1',
         name: 'Fatou Diallo',
         role: 'Investisseuse à impact & Mécène (Paris & Dakar)',
-        photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+        photoUrl: '/assets/duos/fatou-diallo.jpg',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         status: 'EFFIGIE_PRINCIPALE'
       },
@@ -460,7 +460,7 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
         id: 'eff-inv-2',
         name: 'Kwame Mensah',
         role: 'Ingénieur & Bâtisseur d’ouvrages (Cotonou & Kigali)',
-        photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
+        photoUrl: '/assets/duos/kwame-mensah.jpg',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         status: 'EFFIGIE_SERIE'
       }
@@ -535,6 +535,69 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     episodeCount: 5,
     protagonistsCount: 6,
     territories: ['Dakar', 'Cotonou', 'Abidjan', 'Paris', 'Kigali']
+  },
+  {
+    id: 'other-eyes-sixth-sense',
+    slug: 'other-eyes-sixth-sense',
+    title: 'Other Eyes < > Sixth Sense',
+    subtitle: 'Voir autrement. Ressentir l’invisible.',
+    centralQuestion: 'La Perception',
+    shortSynopsis: 'Quand la non-voyance et les perceptions extrasensorielles dialoguent : que voit-on quand le monde ferme les yeux ?',
+    description: 'Une confrontation sensible et profonde entre deux manières extraordinaires de décoder le réel : d’un côté ceux qui, par la non-voyance ou l’éveil sensoriel, naviguent par l’écho, le toucher et les vibrations ; de l’autre ceux qui captent les auras, les énergies subtiles et le souffle de l’invisible. Au-delà des jugements ordinaires, leurs récits intimes révèlent la puissance insoupçonnée des sens humains.',
+    coverImage: '/assets/posters/other-eyes-sixth-sense.png',
+    posterUrl: '/assets/posters/other-eyes-sixth-sense.png',
+    teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    teaserDuration: '1:12',
+    universes: [
+      {
+        name: 'Other Eyes',
+        tagline: 'L’acuité sensorielle et la vision intérieure',
+        description: 'Vivre le monde par le son, le souffle du vent et la résonance tactile de la matière.',
+        territory: 'Bénin (Ganvié & Cotonou)'
+      },
+      {
+        name: 'Sixth Sense',
+        tagline: 'La résonance avec l’invisible et les auras',
+        description: 'Percevoir les énergies subtiles, les présences et les mémoires des lieux.',
+        territory: 'Bénin (Ouidah & Abomey)'
+      }
+    ],
+    effigies: [
+      {
+        id: 'eff-codjo',
+        name: 'Codjo',
+        role: 'Navigateur sonore & sculpteur de sons',
+        photoUrl: '/assets/duos/codjo-blind.jpg',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        status: 'EFFIGIE_PRINCIPALE'
+      },
+      {
+        id: 'eff-mawuna',
+        name: 'Mawuna',
+        role: 'Voyante & guérisseuse d’âmes',
+        photoUrl: '/assets/duos/mawuna-medium.jpg',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        status: 'EFFIGIE_SERIE'
+      }
+    ],
+    questions: [
+      {
+        number: '01',
+        title: 'La Vision Intérieure',
+        prompt: 'Racontez-nous un moment où vous avez compris que vos yeux n’étaient pas nécessaires pour savoir exactement ce qui vous entourait.',
+        posterUrl: '/assets/duos/codjo-blind.jpg',
+        audioDuration: '0:45',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        audioVoiceName: 'Codjo & Mawuna',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Racontez-nous un moment où vous avez compris que vos yeux n’étaient pas nécessaires pour savoir exactement ce qui vous entourait.' },
+          { lang: 'en', label: 'English', prompt: 'Tell us about a moment when you realized that eyes were not needed to perceive the reality around you.' }
+        ]
+      }
+    ],
+    episodeCount: 5,
+    protagonistsCount: 6,
+    territories: ['Ganvié', 'Cotonou', 'Ouidah', 'Abomey']
   }
 ];
 
@@ -592,6 +655,14 @@ export const getCustomDocumentaries = (): Documentary[] => {
             }
             return doc;
           });
+          const hasOtherEyes = updated.some((d: any) => d.id === 'other-eyes-sixth-sense');
+          if (!hasOtherEyes) {
+            const otherEyesDoc = INITIAL_DOCUMENTARIES.find(d => d.id === 'other-eyes-sixth-sense');
+            if (otherEyesDoc) {
+              updated.push(otherEyesDoc);
+              migrated = true;
+            }
+          }
           if (migrated) {
             localStorage.setItem('yonywood_custom_series', JSON.stringify(updated));
           }
@@ -695,7 +766,7 @@ export const PROTAGONISTS: Protagonist[] = [
           partnerName: 'Amara',
           partnerRole: 'Tisserande andine',
           partnerPhoto: '/assets/protagonists/amara-tisserande.jpg',
-          duoId: 'duo-koffi-amara',
+          duoId: 'duo-finagnon-qosqorico-01',
           question: '« Que transmet une main qui tisse depuis toujours ? »'
         }
       ],
@@ -811,7 +882,7 @@ export const PROTAGONISTS: Protagonist[] = [
           partnerName: 'Koffi',
           partnerRole: 'Tisserand de Porto-Novo',
           partnerPhoto: '/assets/protagonists/koffi-tisserand.jpg',
-          duoId: 'duo-koffi-amara',
+          duoId: 'duo-finagnon-qosqorico-01',
           question: '« Que transmet une main qui tisse depuis toujours ? »'
         }
       ],
@@ -869,13 +940,13 @@ export const PROTAGONISTS: Protagonist[] = [
   {
     id: 'dah-zounon',
     slug: 'dah-zounon',
-    name: 'Dah Zounon Gbegnon',
+    name: 'Mahougnon Zounon Gbegnon',
     age: 62,
     role: 'Dignitaire de la Tradition & Gardien des Seuils',
     territory: 'Allada / Ouidah',
     country: 'Bénin',
     flag: '🇧🇯',
-    bio: 'Héritier d\'une lignée de prêtres vodoun d’Allada, Dah Zounon veille sur l’autel de Legba depuis quarante ans. Pour lui, la foi n’est pas une spéculation : c’est un pacte quotidien d’équilibre avec la nature, les carrefours de la vie et le respect de la parole donnée.',
+    bio: 'Héritier d\'une lignée de prêtres vodoun d’Allada, Mahougnon veille sur l’autel de Legba depuis quarante ans. Pour lui, la foi n’est pas une spéculation : c’est un pacte quotidien d’équilibre avec la nature, les carrefours de la vie et le respect de la parole donnée.',
     photoUrl: '/assets/protagonists/dah-zounon.jpg',
     documentaryId: 'jesus-legba',
     universeTag: 'Èṣù',
@@ -899,7 +970,7 @@ export const PROTAGONISTS: Protagonist[] = [
       duos: [
         {
           id: 'duo-1',
-          partnerName: 'Père Matthieu Agonhossou',
+          partnerName: 'Dieudonné Agonhossou',
           partnerRole: 'Prêtre catholique & enseignant',
           partnerPhoto: '/assets/protagonists/pere-matthieu.jpg',
           duoId: 'duo-jesus-legba-01',
@@ -960,10 +1031,10 @@ export const PROTAGONISTS: Protagonist[] = [
         questionTitle: 'La Rencontre',
         duration: '11:42',
         videoDurationSeconds: 702,
-        summary: 'À l’âge de dix-neuf ans, Dah Zounon fuyait le village après un naufrage familial. Assis au carrefour d’Allada, une simple poignée de terre chaude déposée par un vieillard a suspendu son désespoir.',
+        summary: 'À l’âge de dix-neuf ans, Mahougnon fuyait le village après un naufrage familial. Assis au carrefour d’Allada, une simple poignée de terre chaude déposée par un vieillard a suspendu son désespoir.',
         videoCoverUrl: '/assets/protagonists/dah-zounon.jpg',
         credits: [
-          { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Dah Zounon Gbegnon' },
+          { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Mahougnon Zounon Gbegnon' },
           { role: 'director', label: 'Réalisateur', name: 'Ayaba Senou' },
           { role: 'mentor', label: 'Mentor spirituel', name: 'Feu Hounnon Kpossou' },
           { role: 'sound', label: 'Prise de son', name: 'Eric Houndo' }
@@ -974,13 +1045,13 @@ export const PROTAGONISTS: Protagonist[] = [
   {
     id: 'pere-matthieu',
     slug: 'pere-matthieu',
-    name: 'Père Matthieu Agonhossou',
+    name: 'Dieudonné Agonhossou',
     age: 46,
     role: 'Prêtre diocésain, philosophe & éducateur',
     territory: 'Cotonou / Ouidah',
     country: 'Bénin',
     flag: '🇧🇯',
-    bio: 'Né au bord de la lagune de Cotonou, ordonné à Ouidah, le Père Matthieu conjugue l’étude de saint Augustin avec une écoute attentive des traditions de son terroir. Il enseigne la philosophie aux jeunes lycéens et partage son temps entre l’oratoire et la rue.',
+    bio: 'Né au bord de la lagune de Cotonou, ordonné à Ouidah, Dieudonné conjugue l’étude de saint Augustin avec une écoute attentive des traditions de son terroir. Il enseigne la philosophie aux jeunes lycéens et partage son temps entre l’oratoire et la rue.',
     photoUrl: '/assets/protagonists/pere-matthieu.jpg',
     documentaryId: 'jesus-legba',
     universeTag: 'Jésus',
@@ -998,7 +1069,7 @@ export const PROTAGONISTS: Protagonist[] = [
       duos: [
         {
           id: 'duo-1-bis',
-          partnerName: 'Dah Zounon Gbegnon',
+          partnerName: 'Mahougnon Zounon Gbegnon',
           partnerRole: 'Dignitaire Vodoun',
           partnerPhoto: '/assets/protagonists/dah-zounon.jpg',
           duoId: 'duo-jesus-legba-01',
@@ -1046,10 +1117,10 @@ export const PROTAGONISTS: Protagonist[] = [
         questionTitle: 'La Rencontre',
         duration: '13:05',
         videoDurationSeconds: 785,
-        summary: 'Pendant ses années de doute à l’université, Matthieu est entré par hasard dans la basilique déserte de Ouidah en plein midi. Ce n’est pas un miracle qui l’a retenu, mais une soudaine certitude d’être attendu.',
+        summary: 'Pendant ses années de doute à l’université, Dieudonné est entré par hasard dans la basilique déserte de Ouidah en plein midi. Ce n’est pas un miracle qui l’a retenu, mais une soudaine certitude d’être attendu.',
         videoCoverUrl: '/assets/protagonists/pere-matthieu.jpg',
         credits: [
-          { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Père Matthieu Agonhossou' },
+          { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Dieudonné Agonhossou' },
           { role: 'director', label: 'Réalisateur', name: 'Ayaba Senou' },
           { role: 'camera', label: 'Cadre', name: 'Célestin Kiki' }
         ]
@@ -1564,7 +1635,7 @@ export const PROTAGONISTS: Protagonist[] = [
     country: 'Sénégal',
     flag: '🇸🇳',
     bio: 'Pionnière de l’investissement à impact, Fatou finance des ateliers artisanaux, des coopératives agricoles et des infrastructures régénératrices à travers l’Afrique de l’Ouest.',
-    photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+    photoUrl: '/assets/duos/fatou-diallo.jpg',
     documentaryId: 'investors-builders',
     universeTag: 'Investors',
     quote: '« Investir, ce n’est pas acheter l’avenir, c’est donner les moyens au présent de s’enraciner. »',
@@ -1600,7 +1671,7 @@ export const PROTAGONISTS: Protagonist[] = [
           id: 'duo-fatou-kwame-ref',
           partnerName: 'Kwame',
           partnerRole: 'Éco-constructeur & bâtisseur de terre',
-          partnerPhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
+          partnerPhoto: '/assets/duos/kwame-mensah.jpg',
           duoId: 'duo-investors-builders-01',
           question: '« Que vaut le capital sans la sueur de celui qui bâtit ? »'
         }
@@ -1647,7 +1718,7 @@ export const PROTAGONISTS: Protagonist[] = [
         duration: '08:15',
         videoDurationSeconds: 495,
         summary: 'Fatou raconte le jour où elle a décidé de risquer ses premières économies pour soutenir un atelier de menuiserie villageois dont les banques ne voulaient pas.',
-        videoCoverUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+        videoCoverUrl: '/assets/duos/fatou-diallo.jpg',
         credits: [
           { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Fatou Diallo' }
         ]
@@ -1664,7 +1735,7 @@ export const PROTAGONISTS: Protagonist[] = [
     country: 'Bénin',
     flag: '🇧🇯',
     bio: 'Ingénieur et artisan de la terre crue, Kwame réinvente les techniques ancestrales de construction pour bâtir des cités fraîches, durables et accessibles à tous.',
-    photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+    photoUrl: '/assets/duos/kwame-mensah.jpg',
     documentaryId: 'investors-builders',
     universeTag: 'Builders',
     quote: '« La terre ne ment pas. Elle ne demande qu’un toit pour la protéger et une main pour la tasser. »',
@@ -1700,7 +1771,7 @@ export const PROTAGONISTS: Protagonist[] = [
           id: 'duo-kwame-fatou-ref',
           partnerName: 'Fatou',
           partnerRole: 'Investisseuse à impact & mécène',
-          partnerPhoto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+          partnerPhoto: '/assets/duos/fatou-diallo.jpg',
           duoId: 'duo-investors-builders-01',
           question: '« Que vaut le capital sans la sueur de celui qui bâtit ? »'
         }
@@ -1747,9 +1818,209 @@ export const PROTAGONISTS: Protagonist[] = [
         duration: '09:20',
         videoDurationSeconds: 560,
         summary: 'Kwame relate l’angoisse de sa première voûte nubienne inaugurée la veille d’une tornade tropicale, et la fierté de voir la bâtisse intacte au matin.',
-        videoCoverUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+        videoCoverUrl: '/assets/duos/kwame-mensah.jpg',
         credits: [
           { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Kwame Mensah' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'codjo-blind',
+    slug: 'codjo-blind',
+    name: 'Codjo Tossou',
+    age: 36,
+    role: 'Navigateur sonore & sculpteur de sons',
+    territory: 'Ganvié & Cotonou',
+    country: 'Bénin',
+    flag: '🇧🇯',
+    bio: 'Non-voyant depuis l’enfance, Codjo a développé une cartographie auditive et vibratoire stupéfiante de la cité lacustre de Ganvié. Au bruit de l’eau contre la pirogue ou au froissement des roseaux, il guide les embarcations et révèle une perception du monde invisible aux yeux physiques.',
+    photoUrl: '/assets/duos/codjo-blind.jpg',
+    documentaryId: 'other-eyes-sixth-sense',
+    universeTag: 'Other Eyes',
+    quote: '« Vos yeux s’arrêtent aux formes. Mes oreilles et ma peau pénètrent l’épaisseur vivante de l’air et la cadence secrète de la nuit. »',
+    tree: {
+      passeurs: [
+        {
+          id: 'p-ahouan',
+          name: 'Vieux Ahouan',
+          role: 'Pêcheur nocturne & passeur d’échos',
+          country: 'Bénin',
+          photo: '/assets/duos/tobi-ganvie.jpg'
+        }
+      ],
+      heritiers: [
+        {
+          id: 'h-sene',
+          name: 'Sèna',
+          role: 'Apprenti acousticien de la lagune',
+          country: 'Bénin',
+          photo: '/assets/duos/kwame-mensah.jpg'
+        }
+      ],
+      transmissions: [
+        {
+          id: 't-codjo-1',
+          title: 'L’écholocalisation aquatique',
+          ancestorOrMentor: 'Vieux Ahouan, pêcheur de Ganvié',
+          description: 'Savoir lire la profondeur de l’eau au seul claquement de la rame contre la proue.'
+        }
+      ],
+      duos: [
+        {
+          id: 'duo-codjo-mawuna-ref',
+          partnerName: 'Mawuna',
+          partnerRole: 'Voyante & guérisseuse d’âmes',
+          partnerPhoto: '/assets/duos/mawuna-medium.jpg',
+          duoId: 'duo-other-eyes-sixth-sense-01',
+          question: '« Que voit-on quand le monde ferme les yeux ? »'
+        }
+      ],
+      creations: [
+        {
+          id: 'c-codjo-1',
+          title: 'Archives sonores de la lagune Nokoué',
+          type: 'Création acoustique',
+          description: 'Enregistrements immersifs des vents, des rames et des chants nocturnes de Ganvié.'
+        }
+      ],
+      projects: [
+        {
+          id: 'p-codjo-1',
+          title: 'Parcours sensoriel les yeux bandés',
+          stage: 'En cours (75%)',
+          description: 'Expérience d’immersion lacustre pour éveiller l’écoute intime des sens.'
+        }
+      ],
+      opportunities: [
+        {
+          id: 'o-codjo-1',
+          title: 'Résidence de création sonore Ganvié-Ouidah',
+          description: 'Collaboration avec des artistes et musiciens acoustiques.',
+          badge: 'Ouvert'
+        }
+      ],
+      needs: [
+        {
+          id: 'n-codjo-1',
+          title: 'Hydrophones haute fidélité',
+          urgency: 'Prioritaire',
+          description: 'Microphones subaquatiques pour enregistrer les échos profonds de la lagune.'
+        }
+      ]
+    },
+    stories: [
+      {
+        id: 'story-codjo-01',
+        title: 'Traverser la lagune dans la nuit noire sans lanterne',
+        questionNumber: '01',
+        questionTitle: 'La Vision Intérieure',
+        duration: '07:45',
+        videoDurationSeconds: 465,
+        summary: 'Codjo raconte cette nuit de tornade où toutes les lampes s’étaient éteintes, et comment il a ramené les pêcheurs à bon port grâce à l’écho du clocher de Ganvié.',
+        videoCoverUrl: '/assets/duos/codjo-blind.jpg',
+        credits: [
+          { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Codjo Tossou' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'mawuna-medium',
+    slug: 'mawuna-medium',
+    name: 'Mawuna Houénou',
+    age: 44,
+    role: 'Voyante, médium & guérisseuse d’âmes',
+    territory: 'Ouidah & Abomey',
+    country: 'Bénin',
+    flag: '🇧🇯',
+    bio: 'Sensible aux vibrations et aux mémoires invisibles depuis son initiation au bord de la lagune sacrée de Ouidah, Mawuna capte les auras et les résonances intimes. Elle aide à réconcilier les mémoires blessées et à discerner les carrefours du destin.',
+    photoUrl: '/assets/duos/mawuna-medium.jpg',
+    documentaryId: 'other-eyes-sixth-sense',
+    universeTag: 'Sixth Sense',
+    quote: '« L’invisible n’est pas une absence, c’est une présence trop subtile pour le regard distrait. Le cœur doit apprendre à écouter ce que les yeux ne peuvent enfermer. »',
+    tree: {
+      passeurs: [
+        {
+          id: 'p-daagbo',
+          name: 'Prêtresse Na Agbessi',
+          role: 'Matriarche guérisseuse de Ouidah',
+          country: 'Bénin',
+          photo: '/assets/duos/dah-zounon.jpg'
+        }
+      ],
+      heritiers: [
+        {
+          id: 'h-kessi',
+          name: 'Kessi',
+          role: 'Apprentie herboriste et voyante',
+          country: 'Bénin',
+          photo: '/assets/duos/eleonore-vance.jpg'
+        }
+      ],
+      transmissions: [
+        {
+          id: 't-mawuna-1',
+          title: 'L’écoute des souffles et des présences',
+          ancestorOrMentor: 'Na Agbessi, doyenne de Ouidah',
+          description: 'Distinguer les pensées fugaces des murmures ancestraux à travers le silence de l’aube.'
+        }
+      ],
+      duos: [
+        {
+          id: 'duo-mawuna-codjo-ref',
+          partnerName: 'Codjo',
+          partnerRole: 'Navigateur sonore & sculpteur de sons',
+          partnerPhoto: '/assets/duos/codjo-blind.jpg',
+          duoId: 'duo-other-eyes-sixth-sense-01',
+          question: '« Que voit-on quand le monde ferme les yeux ? »'
+        }
+      ],
+      creations: [
+        {
+          id: 'c-mawuna-1',
+          title: 'Sanctuaire de recueillement et de paix',
+          type: 'Espace d’apaisement',
+          description: 'Lieu de méditation à Ouidah dédié à l’écoute des âmes et à la réconciliation intime.'
+        }
+      ],
+      projects: [
+        {
+          id: 'p-mawuna-1',
+          title: 'Cercle de parole des sens invisibles',
+          stage: 'Actif (80%)',
+          description: 'Rencontres mensuelles pour explorer l’intuition et le discernement du cœur.'
+        }
+      ],
+      opportunities: [
+        {
+          id: 'o-mawuna-1',
+          title: 'Ateliers de transmission de la sagesse intuitive',
+          description: 'Formation ouverte aux personnes en quête d’équilibre intérieur.',
+          badge: 'Ouvert'
+        }
+      ],
+      needs: [
+        {
+          id: 'n-mawuna-1',
+          title: 'Jardin conservatoire des plantes sacrées médicinales',
+          urgency: 'Prioritaire',
+          description: 'Protection de la flore médicinale traditionnelle menacée d’Ouidah.'
+        }
+      ]
+    },
+    stories: [
+      {
+        id: 'story-mawuna-01',
+        title: 'Le voile levé sur la mémoire des carrefours',
+        questionNumber: '01',
+        questionTitle: 'La Vision Intérieure',
+        duration: '08:20',
+        videoDurationSeconds: 500,
+        summary: 'Mawuna partage le moment où elle a cessé de craindre les songes et les voix de l’invisible pour en faire un pont de paix entre les êtres.',
+        videoCoverUrl: '/assets/duos/mawuna-medium.jpg',
+        credits: [
+          { role: 'story_owner', label: 'Propriétaire de l’histoire', name: 'Mawuna Houénou' }
         ]
       }
     ]
@@ -1757,24 +2028,6 @@ export const PROTAGONISTS: Protagonist[] = [
 ];
 
 export const DUOS: Duo[] = [
-  {
-    id: 'duo-koffi-amara',
-    slug: 'duo-koffi-amara',
-    documentaryId: 'finagnon-qosqorico',
-    documentaryTitle: 'Finagnon < > Qosqorico',
-    episodeNumber: 'ÉPISODE 02',
-    protagonistA: PROTAGONISTS.find(p => p.id === 'koffi-tisserand') || PROTAGONISTS[0],
-    protagonistB: PROTAGONISTS.find(p => p.id === 'amara-tisserande') || PROTAGONISTS[1],
-    questionNumber: '02',
-    questionTitle: 'Le Geste Ancestral',
-    centralQuestion: '« Que transmet une main qui tisse depuis toujours ? »',
-    quoteA: '« Le tissage est une langue qu’on apprend sans parler. Ses étoffes racontent les marchés et les rites de la côte. »',
-    quoteB: '« Chaque fil garde la mémoire de la montagne. Tisserande des hauteurs de Cusco, je travaille la laine et les teintes végétales. »',
-    coverImage: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1600&q=80',
-    storyA: (PROTAGONISTS.find(p => p.id === 'koffi-tisserand') || PROTAGONISTS[0]).stories[0],
-    storyB: (PROTAGONISTS.find(p => p.id === 'amara-tisserande') || PROTAGONISTS[1]).stories[0],
-    editorialReflection: 'De Porto-Novo à la Vallée Sacrée de Cusco, le métier à tisser n’est pas un outil de confection : c’est une prière muette où les mains nouent la mémoire des ancêtres pour habiller les vivants.'
-  },
   {
     id: 'duo-jesus-legba-01',
     slug: 'duo-jesus-legba-01',
@@ -1788,7 +2041,7 @@ export const DUOS: Duo[] = [
     centralQuestion: 'Racontez-nous un moment de votre vie où vous avez réellement rencontré votre foi. Que s\'est-il passé ?',
     quoteA: '« Legba ne m’a pas parlé dans un coup de tonnerre. C’était la chaleur d’une poignée de terre d’Allada, un jour où je croyais que le monde était mort. »',
     quoteB: '« Je suis entré dans la nef déserte de Ouidah pour fuir la brûlure du soleil. Ce n’est pas un miracle qui m’a retenu : c’était la certitude d’être attendu. »',
-    coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1600&q=80',
+    coverImage: '/assets/posters/jesus-esu.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'dah-zounon') || PROTAGONISTS[2]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'pere-matthieu') || PROTAGONISTS[3]).stories[0],
     editorialReflection: 'Deux traditions que l’histoire a parfois opposées se découvrent ici une racine commune : l’humilité de l’homme devant ce qui le dépasse et l’impérieuse nécessité de ne pas traverser l’obscurité seul.'
@@ -1806,7 +2059,7 @@ export const DUOS: Duo[] = [
     centralQuestion: 'Racontez-nous un moment où vous avez compris que vous étiez vraiment chez vous. Où étiez-vous et que s\'est-il passé ?',
     quoteA: '« Le jour où la pirogue a glissé dans la brume sans que j’aie besoin de regarder le rivage. Ganvié n’est pas sur la terre, mais elle est dans mon sang. »',
     quoteB: '« Quand les pieds nus touchent la roche glacée de Pisac à l’aube et que la montagne souffle son premier vent. Là, tu sais que tu n’es pas un étranger. »',
-    coverImage: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1600&q=80',
+    coverImage: '/assets/posters/finagnon-qosqorico.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'tobi-houndegla') || PROTAGONISTS[0]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'sayri-quispe') || PROTAGONISTS[1]).stories[0],
     editorialReflection: 'Des pilotis de Ganvié aux terrasses de Pisac, le chez-soi n’est pas une propriété cadastrale : c’est une fidélité organique au rythme d’un élément — l’eau vive ou la pierre d’altitude.'
@@ -1816,15 +2069,15 @@ export const DUOS: Duo[] = [
     slug: 'duo-blacks-one-beyond-eve-01',
     documentaryId: 'blacks-one-beyond-eve',
     documentaryTitle: 'Blacks One < > Beyond Eve',
-    episodeNumber: 'ÉPISODE 03',
+    episodeNumber: 'ÉPISODE 01',
     protagonistA: PROTAGONISTS.find(p => p.id === 'malik-diop') || PROTAGONISTS[4],
     protagonistB: PROTAGONISTS.find(p => p.id === 'eleonore-vance') || PROTAGONISTS[5],
-    questionNumber: '03',
+    questionNumber: '01',
     questionTitle: 'Ce que l’on Porte',
     centralQuestion: 'Racontez-nous quelque chose que vous avez reçu de votre histoire, de votre famille ou de ceux qui vous ont précédé et que vous portez encore aujourd\'hui. Qu\'est-ce que cela représente pour vous ?',
     quoteA: '« On m’a dit à Paris que ma danse était trop lourde. J’ai compris ce jour-là que cette pesanteur, c’était le sable de mes aïeux que je refusais de secouer. »',
     quoteB: '« Dans la malle de ma mère, il n’y avait aucun bijou en or, mais trois pagnes de coton usés par le travail. C’est mon manteau de reine. »',
-    coverImage: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=80',
+    coverImage: '/assets/posters/blacks-one-beyond-eve.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'malik-diop') || PROTAGONISTS[4]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'eleonore-vance') || PROTAGONISTS[5]).stories[0],
     editorialReflection: 'Ce que l’on porte n’est pas un fardeau qui alourdit le pas : c’est le fil secret qui permet de traverser l’exil sans s’égarer.'
@@ -1842,7 +2095,7 @@ export const DUOS: Duo[] = [
     centralQuestion: 'Racontez-nous un moment où vous avez créé quelque chose pour quelqu\'un et où vous avez compris, à sa réaction, que vous lui aviez vraiment fait plaisir. Qu\'est-ce qui s\'est passé ?',
     quoteA: '« Quand l’homme s’est assis dans la fumée et a fermé les yeux à la première cuillerée d’igname, ses larmes m’ont dit que je n’étais pas un marchand, mais un frère. »',
     quoteB: '« Ce n’est pas la coupe de cristal qui a touché cette femme, mais le fait que quelqu’un avait remarqué son angoisse et lui offrait un refuge invisible. »',
-    coverImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1600&q=80',
+    coverImage: '/assets/posters/dixeat-fiat-luxe.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'chef-koffi') || PROTAGONISTS[0]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'helene-saint-amand') || PROTAGONISTS[1]).stories[0],
     editorialReflection: 'Entre la marmite populaire et le salon d’apparat, la grandeur de l’expérience ne réside jamais dans le prix facturé, mais dans l’intensité du soin offert à l’autre.'
@@ -1864,6 +2117,24 @@ export const DUOS: Duo[] = [
     storyA: (PROTAGONISTS.find(p => p.id === 'fatou-diallo') || PROTAGONISTS[0]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'kwame-mensah') || PROTAGONISTS[1]).stories[0],
     editorialReflection: 'Entre l’encre des contrats et la poussière des chantiers, la véritable valeur ne naît pas dans le calcul du profit, mais dans l’engagement réciproque de bâtir ce qui perdure.'
+  },
+  {
+    id: 'duo-other-eyes-sixth-sense-01',
+    slug: 'duo-other-eyes-sixth-sense-01',
+    documentaryId: 'other-eyes-sixth-sense',
+    documentaryTitle: 'Other Eyes < > Sixth Sense',
+    episodeNumber: 'ÉPISODE 01',
+    protagonistA: PROTAGONISTS.find(p => p.id === 'codjo-blind') || PROTAGONISTS[0],
+    protagonistB: PROTAGONISTS.find(p => p.id === 'mawuna-medium') || PROTAGONISTS[1],
+    questionNumber: '01',
+    questionTitle: 'La Vision Intérieure',
+    centralQuestion: '« Racontez-nous un moment où vous avez compris que vos yeux n’étaient pas nécessaires pour savoir exactement ce qui vous entourait. »',
+    quoteA: '« Vos yeux s’arrêtent aux formes. Mes oreilles et ma peau pénètrent l’épaisseur vivante de l’air et la cadence secrète de la nuit. »',
+    quoteB: '« L’invisible n’est pas une absence, c’est une présence subtile. Le cœur doit écouter ce que les yeux ne peuvent enfermer. »',
+    coverImage: '/assets/posters/other-eyes-sixth-sense.png',
+    storyA: (PROTAGONISTS.find(p => p.id === 'codjo-blind') || PROTAGONISTS[0]).stories[0],
+    storyB: (PROTAGONISTS.find(p => p.id === 'mawuna-medium') || PROTAGONISTS[1]).stories[0],
+    editorialReflection: 'Face à face entre celui qui navigue par le son et le toucher et celle qui décode les souffles invisibles : tous deux nous enseignent que voir le monde n’a jamais été une affaire de rétine, mais d’attention profonde à ce qui vibre.'
   }
 ];
 
@@ -2142,19 +2413,19 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
     pioneers: [
       {
         id: 'dah-zounon',
-        name: 'Dah Zounon',
+        name: 'Mahougnon',
         age: 68,
         role: 'Dignitaire & gardien de la Tradition',
         territory: 'Allada',
         country: 'Bénin',
         flag: '🇧🇯',
         universeTag: 'Èṣù',
-        photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
+        photoUrl: '/assets/duos/dah-zounon.jpg',
         isPioneer: true,
         badge: 'Première effigie',
         invitationStory: 'Pionnier fondateur de la série. A accepté d\'ouvrir le secret des seuils sacrés pour que la jeunesse comprenne la vraie nature protectrice de Legba.',
-        duoPartnerName: 'Père Matthieu',
-        duoPartnerPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+        duoPartnerName: 'Dieudonné',
+        duoPartnerPhoto: '/assets/duos/pere-matthieu.jpg',
         duoId: 'duo-jesus-legba-01',
         episodeQuestion: '01 — Racontez-nous un moment où vous avez réellement rencontré votre foi.',
         protagonistIdRef: 'dah-zounon',
@@ -2171,8 +2442,8 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
             badge: 'Invité(e)',
             invitedById: 'dah-zounon',
-            invitedByName: 'Dah Zounon',
-            invitationStory: 'Invité par Dah Zounon après qu\'ils ont soigné ensemble des enfants fébriles au dispensaire de Toffo, échangeant tisanes de racines et prières d\'oraison.',
+            invitedByName: 'Mahougnon',
+            invitationStory: 'Invitée par Mahougnon après qu\'ils ont soigné ensemble des enfants fébriles au dispensaire de Toffo, échangeant tisanes de racines et prières d\'oraison.',
             duoPartnerName: 'Hounon Gbaguidi',
             duoId: 'duo-jesus-legba-01',
             episodeQuestion: '02 — L’épreuve qui révèle le vrai dénuement de l’âme.',
@@ -2211,8 +2482,8 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80',
             badge: 'Invité(e)',
             invitedById: 'dah-zounon',
-            invitedByName: 'Dah Zounon',
-            invitationStory: 'Invité par Dah Zounon pour son talent rare à forger les fers d\'Asen et à raconter le mystère du feu qui purifie la colère.',
+            invitedByName: 'Mahougnon',
+            invitationStory: 'Invité par Mahougnon pour son talent rare à forger les fers d\'Asen et à raconter le mystère du feu qui purifie la colère.',
             duoPartnerName: 'Pasteur Emmanuel',
             duoId: 'duo-jesus-legba-01',
             episodeQuestion: '04 — La personne qui a retourné votre regard sur l’invisible.',
@@ -2222,19 +2493,19 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
       },
       {
         id: 'pere-matthieu',
-        name: 'Père Matthieu',
+        name: 'Dieudonné',
         age: 59,
         role: 'Prêtre diocésain & vicaire de paroisse',
         territory: 'Cotonou',
         country: 'Bénin',
         flag: '🇧🇯',
         universeTag: 'Jésus',
-        photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+        photoUrl: '/assets/duos/pere-matthieu.jpg',
         isPioneer: true,
         badge: 'Première effigie',
         invitationStory: 'Pionnier fondateur représentant le pôle chrétien. A voulu témoigner d\'une foi dépouillée de tout mépris envers les traditions des ancêtres.',
-        duoPartnerName: 'Dah Zounon',
-        duoPartnerPhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
+        duoPartnerName: 'Mahougnon',
+        duoPartnerPhoto: '/assets/duos/dah-zounon.jpg',
         duoId: 'duo-jesus-legba-01',
         episodeQuestion: '01 — La rencontre intime avec la grâce.',
         protagonistIdRef: 'pere-matthieu',
@@ -2251,8 +2522,8 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             photoUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80',
             badge: 'Invité(e)',
             invitedById: 'pere-matthieu',
-            invitedByName: 'Père Matthieu',
-            invitationStory: 'Fait entrer par le Père Matthieu après des nuits entières passées à apaiser les tensions entre jeunes convertis et anciens du village.',
+            invitedByName: 'Dieudonné',
+            invitationStory: 'Fait entrer par Dieudonné après des nuits entières passées à apaiser les tensions entre jeunes convertis et anciens du village.',
             duoPartnerName: 'Hounon Gbaguidi',
             duoId: 'duo-jesus-legba-01',
             episodeQuestion: '04 — Le pardon aux portes de l’impossible.',
@@ -2291,9 +2562,9 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             photoUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80',
             badge: 'Invité(e)',
             invitedById: 'pere-matthieu',
-            invitedByName: 'Père Matthieu',
-            invitationStory: 'Invité par le Père Matthieu pour son engagement auprès des plus vulnérables à Dantokpa sans jamais juger personne.',
-            duoPartnerName: 'Dah Zounon',
+            invitedByName: 'Dieudonné',
+            invitationStory: 'Invité par Dieudonné pour son engagement auprès des plus vulnérables à Dantokpa sans jamais juger personne.',
+            duoPartnerName: 'Mahougnon',
             duoId: 'duo-jesus-legba-01',
             episodeQuestion: '02 — L’amour éprouvé par la nuit.',
             protagonistIdRef: 'pere-matthieu'
@@ -2326,7 +2597,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         invitationStory: 'Première effigie et initiateur du volet Finagnon. A posé la question originelle : « Que transmet une main qui tisse depuis l\'enfance ? »',
         duoPartnerName: 'Amara',
         duoPartnerPhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-        duoId: 'duo-koffi-amara',
+        duoId: 'duo-finagnon-qosqorico-01',
         episodeQuestion: '02 — Le geste ancestral qui relie les générations.',
         protagonistIdRef: 'koffi-tisserand',
         invitedPeople: [
@@ -2406,7 +2677,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             invitedByName: 'Koffi',
             invitationStory: 'Invitée par Koffi pour sa mémoire des plantes tinctoriales sauvages du cordon littoral.',
             duoPartnerName: 'Don Huamán',
-            duoId: 'duo-koffi-amara',
+            duoId: 'duo-finagnon-qosqorico-01',
             episodeQuestion: '03 — Les couleurs qui naissent de la terre.',
             protagonistIdRef: 'koffi-tisserand'
           }
@@ -2427,7 +2698,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         invitationStory: 'Première effigie du volet Qosqorico. A fait résonner la laine d\'alpaga avec le coton de Koffi par-delà l\'océan Pacifique et l\'Atlantique.',
         duoPartnerName: 'Koffi',
         duoPartnerPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-        duoId: 'duo-koffi-amara',
+        duoId: 'duo-finagnon-qosqorico-01',
         episodeQuestion: '02 — La mémoire que chaque fil garde de la montagne.',
         protagonistIdRef: 'amara-tisserande',
         invitedPeople: [
@@ -2486,7 +2757,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             invitedByName: 'Amara',
             invitationStory: 'Fait entrer par Amara car il est le seul à connaître le secret de la teinture rouge cochenille fixée à l\'eau de source volcanique.',
             duoPartnerName: 'Ayaba',
-            duoId: 'duo-koffi-amara',
+            duoId: 'duo-finagnon-qosqorico-01',
             episodeQuestion: '03 — Les secrets confiés par le vent des hauteurs.',
             protagonistIdRef: 'amara-tisserande'
           }
@@ -2816,12 +3087,12 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         country: 'Sénégal',
         flag: '🇸🇳',
         universeTag: 'Investors',
-        photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+        photoUrl: '/assets/duos/fatou-diallo.jpg',
         isPioneer: true,
         badge: 'Première effigie',
         invitationStory: 'Pionnière de l’investissement à impact, engagée à prouver que le capital peut nourrir la souveraineté plutôt que la dépendance.',
         duoPartnerName: 'Kwame Mensah',
-        duoPartnerPhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
+        duoPartnerPhoto: '/assets/duos/kwame-mensah.jpg',
         duoId: 'duo-investors-builders-01',
         episodeQuestion: '01 — Le premier pari où vous avez engagé vos ressources ou vos mains sans certitude.',
         protagonistIdRef: 'fatou-diallo',
@@ -2857,12 +3128,12 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         country: 'Bénin',
         flag: '🇧🇯',
         universeTag: 'Builders',
-        photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
+        photoUrl: '/assets/duos/kwame-mensah.jpg',
         isPioneer: true,
         badge: 'Première effigie',
         invitationStory: 'Bâtisseur de terre crue et concepteur d’éco-matériaux, il matérialise les visions d’infrastructures durables.',
         duoPartnerName: 'Fatou Diallo',
-        duoPartnerPhoto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+        duoPartnerPhoto: '/assets/duos/fatou-diallo.jpg',
         duoId: 'duo-investors-builders-01',
         episodeQuestion: '01 — Le premier pari où vous avez engagé vos ressources ou vos mains sans certitude.',
         protagonistIdRef: 'kwame-mensah',
@@ -2885,6 +3156,99 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             duoId: 'duo-investors-builders-01',
             episodeQuestion: '03 — La rencontre décisive entre finance et matière.',
             protagonistIdRef: 'kwame-mensah',
+            invitedPeople: []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    seriesId: 'other-eyes-sixth-sense',
+    seriesTitle: 'Other Eyes < > Sixth Sense',
+    subtitle: 'Voir autrement. Ressentir l’invisible.',
+    description: 'Quand l’écoute vibratoire et la clairvoyance transcendent les limites du visible : une lignée de passeurs qui décodent les mémoires et le souffle du monde.',
+    centralQuestion: 'La Perception',
+    totalAffiliatedCount: 12,
+    generationsCount: 3,
+    pioneers: [
+      {
+        id: 'codjo-blind',
+        name: 'Codjo Tossou',
+        age: 36,
+        role: 'Navigateur sonore & sculpteur de sons',
+        territory: 'Ganvié & Cotonou',
+        country: 'Bénin',
+        flag: '🇧🇯',
+        universeTag: 'Other Eyes',
+        photoUrl: '/assets/duos/codjo-blind.jpg',
+        isPioneer: true,
+        badge: 'Première effigie',
+        invitationStory: 'Navigateur lacustre non-voyant, guidant les pirogues dans l’obscurité par la seule résonance des ondes et des roseaux.',
+        duoPartnerName: 'Mawuna Houénou',
+        duoPartnerPhoto: '/assets/duos/mawuna-medium.jpg',
+        duoId: 'duo-other-eyes-sixth-sense-01',
+        episodeQuestion: '01 — Que voit-on quand le monde ferme les yeux ?',
+        protagonistIdRef: 'codjo-blind',
+        invitedPeople: [
+          {
+            id: 'vieux-ahouan',
+            name: 'Vieux Ahouan',
+            age: 64,
+            role: 'Pêcheur nocturne & passeur d’échos',
+            territory: 'Ganvié',
+            country: 'Bénin',
+            flag: '🇧🇯',
+            universeTag: 'Other Eyes',
+            photoUrl: '/assets/duos/tobi-ganvie.jpg',
+            badge: 'Invité(e)',
+            invitedById: 'codjo-blind',
+            invitedByName: 'Codjo Tossou',
+            invitationStory: 'A appris à Codjo enfant à écouter le retour d’onde sur la proue de bois.',
+            duoPartnerName: 'Na Agbessi',
+            duoId: 'duo-other-eyes-sixth-sense-01',
+            episodeQuestion: '02 — La mémoire du son dans la nuit noire.',
+            protagonistIdRef: 'codjo-blind',
+            invitedPeople: []
+          }
+        ]
+      },
+      {
+        id: 'mawuna-medium',
+        name: 'Mawuna Houénou',
+        age: 44,
+        role: 'Voyante, médium & guérisseuse d’âmes',
+        territory: 'Ouidah & Abomey',
+        country: 'Bénin',
+        flag: '🇧🇯',
+        universeTag: 'Sixth Sense',
+        photoUrl: '/assets/duos/mawuna-medium.jpg',
+        isPioneer: true,
+        badge: 'Première effigie',
+        invitationStory: 'Sensible aux vibrations et aux mémoires de la terre sacrée de Ouidah, reliant le monde visible aux présences invisibles.',
+        duoPartnerName: 'Codjo Tossou',
+        duoPartnerPhoto: '/assets/duos/codjo-blind.jpg',
+        duoId: 'duo-other-eyes-sixth-sense-01',
+        episodeQuestion: '01 — Que voit-on quand le monde ferme les yeux ?',
+        protagonistIdRef: 'mawuna-medium',
+        invitedPeople: [
+          {
+            id: 'na-agbessi',
+            name: 'Na Agbessi',
+            age: 72,
+            role: 'Matriarche guérisseuse de Ouidah',
+            territory: 'Ouidah',
+            country: 'Bénin',
+            flag: '🇧🇯',
+            universeTag: 'Sixth Sense',
+            photoUrl: '/assets/duos/dah-zounon.jpg',
+            badge: 'Invité(e)',
+            invitedById: 'mawuna-medium',
+            invitedByName: 'Mawuna Houénou',
+            invitationStory: 'A guidé Mawuna dans l’apaisement de ses dons et le discernement du cœur.',
+            duoPartnerName: 'Vieux Ahouan',
+            duoId: 'duo-other-eyes-sixth-sense-01',
+            episodeQuestion: '03 — Le silence qui guérit.',
+            protagonistIdRef: 'mawuna-medium',
             invitedPeople: []
           }
         ]

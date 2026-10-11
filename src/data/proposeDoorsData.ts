@@ -41,7 +41,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     icon: Film,
     tagline: 'Racontez votre histoire face à un alter ego d’un autre continent.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    posterUrl: '/assets/posters/jesus-esu.png',
+    posterUrl: '/assets/doors/door-series.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Dialogue face-à-face avec un alter ego d’un autre continent.',
@@ -100,6 +100,16 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         posterUrl: '/investors-builders.png',
         actionLabel: 'Choisir cette série'
+      },
+      {
+        id: 'other-eyes-sixth-sense',
+        title: 'Other Eyes < > Sixth Sense',
+        subtitle: 'Voir autrement < > ressentir l’invisible. Le dialogue des perceptions.',
+        synopsis: 'La confrontation sensible entre ceux qui traversent l’existence avec d’autres sens (non-voyance, acuité vibratoire et spatiale) et ceux qui communiquent avec l’invisible (médiums, clairvoyance, écoute des auras).',
+        question: 'Que percevez-vous quand le monde ferme les yeux ?',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+        posterUrl: '/assets/posters/other-eyes-sixth-sense.png',
+        actionLabel: 'Choisir cette série'
       }
     ]
   },
@@ -109,7 +119,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     icon: Mountain,
     tagline: 'Faites rayonner l’âme, les savoirs et la géographie sacrée de votre terre.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    posterUrl: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=800&q=80',
+    posterUrl: '/assets/doors/door-territoires.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Mettre en lumière les sanctuaires et mémoires méconnues de votre pays.',
@@ -172,7 +182,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     icon: Atom,
     tagline: 'Partagez une mémoire vive, un enseignement ancestral ou une parole éclairante.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-    posterUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
+    posterUrl: '/assets/doors/door-memoires.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Préserver les mémoires orales menacées d’oubli face à la modernité.',
@@ -235,7 +245,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     icon: GraduationCap,
     tagline: 'Transmettez la passion de votre métier, vos gestes d’artisan et vos compétences d’excellence.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-    posterUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
+    posterUrl: '/assets/doors/door-competences.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Inspirer des vocations authentiques auprès des jeunes générations.',
@@ -298,7 +308,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     icon: Star,
     tagline: 'Célébrez les grandes voix, artistes et figures inspirantes qui ouvrent la voie.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-    posterUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80',
+    posterUrl: '/assets/doors/door-personnalites.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Témoigner de l’impact direct d’une grande figure sur votre parcours personnel.',
@@ -361,7 +371,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     icon: Gem,
     tagline: 'Révélez l’authenticité de votre entreprise, son utilité réelle et ses racines.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    posterUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80',
+    posterUrl: '/assets/doors/door-marques.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Éloigner votre communication du bruit publicitaire pour bâtir une confiance intime.',
@@ -424,7 +434,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     icon: Sprout,
     tagline: 'Portez un projet collectif, une initiative citoyenne ou une vision d’intérêt général.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    posterUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
+    posterUrl: '/assets/doors/door-projets.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Présenter votre initiative à une communauté engagée prête à se mobiliser.',
@@ -483,11 +493,11 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
   },
   {
     id: 'offres',
-    label: 'Offres',
+    label: 'Produits & Services',
     icon: ShoppingBag,
-    tagline: 'Proposez des créations uniques, des séjours immersifs ou des services d’exception.',
+    tagline: 'Proposez vos créations artisanales, pièces uniques ou services d’exception.',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-    posterUrl: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80',
+    posterUrl: '/assets/doors/door-offres.jpg',
     actionDoorLabel: 'Choisir cette porte',
     advantages: [
       'Vendre vos créations en expliquant directement l’histoire de leur fabrication.',

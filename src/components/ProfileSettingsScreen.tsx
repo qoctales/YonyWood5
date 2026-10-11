@@ -885,6 +885,26 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       status: 'En production',
       videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
       posterUrl: '/assets/posters/investors-builders.png'
+    },
+    {
+      id: 'prod-6',
+      seriesId: 'other-eyes-sixth-sense',
+      seriesTitle: 'Other Eyes Sixth Sense',
+      sharesCount: 16,
+      sharesOnSale: isOwner ? 6 : 6,
+      startPrice: 42,
+      salePrice: 58,
+      purchasePrice: 672,
+      recommendedPrice: 56,
+      rsiPercent: 38.1,
+      returnForecastPercent: 18.2,
+      returnForecastAmount: 122.30,
+      viewsCount: 38900,
+      growthRatePercent: 32.5,
+      liquidityScore: 'Élevée',
+      status: 'En tournage',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+      posterUrl: '/assets/posters/other-eyes-sixth-sense.png'
     }
   ]);
 
@@ -1709,7 +1729,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       {/* ========================================================================= */}
       {/* 2. VISIONNEUSE VERTICALE 9:16 (STRICTEMENT ALIGNÉE SUR COPRODUCTION)       */}
       {/* ========================================================================= */}
-      <div className="flex-1 flex flex-col items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
+      <div className="flex-1 flex flex-col items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200 relative">
 
         {/* Conteneur principal avec vidéo 9:16 épurée */}
         <div className="relative w-full h-full flex items-center justify-center">
@@ -2349,9 +2369,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
         </div>
 
-        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Créer un projet sur une seule ligne) */}
+        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Créer un projet) - Positionné en absolu pour ne jamais décaler la hauteur de la vidéo */}
         {isOwner && (activeCategory === 'offre' || activeCategory === 'appel') && (
-          <div className="flex items-center justify-center w-full max-w-[340px] mx-auto pt-2 pb-2 px-2 shrink-0">
+          <div className="absolute -bottom-1.5 sm:bottom-0 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
             <button
               type="button"
               onClick={() => {
@@ -2370,7 +2390,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                 setIsAddingModalOpen(true);
               }}
               id="btn-add-new-publication"
-              className="h-9 px-5 rounded-full bg-stone-100 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-semibold transition-all shadow-xs border border-stone-200/90 hover:border-[#A2482B] flex items-center justify-center gap-2 cursor-pointer active:scale-95 group/addaction whitespace-nowrap shrink-0"
+              className="h-8 sm:h-8.5 px-4 sm:px-5 rounded-full bg-white/95 hover:bg-[#A2482B] text-stone-800 hover:text-white text-xs font-semibold transition-all shadow-md border border-stone-200/90 hover:border-[#A2482B] flex items-center justify-center gap-2 cursor-pointer active:scale-95 group/addaction whitespace-nowrap"
             >
               <Plus className="w-3.5 h-3.5 text-stone-500 group-hover/addaction:text-white transition-colors shrink-0" />
               <span className="whitespace-nowrap font-medium tracking-wide">

@@ -69,6 +69,13 @@ const PRODUCTIONS: ProductionPoster[] = [
     posterImage: '/investors-builders.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     sharePrice: 70
+  },
+  {
+    id: 'other-eyes-sixth-sense',
+    title: 'Other Eyes < > Sixth Sense',
+    posterImage: '/assets/posters/other-eyes-sixth-sense.png',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    sharePrice: 55
   }
 ];
 

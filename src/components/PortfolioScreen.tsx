@@ -145,6 +145,25 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
       liquidityScore: 'Élevée',
       status: 'En production',
       posterUrl: '/investors-builders.png'
+    },
+    {
+      id: 'prod-6',
+      seriesId: 'other-eyes-sixth-sense',
+      seriesTitle: 'Other Eyes < > Sixth Sense',
+      sharesCount: 15,
+      sharesOnSale: 5,
+      startPrice: 42,
+      salePrice: 58,
+      purchasePrice: 630,
+      recommendedPrice: 55,
+      rsiPercent: 38.1,
+      returnForecastPercent: 18.2,
+      returnForecastAmount: 114.60,
+      viewsCount: 38900,
+      growthRatePercent: 32.5,
+      liquidityScore: 'Élevée',
+      status: 'En tournage',
+      posterUrl: '/assets/posters/other-eyes-sixth-sense.png'
     }
   ]);
 

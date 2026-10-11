@@ -452,8 +452,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   <img 
                     src={currentDoor.posterUrl} 
                     alt={currentDoor.label} 
+                    loading="eager"
+                    decoding="async"
                     referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-200"
                   />
                 )}
 

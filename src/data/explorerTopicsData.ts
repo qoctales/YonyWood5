@@ -188,6 +188,15 @@ export const EXPLORER_CATALOG: Record<ExplorerCategoryType, ExplorerCatalogItem[
       question: 'Que bâtissez-vous aujourd’hui qui restera debout et fécondera la vie dans mille ans ?',
       photoUrl: '/assets/posters/investors-builders.png',
       badge: '16 pionniers cooptés'
+    },
+    {
+      id: 'other-eyes-sixth-sense',
+      category: 'series',
+      title: 'Other Eyes < > Sixth Sense',
+      subtitle: 'Voir autrement. Ressentir l’invisible.',
+      question: 'Qu’avez-vous découvert sur le monde et sur vous-même le jour où vous avez cessé de faire confiance à vos seuls yeux physiques ?',
+      photoUrl: '/assets/posters/other-eyes-sixth-sense.png',
+      badge: '16 pionniers cooptés'
     }
   ],
 
