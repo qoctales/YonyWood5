@@ -30,7 +30,8 @@ import {
   Fingerprint,
   Sprout,
   Star,
-  BookOpen
+  BookOpen,
+  Gift
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
@@ -49,7 +50,7 @@ import {
 } from '../data/explorerTopicsData';
 import { celestialAudio } from '../utils/celestialAudio';
 
-import { SingleAlveoleIcon } from './YonywoodBrandIcons';
+import { getLineageTree, LINEAGE_COLORS } from '../utils/lineageService';
 
 interface MatrixExplorerProps {
   onNavigate: (screen: ViewScreen | any) => void;
@@ -68,6 +69,7 @@ function countDescendants(person: AffiliationPerson): number {
 
 // Rayons des orbites concentriques
 const R_INNER = 145; // Anneau 1 : Sujets de la Porte active (5 séries, 16 drapeaux, etc.)
+const R_OUTER = 280;
 const ORBIT_RADII = [145, 280, 385, 490, 595];
 
 // Helpers pour calculer la géométrie des alvéoles hexagonales (Rayon de miel)
@@ -89,7 +91,7 @@ const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string
   territoires: Mountain,
   expertises: GraduationCap,
   personnalites: Star,
-  'produits-services': SingleAlveoleIcon,
+  'produits-services': Gift,
   marques: Gem,
   projets: Sprout,
   // Alias de rétrocompatibilité
@@ -99,7 +101,7 @@ const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string
   personalities: Star,
   brands: Gem,
   projects: Sprout,
-  offers: SingleAlveoleIcon
+  offers: Gift
 };
 
 export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ 
@@ -172,7 +174,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   const lastPointerAngleRef = useRef<number>(0);
   const hasDraggedRef = useRef<boolean>(false);
 
-  // 3. Chemin de cooptation généalogique [idGen1, idGen2, ...] en mode Séries
+  // 3. Chemin de cooptation généalogique [idGen1, idGen2, ...] en mode Séries & Lignée
   const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
   // 4. Modale vidéo 9:16 pour la personne sélectionnée
@@ -392,28 +394,31 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     isRotatingRef.current = false;
   };
 
-  // Clic sur un nœud personne en mode 'stories'
-  const handleNodeClick = (person: AffiliationPerson, gen: number) => {
+  // Clic sur un nœud personne en mode 'stories' :
+  // - 1er clic sur une personne : la sélectionne et déploie immédiatement sa Lignée
+  //   (trait fin Miel pour l'ascendance, traits fins Terre cuite pour sa descendance de 1 à 4 enfants)
+  // - Reclic sur cette même personne : ouvre directement sa vidéo de présentation 9:16
+  // - Clic sur n'importe quelle personne liée (ascendant ou descendant) : pivote sur elle et déploie sa lignée à l'infini
+  const handleNodeClick = (person: AffiliationPerson) => {
     celestialAudio.playOrbHover(580);
-    if (activeCategory === 'series') {
-      const hasChildren = person.invitedPeople && person.invitedPeople.length > 0;
-      const isAlreadySelected = selectedPath[gen - 1] === person.id;
+    const isAlreadySelected = selectedPath.length > 0 && selectedPath[selectedPath.length - 1] === person.id;
 
-      if (!hasChildren || isAlreadySelected) {
-        // Ouvre la carte vidéo 9:16
-        setModalPerson(person);
-        setIsPlaying(true);
-      } else {
-        // Déploie ses branches de cooptation sur l'orbite suivante
-        const newPath = selectedPath.slice(0, gen - 1);
-        newPath.push(person.id);
-        setSelectedPath(newPath);
-      }
-    } else {
-      // En mode Sujet / Thématique / Pays : ouvre immédiatement la carte 9:16 avec son récit
+    if (isAlreadySelected) {
+      // Reclic sur la personne active : ouvre directement la carte vidéo 9:16
       setModalPerson(person);
       setIsPlaying(true);
+      return;
     }
+
+    // 1er clic : sélectionne la personne et révèle immédiatement sa relation / lignée
+    // Permet de remonter ou descendre la lignée quasiment à l'infini
+    setSelectedPath(prev => {
+      const idx = prev.indexOf(person.id);
+      if (idx !== -1) {
+        return prev.slice(0, idx + 1);
+      }
+      return [...prev, person.id];
+    });
   };
 
   // Calcul des nœuds et des liens pour chaque niveau d'affichage de la roue
@@ -426,6 +431,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       angle: number;
       descendantCount: number;
       isSelected: boolean;
+      roleInLineage?: 'selected' | 'ascendant' | 'descendant';
     }
 
     interface LinkItem {
@@ -433,6 +439,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       from: { x: number; y: number };
       to: { x: number; y: number };
       isActive: boolean;
+      strokeColor: string; // Miel (#C89B3C) pour ascendance, Terre cuite (#A2482B) pour descendance
+      type: 'ascendant' | 'descendant';
     }
 
     const genNodes: NodeItem[][] = [];
@@ -441,10 +449,13 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     if (explorerLevel === 'stories') {
       // --- ANNEAU 2 (EXTÉRIEUR) : 16 VOIX / PIONNIERS SUR L'ORBITE R_OUTER (280) ---
       const r1 = R_OUTER;
+      const activeId = selectedPath.length > 0 ? selectedPath[selectedPath.length - 1] : null;
+
       const gen1Nodes: NodeItem[] = storiesList.map((p, idx) => {
         const angle = -90 + idx * (360 / 16);
         const rad = (angle * Math.PI) / 180;
-        const isSel = selectedPath[0] === p.id;
+        const isSel = selectedPath.includes(p.id);
+        const isActive = activeId === p.id;
         return {
           person: p,
           gen: 1,
@@ -452,46 +463,142 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
           y: Math.sin(rad) * r1,
           angle,
           descendantCount: activeCategory === 'series' ? countDescendants(p) : 0,
-          isSelected: isSel
+          isSelected: isSel,
+          roleInLineage: isActive ? 'selected' : undefined
         };
       });
       genNodes.push(gen1Nodes);
 
-      // Déploiement concentrique des générations de cooptation 2..5 (mode Séries uniquement)
-      if (activeCategory === 'series') {
-        let currentParentGen = 1;
-        while (currentParentGen < selectedPath.length + 1 && currentParentGen < 5) {
-          const parentId = selectedPath[currentParentGen - 1];
-          const parentNode = genNodes[currentParentGen - 1]?.find(n => n.person.id === parentId);
-          if (!parentNode || !parentNode.person.invitedPeople || parentNode.person.invitedPeople.length === 0) {
-            break;
-          }
+      // Déploiement de la Lignée au clic sur un individu :
+      // - Traits Miel très fins vers l'ascendance (mentors / parrains)
+      // - Traits Terre cuite très fins vers la descendance (cooptés sous ses ailes, maximum 4)
+      if (activeId) {
+        // Trouver la personne active et sa position
+        let activeNode = gen1Nodes.find(n => n.person.id === activeId);
+        let activePerson = activeNode?.person;
+        let activeX = activeNode?.x ?? 0;
+        let activeY = activeNode?.y ?? -r1;
+        let activeAngle = activeNode?.angle ?? -90;
 
-          const children = parentNode.person.invitedPeople;
-          const childCount = children.length;
-          const childGen = currentParentGen + 1;
-          const r = ORBIT_RADII[childGen];
+        const lineage = getLineageTree(activePerson || activeId);
 
-          const span = childCount === 1 ? 0 : Math.min(85, Math.max(38, (childCount - 1) * 32));
+        if (!activePerson) {
+          activePerson = {
+            id: lineage.current.id,
+            name: lineage.current.name,
+            firstName: lineage.current.firstName,
+            age: 42,
+            role: lineage.current.role,
+            territory: lineage.current.territory,
+            country: lineage.current.country,
+            flag: lineage.current.flag,
+            photoUrl: lineage.current.photoUrl,
+            teaserVideoUrl: lineage.current.teaserVideoUrl,
+            universeTag: lineage.current.universeTag,
+            teaserPitch: lineage.current.quote,
+            invitationStory: lineage.current.invitationStory,
+            badge: 'Lignée'
+          };
+          // Calculer la position si nœud dérivé
+          const rad = (activeAngle * Math.PI) / 180;
+          activeX = Math.cos(rad) * r1;
+          activeY = Math.sin(rad) * r1;
+        }
 
-          const childNodes: NodeItem[] = children.map((child, cIdx) => {
-            let childAngle = parentNode.angle;
+        // 1. Ascendants (traits Miel ultra-fins vers l'orbite intérieure r=190)
+        if (lineage.ascendants && lineage.ascendants.length > 0) {
+          const ascNodesList: NodeItem[] = [];
+          lineage.ascendants.forEach((asc, aIdx) => {
+            const ascAngle = activeAngle - 15 - aIdx * 16;
+            const ascRad = (ascAngle * Math.PI) / 180;
+            const ascX = Math.cos(ascRad) * 190;
+            const ascY = Math.sin(ascRad) * 190;
+            const isSel = selectedPath.includes(asc.id);
+
+            const ascPerson: AffiliationPerson = {
+              id: asc.id,
+              name: asc.name,
+              firstName: asc.firstName,
+              age: 65,
+              role: asc.role,
+              territory: asc.territory,
+              country: asc.country,
+              flag: asc.flag,
+              photoUrl: asc.photoUrl,
+              teaserVideoUrl: asc.teaserVideoUrl,
+              teaserPitch: asc.quote,
+              invitationStory: asc.invitationStory,
+              universeTag: asc.universeTag,
+              badge: 'Ascendant'
+            };
+
+            links.push({
+              id: `link-asc-${activeId}-${asc.id}`,
+              from: { x: ascX, y: ascY },
+              to: { x: activeX, y: activeY },
+              isActive: true,
+              strokeColor: LINEAGE_COLORS.honey,
+              type: 'ascendant'
+            });
+
+            ascNodesList.push({
+              person: ascPerson,
+              gen: 0,
+              x: ascX,
+              y: ascY,
+              angle: ascAngle,
+              descendantCount: 0,
+              isSelected: isSel,
+              roleInLineage: 'ascendant'
+            });
+          });
+          genNodes.push(ascNodesList);
+        }
+
+        // 2. Descendants (traits Terre cuite ultra-fins vers l'orbite extérieure r=375, max 4 enfants)
+        const rawChildren: AffiliationPerson[] = (activePerson.invitedPeople && activePerson.invitedPeople.length > 0)
+          ? activePerson.invitedPeople.slice(0, 4)
+          : lineage.descendants.slice(0, 4).map(d => ({
+              id: d.id,
+              name: d.name,
+              firstName: d.firstName,
+              age: 32,
+              role: d.role,
+              territory: d.territory,
+              country: d.country,
+              flag: d.flag,
+              universeTag: d.universeTag || activePerson?.universeTag,
+              photoUrl: d.photoUrl,
+              badge: 'Coopté(e)',
+              invitationStory: d.invitationStory || 'Accueilli(e) sous ses ailes par cooptation mutuelle.',
+              teaserVideoUrl: d.teaserVideoUrl,
+              teaserPitch: d.quote,
+              generation: 2
+            }));
+
+        const childCount = rawChildren.length;
+        if (childCount > 0) {
+          const childGen = 2;
+          const r = 375;
+          const span = childCount === 1 ? 0 : Math.min(80, Math.max(34, (childCount - 1) * 26));
+
+          const childNodes: NodeItem[] = rawChildren.map((child, cIdx) => {
+            let childAngle = activeAngle;
             if (childCount > 1) {
-              childAngle = parentNode.angle - span / 2 + cIdx * (span / (childCount - 1));
+              childAngle = activeAngle - span / 2 + cIdx * (span / (childCount - 1));
             }
             const childRad = (childAngle * Math.PI) / 180;
             const x = Math.cos(childRad) * r;
             const y = Math.sin(childRad) * r;
-            const isSel = selectedPath[childGen - 1] === child.id;
-
-            const isLinkActive = selectedPath[currentParentGen - 1] === parentNode.person.id &&
-                                 selectedPath[childGen - 1] === child.id;
+            const isSel = selectedPath.includes(child.id);
 
             links.push({
-              id: `link-${parentNode.person.id}-${child.id}`,
-              from: { x: parentNode.x, y: parentNode.y },
+              id: `link-desc-${activeId}-${child.id}`,
+              from: { x: activeX, y: activeY },
               to: { x, y },
-              isActive: isLinkActive
+              isActive: true,
+              strokeColor: LINEAGE_COLORS.terracotta,
+              type: 'descendant'
             });
 
             return {
@@ -500,19 +607,26 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
               x,
               y,
               angle: childAngle,
-              descendantCount: countDescendants(child),
-              isSelected: isSel
+              descendantCount: 0,
+              isSelected: isSel,
+              roleInLineage: 'descendant'
             };
           });
 
           genNodes.push(childNodes);
-          currentParentGen++;
         }
       }
     }
 
     return { nodesByGeneration: genNodes, connectingLinks: links };
-  }, [explorerLevel, storiesList, selectedPath, activeCategory]);
+  }, [explorerLevel, storiesList, selectedPath, activeCategory, activeTopicCoords]);
+
+  // Personne actuellement sélectionnée
+  const selectedPerson = useMemo<AffiliationPerson | null>(() => {
+    if (selectedPath.length === 0) return null;
+    const targetId = selectedPath[selectedPath.length - 1];
+    return nodesByGeneration.flatMap(nodes => nodes).find(n => n.person.id === targetId)?.person || null;
+  }, [selectedPath, nodesByGeneration]);
 
   return (
     <div 
@@ -1185,13 +1299,13 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     x2={pNode.x} 
                     y2={pNode.y} 
                     stroke="#C89B3C" 
-                    strokeWidth="0.8" 
+                    strokeWidth="0.5" 
                     strokeDasharray="2 4" 
-                    opacity="0.15" 
+                    opacity="0.10" 
                   />
                 ))}
 
-                {/* Liens de cooptation entre générations (mode Séries) */}
+                {/* Liens de filiation & cooptation de la Lignée (Miel = ascendance, Terre cuite = descendance, traits ultra-fins) */}
                 {connectingLinks.map((link) => (
                   <line 
                     key={link.id}
@@ -1199,10 +1313,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     y1={link.from.y} 
                     x2={link.to.x} 
                     y2={link.to.y} 
-                    stroke="#C89B3C" 
-                    strokeWidth={link.isActive ? '1.8' : '1.2'} 
-                    strokeDasharray={link.isActive ? 'none' : '3 3'} 
-                    opacity={link.isActive ? '0.95' : '0.6'} 
+                    stroke={link.strokeColor || (link.type === 'descendant' ? '#A2482B' : '#C89B3C')} 
+                    strokeWidth={link.isActive ? '0.85' : '0.55'} 
+                    strokeDasharray={link.type === 'ascendant' ? '3 3' : 'none'} 
+                    opacity={link.isActive ? '0.85' : '0.45'} 
                   />
                 ))}
 
@@ -1222,7 +1336,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           if (hasDraggedRef.current) return;
-                          handleNodeClick(node.person, node.gen);
+                          handleNodeClick(node.person);
                         }}
                         onDoubleClick={(e) => {
                           e.stopPropagation();
@@ -1251,7 +1365,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                           r={radius + 3.5} 
                           fill="none" 
                           stroke="#C89B3C" 
-                          strokeWidth="2" 
+                          strokeWidth="1.5" 
                           strokeDasharray="3 3"
                           className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
                         />
@@ -1263,7 +1377,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                           r={radius + 1.5} 
                           fill="#FFFFFF" 
                           stroke={isSelected ? '#C89B3C' : '#E7E5E4'} 
-                          strokeWidth={isSelected ? '2.5' : '1.5'} 
+                          strokeWidth={isSelected ? '2' : '1.2'} 
                           filter="drop-shadow(0 2px 5px rgba(0,0,0,0.15))" 
                         />
 
@@ -1284,8 +1398,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                           cy={node.y} 
                           r={radius} 
                           fill="none" 
-                          stroke={isSelected ? '#C89B3C' : '#FFFFFF'} 
-                          strokeWidth={isSelected ? '2' : '1.5'} 
+                          stroke={isSelected ? (node.roleInLineage === 'descendant' ? '#A2482B' : '#C89B3C') : '#FFFFFF'} 
+                          strokeWidth={isSelected ? '2' : '1.2'} 
                         />
 
                         {/* Prénom et Âge sous l'avatar au survol (strictement prénom et âge) */}
@@ -1326,31 +1440,6 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                             {node.person.age ? `${node.person.age} ans` : '42 ans'}
                           </text>
                         </g>
-
-                        {/* Pastille compteur de cooptation (mode Séries) */}
-                        {node.descendantCount > 0 && (
-                          <g transform={`translate(${node.x + radius * 0.65}, ${node.y + radius * 0.65})`} pointerEvents="none">
-                            <circle 
-                              cx="0" 
-                              cy="0" 
-                              r="8" 
-                              fill={isSelected ? '#C89B3C' : '#1C1917'} 
-                              stroke="#FFFFFF" 
-                              strokeWidth="1.2" 
-                            />
-                            <text 
-                              x="0" 
-                              y="3" 
-                              textAnchor="middle" 
-                              fill="#FFFFFF" 
-                              fontSize="9" 
-                              fontWeight="bold"
-                              fontFamily="sans-serif"
-                            >
-                              {node.descendantCount}
-                            </text>
-                          </g>
-                        )}
                       </g>
                     );
                   })

@@ -47,7 +47,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     },
     {
       id: 'agora',
-      label: 'Agora',
+      label: 'Héritages',
       icon: AgoraAlveolesIcon,
       isActive: isAgoraActive,
       onClick: () => onNavigate({ type: 'home' }),

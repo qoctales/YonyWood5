@@ -439,10 +439,10 @@ export type ViewScreen =
   | { type: 'documentary_detail'; documentaryId: string }
   | { type: 'duo_detail'; duoId: string }
   | { type: 'video_player'; story: ProtagonistStory; protagonist: Protagonist; duoId?: string; documentaryTitle: string }
-  | { type: 'protagonist_profile'; protagonistId: string; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
+  | { type: 'protagonist_profile'; protagonistId: string; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string; returnToProtagonistId?: string; initialShowLineage?: boolean }
   | { type: 'transmission_detail'; protagonistId: string; transmissionId: string }
   | { type: 'my_forest' }
-  | { type: 'profile'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
+  | { type: 'profile'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string; returnToProtagonistId?: string; initialShowLineage?: boolean }
   | { type: 'settings'; returnTo?: 'profile' | 'duo_feed' }
   | { type: 'portfolio'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
   | { type: 'messaging' }

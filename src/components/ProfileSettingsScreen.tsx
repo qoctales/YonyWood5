@@ -50,12 +50,14 @@ import {
   Calendar,
   Target,
   Crown,
-  LogIn
+  LogIn,
+  Star
 } from 'lucide-react';
 import { useAuth } from '../services/authContext';
 import { AuthModal } from './AuthModal';
 import { ShareIcon } from './ShareIcon';
 import { MarcheCloverIcon } from './YonywoodBrandIcons';
+import { ProfileLineageFrise } from './ProfileLineageFrise';
 import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
 import { PROTAGONISTS, DOCUMENTARIES, DUOS } from '../data/mockData';
 import { MATRIX_SERIES_DATA } from '../data/matrixData';
@@ -462,6 +464,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   const { currentUser, isAdmin, isAuthenticated, login, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [showLineageFrise, setShowLineageFrise] = useState(false);
 
   // Identité du profil affiché
   const [userName, setUserName] = useState<string>(() => {
@@ -1669,6 +1672,21 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   </span>
                 </button>
 
+                {/* Bouton Lignée : étoile, aucun chiffre, bascule la frise directement sur la page */}
+                <button
+                  onClick={() => setShowLineageFrise(prev => !prev)}
+                  id="btn-profile-lineage-header"
+                  className={`group w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full border text-xs font-semibold flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative ${
+                    showLineageFrise 
+                      ? 'bg-[#A2482B] border-[#A2482B] text-white' 
+                      : 'bg-white hover:bg-[#A2482B] border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white'
+                  }`}
+                  title="Afficher la frise de lignée"
+                >
+                  <Star className={`w-3.5 h-3.5 transition-colors ${showLineageFrise ? 'text-white fill-white' : 'text-stone-700 group-hover:text-white'}`} />
+                  <span className="hidden sm:inline">Lignée</span>
+                </button>
+
                 {/* Bouton Partager : fond blanc avec icône noire au repos, fond terre cuite avec icône blanche au survol */}
                 <button
                   onClick={handleShareProfile}
@@ -1702,6 +1720,21 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   <span>Message</span>
                 </button>
 
+                {/* Visiteur : Bouton Lignée (visible pour tous les profils visités) */}
+                <button
+                  onClick={() => setShowLineageFrise(prev => !prev)}
+                  id="btn-visitor-lineage-header"
+                  className={`group h-8 sm:h-8.5 px-3 sm:px-3.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer whitespace-nowrap ${
+                    showLineageFrise 
+                      ? 'bg-[#A2482B] border-[#A2482B] text-white' 
+                      : 'bg-white hover:bg-[#A2482B] border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white'
+                  }`}
+                  title={`Voir la lignée de ${userName}`}
+                >
+                  <Star className={`w-3.5 h-3.5 transition-colors ${showLineageFrise ? 'text-white fill-white' : 'text-stone-700 group-hover:text-white'}`} />
+                  <span>Lignée</span>
+                </button>
+
                 {/* Visiteur : Bouton Partager (fond blanc avec icône noire au repos, fond terre cuite avec icône blanche au survol) */}
                 <button
                   onClick={handleShareProfile}
@@ -1731,25 +1764,35 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       {/* ========================================================================= */}
       <div className="flex-1 flex flex-col items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200 relative">
 
-        {/* Conteneur principal avec vidéo 9:16 épurée */}
+        {/* Conteneur principal avec vidéo 9:16 épurée OU Frise de Lignée épurée */}
         <div className="relative w-full h-full flex items-center justify-center">
           
-          {/* CARTE FORMAT 9:16 VERTICAL AVEC GESTION DU SWIPE 2D */}
-          <div
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
-            onWheel={onWheel}
-            onClick={(e) => {
-              if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
-              toggleVideoPlayback();
-            }}
-            className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-stone-200/80 bg-stone-950 outline-none focus:outline-none ring-0 shrink-0"
-            style={{ transform: `translate(${swipeOffsetX}px, ${swipeOffsetY}px)` }}
-          >
+          {showLineageFrise ? (
+            <ProfileLineageFrise
+              personIdOrName={protagonistId || userFullName || 'current-user'}
+              onNavigateToPerson={(id) => {
+                setShowLineageFrise(false);
+                onNavigate({ type: 'protagonist_profile', protagonistId: id });
+              }}
+              onClose={() => setShowLineageFrise(false)}
+            />
+          ) : (
+            /* CARTE FORMAT 9:16 VERTICAL AVEC GESTION DU SWIPE 2D */
+            <div
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onMouseUp={onMouseUp}
+              onWheel={onWheel}
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest('button, a, input, textarea, select')) return;
+                toggleVideoPlayback();
+              }}
+              className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto transition-transform duration-150 ease-out select-none cursor-pointer relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-stone-200/80 bg-stone-950 outline-none focus:outline-none ring-0 shrink-0"
+              style={{ transform: `translate(${swipeOffsetX}px, ${swipeOffsetY}px)` }}
+            >
             {/* ================================================================= */}
             {/* 4 ICÔNES SUR LE CÔTÉ DROIT DE LA VIDÉO                            */}
             {/* Même gabarit que le bouton Partager en haut (w-9 h-9, icône w-4)   */}
@@ -2365,12 +2408,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               </div>
             )}
 
-          </div>
+            </div>
+          )}
 
         </div>
 
-        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Créer un projet) - Positionné en absolu pour ne jamais décaler la hauteur de la vidéo */}
-        {isOwner && (activeCategory === 'offre' || activeCategory === 'appel') && (
+        {/* Bouton d'action contextuel propriétaire (Ajouter une offre ou Créer un projet) - Masqué quand la frise est ouverte */}
+        {isOwner && !showLineageFrise && (activeCategory === 'offre' || activeCategory === 'appel') && (
           <div className="absolute -bottom-1.5 sm:bottom-0 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
             <button
               type="button"

@@ -202,31 +202,62 @@ export const AgoraAssemblyIcon = AgoraAlveolesIcon;
 
 /**
  * MarcheCloverIcon:
- * Symbole « Marché » : Un trèfle à quatre feuilles stylisé et équilibré,
- * composé de 4 folioles en forme de cœur partageant le centre et d'une tige descendante délicate,
- * même trait fin 1.5 et bouts arrondis partout, symbolisant la chance, l'abondance et la prospérité.
+ * Symbole « Marché » : Le trèfle à quatre feuilles signature YonyWood,
+ * composé de 4 feuilles en cœur avec leurs nervures axiales et une petite tige
+ * gracieuse en bas pour un rendu floral et botanique immédiatement identifiable.
  */
 export const MarcheCloverIcon: React.FC<IconProps> = ({ 
   className = 'w-5 h-5',
   strokeWidth = 1.5 
 }) => {
+  const strokeVal = typeof strokeWidth === 'number' ? strokeWidth : parseFloat(String(strokeWidth)) || 1.5;
+  const s = 0.060; // Taille légèrement réduite des fleurs pour laisser respirer l'icône
+  const innerStroke = strokeVal / s;
+
   return (
     <svg 
       viewBox="0 0 24 24" 
       fill="none" 
       stroke="currentColor" 
-      strokeWidth={strokeWidth} 
       strokeLinecap="round" 
       strokeLinejoin="round" 
       className={className}
       aria-hidden="true"
     >
-      {/* 4 folioles en forme de cœur (trèfle à 4 feuilles) */}
-      <g transform="translate(12, 10) scale(0.82) rotate(45) translate(-12, -12)">
-        <path d="M4.02 12a2.83 2.83 0 1 1 3.81-4.17A2.83 2.83 0 1 1 12 4.02a2.83 2.83 0 1 1 4.17 3.81A2.83 2.83 0 1 1 19.98 12a2.83 2.83 0 1 1-3.81 4.17A2.83 2.83 0 1 1 12 19.98a2.83 2.83 0 1 1-4.17-3.81A2.83 2.83 0 1 1 4.02 12Z" />
+      <g transform={`translate(12, 9.2) scale(${s})`} strokeWidth={innerStroke}>
+        {/* Les 4 feuilles du trèfle */}
+        <g transform="translate(-4, -4) rotate(-45)">
+          <path d="M0 0 C8 -9 46 -32 57 -57 C74 -76 68 -111 42 -116 C26 -119 10 -110 0 -100 C-10 -110 -26 -119 -42 -116 C-68 -111 -74 -76 -57 -57 C-46 -32 -8 -9 0 0 Z" />
+        </g>
+        <g transform="translate(4, -4) rotate(45)">
+          <path d="M0 0 C8 -9 46 -32 57 -57 C74 -76 68 -111 42 -116 C26 -119 10 -110 0 -100 C-10 -110 -26 -119 -42 -116 C-68 -111 -74 -76 -57 -57 C-46 -32 -8 -9 0 0 Z" />
+        </g>
+        <g transform="translate(-4, 4) rotate(-135)">
+          <path d="M0 0 C8 -9 46 -32 57 -57 C74 -76 68 -111 42 -116 C26 -119 10 -110 0 -100 C-10 -110 -26 -119 -42 -116 C-68 -111 -74 -76 -57 -57 C-46 -32 -8 -9 0 0 Z" />
+        </g>
+        <g transform="translate(4, 4) rotate(135)">
+          <path d="M0 0 C8 -9 46 -32 57 -57 C74 -76 68 -111 42 -116 C26 -119 10 -110 0 -100 C-10 -110 -26 -119 -42 -116 C-68 -111 -74 -76 -57 -57 C-46 -32 -8 -9 0 0 Z" />
+        </g>
+
+        {/* Les 4 nervures axiales intérieures */}
+        <g fill="currentColor" stroke="none">
+          <g transform="translate(-4, -4) rotate(-45)">
+            <path d="M0 -34 Q2.4 -60 0 -88 Q-2.4 -60 0 -34 Z" />
+          </g>
+          <g transform="translate(4, -4) rotate(45)">
+            <path d="M0 -34 Q2.4 -60 0 -88 Q-2.4 -60 0 -34 Z" />
+          </g>
+          <g transform="translate(-4, 4) rotate(-135)">
+            <path d="M0 -34 Q2.4 -60 0 -88 Q-2.4 -60 0 -34 Z" />
+          </g>
+          <g transform="translate(4, 4) rotate(135)">
+            <path d="M0 -34 Q2.4 -60 0 -88 Q-2.4 -60 0 -34 Z" />
+          </g>
+        </g>
+
+        {/* Tige allongée et nettement visible, courbée vers la gauche */}
+        <path d="M 0 25 C -2 90, -24 150, -52 198" />
       </g>
-      {/* Tige descendante naturelle et fluide */}
-      <path d="M 12 11.5 C 12 15.5 11 18.5 8.5 21" />
     </svg>
   );
 };

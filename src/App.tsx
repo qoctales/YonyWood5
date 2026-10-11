@@ -246,7 +246,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Menu de navigation 5 onglets : Studio, Agora, Duocumentaires, Marché, Profil */}
+      {/* Menu de navigation 5 onglets : Studio, Héritages, Duocumentaires, Marché, Profil */}
       {!isVideoPlayer && (
         <BottomMenu 
           currentScreen={currentScreen} 
