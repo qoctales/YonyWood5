@@ -69,6 +69,7 @@ export interface Protagonist {
   id: string;
   slug: string;
   name: string;
+  firstName?: string;
   age?: number;
   role: string;
   territory: string;
@@ -76,12 +77,20 @@ export interface Protagonist {
   flag: string;
   bio: string;
   photoUrl: string;
+  photo?: string;
+  videoPreviewUrl?: string;
   videoAvatarUrl?: string;
   teaserVideoUrl?: string;
-  documentaryId: string;
+  documentaryId?: string;
   universeTag: string;
   quote: string;
-  tree: {
+  centralQuestion?: string;
+  details?: any;
+  storiesCount?: number;
+  transmissionsCount?: number;
+  projectsCount?: number;
+  socialLinks?: any;
+  tree?: {
     passeurs?: ProtagonistPasseur[];
     heritiers?: ProtagonistPasseur[];
     transmissions: {
@@ -301,6 +310,7 @@ export interface AffiliationPerson {
   duoPartnerPhoto?: string;
   duoId?: string;
   episodeQuestion?: string;
+  question?: string;
   protagonistIdRef?: string;
   teaserVideoUrl?: string;
   teaserPitch?: string;
@@ -446,6 +456,7 @@ export type ViewScreen =
   | { type: 'settings'; returnTo?: 'profile' | 'duo_feed' }
   | { type: 'portfolio'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
   | { type: 'messaging' }
+  | { type: 'lineage'; protagonistId?: string; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string; returnToProtagonistId?: string }
   | { type: 'submit_story'; preselectedDocumentaryId?: string }
   | { type: 'request_videographer' }
   | { type: 'review_system' }

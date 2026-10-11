@@ -38,44 +38,58 @@ const PRODUCTIONS: ProductionPoster[] = [
   {
     id: 'jesus-legba',
     title: 'Èṣù < > Jésus',
-    posterImage: '/assets/posters/jesus-esu.png',
+    posterImage: '/assets/posters/Esu < > Jesus.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
     sharePrice: 45
   },
   {
     id: 'finagnon-qosqorico',
     title: 'Finagnon < > Qosqorico',
-    posterImage: '/assets/posters/finagnon-qosqorico.png',
+    posterImage: '/assets/posters/Finagnon < > Qosqorico.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharePrice: 60
   },
   {
     id: 'blacks-one-beyond-eve',
     title: 'Blacks One < > Beyond Eve',
-    posterImage: '/assets/posters/blacks-one-beyond-eve.png',
+    posterImage: '/assets/posters/Blacks One < > Beyond Eve.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
     sharePrice: 50
   },
   {
     id: 'dixeat-fiat-luxe',
     title: 'E Vivi < > Fiât Luxe',
-    posterImage: '/assets/posters/dixeat-fiat-luxe.png',
+    posterImage: '/assets/posters/E Vivi < > Fiat Luxe.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharePrice: 65
   },
   {
     id: 'investors-builders',
     title: 'Investors < > Builders',
-    posterImage: '/assets/posters/investors-builders.png',
+    posterImage: '/assets/posters/Investors < > Builders.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     sharePrice: 70
   },
   {
     id: 'other-eyes-sixth-sense',
-    title: 'Other Eyes < > Sixth Sense',
-    posterImage: '/assets/posters/other-eyes-sixth-sense.png',
+    title: 'Other eyes < > Sixth sense',
+    posterImage: '/assets/posters/Other eyes < > Sixth sense.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     sharePrice: 55
+  },
+  {
+    id: 'coaching-unlimited',
+    title: 'Coaching < > Unlimited',
+    posterImage: '/assets/posters/Coaching < > Unlimited.png',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    sharePrice: 65
+  },
+  {
+    id: 'safer-healer',
+    title: 'Safer < > healer',
+    posterImage: '/assets/posters/Safer < > healer.png',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    sharePrice: 58
   }
 ];
 
@@ -86,54 +100,87 @@ const INITIAL_PEER_OFFERS: PeerOffer[] = [
     sellerName: 'Koffi',
     sellerPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
     seriesTitle: 'Èṣù < > Jésus',
-    posterImage: '/assets/posters/jesus-esu.png',
+    posterImage: '/assets/posters/Esu < > Jesus.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
     sharesCount: 3,
     unitPrice: 55
   },
   {
     id: 'peer-2',
-    sellerId: 'koffi-tisserand',
+    sellerId: 'nadia-artist',
     sellerName: 'Nadia',
     sellerPhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
     seriesTitle: 'Finagnon < > Qosqorico',
-    posterImage: '/assets/posters/finagnon-qosqorico.png',
+    posterImage: '/assets/posters/Finagnon < > Qosqorico.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     sharesCount: 5,
     unitPrice: 52
   },
   {
     id: 'peer-3',
-    sellerId: 'koffi-tisserand',
+    sellerId: 'marcel-speaker',
     sellerName: 'Marcel',
     sellerPhoto: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80',
     seriesTitle: 'Blacks One < > Beyond Eve',
-    posterImage: '/assets/posters/blacks-one-beyond-eve.png',
+    posterImage: '/assets/posters/Blacks One < > Beyond Eve.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     sharesCount: 2,
     unitPrice: 72
   },
   {
     id: 'peer-4',
-    sellerId: 'koffi-tisserand',
+    sellerId: 'amina-cook',
     sellerName: 'Amina',
     sellerPhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
     seriesTitle: 'E Vivi < > Fiât Luxe',
-    posterImage: '/assets/posters/dixeat-fiat-luxe.png',
+    posterImage: '/assets/posters/E Vivi < > Fiat Luxe.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharesCount: 4,
     unitPrice: 62
   },
   {
     id: 'peer-5',
-    sellerId: 'koffi-tisserand',
+    sellerId: 'benoit-builder',
     sellerName: 'Benoît',
     sellerPhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80',
     seriesTitle: 'Investors < > Builders',
-    posterImage: '/assets/posters/investors-builders.png',
+    posterImage: '/assets/posters/Investors < > Builders.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     sharesCount: 3,
     unitPrice: 68
+  },
+  {
+    id: 'peer-6',
+    sellerId: 'codjo-voyant',
+    sellerName: 'Codjo',
+    sellerPhoto: '/assets/duos/codjo-blind.jpg',
+    seriesTitle: 'Other eyes < > Sixth sense',
+    posterImage: '/assets/posters/Other eyes < > Sixth sense.png',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+    sharesCount: 4,
+    unitPrice: 59
+  },
+  {
+    id: 'peer-7',
+    sellerId: 'coach-marc-seller',
+    sellerName: 'Marc',
+    sellerPhoto: '/assets/duos/coach-office.jpg',
+    seriesTitle: 'Coaching < > Unlimited',
+    posterImage: '/assets/posters/Coaching < > Unlimited.png',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    sharesCount: 6,
+    unitPrice: 65
+  },
+  {
+    id: 'peer-8',
+    sellerId: 'jennifer-rescuer-seller',
+    sellerName: 'Jennifer',
+    sellerPhoto: '/assets/duos/firefighter-safer.jpg',
+    seriesTitle: 'Safer < > healer',
+    posterImage: '/assets/posters/Safer < > healer.png',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    sharesCount: 5,
+    unitPrice: 58
   }
 ];
 

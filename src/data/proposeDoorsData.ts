@@ -74,7 +74,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         synopsis: 'Mise en miroir des deux spiritualités chrétienne et vodun face aux tourments du destin. Deux protagonistes sur deux continents explorent la transcendance, la mort, le pardon et la rédemption au-delà des dogmes.',
         question: 'Comment votre foi ou votre rapport au sacré vous aide-t-il à traverser le deuil ou l’épreuve ?',
         videoUrl: STOCK_VIDEOS[0],
-        posterUrl: '/assets/posters/jesus-esu.png',
+        posterUrl: '/assets/posters/Esu < > Jesus.png',
         actionLabel: 'Choisir cette série'
       },
       {
@@ -84,7 +84,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         synopsis: 'Des cités lacustres de Ganvié aux terrasses sacrées des Andes péruviennes. Le dialogue sensible entre deux gardiens de l’eau et de la Pachamama qui protègent la mémoire vitale de leurs communautés.',
         question: 'Quel est votre lien intime avec la terre ou l’eau qui nourrit votre communauté ?',
         videoUrl: STOCK_VIDEOS[1],
-        posterUrl: '/assets/posters/finagnon-qosqorico.png',
+        posterUrl: '/assets/posters/Finagnon < > Qosqorico.png',
         actionLabel: 'Choisir cette série'
       },
       {
@@ -94,7 +94,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         synopsis: 'Entre banlieues parisiennes et scènes urbaines de Cotonou, deux collectifs de créateurs transforment les blessures en poésie et le hip-hop en levier de dignité et d’autonomie pour la jeunesse.',
         question: 'Quelle voix singulière et quel message d’émancipation souhaitez-vous transmettre à la jeunesse ?',
         videoUrl: STOCK_VIDEOS[2],
-        posterUrl: '/assets/posters/blacks-one-beyond-eve.png',
+        posterUrl: '/assets/posters/Blacks One < > Beyond Eve.png',
         actionLabel: 'Choisir cette série'
       },
       {
@@ -104,7 +104,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         synopsis: 'L’artisanat d’art et la haute gastronomie vus de l’intérieur. La rencontre de deux orfèvres du détail qui consacrent leur existence à la patience de la matière et à l’hospitalité sublime.',
         question: 'Quelle est la noblesse et le sens profond caché dans le geste de votre métier ?',
         videoUrl: STOCK_VIDEOS[3],
-        posterUrl: '/assets/posters/dixeat-fiat-luxe.png',
+        posterUrl: '/assets/posters/E Vivi < > Fiat Luxe.png',
         actionLabel: 'Choisir cette série'
       },
       {
@@ -114,17 +114,37 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
         synopsis: 'La confrontation constructive entre visionnaires du capital et bâtisseurs de terrain. Comment aligner la souveraineté économique, le courage d’entreprendre et l’impact écologique concret.',
         question: 'Comment concilier la vision économique d’avenir et l’impact réel sur le terrain ?',
         videoUrl: STOCK_VIDEOS[0],
-        posterUrl: '/assets/posters/investors-builders.png',
+        posterUrl: '/assets/posters/Investors < > Builders.png',
         actionLabel: 'Choisir cette série'
       },
       {
         id: 'other-eyes-sixth-sense',
-        title: 'Other Eyes < > Sixth Sense',
+        title: 'Other eyes < > Sixth sense',
         subtitle: 'L’écoute vibratoire et la clairvoyance transcendent les limites du visible.',
         synopsis: 'Le dialogue sensible entre non-voyants d’exception et médiums de Ouidah. Percevoir les énergies subtiles, les présences et les mémoires des lieux au-delà du visible.',
         question: 'Comment percevez-vous les dimensions subtiles qui échappent aux yeux ordinaires ?',
         videoUrl: STOCK_VIDEOS[1],
-        posterUrl: '/assets/posters/other-eyes-sixth-sense.png',
+        posterUrl: '/assets/posters/Other eyes < > Sixth sense.png',
+        actionLabel: 'Choisir cette série'
+      },
+      {
+        id: 'coaching-unlimited',
+        title: 'Coaching < > Unlimited',
+        subtitle: 'L’exigence du mentor dans son bureau < > l’envol d’un athlète sur les haies.',
+        synopsis: 'Dans le silence stratégique d’un bureau où s’élabore la transformation intérieure et sur la piste rouge où une athlète franchit la haie : briser les limites de l’impossible.',
+        question: 'Quelle limite que vous croyiez infranchissable avez-vous réussi à briser grâce à l’exigence intérieure ?',
+        videoUrl: STOCK_VIDEOS[2],
+        posterUrl: '/assets/posters/Coaching < > Unlimited.png',
+        actionLabel: 'Choisir cette série'
+      },
+      {
+        id: 'safer-healer',
+        title: 'Safer < > healer',
+        subtitle: 'La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.',
+        synopsis: 'Entre le courage intrépide d’une pompière face aux flammes et le dévouement méthodique d’une femme médecin en hôpital : veiller sur la vie d’autrui.',
+        question: 'Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ?',
+        videoUrl: STOCK_VIDEOS[3],
+        posterUrl: '/assets/posters/Safer < > healer.png',
         actionLabel: 'Choisir cette série'
       }
     ]

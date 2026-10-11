@@ -78,6 +78,8 @@ export interface ProfileSettingsScreenProps {
   returnToDuoId?: string;
   returnToDuoIndex?: number;
   returnToDocId?: string;
+  returnToProtagonistId?: string;
+  initialShowLineage?: boolean;
 }
 
 // 1. Récit : Vidéo personnelle / histoire personnelle
@@ -339,7 +341,9 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   initialTab = 'recit',
   returnToDuoId,
   returnToDuoIndex,
-  returnToDocId
+  returnToDocId,
+  returnToProtagonistId,
+  initialShowLineage = false
 }) => {
   // Déterminer le mode : Propriétaire ou Visiteur
   const isOwner = !protagonistId || protagonistId === 'me';
@@ -464,7 +468,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   const { currentUser, isAdmin, isAuthenticated, login, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [showLineageFrise, setShowLineageFrise] = useState(false);
+  const [showLineageFrise, setShowLineageFrise] = useState(initialShowLineage);
 
   // Identité du profil affiché
   const [userName, setUserName] = useState<string>(() => {
@@ -1551,32 +1555,76 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     <div className="max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 pb-20 sm:pb-24 pt-safe pb-safe h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between text-[#1C1917]">
       
       {/* ========================================================================= */}
-      {/* 1. EN-TÊTE D'IDENTITÉ UNIFIÉ COMPACT : STRICTEMENT ALIGNÉ SUR COPRODUCTION */}
+      {/* 1. EN-TÊTE D'IDENTITÉ OU EN-TÊTE LIGNÉE ALIGNÉ SUR MESSAGERIE & MES PARTS */}
       {/* ========================================================================= */}
-      <div className="border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0">
-        
-        {/* LIGNE PRINCIPALE : IDENTITÉ & ACTIONS RAPIDES SANS COLLISION */}
-        <div className="flex items-center justify-between gap-1.5 sm:gap-3">
-          <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
-            {/* Bouton retour avec le chevron officiel unifié */}
+      {showLineageFrise ? (
+        <div className="pb-3 border-b border-[#E7E5E4] mb-4 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => {
-                if (returnToDuoId) {
+                if (returnToProtagonistId) {
+                  onNavigate({
+                    type: 'protagonist_profile',
+                    protagonistId: returnToProtagonistId,
+                    returnToDuoId,
+                    returnToDuoIndex,
+                    returnToDocId,
+                    initialShowLineage: true
+                  });
+                } else if (returnToDuoId) {
                   onNavigate({
                     type: 'duo_feed',
                     currentDuoIndex: returnToDuoIndex ?? 0,
                     selectedDocId: returnToDocId
                   });
                 } else {
-                  onNavigate({ type: 'home' });
+                  setShowLineageFrise(false);
                 }
               }}
               className="w-8 h-8 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-[#1C1917] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
               title="Retour"
-              id="btn-profile-back"
+              id="btn-back-from-lineage"
             >
               <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
             </button>
+            <h1 className="font-editorial text-2xl sm:text-3xl font-bold text-[#1C1917] leading-none">
+              Lignée
+            </h1>
+          </div>
+        </div>
+      ) : (
+        <div className="border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0">
+          {/* LIGNE PRINCIPALE : IDENTITÉ & ACTIONS RAPIDES SANS COLLISION */}
+          <div className="flex items-center justify-between gap-1.5 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
+              {/* Bouton retour avec le chevron officiel unifié */}
+              <button
+                onClick={() => {
+                  if (returnToProtagonistId) {
+                    onNavigate({
+                      type: 'protagonist_profile',
+                      protagonistId: returnToProtagonistId,
+                      returnToDuoId,
+                      returnToDuoIndex,
+                      returnToDocId,
+                      initialShowLineage: true
+                    });
+                  } else if (returnToDuoId) {
+                    onNavigate({
+                      type: 'duo_feed',
+                      currentDuoIndex: returnToDuoIndex ?? 0,
+                      selectedDocId: returnToDocId
+                    });
+                  } else {
+                    onNavigate({ type: 'home' });
+                  }
+                }}
+                className="w-8 h-8 rounded-full bg-white hover:bg-stone-100 border border-stone-200 text-[#1C1917] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
+                title="Retour"
+                id="btn-profile-back"
+              >
+                <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
+              </button>
 
             <div className="relative shrink-0">
               <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full p-0.5 border-2 border-[#C89B3C] shadow-sm overflow-hidden bg-white">
@@ -1750,6 +1798,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
         </div>
 
       </div>
+      )}
 
       {/* TOAST SUCCÈS */}
       {shareToast && (
@@ -1772,7 +1821,14 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               personIdOrName={protagonistId || userFullName || 'current-user'}
               onNavigateToPerson={(id) => {
                 setShowLineageFrise(false);
-                onNavigate({ type: 'protagonist_profile', protagonistId: id });
+                onNavigate({ 
+                  type: 'protagonist_profile', 
+                  protagonistId: id,
+                  returnToProtagonistId: protagonistId || (currentUser ? currentUser.id : undefined),
+                  returnToDuoId,
+                  returnToDuoIndex,
+                  returnToDocId
+                });
               }}
               onClose={() => setShowLineageFrise(false)}
             />

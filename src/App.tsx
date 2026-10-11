@@ -130,6 +130,27 @@ export default function App() {
             returnToDuoId={currentScreen.returnToDuoId}
             returnToDuoIndex={currentScreen.returnToDuoIndex}
             returnToDocId={currentScreen.returnToDocId}
+            returnToProtagonistId={currentScreen.returnToProtagonistId}
+            initialShowLineage={currentScreen.initialShowLineage}
+          />
+        )}
+
+        {currentScreen.type === 'lineage' && (
+          <ProfileSettingsScreen 
+            key={currentScreen.protagonistId || 'default-lineage'}
+            protagonistId={currentScreen.protagonistId} 
+            onNavigate={setCurrentScreen} 
+            selectedDocFilter={selectedSeriesFilter}
+            onUpdateDocFilter={handleUpdateDocFilter}
+            language={language}
+            onUpdateLanguage={setLanguage}
+            hideQuestionByDefault={hideQuestionByDefault}
+            onToggleHideQuestion={setHideQuestionByDefault}
+            returnToDuoId={currentScreen.returnToDuoId}
+            returnToDuoIndex={currentScreen.returnToDuoIndex}
+            returnToDocId={currentScreen.returnToDocId}
+            returnToProtagonistId={currentScreen.returnToProtagonistId}
+            initialShowLineage={true}
           />
         )}
 
@@ -200,6 +221,8 @@ export default function App() {
             returnToDuoId={currentScreen.returnToDuoId}
             returnToDuoIndex={currentScreen.returnToDuoIndex}
             returnToDocId={currentScreen.returnToDocId}
+            returnToProtagonistId={currentScreen.returnToProtagonistId}
+            initialShowLineage={currentScreen.initialShowLineage}
           />
         )}
 

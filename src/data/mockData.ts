@@ -557,13 +557,13 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
   {
     id: 'other-eyes-sixth-sense',
     slug: 'other-eyes-sixth-sense',
-    title: 'Other Eyes < > Sixth Sense',
+    title: 'Other eyes < > Sixth sense',
     subtitle: 'Voir autrement. Ressentir l’invisible.',
     centralQuestion: 'La Perception',
     shortSynopsis: 'Quand la non-voyance et les perceptions extrasensorielles dialoguent : que voit-on quand le monde ferme les yeux ?',
     description: 'Une confrontation sensible et profonde entre deux manières extraordinaires de décoder le réel : d’un côté ceux qui, par la non-voyance ou l’éveil sensoriel, naviguent par l’écho, le toucher et les vibrations ; de l’autre ceux qui captent les auras, les énergies subtiles et le souffle de l’invisible. Au-delà des jugements ordinaires, leurs récits intimes révèlent la puissance insoupçonnée des sens humains.',
-    coverImage: '/assets/posters/other-eyes-sixth-sense.png',
-    posterUrl: '/assets/posters/other-eyes-sixth-sense.png',
+    coverImage: '/assets/posters/Other eyes < > Sixth sense.png',
+    posterUrl: '/assets/posters/Other eyes < > Sixth sense.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     teaserDuration: '1:12',
     universes: [
@@ -616,6 +616,158 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     episodeCount: 5,
     protagonistsCount: 6,
     territories: ['Ganvié', 'Cotonou', 'Ouidah', 'Abomey']
+  },
+  {
+    id: 'coaching-unlimited',
+    slug: 'coaching-unlimited',
+    title: 'Coaching < > Unlimited',
+    subtitle: 'L’exigence du mentor dans son bureau < > l’envol d’un athlète sur les haies.',
+    centralQuestion: 'Le Dépassement',
+    shortSynopsis: 'Dans le silence stratégique d’un bureau où s’élabore la transformation intérieure et sur la piste rouge où une athlète saute une haie vers l’infini : briser les limites de l’impossible.',
+    description: 'D’un côté, Coach Marc, mentor d’élite au regard affûté dans son bureau tapissé de livres, qui déverrouille le potentiel mental et psychologique des bâtisseurs. De l’autre côté, Aïcha Lagat, athlète en pleine course franchissant une haie avec une puissance féline et un dépassement total de soi. Deux énergies complémentaires qui prouvent que chaque obstacle franchi sur le terrain a d’abord été apprivoisé dans la forge de l’esprit.',
+    coverImage: '/assets/posters/Coaching < > Unlimited.png',
+    posterUrl: '/assets/posters/Coaching < > Unlimited.png',
+    teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    teaserDuration: '1:24',
+    universes: [
+      {
+        name: 'Coaching',
+        tagline: 'La clarté stratégique, l’écoute exigeante et l’éveil des géants',
+        description: 'L’intimité du cabinet où l’on déconstruit les peurs, où l’on aligne la volonté et où naît la discipline des champions.',
+        territory: 'Paris, Cotonou & Montréal'
+      },
+      {
+        name: 'Unlimited',
+        tagline: 'L’effort brut, le franchissement d’obstacles et la transcendance du corps',
+        description: 'La piste de course, le cœur qui bat à 180 pulsations, le saut au-dessus de la haie et le refus viscéral d’abandonner.',
+        territory: 'Nairobi, Dakar & Lausanne'
+      }
+    ],
+    effigies: [
+      {
+        id: 'eff-coach-marc',
+        name: 'Coach Marc',
+        role: 'Mentor de performance & Stratège mental',
+        photoUrl: '/assets/duos/coach-office.jpg',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+        status: 'EFFIGIE_PRINCIPALE'
+      },
+      {
+        id: 'eff-athlete-lagat',
+        name: 'Aïcha Lagat',
+        role: 'Athlète internationale de saut de haies',
+        photoUrl: '/assets/duos/athlete-hurdle.jpg',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+        status: 'EFFIGIE_SERIE'
+      }
+    ],
+    questions: [
+      {
+        number: '01',
+        title: 'L’Obstacle',
+        prompt: 'Racontez-nous un moment où vous avez cru que l’obstacle devant vous était trop haut pour être franchi. Qu’avez-vous trouvé en vous ?',
+        posterUrl: '/assets/duos/athlete-hurdle.jpg',
+        audioDuration: '0:44',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+        audioVoiceName: 'Marc & Aïcha',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Racontez-nous un moment où vous avez cru que l’obstacle était trop haut pour être franchi.' },
+          { lang: 'en', label: 'English', prompt: 'Tell us about a time when you thought the hurdle ahead was too high to clear. What did you discover within yourself?' }
+        ]
+      },
+      {
+        number: '02',
+        title: 'Le Dialogue Intérieur',
+        prompt: 'Quelle est la phrase ou la certitude silencieuse que vous vous répétez quand tout votre corps ou votre esprit crie d’arrêter ?',
+        posterUrl: '/assets/duos/coach-office.jpg',
+        audioDuration: '0:40',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+        audioVoiceName: 'Coach Marc',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Quelle est la certitude silencieuse que vous vous répétez au moment de flancher ?' },
+          { lang: 'en', label: 'English', prompt: 'What silent truth do you tell yourself when your whole body wants to give up?' }
+        ]
+      }
+    ],
+    episodeCount: 5,
+    protagonistsCount: 6,
+    territories: ['Paris', 'Nairobi', 'Dakar', 'Montréal']
+  },
+  {
+    id: 'safer-healer',
+    slug: 'safer-healer',
+    title: 'Safer < > healer',
+    subtitle: 'La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.',
+    centralQuestion: 'La Vocation',
+    shortSynopsis: 'Quand le courage intrépide d’une pompière face aux flammes rencontre la science compatissante d’une femme médecin à l’hôpital : deux gardiennes de la vie humaine.',
+    description: 'D’un côté, Capitaine Jennifer, pompière d’élite en tenue d’intervention qui plonge dans le brasier pour arracher des vies au néant et sécuriser la communauté (Safer). De l’autre côté, Dr. Aminata Sharma, médecin dévouée au chevet des souffrances, diagnostiquant avec finesse et soignant avec humanité dans les couloirs hospitaliers (Healer). Deux faces d’une même noblesse : celle de ceux qui veillent sur la vie des autres.',
+    coverImage: '/assets/posters/Safer < > healer.png',
+    posterUrl: '/assets/posters/Safer < > healer.png',
+    teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    teaserDuration: '1:32',
+    universes: [
+      {
+        name: 'Safer',
+        tagline: 'L’engagement au feu, la protection des innocents et le sang-froid',
+        description: 'La sirène qui déchire la nuit, la lance en main, la fraternité du camion et le refus viscéral de laisser périr quiconque.',
+        territory: 'Cotonou, Marseille & Chicago'
+      },
+      {
+        name: 'Healer',
+        tagline: 'L’écoute des cœurs blessés, le diagnostic précis et la guérison',
+        description: 'Le stéthoscope attentif, les nuits blanches aux urgences, le soulagement d’une famille et la compassion qui restaure la dignité.',
+        territory: 'Dakar, Abidjan & Genève'
+      }
+    ],
+    effigies: [
+      {
+        id: 'eff-jennifer-rescuer',
+        name: 'Capitaine Jennifer',
+        role: 'Pompière d’intervention & Formatrice secours',
+        photoUrl: '/assets/duos/firefighter-safer.jpg',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+        status: 'EFFIGIE_PRINCIPALE'
+      },
+      {
+        id: 'eff-dr-aminata',
+        name: 'Dr. Aminata Sharma',
+        role: 'Médecin urgentiste & Soignante des âmes',
+        photoUrl: '/assets/duos/doctor-healer.jpg',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+        status: 'EFFIGIE_SERIE'
+      }
+    ],
+    questions: [
+      {
+        number: '01',
+        title: 'Le Premier Secours',
+        prompt: 'Racontez-nous un moment où vous avez tenu la main de quelqu’un en détresse et où vous avez su que votre présence faisait la différence entre la peur et l’espoir.',
+        posterUrl: '/assets/duos/firefighter-safer.jpg',
+        audioDuration: '0:48',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+        audioVoiceName: 'Jennifer & Aminata',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Racontez-nous un moment où votre présence a fait la différence entre la peur et l’espoir.' },
+          { lang: 'en', label: 'English', prompt: 'Tell us about a time when holding someone’s hand in crisis made the difference between fear and hope.' }
+        ]
+      },
+      {
+        number: '02',
+        title: 'Le Prix du Don',
+        prompt: 'Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus jour et nuit ?',
+        posterUrl: '/assets/duos/doctor-healer.jpg',
+        audioDuration: '0:42',
+        videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+        audioVoiceName: 'Dr. Aminata Sharma',
+        translations: [
+          { lang: 'fr', label: 'Français', prompt: 'Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ?' },
+          { lang: 'en', label: 'English', prompt: 'What personal sacrifice have you made to keep watching over strangers day and night?' }
+        ]
+      }
+    ],
+    episodeCount: 5,
+    protagonistsCount: 6,
+    territories: ['Cotonou', 'Marseille', 'Dakar', 'Genève']
   }
 ];
 
@@ -694,14 +846,23 @@ export const getCustomDocumentaries = (): Documentary[] => {
             }
             return doc;
           });
-          const hasOtherEyes = updated.some((d: any) => d.id === 'other-eyes-sixth-sense');
-          if (!hasOtherEyes) {
-            const otherEyesDoc = INITIAL_DOCUMENTARIES.find(d => d.id === 'other-eyes-sixth-sense');
-            if (otherEyesDoc) {
-              updated.push(otherEyesDoc);
+
+          // S'assurer que toutes les 8 séries initiales sont présentes et à jour
+          for (const initDoc of INITIAL_DOCUMENTARIES) {
+            const existingIdx = updated.findIndex((d: any) => d.id === initDoc.id);
+            if (existingIdx === -1) {
+              updated.push(initDoc);
               migrated = true;
+            } else {
+              // Mettre à jour posterUrl et coverImage si nécessaire
+              if (updated[existingIdx].posterUrl !== initDoc.posterUrl || updated[existingIdx].coverImage !== initDoc.coverImage) {
+                updated[existingIdx].posterUrl = initDoc.posterUrl;
+                updated[existingIdx].coverImage = initDoc.coverImage;
+                migrated = true;
+              }
             }
           }
+
           if (migrated) {
             localStorage.setItem('yonywood_custom_series', JSON.stringify(updated));
           }
@@ -2063,6 +2224,237 @@ export const PROTAGONISTS: Protagonist[] = [
         ]
       }
     ]
+  },
+  {
+    id: 'coach-marc',
+    slug: 'coach-marc',
+    name: 'Marc Valmont',
+    firstName: 'Marc',
+    age: 48,
+    role: 'Mentor de haute performance & Stratège mental',
+    country: 'France',
+    territory: 'Paris & Diaspora',
+    flag: '🇫🇷',
+    photo: '/assets/duos/coach-office.jpg',
+    photoUrl: '/assets/duos/coach-office.jpg',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    quote: '« Chaque barrière mentale que l’on fait tomber dans le calme d’un bureau déverrouille dix victoires sur le terrain. »',
+    bio: 'Ancien conseiller de dirigeants et d’athlètes de classe mondiale, Marc a consacré vingt ans à explorer la mécanique invisible de la confiance et du rebond psychologique.',
+    universeTag: 'Coaching',
+    centralQuestion: 'Comment forger une volonté inébranlable sans détruire la vulnérabilité qui fait notre humanité ?',
+    storiesCount: 4,
+    transmissionsCount: 3,
+    projectsCount: 2,
+    socialLinks: { linkedin: 'https://linkedin.com' },
+    details: {
+      bioExtended: 'Dans son cabinet baigné de lumière douce, Marc reçoit ceux qui s’apprêtent à franchir des seuils décisifs. Son approche combine écoute maïeutique et rigueur stratégique.',
+      universeDescription: 'L’antre de la préparation mentale et de l’alignement des ambitions.',
+      transmissions: [
+        {
+          id: 't-marc-1',
+          title: 'L’art de la recalibration émotionnelle',
+          ancestorOrMentor: 'Professeur Albert Kahn',
+          description: 'Transformer la peur de l’échec en carburant de précision.'
+        }
+      ],
+      duos: [
+        {
+          id: 'duo-marc-lagat-ref',
+          partnerName: 'Aïcha Lagat',
+          partnerRole: 'Athlète de saut de haies',
+          partnerPhoto: '/assets/duos/athlete-hurdle.jpg',
+          duoId: 'duo-coaching-unlimited-01',
+          question: '« Quelle certitude silencieuse répétez-vous au moment de flancher ? »'
+        }
+      ],
+      creations: [
+        {
+          id: 'c-marc-1',
+          title: 'Méthode du Pivot Intérieur',
+          type: 'Protocole de coaching',
+          description: 'Guide pratique pour déjouer le syndrome de l’imposteur en compétition.'
+        }
+      ],
+      projects: [],
+      opportunities: [],
+      needs: []
+    },
+    stories: [
+      {
+        id: 'story-coach-marc-01',
+        title: 'Le silence avant la décision',
+        questionNumber: '01',
+        questionTitle: 'L’Obstacle',
+        duration: '07:45',
+        videoDurationSeconds: 465,
+        summary: 'Marc partage la séance où un champion brisé a retrouvé le désir de s’entraîner après trois ans de doute.',
+        videoCoverUrl: '/assets/duos/coach-office.jpg',
+        credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Marc Valmont' }]
+      }
+    ]
+  },
+  {
+    id: 'athlete-lagat',
+    slug: 'athlete-lagat',
+    name: 'Aïcha Lagat',
+    firstName: 'Aïcha',
+    age: 26,
+    role: 'Athlète internationale de saut de haies & Recordwoman',
+    country: 'Kenya',
+    territory: 'Nairobi & Lausanne',
+    flag: '🇰🇪',
+    photo: '/assets/duos/athlete-hurdle.jpg',
+    photoUrl: '/assets/duos/athlete-hurdle.jpg',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+    quote: '« La haie n’est pas un mur : c’est une invitation à voler une fraction de seconde de plus. »',
+    bio: 'Championne d’Afrique du 400m haies, Aïcha incarne la persévérance absolue et l’élégance du geste sous la pression des grands stades.',
+    universeTag: 'Unlimited',
+    centralQuestion: 'Jusqu’où le corps peut-il obéir à la soif infinie de transcendance ?',
+    storiesCount: 5,
+    transmissionsCount: 2,
+    projectsCount: 3,
+    details: {
+      bioExtended: 'Née sur les hauts plateaux de la vallée du Rift, Aïcha s’entraîne à l’aube quand le givre recouvre encore le tartan.',
+      universeDescription: 'Le monde de l’effort sans concession et de la quête de perfection athlétique.',
+      transmissions: [],
+      duos: [
+        {
+          id: 'duo-lagat-marc-ref',
+          partnerName: 'Marc Valmont',
+          partnerRole: 'Mentor de performance',
+          partnerPhoto: '/assets/duos/coach-office.jpg',
+          duoId: 'duo-coaching-unlimited-01',
+          question: '« Quelle certitude silencieuse répétez-vous au moment de flancher ? »'
+        }
+      ],
+      creations: [],
+      projects: [],
+      opportunities: [],
+      needs: []
+    },
+    stories: [
+      {
+        id: 'story-athlete-lagat-01',
+        title: 'Le franchissement du dixième obstacle',
+        questionNumber: '01',
+        questionTitle: 'L’Obstacle',
+        duration: '06:30',
+        videoDurationSeconds: 390,
+        summary: 'Aïcha raconte la finale des championnats du monde où un faux pas à la 8e haie l’a obligée à réinventer sa foulée en plein vol.',
+        videoCoverUrl: '/assets/duos/athlete-hurdle.jpg',
+        credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Aïcha Lagat' }]
+      }
+    ]
+  },
+  {
+    id: 'firefighter-jennifer',
+    slug: 'firefighter-jennifer',
+    name: 'Capitaine Jennifer Collins',
+    firstName: 'Jennifer',
+    age: 41,
+    role: 'Officière sapeur-pompier & Commandante des opérations',
+    country: 'États-Unis',
+    territory: 'Chicago & Cotonou',
+    flag: '🇺🇸',
+    photo: '/assets/duos/firefighter-safer.jpg',
+    photoUrl: '/assets/duos/firefighter-safer.jpg',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    quote: '« Dans la fumée épaisse, on n’avance pas avec la peur de mourir mais avec l’urgence furieuse que quelqu’un respire encore. »',
+    bio: 'Dix-huit ans de service au feu, formatrice internationale en techniques de sauvetage en milieu clos et pionnière des brigades mixtes.',
+    universeTag: 'Safer',
+    centralQuestion: 'Que ressent-on quand on franchit le rideau de flammes vers un inconnu ?',
+    storiesCount: 6,
+    transmissionsCount: 4,
+    projectsCount: 2,
+    details: {
+      bioExtended: 'Jennifer commande l’une des casernes les plus actives, alliant sang-froid tactique et attention paternelle et fraternelle à ses équipes.',
+      universeDescription: 'Le dévouement immédiat face au danger et la protection sans condition des citoyens.',
+      transmissions: [],
+      duos: [
+        {
+          id: 'duo-jennifer-aminata-ref',
+          partnerName: 'Dr. Aminata Sharma',
+          partnerRole: 'Médecin urgentiste',
+          partnerPhoto: '/assets/duos/doctor-healer.jpg',
+          duoId: 'duo-safer-healer-01',
+          question: '« Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ? »'
+        }
+      ],
+      creations: [],
+      projects: [],
+      opportunities: [],
+      needs: []
+    },
+    stories: [
+      {
+        id: 'story-firefighter-jennifer-01',
+        title: 'Le cri dans le sous-sol inondé',
+        questionNumber: '01',
+        questionTitle: 'Le Premier Secours',
+        duration: '09:10',
+        videoDurationSeconds: 550,
+        summary: 'Jennifer revient sur un sauvetage nocturne où le filin thermique s’est rompu mais où l’instinct a guidé l’évacuation d’une famille.',
+        videoCoverUrl: '/assets/duos/firefighter-safer.jpg',
+        credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Jennifer Collins' }]
+      }
+    ]
+  },
+  {
+    id: 'doctor-aminata',
+    slug: 'doctor-aminata',
+    name: 'Dr. Aminata Sharma',
+    firstName: 'Aminata',
+    age: 44,
+    role: 'Médecin urgentiste & Spécialiste de santé communautaire',
+    country: 'Sénégal',
+    territory: 'Dakar & Genève',
+    flag: '🇸🇳',
+    photo: '/assets/duos/doctor-healer.jpg',
+    photoUrl: '/assets/duos/doctor-healer.jpg',
+    videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+    quote: '« La médecine commence là où l’ordonnance s’arrête : dans le regard qui rassure et la main qui soutient sans juger. »',
+    bio: 'Formée entre Dakar et Genève, le Dr. Sharma dirige un pôle d’urgence pédiatrique tout en œuvrant à des cliniques mobiles en milieu rural.',
+    universeTag: 'Healer',
+    centralQuestion: 'Comment garder son humanité intacte après mille nuits de combat contre la douleur ?',
+    storiesCount: 5,
+    transmissionsCount: 3,
+    projectsCount: 4,
+    details: {
+      bioExtended: 'Dans le vacarme des urgences, sa présence calme apaise instantanément patients et soignants.',
+      universeDescription: 'L’art exigeant du soin, du soulagement et de la compassion médicale.',
+      transmissions: [],
+      duos: [
+        {
+          id: 'duo-aminata-jennifer-ref',
+          partnerName: 'Capitaine Jennifer Collins',
+          partnerRole: 'Officière sapeur-pompier',
+          partnerPhoto: '/assets/duos/firefighter-safer.jpg',
+          duoId: 'duo-safer-healer-01',
+          question: '« Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ? »'
+        }
+      ],
+      creations: [],
+      projects: [],
+      opportunities: [],
+      needs: []
+    },
+    stories: [
+      {
+        id: 'story-doctor-aminata-01',
+        title: 'La première respiration de l’aube',
+        questionNumber: '01',
+        questionTitle: 'Le Premier Secours',
+        duration: '08:15',
+        videoDurationSeconds: 495,
+        summary: 'Aminata décrit une garde de Noël où le cœur d’un nouveau-né s’était arrêté et la résurrection vécue ensemble par l’équipe.',
+        videoCoverUrl: '/assets/duos/doctor-healer.jpg',
+        credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dr. Aminata Sharma' }]
+      }
+    ]
   }
 ];
 
@@ -2161,7 +2553,7 @@ export const DUOS: Duo[] = [
     id: 'duo-other-eyes-sixth-sense-01',
     slug: 'duo-other-eyes-sixth-sense-01',
     documentaryId: 'other-eyes-sixth-sense',
-    documentaryTitle: 'Other Eyes < > Sixth Sense',
+    documentaryTitle: 'Other eyes < > Sixth sense',
     episodeNumber: 'ÉPISODE 01',
     protagonistA: PROTAGONISTS.find(p => p.id === 'codjo-blind') || PROTAGONISTS[0],
     protagonistB: PROTAGONISTS.find(p => p.id === 'mawuna-medium') || PROTAGONISTS[1],
@@ -2170,10 +2562,214 @@ export const DUOS: Duo[] = [
     centralQuestion: '« Racontez-nous un moment où vous avez compris que vos yeux n’étaient pas nécessaires pour savoir exactement ce qui vous entourait. »',
     quoteA: '« Vos yeux s’arrêtent aux formes. Mes oreilles et ma peau pénètrent l’épaisseur vivante de l’air et la cadence secrète de la nuit. »',
     quoteB: '« L’invisible n’est pas une absence, c’est une présence subtile. Le cœur doit écouter ce que les yeux ne peuvent enfermer. »',
-    coverImage: '/assets/posters/other-eyes-sixth-sense.png',
+    coverImage: '/assets/posters/Other eyes < > Sixth sense.png',
     storyA: (PROTAGONISTS.find(p => p.id === 'codjo-blind') || PROTAGONISTS[0]).stories[0],
     storyB: (PROTAGONISTS.find(p => p.id === 'mawuna-medium') || PROTAGONISTS[1]).stories[0],
     editorialReflection: 'Face à face entre celui qui navigue par le son et le toucher et celle qui décode les souffles invisibles : tous deux nous enseignent que voir le monde n’a jamais été une affaire de rétine, mais d’attention profonde à ce qui vibre.'
+  },
+  {
+    id: 'duo-coaching-unlimited-01',
+    slug: 'duo-coaching-unlimited-01',
+    documentaryId: 'coaching-unlimited',
+    documentaryTitle: 'Coaching < > Unlimited',
+    episodeNumber: 'ÉPISODE 01',
+    protagonistA: {
+      id: 'coach-marc',
+      name: 'Marc Valmont',
+      firstName: 'Marc',
+      age: 48,
+      role: 'Mentor de performance & Stratège mental',
+      country: 'France',
+      territory: 'Paris',
+      flag: '🇫🇷',
+      photo: '/assets/duos/coach-office.jpg',
+      photoUrl: '/assets/duos/coach-office.jpg',
+      videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+      quote: '« Chaque barrière mentale que l’on fait tomber dans le calme d’un bureau déverrouille dix victoires sur le terrain. »',
+      bio: 'Stratège de la haute performance humaine dans son bureau feutré.',
+      universeTag: 'Coaching',
+      centralQuestion: 'Comment forger une volonté inébranlable sans détruire la vulnérabilité ?',
+      storiesCount: 4,
+      transmissionsCount: 3,
+      projectsCount: 2,
+      stories: [
+        {
+          id: 'story-coach-marc-01',
+          title: 'Le silence avant la décision',
+          questionNumber: '01',
+          questionTitle: 'L’Obstacle',
+          duration: '07:45',
+          videoDurationSeconds: 465,
+          summary: 'Marc partage la séance où un champion brisé a retrouvé le désir de s’entraîner.',
+          videoCoverUrl: '/assets/duos/coach-office.jpg',
+          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Marc Valmont' }]
+        }
+      ]
+    } as any,
+    protagonistB: {
+      id: 'athlete-lagat',
+      name: 'Aïcha Lagat',
+      firstName: 'Aïcha',
+      age: 26,
+      role: 'Athlète internationale de saut de haies',
+      country: 'Kenya',
+      territory: 'Nairobi',
+      flag: '🇰🇪',
+      photo: '/assets/duos/athlete-hurdle.jpg',
+      photoUrl: '/assets/duos/athlete-hurdle.jpg',
+      videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+      quote: '« La haie n’est pas un mur : c’est une invitation à voler une fraction de seconde de plus. »',
+      bio: 'Athlète olympique en plein envol au-dessus des haies.',
+      universeTag: 'Unlimited',
+      centralQuestion: 'Jusqu’où le corps peut-il obéir à la soif infinie de transcendance ?',
+      storiesCount: 5,
+      transmissionsCount: 2,
+      projectsCount: 3,
+      stories: [
+        {
+          id: 'story-athlete-lagat-01',
+          title: 'Le franchissement du dixième obstacle',
+          questionNumber: '01',
+          questionTitle: 'L’Obstacle',
+          duration: '06:30',
+          videoDurationSeconds: 390,
+          summary: 'Aïcha raconte la finale des championnats du monde où un faux pas à la 8e haie l’a obligée à réinventer sa foulée.',
+          videoCoverUrl: '/assets/duos/athlete-hurdle.jpg',
+          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Aïcha Lagat' }]
+        }
+      ]
+    } as any,
+    questionNumber: '01',
+    questionTitle: 'L’Obstacle',
+    centralQuestion: '« Racontez-nous un moment où vous avez cru que l’obstacle devant vous était trop haut pour être franchi. Qu’avez-vous trouvé en vous ? »',
+    quoteA: '« Ce n’est jamais la hauteur de l’objectif qui paralyse, c’est le bruit de nos propres doutes. Dans ce bureau, on fait taire le vacarme pour entendre sa vraie puissance. »',
+    quoteB: '« Quand tu es lancée à pleine vitesse et que la haie se dresse, tu ne peux plus hésiter. Tu dois faire confiance à ton impulsion et bondir. »',
+    coverImage: '/assets/posters/Coaching < > Unlimited.png',
+    storyA: {
+      id: 'story-coach-marc-01',
+      title: 'Le silence avant la décision',
+      questionNumber: '01',
+      questionTitle: 'L’Obstacle',
+      duration: '07:45',
+      videoDurationSeconds: 465,
+      summary: 'Marc partage la séance où un champion brisé a retrouvé le désir de s’entraîner.',
+      videoCoverUrl: '/assets/duos/coach-office.jpg',
+      credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Marc Valmont' }]
+    },
+    storyB: {
+      id: 'story-athlete-lagat-01',
+      title: 'Le franchissement du dixième obstacle',
+      questionNumber: '01',
+      questionTitle: 'L’Obstacle',
+      duration: '06:30',
+      videoDurationSeconds: 390,
+      summary: 'Aïcha raconte la finale des championnats du monde où un faux pas à la 8e haie l’a obligée à réinventer sa foulée.',
+      videoCoverUrl: '/assets/duos/athlete-hurdle.jpg',
+      credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Aïcha Lagat' }]
+    },
+    editorialReflection: 'Entre la sagesse stratégique d’un mentor dans son bureau et la fulgurance physique d’une hurdleuse en plein saut : la victoire s’invente toujours dans l’alliance de l’esprit et du souffle.'
+  },
+  {
+    id: 'duo-safer-healer-01',
+    slug: 'duo-safer-healer-01',
+    documentaryId: 'safer-healer',
+    documentaryTitle: 'Safer < > healer',
+    episodeNumber: 'ÉPISODE 01',
+    protagonistA: {
+      id: 'firefighter-jennifer',
+      name: 'Jennifer Collins',
+      firstName: 'Jennifer',
+      age: 41,
+      role: 'Commandante sapeur-pompier',
+      country: 'États-Unis',
+      territory: 'Chicago & Cotonou',
+      flag: '🇺🇸',
+      photo: '/assets/duos/firefighter-safer.jpg',
+      photoUrl: '/assets/duos/firefighter-safer.jpg',
+      videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+      quote: '« Dans la fumée épaisse, on n’avance pas avec la peur de mourir mais avec l’urgence furieuse que quelqu’un respire encore. »',
+      bio: 'Dix-huit ans au feu, protectrice intrépide des vies de la cité.',
+      universeTag: 'Safer',
+      centralQuestion: 'Que ressent-on quand on franchit le rideau de flammes vers un inconnu ?',
+      storiesCount: 6,
+      transmissionsCount: 4,
+      projectsCount: 2,
+      stories: [
+        {
+          id: 'story-firefighter-jennifer-01',
+          title: 'Le cri dans le sous-sol inondé',
+          questionNumber: '01',
+          questionTitle: 'Le Premier Secours',
+          duration: '09:10',
+          videoDurationSeconds: 550,
+          summary: 'Jennifer revient sur un sauvetage nocturne au péril de sa vie.',
+          videoCoverUrl: '/assets/duos/firefighter-safer.jpg',
+          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Jennifer Collins' }]
+        }
+      ]
+    } as any,
+    protagonistB: {
+      id: 'doctor-aminata',
+      name: 'Dr. Aminata Sharma',
+      firstName: 'Aminata',
+      age: 44,
+      role: 'Médecin urgentiste & Soignante',
+      country: 'Sénégal',
+      territory: 'Dakar & Genève',
+      flag: '🇸🇳',
+      photo: '/assets/duos/doctor-healer.jpg',
+      photoUrl: '/assets/duos/doctor-healer.jpg',
+      videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+      quote: '« La médecine commence là où l’ordonnance s’arrête : dans le regard qui rassure et la main qui soutient sans juger. »',
+      bio: 'Médecin hospitalière au dévouement sans faille pour ses patients.',
+      universeTag: 'Healer',
+      centralQuestion: 'Comment garder son humanité intacte après mille nuits de combat contre la douleur ?',
+      storiesCount: 5,
+      transmissionsCount: 3,
+      projectsCount: 4,
+      stories: [
+        {
+          id: 'story-doctor-aminata-01',
+          title: 'La première respiration de l’aube',
+          questionNumber: '01',
+          questionTitle: 'Le Premier Secours',
+          duration: '08:15',
+          videoDurationSeconds: 495,
+          summary: 'Aminata décrit une garde de nuit où la vie a triomphé.',
+          videoCoverUrl: '/assets/duos/doctor-healer.jpg',
+          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dr. Aminata Sharma' }]
+        }
+      ]
+    } as any,
+    questionNumber: '01',
+    questionTitle: 'Le Premier Secours',
+    centralQuestion: '« Racontez-nous un moment où vous avez tenu la main de quelqu’un en détresse et où vous avez su que votre présence faisait la différence entre la peur et l’espoir. »',
+    quoteA: '« Quand tu extirpes un enfant d’un brasier et que son regard croise le tien à travers ta visière, tu comprends pourquoi tu as choisi d’enfiler cet uniforme. »',
+    quoteB: '« Poser le stéthoscope et écouter les battements qui reviennent, c’est le moment le plus sacré du monde. Nous sommes là pour réparer ce que la vie a heurté. »',
+    coverImage: '/assets/posters/Safer < > healer.png',
+    storyA: {
+      id: 'story-firefighter-jennifer-01',
+      title: 'Le cri dans le sous-sol inondé',
+      questionNumber: '01',
+      questionTitle: 'Le Premier Secours',
+      duration: '09:10',
+      videoDurationSeconds: 550,
+      summary: 'Jennifer revient sur un sauvetage nocturne au péril de sa vie.',
+      videoCoverUrl: '/assets/duos/firefighter-safer.jpg',
+      credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Jennifer Collins' }]
+    },
+    storyB: {
+      id: 'story-doctor-aminata-01',
+      title: 'La première respiration de l’aube',
+      questionNumber: '01',
+      questionTitle: 'Le Premier Secours',
+      duration: '08:15',
+      videoDurationSeconds: 495,
+      summary: 'Aminata décrit une garde de nuit où la vie a triomphé.',
+      videoCoverUrl: '/assets/duos/doctor-healer.jpg',
+      credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dr. Aminata Sharma' }]
+    },
+    editorialReflection: 'D’un côté, la témérité de l’officière pompière qui s’interpose entre le citoyen et les flammes ; de l’autre, la tendresse experte du médecin qui recoud les plaies et guérit les cœurs. Deux gardiennes de notre vulnérabilité commune.'
   }
 ];
 
