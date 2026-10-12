@@ -238,50 +238,54 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
     <div className="w-full max-w-6xl mx-auto px-2 sm:px-6 pt-2 sm:pt-4 pb-20 sm:pb-24 pt-safe pb-safe h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between text-[#1C1917] select-none">
       
       {/* ========================================================================= */}
-      {/* 1. BARRE SUPÉRIEURE AVEC TITRE ET DECK SUR LA MÊME LIGNE HORIZONTALE        */}
+      {/* 1. EN-TÊTE HARMONISÉ : TITRE DUOCUMENTAIRES, NOM DE LA SÉRIE AU CENTRE ET ACTIONS */}
       {/* ========================================================================= */}
-      <div className="relative flex items-center justify-between pt-2 sm:pt-4 pb-1 shrink-0 min-h-[44px] sm:min-h-[48px] px-1 sm:px-2">
-        <div className="w-16 sm:w-20" /> {/* Spacer pour centrage parfait */}
-        
-        {(() => {
-          const title = currentDuo.documentaryTitle || '';
-          const parts = title.includes('< >') ? title.split('< >') : title.includes('<>') ? title.split('<>') : null;
-          return parts ? (
-            <div 
-              key={`duo-series-${currentDuo.id}-${title}`}
-              className="inline-flex items-center gap-1.5 sm:gap-2 h-7.5 sm:h-8.5 px-4 sm:px-4.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-sm text-[11px] sm:text-xs animate-in fade-in duration-200 text-white truncate"
-            >
-              <span className="font-sans font-bold text-white tracking-tight truncate max-w-[95px] sm:max-w-[180px]">{formatTitleCase(parts[0])}</span>
-              <span 
-                className="font-mono text-[9px] sm:text-[10.5px] font-black text-white/90 px-1 sm:px-1.5 select-none shrink-0 tracking-widest flex items-center gap-1.5 sm:gap-2"
-                title="Face à face"
+      <header className="relative flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3.5 bg-white/95 backdrop-blur-md border-b border-[#E7E5E4] shrink-0 gap-2">
+        <div className="flex items-center gap-2 shrink-0">
+          <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
+            Duocumentaires
+          </h1>
+        </div>
+
+        {/* Centre absolu : Le nom de la série centré avec le symbole < > au centre mort */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none max-w-[44vw] sm:max-w-[48vw]">
+          {(() => {
+            const title = currentDuo.documentaryTitle || '';
+            const parts = title.includes('< >') ? title.split('< >') : title.includes('<>') ? title.split('<>') : null;
+            return parts ? (
+              <div 
+                key={`duo-series-header-${currentDuo.id}-${title}`}
+                className="inline-flex items-center gap-1 sm:gap-2 h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-xs text-[10.5px] sm:text-xs text-white pointer-events-auto select-none"
+                title={`${formatTitleCase(parts[0])} < > ${formatTitleCase(parts[1])}`}
               >
-                <span>&lt;</span>
-                <span>&gt;</span>
-              </span>
-              <span className="font-sans font-bold text-white tracking-tight truncate max-w-[95px] sm:max-w-[180px]">{formatTitleCase(parts[1])}</span>
-            </div>
-          ) : (
-            <div className="inline-flex items-center h-7.5 sm:h-8.5 px-4 sm:px-4.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-sm text-[11px] sm:text-xs text-white font-bold">
-              {formatTitleCase(title)}
-            </div>
-          );
-        })()}
+                <span className="font-sans font-bold text-white tracking-tight truncate max-w-[65px] sm:max-w-[130px] text-right">
+                  {formatTitleCase(parts[0])}
+                </span>
+                <span 
+                  className="font-mono text-[9px] sm:text-[11px] font-black text-white/95 px-0.5 select-none shrink-0 tracking-wider flex items-center gap-0.5"
+                  title="Face à face"
+                >
+                  <span>&lt;</span>
+                  <span>&gt;</span>
+                </span>
+                <span className="font-sans font-bold text-white tracking-tight truncate max-w-[65px] sm:max-w-[130px] text-left">
+                  {formatTitleCase(parts[1])}
+                </span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center h-7 sm:h-8 px-3 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-xs text-[10.5px] sm:text-xs text-white font-bold pointer-events-auto select-none truncate">
+                {formatTitleCase(title)}
+              </div>
+            );
+          })()}
+        </div>
 
-        {/* Bouton de signalement discret & Bouton bascule Vue Duo / Vue Deck */}
-        <div className="flex items-center justify-end gap-1.5 w-24 sm:w-28">
-          <button
-            onClick={() => setIsReportModalOpen(true)}
-            className="w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-red-50 text-stone-500 hover:text-red-600 border border-stone-200 hover:border-red-200 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
-            title="Signaler ce contenu vidéo"
-            id="btn-report-duo-content"
-          >
-            <Flag className="w-3.5 h-3.5" />
-          </button>
-
+        {/* Côté droit épuré : Onglet deck et drapeau du signalement UNIQUEMENT */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Bascule Vue Duo / Vue Deck */}
           <button
             onClick={() => setViewMode(prev => prev === 'duo' ? 'deck' : 'duo')}
-            className="flex items-center gap-1 h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-[11px] sm:text-xs font-semibold shadow-xs transition-all cursor-pointer active:scale-95 group/modetoggle"
+            className="flex items-center gap-1 h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-[11px] sm:text-xs font-semibold shadow-xs transition-all cursor-pointer active:scale-95 group/modetoggle shrink-0"
             title={viewMode === 'duo' ? 'Passer en vue Deck (1 vidéo à la fois)' : 'Passer en vue Duo (2 vidéos côte à côte)'}
           >
             {viewMode === 'duo' ? (
@@ -296,8 +300,18 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
               </>
             )}
           </button>
+
+          {/* Bouton de signalement */}
+          <button
+            onClick={() => setIsReportModalOpen(true)}
+            className="w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-red-50 text-stone-500 hover:text-red-600 border border-stone-200 hover:border-red-200 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
+            title="Signaler ce contenu vidéo"
+            id="btn-report-duo-content"
+          >
+            <Flag className="w-3.5 h-3.5" />
+          </button>
         </div>
-      </div>
+      </header>
 
       {/* ========================================================================= */}
       {/* 2. ZONE PRINCIPALE : LE DUO EN FACE-À-FACE (DIPTYQUE PARFAIT)              */}
@@ -365,7 +379,6 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
               transition={{ duration: 0.28, ease: 'easeInOut' }}
               className="cursor-grab active:cursor-grabbing w-full max-w-4xl relative flex flex-col items-center justify-center my-auto"
             >
-              
               {/* Dynamic Swipe Stamps */}
               {/* Tampon Gauche : glissé vers la droite -> REVENIR */}
               <motion.div
@@ -729,23 +742,26 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       <div className="relative z-10 p-3 sm:p-5 flex items-end justify-between gap-2">
                         <div className="text-left font-sans min-w-0 pr-1">
                           <h3 className="text-base sm:text-xl font-bold text-white tracking-tight leading-tight truncate">
-                            {pA.name}
+                            {pA.name.split(' ')[0]}
                           </h3>
-                          <p className="text-xs text-stone-300 mt-0.5">
-                            {pA.age ? `${pA.age} ans • ` : ''}{pA.role || 'Protagoniste'}
-                          </p>
+                          {pA.age && (
+                            <p className="text-xs text-stone-300 mt-0.5">
+                              {pA.age} ans
+                            </p>
+                          )}
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
+                        {/* Boutons d'action sur la vidéo empilés verticalement comme en mode duo */}
+                        <div className="flex flex-col items-center gap-1.5 sm:gap-2 shrink-0">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setIsQuestionModalOpen(true);
                             }}
-                            className="w-9 h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
+                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
                             title="Voir la question"
                           >
-                            <BookOpen className="w-4 h-4 text-white" />
+                            <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                           </button>
 
                           <button
@@ -759,10 +775,10 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                                 returnToDocId: selectedDocId || currentDuo.documentaryId
                               });
                             }}
-                            className="w-9 h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
+                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
                             title={`Consulter le profil de ${pA.name}`}
                           >
-                            <User className="w-4 h-4 text-white" />
+                            <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                           </button>
                         </div>
                       </div>
@@ -857,23 +873,26 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       <div className="relative z-10 p-3 sm:p-5 flex items-end justify-between gap-2">
                         <div className="text-left font-sans min-w-0 pr-1">
                           <h3 className="text-base sm:text-xl font-bold text-white tracking-tight leading-tight truncate">
-                            {pB.name}
+                            {pB.name.split(' ')[0]}
                           </h3>
-                          <p className="text-xs text-stone-300 mt-0.5">
-                            {pB.age ? `${pB.age} ans • ` : ''}{pB.role || 'Protagoniste'}
-                          </p>
+                          {pB.age && (
+                            <p className="text-xs text-stone-300 mt-0.5">
+                              {pB.age} ans
+                            </p>
+                          )}
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
+                        {/* Boutons d'action sur la vidéo empilés verticalement comme en mode duo */}
+                        <div className="flex flex-col items-center gap-1.5 sm:gap-2 shrink-0">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setIsQuestionModalOpen(true);
                             }}
-                            className="w-9 h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
+                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
                             title="Voir la question"
                           >
-                            <BookOpen className="w-4 h-4 text-white" />
+                            <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                           </button>
 
                           <button
@@ -887,10 +906,10 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                                 returnToDocId: selectedDocId || currentDuo.documentaryId
                               });
                             }}
-                            className="w-9 h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
+                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
                             title={`Consulter le profil de ${pB.name}`}
                           >
-                            <User className="w-4 h-4 text-white" />
+                            <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                           </button>
                         </div>
                       </div>

@@ -7,7 +7,7 @@ import { ViewScreen } from '../types';
 import { 
   AgoraAlveolesIcon,
   DuocumentairesTvIcon,
-  MarcheCloverIcon 
+  ProductionTokenIcon 
 } from './YonywoodBrandIcons';
 
 interface BottomMenuProps {
@@ -25,6 +25,7 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     currentScreen.type === 'profile' || 
     currentScreen.type === 'settings' || 
     currentScreen.type === 'portfolio' || 
+    currentScreen.type === 'transactions' ||
     currentScreen.type === 'protagonist_profile' || 
     currentScreen.type === 'my_forest' || 
     currentScreen.type === 'messaging' ||
@@ -62,12 +63,12 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       screenId: 'menu-item-duocumentaires'
     },
     {
-      id: 'marche',
-      label: 'Marché',
-      icon: MarcheCloverIcon,
+      id: 'productions',
+      label: 'Productions',
+      icon: ProductionTokenIcon,
       isActive: isMarcheActive,
       onClick: () => onNavigate({ type: 'marketplace' }),
-      screenId: 'menu-item-marche'
+      screenId: 'menu-item-productions'
     },
     {
       id: 'profil',

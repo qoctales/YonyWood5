@@ -201,6 +201,24 @@ const seriesList: ExplorerCatalogItem[] = [
     "question": "Comment développez-vous l’écoute intérieure et la sensibilité aux énergies invisibles ?",
     "photoUrl": "/assets/posters/other-eyes-sixth-sense.png",
     "badge": "16 pionniers cooptés"
+  },
+  {
+    "id": "coaching-unlimited",
+    "category": "series",
+    "title": "Coaching < > Unlimited",
+    "subtitle": "L’exigence du mentor dans son bureau < > l’envol d’un athlète sur les haies.",
+    "question": "Racontez-nous un moment où vous avez cru que l’obstacle devant vous était trop haut pour être franchi. Qu’avez-vous trouvé en vous ?",
+    "photoUrl": "/assets/posters/coaching-unlimited.png",
+    "badge": "16 pionniers cooptés"
+  },
+  {
+    "id": "safer-healer",
+    "category": "series",
+    "title": "Safer < > Healer",
+    "subtitle": "La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.",
+    "question": "Racontez-nous un moment où vous avez tenu la main de quelqu’un en détresse et où vous avez su que votre présence faisait la différence entre la peur et l’espoir.",
+    "photoUrl": "/assets/posters/safer-healer.png",
+    "badge": "16 pionniers cooptés"
   }
 ];
 

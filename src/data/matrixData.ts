@@ -2126,5 +2126,97 @@ export const MATRIX_SERIES_DATA: MatrixSeriesConfig[] = [
         generation: 1
       }
     ]
+  },
+  {
+    seriesId: 'coaching-unlimited',
+    seriesTitle: 'Coaching < > Unlimited',
+    subtitle: 'L’exigence du mentor dans son bureau < > l’envol d’un athlète sur les haies.',
+    description: 'Entre la forge mentale d’un mentor d’élite au regard perçant et l’explosion physique d’une athlète sur la piste rouge : briser les plafonds de verre.',
+    centralQuestion: 'Le Dépassement',
+    accentColor: '#D97706',
+    pioneers: [
+      {
+        id: 'cu-01',
+        name: 'Coach Marc',
+        firstName: 'Marc',
+        age: 52,
+        role: 'Mentor de performance & Stratège mental',
+        territory: 'Paris',
+        country: 'France',
+        flag: '🇫🇷',
+        universeTag: 'Coaching',
+        photoUrl: '/assets/duos/coach-office.jpg',
+        isPioneer: true,
+        badge: 'Première effigie',
+        invitationStory: 'Stratège des champions préparant les esprits avant les grandes épreuves.',
+        teaserVideoUrl: TEASER_VIDEOS[3],
+        teaserPitch: '« Chaque obstacle franchi sur le terrain a d’abord été apprivoisé dans la forge secrète de l’esprit. »',
+        generation: 1
+      },
+      {
+        id: 'cu-02',
+        name: 'Aïcha Lagat',
+        firstName: 'Aïcha',
+        age: 27,
+        role: 'Athlète internationale de saut de haies',
+        territory: 'Nairobi',
+        country: 'Kenya',
+        flag: '🇰🇪',
+        universeTag: 'Unlimited',
+        photoUrl: '/assets/duos/athlete-hurdle.jpg',
+        isPioneer: true,
+        badge: 'Première effigie',
+        invitationStory: 'Spécialiste du 400m haies transformant chaque douleur en impulsion vers le ciel.',
+        teaserVideoUrl: TEASER_VIDEOS[4],
+        teaserPitch: '« Quand vos jambes brûlent et que tout votre corps crie d’abandonner, c’est votre foi qui s’envole. »',
+        generation: 1
+      }
+    ]
+  },
+  {
+    seriesId: 'safer-healer',
+    seriesTitle: 'Safer < > Healer',
+    subtitle: 'La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.',
+    description: 'Quand le courage d’une pompière face aux flammes rencontre la science compatissante d’une femme médecin à l’hôpital : deux gardiennes de la vie humaine.',
+    centralQuestion: 'La Vocation',
+    accentColor: '#DC2626',
+    pioneers: [
+      {
+        id: 'sh-01',
+        name: 'Capitaine Jennifer',
+        firstName: 'Jennifer',
+        age: 34,
+        role: 'Pompière d’intervention & Formatrice secours',
+        territory: 'Cotonou',
+        country: 'Bénin',
+        flag: '🇧🇯',
+        universeTag: 'Safer',
+        photoUrl: '/assets/duos/firefighter-safer.jpg',
+        isPioneer: true,
+        badge: 'Première effigie',
+        invitationStory: 'Officière d’intervention première ligne affrontant les flammes pour arracher des vies au néant.',
+        teaserVideoUrl: TEASER_VIDEOS[0],
+        teaserPitch: '« Dans le brasier, il n’y a plus de peur. Il n’y a que la certitude absolue qu’une vie vous attend de l’autre côté. »',
+        generation: 1
+      },
+      {
+        id: 'sh-02',
+        name: 'Dr. Aminata Sharma',
+        firstName: 'Aminata',
+        age: 41,
+        role: 'Médecin urgentiste & Soignante des âmes',
+        territory: 'Dakar',
+        country: 'Sénégal',
+        flag: '🇸🇳',
+        universeTag: 'Healer',
+        photoUrl: '/assets/duos/doctor-healer.jpg',
+        isPioneer: true,
+        badge: 'Première effigie',
+        invitationStory: 'Médecin humaniste soignant les corps et réparant la dignité humaine dans les couloirs d’urgence.',
+        teaserVideoUrl: TEASER_VIDEOS[1],
+        teaserPitch: '« Guérir ne consiste pas seulement à recoudre un corps, mais à rappeler à l’âme qu’elle a le droit de vivre. »',
+        generation: 1
+      }
+    ]
   }
 ];

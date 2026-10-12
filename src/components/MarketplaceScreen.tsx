@@ -6,12 +6,25 @@ import {
   CheckCircle2, 
   ChevronLeft, 
   ChevronRight,
-  ArrowRight
+  ArrowRight,
+  Layers
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 
 interface MarketplaceScreenProps {
   onNavigate: (screen: ViewScreen) => void;
+  initialPeerOfferId?: string;
+  initialPeerIndex?: number;
+  initialTab?: 'coproduire' | 'marche';
+  restoreContext?: {
+    offerId: string;
+    offerIndex: number;
+    sellerId: string;
+    sellerName: string;
+    sharesCount: number;
+    unitPrice: number;
+    seriesTitle: string;
+  };
 }
 
 interface ProductionPoster {
@@ -184,14 +197,36 @@ const INITIAL_PEER_OFFERS: PeerOffer[] = [
   }
 ];
 
-export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate }) => {
-  const [activeTab, setActiveTab] = useState<'coproduire' | 'marche'>('coproduire');
+export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ 
+  onNavigate,
+  initialPeerOfferId,
+  initialPeerIndex,
+  initialTab,
+  restoreContext
+}) => {
+  const [activeTab, setActiveTab] = useState<'coproduire' | 'marche'>(() => {
+    if (initialTab) return initialTab;
+    if (restoreContext || initialPeerOfferId || typeof initialPeerIndex === 'number') return 'marche';
+    return 'coproduire';
+  });
 
   // Indexes
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
-  const [marketIndex, setMarketIndex] = useState<number>(0);
+  const [marketIndex, setMarketIndex] = useState<number>(() => {
+    if (typeof initialPeerIndex === 'number' && initialPeerIndex >= 0 && initialPeerIndex < INITIAL_PEER_OFFERS.length) {
+      return initialPeerIndex;
+    }
+    if (restoreContext?.offerIndex !== undefined && restoreContext.offerIndex >= 0 && restoreContext.offerIndex < INITIAL_PEER_OFFERS.length) {
+      return restoreContext.offerIndex;
+    }
+    if (initialPeerOfferId) {
+      const idx = INITIAL_PEER_OFFERS.findIndex(p => p.id === initialPeerOfferId);
+      if (idx !== -1) return idx;
+    }
+    return 0;
+  });
   const [peerOffers, setPeerOffers] = useState<PeerOffer[]>(INITIAL_PEER_OFFERS);
 
   // Modal d'achat
@@ -215,6 +250,14 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
   useEffect(() => {
     setIsPlaying(false);
   }, [currentIndex, marketIndex, activeTab]);
+
+  useEffect(() => {
+    if (restoreContext) {
+      setSuccessToast(`Offre retrouvée : ${restoreContext.sharesCount} part${restoreContext.sharesCount > 1 ? 's' : ''} de ${restoreContext.seriesTitle} (${restoreContext.sellerName})`);
+      const timer = setTimeout(() => setSuccessToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [restoreContext]);
 
   const handleNext = () => {
     if (activeTab === 'coproduire') {
@@ -324,15 +367,14 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
       <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
         <div>
           <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
-            Marché
+            Productions
           </h1>
         </div>
 
-        {/* Boutons d'onglets Coproduire / Marché + Avatar profil parfaitement alignés */}
-        <div className="flex items-center gap-2.5 sm:gap-3.5">
-          <div className="flex items-center gap-1 sm:gap-1.5">
-            <button
-              onClick={() => setActiveTab('coproduire')}
+        {/* Côté droit : Boutons d'onglets Coproduire / Marché */}
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          <button
+            onClick={() => setActiveTab('coproduire')}
               id="tab-coproduire"
               className={`px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'coproduire'
@@ -355,7 +397,6 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
             >
               Marché
             </button>
-          </div>
         </div>
       </div>
 
@@ -563,7 +604,20 @@ export const MarketplaceScreen: React.FC<MarketplaceScreenProps> = ({ onNavigate
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onNavigate({ type: 'protagonist_profile', protagonistId: currentOffer.sellerId });
+                        onNavigate({ 
+                          type: 'protagonist_profile', 
+                          protagonistId: currentOffer.sellerId,
+                          returnToMarketplace: true,
+                          marketplaceContext: {
+                            offerId: currentOffer.id,
+                            offerIndex: marketIndex,
+                            sellerId: currentOffer.sellerId,
+                            sellerName: currentOffer.sellerName,
+                            sharesCount: currentOffer.sharesCount,
+                            unitPrice: currentOffer.unitPrice,
+                            seriesTitle: currentOffer.seriesTitle
+                          }
+                        });
                       }}
                       className="h-7 sm:h-7.5 px-2 sm:px-2.5 rounded-full bg-black/60 hover:bg-black/85 text-white text-[10.5px] font-medium backdrop-blur-md transition-all flex items-center gap-1.5 border border-white/20 cursor-pointer shadow-sm group/user text-left w-fit active:scale-95"
                       title={`Découvrir l’univers de ${currentOffer.sellerName}`}

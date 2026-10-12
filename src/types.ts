@@ -439,22 +439,130 @@ export interface PlatformFinancials {
   earnings: CoproductionEarning[];
 }
 
+export type OrderStatus =
+  | 'COMMANDE_PASSEE'
+  | 'COMMANDE_CONFIRMEE'
+  | 'EN_PREPARATION'
+  | 'EXPEDIEE'
+  | 'RECUE'
+  | 'TERMINEE'
+  | 'PROBLEME_SIGNALE';
+
+export interface UserPurchaseOrder {
+  id: string;
+  itemTitle: string;
+  itemType: 'produit' | 'service';
+  categoryLabel?: string;
+  sellerId: string;
+  sellerName: string;
+  sellerPhoto?: string;
+  orderDate: string;
+  amount: number;
+  currency: string;
+  quantity: number;
+  status: OrderStatus;
+  statusHistory: { status: OrderStatus; date: string; note?: string }[];
+  deliveryInfo?: string;
+  trackingNumber?: string;
+  buyerNotes?: string;
+  issueReported?: {
+    date: string;
+    description: string;
+    resolutionStatus: 'EN_ATTENTE' | 'EN_MEDIATION' | 'RESOLU';
+  };
+}
+
+export type ContributionStatus =
+  | 'CONTRIBUTION_EFFECTUEE'
+  | 'CONTREPARTIE_A_VENIR'
+  | 'CONTREPARTIE_EN_COURS'
+  | 'CONTREPARTIE_ATTRIBUEE'
+  | 'CONTREPARTIE_SANS'
+  | 'PROBLEME_SIGNALE';
+
+export interface UserProjectContribution {
+  id: string;
+  projectId: string;
+  projectTitle: string;
+  projectOwnerId: string;
+  projectOwnerName: string;
+  projectOwnerPhoto?: string;
+  date: string;
+  amount: number;
+  nature: string;
+  counterpart?: {
+    id: string;
+    title: string;
+    description: string;
+    estimatedDelivery?: string;
+    isDelivered: boolean;
+  };
+  status: ContributionStatus;
+  statusHistory: { status: ContributionStatus; date: string; note?: string }[];
+  issueReported?: {
+    date: string;
+    description: string;
+    resolutionStatus: 'EN_ATTENTE' | 'EN_MEDIATION' | 'RESOLU';
+  };
+}
+
 export type ViewScreen = 
   | { type: 'landing' }
   | { type: 'home' }
   | { type: 'matrix_view' }
   | { type: 'duo_feed'; selectedDocId?: string; currentDuoIndex?: number }
-  | { type: 'marketplace' }
+  | { 
+      type: 'marketplace'; 
+      initialPeerOfferId?: string; 
+      initialPeerIndex?: number; 
+      initialTab?: 'coproduire' | 'marche';
+      restoreContext?: {
+        offerId: string;
+        offerIndex: number;
+        sellerId: string;
+        sellerName: string;
+        sharesCount: number;
+        unitPrice: number;
+        seriesTitle: string;
+      };
+    }
   | { type: 'documentaries' }
   | { type: 'documentary_detail'; documentaryId: string }
   | { type: 'duo_detail'; duoId: string }
   | { type: 'video_player'; story: ProtagonistStory; protagonist: Protagonist; duoId?: string; documentaryTitle: string }
-  | { type: 'protagonist_profile'; protagonistId: string; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string; returnToProtagonistId?: string; initialShowLineage?: boolean }
+  | { 
+      type: 'protagonist_profile'; 
+      protagonistId: string; 
+      returnToDuoId?: string; 
+      returnToDuoIndex?: number; 
+      returnToDocId?: string; 
+      returnToProtagonistId?: string; 
+      initialShowLineage?: boolean;
+      returnToMarketplace?: boolean;
+      marketplaceContext?: {
+        offerId: string;
+        offerIndex: number;
+        sellerId: string;
+        sellerName: string;
+        sharesCount: number;
+        unitPrice: number;
+        seriesTitle: string;
+      };
+    }
   | { type: 'transmission_detail'; protagonistId: string; transmissionId: string }
   | { type: 'my_forest' }
-  | { type: 'profile'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string; returnToProtagonistId?: string; initialShowLineage?: boolean }
+  | { 
+      type: 'profile'; 
+      returnToDuoId?: string; 
+      returnToDuoIndex?: number; 
+      returnToDocId?: string; 
+      returnToProtagonistId?: string; 
+      initialShowLineage?: boolean;
+      initialModal?: 'orders' | 'contributions';
+    }
   | { type: 'settings'; returnTo?: 'profile' | 'duo_feed' }
   | { type: 'portfolio'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
+  | { type: 'transactions'; initialTab?: 'achats' | 'projets' | 'parts'; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string }
   | { type: 'messaging' }
   | { type: 'lineage'; protagonistId?: string; returnToDuoId?: string; returnToDuoIndex?: number; returnToDocId?: string; returnToProtagonistId?: string }
   | { type: 'submit_story'; preselectedDocumentaryId?: string }

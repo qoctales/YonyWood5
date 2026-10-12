@@ -14,6 +14,7 @@ import { MyForestScreen } from './components/MyForestScreen';
 import { ProfileSettingsScreen } from './components/ProfileSettingsScreen';
 import { SettingsScreen } from './components/SettingsScreen';
 import { PortfolioScreen } from './components/PortfolioScreen';
+import { TransactionsScreen } from './components/TransactionsScreen';
 import { MessagingScreen } from './components/MessagingScreen';
 import { MarketplaceScreen } from './components/MarketplaceScreen';
 import { SubmitStoryScreen } from './components/SubmitStoryScreen';
@@ -115,7 +116,13 @@ export default function App() {
         )}
 
         {currentScreen.type === 'marketplace' && (
-          <MarketplaceScreen onNavigate={setCurrentScreen} />
+          <MarketplaceScreen 
+            onNavigate={setCurrentScreen} 
+            initialPeerOfferId={currentScreen.initialPeerOfferId}
+            initialPeerIndex={currentScreen.initialPeerIndex}
+            initialTab={currentScreen.initialTab}
+            restoreContext={currentScreen.restoreContext}
+          />
         )}
 
         {currentScreen.type === 'profile' && (
@@ -132,6 +139,7 @@ export default function App() {
             returnToDocId={currentScreen.returnToDocId}
             returnToProtagonistId={currentScreen.returnToProtagonistId}
             initialShowLineage={currentScreen.initialShowLineage}
+            initialModal={currentScreen.initialModal}
           />
         )}
 
@@ -168,6 +176,16 @@ export default function App() {
         {currentScreen.type === 'portfolio' && (
           <PortfolioScreen 
             onNavigate={setCurrentScreen}
+            returnToDuoId={currentScreen.returnToDuoId}
+            returnToDuoIndex={currentScreen.returnToDuoIndex}
+            returnToDocId={currentScreen.returnToDocId}
+          />
+        )}
+
+        {currentScreen.type === 'transactions' && (
+          <TransactionsScreen 
+            onNavigate={setCurrentScreen}
+            initialTab={currentScreen.initialTab}
             returnToDuoId={currentScreen.returnToDuoId}
             returnToDuoIndex={currentScreen.returnToDuoIndex}
             returnToDocId={currentScreen.returnToDocId}
@@ -223,6 +241,8 @@ export default function App() {
             returnToDocId={currentScreen.returnToDocId}
             returnToProtagonistId={currentScreen.returnToProtagonistId}
             initialShowLineage={currentScreen.initialShowLineage}
+            returnToMarketplace={currentScreen.returnToMarketplace}
+            marketplaceContext={currentScreen.marketplaceContext}
           />
         )}
 

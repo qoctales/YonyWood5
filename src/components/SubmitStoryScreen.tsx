@@ -14,7 +14,8 @@ import {
   ChevronLeft, 
   ChevronRight, 
   BookOpen,
-  FileText
+  FileText,
+  Layers
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { PROPOSE_DOORS, ProposeDoor, ProposeSubject } from '../data/proposeDoorsData';
@@ -381,16 +382,18 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
           )}
         </div>
 
-        {/* Côté droit épuré : Raccourci retour direct aux duos si nécessaire */}
-        {preselectedDocumentaryId && (
-          <button
-            onClick={() => onNavigate({ type: 'duo_feed' })}
-            className="text-[11px] sm:text-xs text-stone-500 hover:text-stone-900 font-medium underline cursor-pointer shrink-0"
-            title="Revenir aux duos"
-          >
-            Quitter
-          </button>
-        )}
+        {/* Côté droit épuré : Raccourci retour si applicable */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {preselectedDocumentaryId && (
+            <button
+              onClick={() => onNavigate({ type: 'duo_feed' })}
+              className="text-[11px] sm:text-xs text-stone-500 hover:text-stone-900 font-medium underline cursor-pointer shrink-0"
+              title="Revenir aux duos"
+            >
+              Quitter
+            </button>
+          )}
+        </div>
       </div>
 
       {/* ========================================================================= */}

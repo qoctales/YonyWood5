@@ -77,18 +77,18 @@ export const ProfileLineageFrise: React.FC<ProfileLineageFriseProps> = ({
   return (
     <div 
       id="profile-lineage-frise-container"
-      className="relative w-full max-w-md mx-auto flex-1 flex flex-col items-center justify-center animate-in fade-in duration-200 select-none pb-28 sm:pb-32"
+      className="relative w-full max-w-md mx-auto flex-1 min-h-0 h-full flex flex-col items-center justify-center animate-in fade-in duration-200 select-none overflow-hidden"
     >
-      {/* Conteneur de la frise verticale (défilement fluide et infini le long de la frise) */}
+      {/* Conteneur de la frise verticale (strictement contenu entre le header et la barre de nav) */}
       <div 
         ref={scrollContainerRef}
         id="profile-lineage-frise-scroll"
-        className="relative flex-1 w-full max-h-[calc(100dvh-180px)] overflow-y-auto overflow-x-hidden no-scrollbar px-4 py-12 flex flex-col items-center scroll-smooth"
+        className="relative flex-1 w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar px-4 py-8 flex flex-col items-center scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {/* Ligne verticale ultra-fine traversant toute la frise */}
+        {/* Ligne verticale ultra-fine contenue dans la frise */}
         <div 
-          className="absolute top-10 bottom-10 left-1/2 -translate-x-1/2 w-[1.5px] bg-gradient-to-b from-[#C89B3C]/70 via-stone-300 to-[#A2482B]/70 pointer-events-none"
+          className="absolute top-4 bottom-4 left-1/2 -translate-x-1/2 w-[2px] bg-gradient-to-b from-[#C89B3C]/80 via-stone-300 via-30% via-[#A2482B] via-60% to-[#A2482B]/60 pointer-events-none"
         />
 
         {/* Liste des visages positionnés sur la ligne */}

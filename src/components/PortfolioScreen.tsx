@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { UserProductionShare } from './ProfileSettingsScreen';
-import { MarcheCloverIcon } from './YonywoodBrandIcons';
+import { ProductionTokenIcon } from './YonywoodBrandIcons';
 
 export interface PortfolioTransactionItem {
   id: string;
@@ -589,7 +589,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
                   onClick={() => setIsQuickSellOpen(true)}
                   className="w-full h-11 sm:h-12 rounded-2xl bg-[#A2482B] hover:bg-[#8B3A20] text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2.5"
                 >
-                  <MarcheCloverIcon className="w-5 h-5 text-white" />
+                  <ProductionTokenIcon className="w-5 h-5 text-white" />
                   <span>Vendre des parts</span>
                 </button>
               </div>

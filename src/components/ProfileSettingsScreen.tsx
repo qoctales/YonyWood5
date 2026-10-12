@@ -51,12 +51,15 @@ import {
   Target,
   Crown,
   LogIn,
-  Star
+  Star,
+  ReceiptText
 } from 'lucide-react';
 import { useAuth } from '../services/authContext';
 import { AuthModal } from './AuthModal';
 import { ShareIcon } from './ShareIcon';
-import { MarcheCloverIcon } from './YonywoodBrandIcons';
+import { ProductionTokenIcon } from './YonywoodBrandIcons';
+import { OrdersAndContributionsModal } from './OrdersAndContributionsModal';
+import { transactionService } from '../utils/transactionService';
 import { ProfileLineageFrise } from './ProfileLineageFrise';
 import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
 import { PROTAGONISTS, DOCUMENTARIES, DUOS } from '../data/mockData';
@@ -80,6 +83,17 @@ export interface ProfileSettingsScreenProps {
   returnToDocId?: string;
   returnToProtagonistId?: string;
   initialShowLineage?: boolean;
+  returnToMarketplace?: boolean;
+  marketplaceContext?: {
+    offerId: string;
+    offerIndex: number;
+    sellerId: string;
+    sellerName: string;
+    sharesCount: number;
+    unitPrice: number;
+    seriesTitle: string;
+  };
+  initialModal?: 'orders' | 'contributions';
 }
 
 // 1. Récit : Vidéo personnelle / histoire personnelle
@@ -343,8 +357,28 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
   returnToDuoIndex,
   returnToDocId,
   returnToProtagonistId,
-  initialShowLineage = false
+  initialShowLineage = false,
+  returnToMarketplace = false,
+  marketplaceContext,
+  initialModal
 }) => {
+  // Modal de suivi des achats et contributions
+  const [isOrdersModalOpen, setIsOrdersModalOpen] = useState<boolean>(false);
+  const [ordersModalTab, setOrdersModalTab] = useState<'orders' | 'contributions'>('orders');
+  const [activeTooltipCat, setActiveTooltipCat] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialModal === 'orders' || initialModal === 'contributions') {
+      onNavigate({ 
+        type: 'transactions', 
+        initialTab: initialModal === 'contributions' ? 'projets' : 'achats',
+        returnToDuoId,
+        returnToDuoIndex,
+        returnToDocId
+      });
+    }
+  }, [initialModal]);
+
   // Déterminer le mode : Propriétaire ou Visiteur
   const isOwner = !protagonistId || protagonistId === 'me';
 
@@ -1197,11 +1231,11 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   const CATEGORY_KEYS: ProfileCategory[] = ['recit', 'production', 'offre', 'appel'];
 
-  const CATEGORIES: { key: ProfileCategory; label: string; icon: React.FC<{ className?: string }> }[] = [
-    { key: 'recit', label: 'Récits & Épisodes', icon: Film },
-    { key: 'production', label: 'Productions', icon: MarcheCloverIcon },
-    { key: 'offre', label: 'Offre', icon: ShoppingBag },
-    { key: 'appel', label: 'Projet', icon: Sprout },
+  const CATEGORIES: { key: ProfileCategory; label: string; tooltip: string; icon: React.FC<{ className?: string }> }[] = [
+    { key: 'recit', label: 'Séries', tooltip: 'Séries', icon: Film },
+    { key: 'production', label: 'Productions', tooltip: 'Productions', icon: ProductionTokenIcon },
+    { key: 'offre', label: 'Offre', tooltip: 'Produits et services', icon: ShoppingBag },
+    { key: 'appel', label: 'Projets', tooltip: 'Projets', icon: Sprout },
   ];
 
   // Calcul du nombre de vidéos de la catégorie active
@@ -1667,6 +1701,26 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {/* Bouton Retour au Marché (si navigation contextuelle depuis une offre de vente) */}
+            {returnToMarketplace && (
+              <button
+                type="button"
+                onClick={() => onNavigate({
+                  type: 'marketplace',
+                  initialTab: 'marche',
+                  initialPeerOfferId: marketplaceContext?.offerId,
+                  initialPeerIndex: marketplaceContext?.offerIndex,
+                  restoreContext: marketplaceContext
+                })}
+                className="group flex h-8 sm:h-8.5 px-3 rounded-full bg-[#A2482B] text-white hover:bg-[#8A3B22] border border-[#8A3B22] text-xs font-semibold transition-all shadow-xs items-center gap-1.5 cursor-pointer whitespace-nowrap active:scale-95"
+                title="Retourner à l'annonce sur le Marché"
+                id="btn-return-to-market-header"
+              >
+                <ChevronLeft className="w-3.5 h-3.5 text-white stroke-[2.2]" />
+                <span>Retour au Marché</span>
+              </button>
+            )}
+
             {/* Bouton Revenir au Duo placé à côté des actions (sur desktop) */}
             {returnToDuoId && (
               <button
@@ -1687,23 +1741,21 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
             {isOwner ? (
               <>
-                {/* Bouton Mes Parts : fond terre cuite et contenu blanc au survol */}
+                {/* Bouton Unifié : Transactions (Achats, Projets, Mes parts) */}
                 <button
                   onClick={() => onNavigate({ 
-                    type: 'portfolio', 
+                    type: 'transactions',
+                    initialTab: 'achats',
                     returnToDuoId, 
                     returnToDuoIndex, 
                     returnToDocId 
                   })}
-                  id="btn-profile-portfolio-header"
-                  className="group w-8 h-8 sm:w-auto sm:h-8.5 sm:px-3.5 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-[#1C1917] hover:text-white flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative"
-                  title="Voir mes parts de marché"
+                  id="btn-profile-transactions-header"
+                  className="group h-8 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-xs font-semibold text-[#1C1917] hover:text-white flex items-center justify-center sm:gap-1.5 transition-all shadow-xs cursor-pointer relative active:scale-95"
+                  title="Consulter les transactions : Achats, Projets soutenus et Mes parts"
                 >
-                  <Wallet className="w-3.5 h-3.5 text-stone-700 group-hover:text-white transition-colors" />
-                  <span className="hidden sm:inline">Mes parts</span>
-                  <span className="absolute -top-1 -right-1 sm:static sm:top-auto sm:right-auto w-4 h-4 rounded-full bg-[#A2482B] group-hover:bg-white text-white group-hover:text-[#A2482B] text-[9px] font-bold flex items-center justify-center transition-colors">
-                    {productions.reduce((acc, p) => acc + (p.sharesCount || 0), 0)}
-                  </span>
+                  <ReceiptText className="w-3.5 h-3.5 text-stone-700 group-hover:text-white transition-colors" />
+                  <span>Transactions</span>
                 </button>
 
                 {/* Bouton Messagerie : fond terre cuite et contenu blanc au survol */}
@@ -1800,6 +1852,35 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       </div>
       )}
 
+      {/* BANNIÈRE CONTEXTUELLE DE REPRISE D'ACHAT DEPUIS LE MARCHÉ */}
+      {returnToMarketplace && marketplaceContext && (
+        <div className="max-w-4xl mx-auto px-4 mt-1 mb-1.5 w-full animate-in fade-in">
+          <div className="p-2.5 sm:p-3 rounded-2xl bg-amber-50/90 border border-amber-200/90 shadow-xs flex items-center justify-between gap-3 text-[#1C1917]">
+            <div className="min-w-0">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#A2482B] block">
+                Offre consultée sur le Marché
+              </span>
+              <p className="text-xs sm:text-sm font-bold text-[#1C1917] truncate">
+                {marketplaceContext.sharesCount} part{marketplaceContext.sharesCount > 1 ? 's' : ''} de {marketplaceContext.seriesTitle} à {marketplaceContext.unitPrice} € / part
+              </p>
+              <span className="text-[10.5px] text-stone-500 font-medium">Vendeur : {marketplaceContext.sellerName}</span>
+            </div>
+            <button
+              onClick={() => onNavigate({
+                type: 'marketplace',
+                initialTab: 'marche',
+                initialPeerOfferId: marketplaceContext.offerId,
+                initialPeerIndex: marketplaceContext.offerIndex,
+                restoreContext: marketplaceContext
+              })}
+              className="shrink-0 px-3.5 py-1.5 rounded-full bg-[#A2482B] hover:bg-[#8A3B22] text-white text-xs font-bold shadow-sm transition-all cursor-pointer active:scale-95"
+            >
+              Reprendre l'achat
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* TOAST SUCCÈS */}
       {shareToast && (
         <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 max-w-sm w-full px-4 py-2.5 rounded-2xl bg-[#1C1917] text-white text-xs font-semibold flex items-center gap-2 shadow-xl animate-in fade-in">
@@ -1811,10 +1892,10 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       {/* ========================================================================= */}
       {/* 2. VISIONNEUSE VERTICALE 9:16 (STRICTEMENT ALIGNÉE SUR COPRODUCTION)       */}
       {/* ========================================================================= */}
-      <div className="flex-1 flex flex-col items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200 relative">
+      <div className={`flex-1 flex flex-col items-center justify-center py-1 sm:py-2 min-h-0 ${showLineageFrise ? 'overflow-hidden' : 'overflow-visible'} px-2 sm:px-6 md:px-10 animate-in fade-in duration-200 relative`}>
 
         {/* Conteneur principal avec vidéo 9:16 épurée OU Frise de Lignée épurée */}
-        <div className="relative w-full h-full flex items-center justify-center">
+        <div className={`relative w-full h-full flex items-center justify-center ${showLineageFrise ? 'overflow-hidden' : ''}`}>
           
           {showLineageFrise ? (
             <ProfileLineageFrise
@@ -1862,32 +1943,52 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   : 'opacity-100 pointer-events-auto scale-100 translate-x-0'
               }`}
             >
-              {CATEGORIES.map(({ key, label, icon: IconComponent }) => {
+              {CATEGORIES.map(({ key, label, tooltip, icon: IconComponent }) => {
                 const isActive = activeCategory === key;
+                const isTooltipVisible = activeTooltipCat === key;
                 return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      switchCategory(key);
-                    }}
-                    id={`btn-profile-cat-${key}`}
-                    title={label}
-                    className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md active:scale-90 ${
-                      isActive
-                        ? 'bg-[#A2482B] border border-[#A2482B] text-white scale-105 shadow-[0_2px_12px_rgba(162,72,43,0.45)]'
-                        : 'bg-black/50 hover:bg-[#A2482B] border border-white/20 hover:border-[#A2482B] text-white hover:text-white'
-                    }`}
-                  >
-                    <IconComponent
-                      className={`w-4 h-4 transition-all duration-200 text-white ${
-                        isActive
-                          ? 'stroke-[2.4]'
-                          : 'stroke-[2]'
+                  <div key={key} className="relative group/catbtn flex items-center">
+                    {/* Infobulle : visible au survol sur desktop ET au tap sur mobile tactile */}
+                    <div 
+                      className={`absolute right-11 top-1/2 -translate-y-1/2 z-40 pointer-events-none transition-all duration-200 ${
+                        isTooltipVisible 
+                          ? 'opacity-100 translate-x-0' 
+                          : 'opacity-0 translate-x-1 group-hover/catbtn:opacity-100 group-hover/catbtn:translate-x-0'
                       }`}
-                    />
-                  </button>
+                    >
+                      <div className="px-2.5 py-1 rounded-lg bg-black/90 text-white text-[10.5px] font-semibold whitespace-nowrap shadow-xl border border-white/15">
+                        {tooltip}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        switchCategory(key);
+                        // Toggle tooltip for touch mobile devices
+                        setActiveTooltipCat(prev => prev === key ? null : key);
+                      }}
+                      onMouseEnter={() => setActiveTooltipCat(key)}
+                      onMouseLeave={() => setActiveTooltipCat(null)}
+                      id={`btn-profile-cat-${key}`}
+                      title={tooltip}
+                      aria-label={tooltip}
+                      className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md active:scale-90 ${
+                        isActive
+                          ? 'bg-[#A2482B] border border-[#A2482B] text-white scale-105 shadow-[0_2px_12px_rgba(162,72,43,0.45)]'
+                          : 'bg-black/50 hover:bg-[#A2482B] border border-white/20 hover:border-[#A2482B] text-white hover:text-white'
+                      }`}
+                    >
+                      <IconComponent
+                        className={`w-4 h-4 transition-all duration-200 text-white ${
+                          isActive
+                            ? 'stroke-[2.4]'
+                            : 'stroke-[2]'
+                        }`}
+                      />
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -2644,6 +2745,25 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   : orderActionType === 'acheter' 
                   ? 'achat' 
                   : 'commande';
+
+                // Enregistrement dans le suivi des transactions
+                const priceNum = parseInt(currentCreation.price?.replace(/[^0-9]/g, '') || '45', 10) || 45;
+                transactionService.addOrder({
+                  itemTitle: currentCreation.title,
+                  itemType: currentCreation.categoryLabel?.toLowerCase().includes('service') || currentCreation.categoryLabel?.toLowerCase().includes('cours') ? 'service' : 'produit',
+                  categoryLabel: currentCreation.categoryLabel,
+                  sellerId: targetProtagonist?.id || 'seller-artisan',
+                  sellerName: userName,
+                  sellerPhoto: userPhoto,
+                  orderDate: new Date().toISOString().split('T')[0],
+                  amount: priceNum,
+                  currency: '€',
+                  quantity: 1,
+                  status: 'COMMANDE_PASSEE',
+                  deliveryInfo: `Confirmation envoyée à ${orderContact || 'votre contact'}`,
+                  buyerNotes: `Option choisie : ${actionLabel}`
+                });
+
                 setShareToast(`Votre demande de ${actionLabel} a été transmise à ${userName}.`);
                 setTimeout(() => setShareToast(null), 3500);
               }}
@@ -2734,7 +2854,27 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               onClick={() => {
                 setIsContributingModalOpen(false);
                 if (initiativeActionType === 'contribuer') {
-                  setShareToast(`Merci pour votre contribution de ${contributionAmount} € !`);
+                  // Enregistrement dans le suivi des contributions
+                  transactionService.addContribution({
+                    projectId: currentInitiative?.id || 'projet-communaute',
+                    projectTitle: currentInitiative?.title || 'Projet solidaire',
+                    projectOwnerId: targetProtagonist?.id || 'owner-communaute',
+                    projectOwnerName: userName,
+                    projectOwnerPhoto: userPhoto,
+                    date: new Date().toISOString().split('T')[0],
+                    amount: contributionAmount,
+                    nature: 'Soutien participatif communautaire',
+                    counterpart: {
+                      id: `cp-${Date.now()}`,
+                      title: 'Remerciement officiel & invitation à l’inauguration',
+                      description: 'Votre nom mentionné dans le livre d’or du projet et accès privilégié aux étapes d’avancement.',
+                      estimatedDelivery: 'À la fin de la campagne',
+                      isDelivered: false
+                    },
+                    status: 'CONTREPARTIE_A_VENIR'
+                  });
+
+                  setShareToast(`Merci pour votre contribution de ${contributionAmount} € ! Contrepartie enregistrée.`);
                 } else {
                   setShareToast(`Merci ! Votre proposition de participation a été envoyée à ${userName}.`);
                 }
@@ -4600,6 +4740,17 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
           </div>
         )
       )}
+
+      {/* Modale de suivi des Achats et Contributions aux projets */}
+      <OrdersAndContributionsModal
+        isOpen={isOrdersModalOpen}
+        onClose={() => setIsOrdersModalOpen(false)}
+        initialTab={ordersModalTab}
+        onNavigateToSeller={(sellerId) => {
+          setIsOrdersModalOpen(false);
+          onNavigate({ type: 'protagonist_profile', protagonistId: sellerId });
+        }}
+      />
 
       {/* Modal d'authentification Connexion / Inscription */}
       <AuthModal 

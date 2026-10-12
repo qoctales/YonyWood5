@@ -662,63 +662,73 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         }}
       />
 
-      {/* 1. BARRE SUPÉRIEURE : EN-TÊTE ÉPURÉ, COMPACT AVEC BREADCRUMBS ET AVATAR PROFIL ALIGNÉS */}
-      <header className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 flex items-center justify-between pointer-events-none">
-        
-        {explorerLevel === 'dimensions' ? (
-          /* Niveau 0 : Portes d'entrée */
-          <div className="flex items-center gap-1.5 h-7.5 px-3 rounded-full bg-[#A2482B] text-white shadow-sm border border-[#8A3B22] pointer-events-auto text-[11px] sm:text-xs font-semibold">
-            <Layers className="w-3.5 h-3.5" />
-            <span>Portes</span>
-          </div>
-        ) : (
-          /* Niveau 1+ : Bouton retour aux Portes (Fond blanc, écriture noire, contour terre cuite) + Capsule Sujet actif & Actualiser */
-          <div className="flex items-center gap-1.5 pointer-events-auto min-w-0">
-            {/* Bouton retour aux Portes */}
-            <button
-              id="breadcrumb-dimensions-btn"
-              onClick={() => {
-                celestialAudio.playOrbSelect();
-                setExplorerLevel('dimensions');
-                setIsQuestionModalOpen(false);
-              }}
-              className="h-7.5 px-3 rounded-full bg-white hover:bg-stone-50 text-stone-900 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border border-[#A2482B] shadow-xs cursor-pointer transition-all active:scale-95 shrink-0"
-              title="Revenir au choix des Portes"
-            >
-              <Layers className="w-3.5 h-3.5 text-[#A2482B]" />
-              <span>Portes</span>
-            </button>
-
-            {/* Sujet actif sélectionné & Bouton Actualiser */}
-            <div className="h-7.5 pl-2.5 pr-1 rounded-full bg-[#A2482B] text-white shadow-sm border border-[#8A3B22] flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold shrink-0 max-w-[210px] sm:max-w-[320px]">
-              <button
-                id="breadcrumb-topic-title-btn"
-                onClick={() => {
-                  if (activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle)) {
-                    setIsQuestionModalOpen(prev => !prev);
-                  }
-                }}
-                className={`truncate text-white transition-colors ${
-                  activeCategory === 'questions' ? 'cursor-pointer hover:text-[#FFE7A3]' : 'cursor-default'
-                }`}
-                title={activeCategory === 'questions' ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
-              >
-                <span className="truncate">{activeTopicItem?.title}</span>
-              </button>
-
-              {/* Symbole discret pour actualiser les 16 voix */}
-              <button
-                id="btn-symbol-16-autres-voix"
-                onClick={handleActualiser}
-                className="w-5.5 h-5.5 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#A2482B] border border-white/30 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group shrink-0"
-                title="Actualiser : 16 autres voix"
-              >
-                <RefreshCw className={`w-2.5 h-2.5 transition-transform ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 duration-500'}`} />
-              </button>
+      {/* 1. BARRE SUPÉRIEURE : EN-TÊTE HARMONISÉ EXACTEMENT AU MÊME ENDROIT QUE STUDIO ET PRODUCTIONS */}
+      <div className="absolute top-0 left-0 right-0 z-40 w-full pointer-events-none">
+        <div className="w-full max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4">
+          <header className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2 pointer-events-auto">
+            {/* Titre Héritage exactement au même gabarit et position que Studio et Productions */}
+            <div className="flex items-center gap-2">
+              <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
+                Héritage
+              </h1>
             </div>
-          </div>
-        )}
-      </header>
+
+            {explorerLevel === 'dimensions' ? (
+              /* Niveau 0 : Portes d'entrée */
+              <div className="flex items-center gap-1.5 h-7.5 sm:h-8.5 px-3 rounded-full bg-[#A2482B] text-white shadow-xs border border-[#8A3B22] text-[11px] sm:text-xs font-semibold shrink-0">
+                <Layers className="w-3.5 h-3.5" />
+                <span>Portes</span>
+              </div>
+            ) : (
+              /* Niveau 1+ : Boutons rapprochés au fur et à mesure */
+              <div className="flex items-center gap-1.5 shrink-0 min-w-0">
+                {/* Bouton retour aux Portes */}
+                <button
+                  id="breadcrumb-dimensions-btn"
+                  onClick={() => {
+                    celestialAudio.playOrbSelect();
+                    setExplorerLevel('dimensions');
+                    setIsQuestionModalOpen(false);
+                  }}
+                  className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-stone-50 text-stone-900 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border border-[#A2482B] shadow-xs cursor-pointer transition-all active:scale-95 shrink-0"
+                  title="Revenir au choix des Portes"
+                >
+                  <Layers className="w-3.5 h-3.5 text-[#A2482B]" />
+                  <span>Portes</span>
+                </button>
+
+                {/* Sujet actif sélectionné & Bouton Actualiser rapprochés */}
+                <div className="h-7.5 sm:h-8.5 pl-2.5 pr-1 rounded-full bg-[#A2482B] text-white shadow-xs border border-[#8A3B22] flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold shrink-0 max-w-[180px] sm:max-w-[280px]">
+                  <button
+                    id="breadcrumb-topic-title-btn"
+                    onClick={() => {
+                      if (activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle)) {
+                        setIsQuestionModalOpen(prev => !prev);
+                      }
+                    }}
+                    className={`truncate text-white transition-colors ${
+                      activeCategory === 'questions' ? 'cursor-pointer hover:text-[#FFE7A3]' : 'cursor-default'
+                    }`}
+                    title={activeCategory === 'questions' ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
+                  >
+                    <span className="truncate">{activeTopicItem?.title}</span>
+                  </button>
+
+                  {/* Symbole discret pour actualiser les 16 voix */}
+                  <button
+                    id="btn-symbol-16-autres-voix"
+                    onClick={handleActualiser}
+                    className="w-5.5 h-5.5 rounded-full bg-white/20 hover:bg-white text-white hover:text-[#A2482B] border border-white/30 flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-110 active:scale-90 group shrink-0"
+                    title="Actualiser : 16 autres voix"
+                  >
+                    <RefreshCw className={`w-2.5 h-2.5 transition-transform ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 duration-500'}`} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </header>
+        </div>
+      </div>
 
       {/* POP-OVER AÉRÉ DE LA QUESTION (S'affiche uniquement au clic sur la Question pour la catégorie Mémoires) */}
       {isQuestionModalOpen && activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (

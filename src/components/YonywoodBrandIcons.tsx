@@ -266,6 +266,46 @@ export const MarcheCloverIcon: React.FC<IconProps> = ({
 export const MarcheSproutIcon = MarcheCloverIcon;
 
 /**
+ * ProductionTokenIcon:
+ * Symbole « Production » : Jeton de valeur / Pièce inspirée des jetons de casino,
+ * avec contour dentelé/cannelé, double anneau concentrique et noyau central,
+ * distinguant clairement la participation économique et financière de l'imaginaire végétal.
+ */
+export const ProductionTokenIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.5 
+}) => {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Anneau extérieur du jeton */}
+      <circle cx="12" cy="12" r="9.5" />
+      {/* Anneau intérieur concentrique pointillé */}
+      <circle cx="12" cy="12" r="6" strokeDasharray="2.5 2" />
+      {/* Noyau central (symbole de pièce/valeur) */}
+      <circle cx="12" cy="12" r="2.8" />
+      {/* Cannelures radiales du jeton de casino (8 repères de tranche) */}
+      <line x1="12" y1="2.5" x2="12" y2="4.5" />
+      <line x1="12" y1="19.5" x2="12" y2="21.5" />
+      <line x1="2.5" y1="12" x2="4.5" y2="12" />
+      <line x1="19.5" y1="12" x2="21.5" y2="12" />
+      <line x1="5.28" y1="5.28" x2="6.7" y2="6.7" />
+      <line x1="17.3" y1="17.3" x2="18.72" y2="18.72" />
+      <line x1="5.28" y1="18.72" x2="6.7" y2="17.3" />
+      <line x1="17.3" y1="6.7" x2="18.72" y2="5.28" />
+    </svg>
+  );
+};
+
+/**
  * SingleAlveoleIcon:
  * Alvéole pour remplacer les sacs sur la page Agora / Matrice.
  */
