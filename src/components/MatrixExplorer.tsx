@@ -69,8 +69,8 @@ function countDescendants(person: AffiliationPerson): number {
 
 // Rayons des orbites concentriques
 const R_INNER = 145; // Anneau 1 : Sujets de la Porte active (5 séries, 16 drapeaux, etc.)
-const R_OUTER = 280;
-const ORBIT_RADII = [145, 190, 280, 375, 465, 555, 645, 735, 825, 915];
+const R_OUTER = 280; // Anneau 2 : 16 Voix / Protagonistes
+const ORBIT_RADII = [145, 280, 375, 465, 555, 645, 735, 825, 915];
 
 // Helpers pour calculer la géométrie des alvéoles hexagonales (Rayon de miel)
 const getHexagonPoints = (cx: number, cy: number, r: number): string => {
@@ -477,64 +477,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       });
       genNodes.push(gen1Nodes);
 
-      // Traitement des ascendants pour le pionnier racine sélectionné (r=190, Fil Miel)
-      if (selectedPath.length > 0) {
-        const rootId = selectedPath[0];
-        const rootNode = gen1Nodes.find(n => n.person.id === rootId);
-        if (rootNode) {
-          const rootLineage = getLineageTree(rootNode.person || rootId);
-          if (rootLineage.ascendants && rootLineage.ascendants.length > 0) {
-            const ascNodesList: NodeItem[] = [];
-            rootLineage.ascendants.forEach((asc, aIdx) => {
-              const ascAngle = rootNode.angle - 14 - aIdx * 15;
-              const ascRad = (ascAngle * Math.PI) / 180;
-              const ascX = Math.cos(ascRad) * 190;
-              const ascY = Math.sin(ascRad) * 190;
-              const isSel = selectedPath.includes(asc.id);
-
-              const ascPerson: AffiliationPerson = {
-                id: asc.id,
-                name: asc.name,
-                firstName: asc.firstName,
-                age: 65,
-                role: asc.role,
-                territory: asc.territory,
-                country: asc.country,
-                flag: asc.flag,
-                photoUrl: asc.photoUrl,
-                teaserVideoUrl: asc.teaserVideoUrl,
-                teaserPitch: asc.quote,
-                invitationStory: asc.invitationStory,
-                universeTag: asc.universeTag,
-                badge: 'Ascendant'
-              };
-
-              links.push({
-                id: `link-asc-${rootId}-${asc.id}-${aIdx}`,
-                from: { x: ascX, y: ascY },
-                to: { x: rootNode.x, y: rootNode.y },
-                isActive: isSel,
-                strokeColor: LINEAGE_COLORS.honey,
-                type: 'ascendant'
-              });
-
-              ascNodesList.push({
-                person: ascPerson,
-                gen: 0,
-                x: ascX,
-                y: ascY,
-                angle: ascAngle,
-                descendantCount: 0,
-                isSelected: isSel,
-                roleInLineage: 'ascendant',
-                nodeKey: `node-asc-${rootId}-${asc.id}-${aIdx}`,
-                clipId: `clip-asc-${rootId}-${asc.id}-${aIdx}`
-              });
-            });
-            genNodes.push(ascNodesList);
-          }
-        }
-      }
+      // Pas de nœuds ascendants sur la matrice : les liens et cercles ascendants ne sont pas affichés ici
+      // afin de préserver l'élégance et la clarté du design (la lignée ascendante s'affiche sur la page de profil)
 
       // --- DÉPLOIEMENT EN CASCADE MULTI-NIVEAUX SANS PERTE DE CONTEXTE (JUSQU'À 8 DEGRÉS) ---
       const allPositionedNodes = new Map<string, NodeItem>();
@@ -865,27 +809,63 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
               })}
             </defs>
 
-            {/* A. CERCLES ORBITAUX PERMANENTS */}
-            {ORBIT_RADII.map((radius, idx) => {
-              const hasNodesOnRing = nodesByGeneration.some(nodes => nodes.some(n => Math.abs(Math.hypot(n.x, n.y) - radius) < 18));
-              const isHighlighted = (explorerLevel === 'stories' && (radius === 280 || hasNodesOnRing))
-                || (explorerLevel === 'dimensions' && radius === 145);
-
-              return (
-                <g key={`orbit-${idx}`}>
+            {/* A. CERCLES ORBITAUX : UNIQUEMENT LE 1ER CERCLE (16 CHOIX), LE 2ÈME (PROTAGONISTES), ET CEUX QUI VIENNENT APRÈS */}
+            {(() => {
+              // En niveau dimensions (8 portes) : seul l'anneau des portes (215) est tracé
+              if (explorerLevel === 'dimensions') {
+                return (
                   <circle 
                     cx="0" 
                     cy="0" 
-                    r={radius} 
+                    r="215" 
                     fill="none" 
                     stroke="#C89B3C" 
-                    strokeWidth={isHighlighted ? '1.5' : '0.8'} 
-                    strokeDasharray={isHighlighted ? 'none' : '3 4'} 
-                    opacity={isHighlighted ? '0.6' : '0.18'} 
+                    strokeWidth="1.2" 
+                    strokeDasharray="none" 
+                    opacity="0.5" 
+                  />
+                );
+              }
+
+              // En niveau stories :
+              // 1. Premier cercle : les 16 choix (R_INNER = 145)
+              // 2. Deuxième cercle : les protagonistes (R_OUTER = 280)
+              // 3. Cercles de ceux qui viennent après (descendants déployés) uniquement quand des nœuds y sont présents
+              const ringsToDraw: Array<{ radius: number; isHighlighted: boolean; isDashed: boolean; opacity: number }> = [
+                { radius: R_INNER, isHighlighted: false, isDashed: true, opacity: 0.35 },
+                { radius: R_OUTER, isHighlighted: true, isDashed: false, opacity: 0.6 }
+              ];
+
+              // Cercles supplémentaires pour les générations suivantes (descendants successifs)
+              nodesByGeneration.slice(1).forEach((genNodesList) => {
+                if (genNodesList.length > 0) {
+                  const ringRadius = Math.round(Math.hypot(genNodesList[0].x, genNodesList[0].y));
+                  if (!ringsToDraw.some(r => Math.abs(r.radius - ringRadius) < 15)) {
+                    ringsToDraw.push({
+                      radius: ringRadius,
+                      isHighlighted: false,
+                      isDashed: true,
+                      opacity: 0.4
+                    });
+                  }
+                }
+              });
+
+              return ringsToDraw.map((ring, idx) => (
+                <g key={`orbit-ring-${ring.radius}-${idx}`}>
+                  <circle 
+                    cx="0" 
+                    cy="0" 
+                    r={ring.radius} 
+                    fill="none" 
+                    stroke="#C89B3C" 
+                    strokeWidth={ring.isHighlighted ? '1.5' : '0.9'} 
+                    strokeDasharray={ring.isDashed ? '3 4' : 'none'} 
+                    opacity={ring.opacity} 
                   />
                 </g>
-              );
-            })}
+              ));
+            })()}
 
             {/* ========================================================================= */}
             {/* NIVEAU 0 : LES 8 PORTES D'OR ET LEURS HUBLOTS PHOTOGRAPHIQUES (PISTE 1)   */}
@@ -1625,12 +1605,20 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
 
             {/* BAS : Prénom + Âge en dessous uniquement + Bouton Diamant & Bonhomme */}
             <div className="relative z-20 p-5 sm:p-6 flex items-end justify-between pointer-events-auto mt-auto">
-              <div className="text-left font-sans">
-                <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none drop-shadow-md">
+              <div 
+                className="text-left font-sans cursor-pointer group/profile hover:opacity-95 transition-opacity"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenUniverse(modalPerson);
+                }}
+                title="Découvrir son profil complet et sa lignée ascendante"
+              >
+                <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none drop-shadow-md group-hover/profile:text-[#FFE7A3] transition-colors">
                   {modalPerson.firstName || modalPerson.name.split(' ')[0]}
                 </h3>
-                <p className="text-xs sm:text-sm text-stone-300 mt-1 font-medium drop-shadow">
-                  {modalPerson.age ? `${modalPerson.age} ans` : '46 ans'}
+                <p className="text-xs sm:text-sm text-stone-300 mt-1 font-medium drop-shadow flex items-center gap-1.5">
+                  <span>{modalPerson.age ? `${modalPerson.age} ans` : '46 ans'}</span>
+                  <span className="text-[10px] text-stone-400 group-hover/profile:text-white transition-colors">• Voir la lignée →</span>
                 </p>
               </div>
 
@@ -1665,7 +1653,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </button>
 
-                {/* 3. Accès à son univers complet (bonhomme) */}
+                {/* 3. Accès à son univers complet et à sa lignée ascendante (bonhomme) */}
                 <button
                   id={`modal-btn-universe-${modalPerson.id}`}
                   onClick={(e) => {
@@ -1673,7 +1661,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     handleOpenUniverse(modalPerson);
                   }}
                   className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 hover:bg-[#A2482B] backdrop-blur-md border border-white/25 hover:border-[#A2482B] text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
-                  title="Découvrir son univers complet"
+                  title="Découvrir son univers complet et sa lignée ascendante"
                 >
                   <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </button>

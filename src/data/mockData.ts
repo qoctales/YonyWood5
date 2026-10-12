@@ -2802,6 +2802,7 @@ export const VIDEOGRAPHERS: Videographer[] = [
   {
     id: 'vid-1',
     name: 'Ayaba Senou',
+    age: 28,
     photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
     photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
     territory: 'Bénin (Cotonou, Ouidah, Allada)',
@@ -2822,6 +2823,7 @@ export const VIDEOGRAPHERS: Videographer[] = [
   {
     id: 'vid-2',
     name: 'Mateo Quispe Flores',
+    age: 32,
     photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
     photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
     territory: 'Pérou (Cusco, Vallée Sacrée, Pisac)',
@@ -2842,6 +2844,7 @@ export const VIDEOGRAPHERS: Videographer[] = [
   {
     id: 'vid-3',
     name: 'Kadiatou Bocoum',
+    age: 29,
     photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
     photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
     territory: 'Sénégal (Dakar, Saint-Louis, Rufisque)',
@@ -2862,6 +2865,7 @@ export const VIDEOGRAPHERS: Videographer[] = [
   {
     id: 'vid-4',
     name: 'Adrien Vasseur',
+    age: 35,
     photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80',
     photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80',
     territory: 'France (Paris, Île-de-France, Lyon)',

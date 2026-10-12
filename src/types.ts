@@ -311,6 +311,7 @@ export interface Duo {
 export interface Videographer {
   id: string;
   name: string;
+  age?: number;
   photo?: string;
   photoUrl?: string;
   territory: string;

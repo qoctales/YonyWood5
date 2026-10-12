@@ -44,7 +44,7 @@ export const RequestVideographerScreen: React.FC<RequestVideographerScreenProps>
       <div className="bg-[#FFFFFF] rounded-3xl border border-[#E7E5E4] p-6 sm:p-8 shadow-card space-y-3 text-center max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C89B3C]/12 text-[#8B6845] text-xs font-semibold">
           <Camera className="w-3.5 h-3.5" />
-          Réseau des Artisans de l'Image YonyWood
+          Recruter un vidéaste
         </div>
         
         <h1 className="font-editorial text-3xl sm:text-4xl font-normal text-[#1C1917]">
