@@ -86,13 +86,16 @@ export const ProfileLineageFrise: React.FC<ProfileLineageFriseProps> = ({
         className="relative flex-1 w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar px-4 py-8 flex flex-col items-center scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {/* Ligne verticale ultra-fine contenue dans la frise */}
-        <div 
-          className="absolute top-4 bottom-4 left-1/2 -translate-x-1/2 w-[2px] bg-gradient-to-b from-[#C89B3C]/80 via-stone-300 via-30% via-[#A2482B] via-60% to-[#A2482B]/60 pointer-events-none"
-        />
-
         {/* Liste des visages positionnés sur la ligne */}
-        <div className="relative flex flex-col items-center gap-12 sm:gap-14 w-full my-auto py-8">
+        <div className="relative flex flex-col items-center gap-12 sm:gap-14 w-full my-auto py-10 min-h-full">
+          {/* Ligne verticale ininterrompue reliant tous les maillons de la lignée du premier au tout dernier */}
+          <div 
+            className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2.5px] bg-[#A2482B] pointer-events-none z-0"
+            style={{
+              boxShadow: '0 0 8px rgba(162, 72, 43, 0.35)'
+            }}
+          />
+
           {items.map(({ member, isCurrent, type }, idx) => {
             const isSelected = selectedMemberId === member.id;
             const isHovered = hoveredMemberId === member.id;
@@ -103,10 +106,40 @@ export const ProfileLineageFrise: React.FC<ProfileLineageFriseProps> = ({
               <div 
                 key={`frise-node-${member.id}-${idx}`}
                 id={`frise-node-${member.id}`}
-                className="relative flex flex-col items-center"
+                className="relative z-10 flex flex-col items-center"
                 onMouseEnter={() => setHoveredMemberId(member.id)}
                 onMouseLeave={() => setHoveredMemberId(null)}
               >
+                {/* Ligne verticale de liaison continue vers le maillon suivant */}
+                {idx < items.length - 1 && (
+                  <div 
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[2.5px] bg-[#A2482B] pointer-events-none -z-10"
+                    style={{
+                      height: 'calc(100% + 3.5rem)',
+                      boxShadow: '0 0 6px rgba(162, 72, 43, 0.35)'
+                    }}
+                  />
+                )}
+
+                {/* Prolongement vers le haut pour le premier maillon */}
+                {idx === 0 && (
+                  <div 
+                    className="absolute bottom-1/2 left-1/2 -translate-x-1/2 w-[2.5px] h-16 bg-[#A2482B] pointer-events-none -z-10"
+                    style={{
+                      boxShadow: '0 0 6px rgba(162, 72, 43, 0.35)'
+                    }}
+                  />
+                )}
+
+                {/* Prolongement vers le bas pour le dernier maillon descendant */}
+                {idx === items.length - 1 && (
+                  <div 
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[2.5px] h-16 bg-[#A2482B] pointer-events-none -z-10"
+                    style={{
+                      boxShadow: '0 0 6px rgba(162, 72, 43, 0.35)'
+                    }}
+                  />
+                )}
                 {/* Bulle prénom épurée : uniquement le prénom, aucune data technique ni mention premier clic */}
                 {(isSelected || isHovered || isCurrent) && (
                   <div 

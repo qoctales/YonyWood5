@@ -71,7 +71,7 @@ const PRODUCTIONS: ProductionPoster[] = [
   },
   {
     id: 'dixeat-fiat-luxe',
-    title: 'E Vivi < > Fiât Luxe',
+    title: 'E Vivi < > Fiat Luxe',
     posterImage: '/assets/posters/E Vivi < > Fiat Luxe.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharePrice: 65
@@ -145,7 +145,7 @@ const INITIAL_PEER_OFFERS: PeerOffer[] = [
     sellerId: 'amina-cook',
     sellerName: 'Amina',
     sellerPhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    seriesTitle: 'E Vivi < > Fiât Luxe',
+    seriesTitle: 'E Vivi < > Fiat Luxe',
     posterImage: '/assets/posters/E Vivi < > Fiat Luxe.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharesCount: 4,

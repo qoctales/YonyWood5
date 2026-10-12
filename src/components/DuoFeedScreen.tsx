@@ -13,13 +13,15 @@ import {
   Layers,
   LayoutGrid,
   ArrowRightLeft,
-  Flag
+  Flag,
+  Clapperboard
 } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
 import { apiService } from '../services/api';
 import { ViewScreen, Duo, Protagonist } from '../types';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 import { ReportModal } from './ReportModal';
+import { SequenceCreditsModal } from './SequenceCreditsModal';
 
 interface DuoFeedScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -50,6 +52,7 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isCreditsModalOpen, setIsCreditsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'duo' | 'deck'>('duo');
   const [deckActiveSide, setDeckActiveSide] = useState<'A' | 'B'>('A');
 
@@ -235,83 +238,85 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
     || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4';
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-2 sm:px-6 pt-2 sm:pt-4 pb-20 sm:pb-24 pt-safe pb-safe h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between text-[#1C1917] select-none">
+    <div className="w-full h-[100dvh] max-h-[100dvh] pb-20 sm:pb-24 pt-safe pb-safe overflow-hidden flex flex-col justify-between text-[#1C1917] select-none">
       
       {/* ========================================================================= */}
-      {/* 1. EN-TÊTE HARMONISÉ : TITRE DUOCUMENTAIRES, NOM DE LA SÉRIE AU CENTRE ET ACTIONS */}
+      {/* 1. EN-TÊTE HARMONISÉ EXACTEMENT AU MÊME ENDROIT QUE STUDIO, HÉRITAGES, PRODUCTIONS */}
       {/* ========================================================================= */}
-      <header className="relative flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3.5 bg-white/95 backdrop-blur-md border-b border-[#E7E5E4] shrink-0 gap-2">
-        <div className="flex items-center gap-2 shrink-0">
-          <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
-            Duocumentaires
-          </h1>
-        </div>
+      <div className="w-full max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 shrink-0">
+        <header className="relative flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
+          <div className="flex items-center gap-2 shrink-0">
+            <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
+              Duocumentaires
+            </h1>
+          </div>
 
-        {/* Centre absolu : Le nom de la série centré avec le symbole < > au centre mort */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none max-w-[44vw] sm:max-w-[48vw]">
-          {(() => {
-            const title = currentDuo.documentaryTitle || '';
-            const parts = title.includes('< >') ? title.split('< >') : title.includes('<>') ? title.split('<>') : null;
-            return parts ? (
-              <div 
-                key={`duo-series-header-${currentDuo.id}-${title}`}
-                className="inline-flex items-center gap-1 sm:gap-2 h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-xs text-[10.5px] sm:text-xs text-white pointer-events-auto select-none"
-                title={`${formatTitleCase(parts[0])} < > ${formatTitleCase(parts[1])}`}
-              >
-                <span className="font-sans font-bold text-white tracking-tight truncate max-w-[65px] sm:max-w-[130px] text-right">
-                  {formatTitleCase(parts[0])}
-                </span>
-                <span 
-                  className="font-mono text-[9px] sm:text-[11px] font-black text-white/95 px-0.5 select-none shrink-0 tracking-wider flex items-center gap-0.5"
-                  title="Face à face"
+          {/* Centre absolu : Le nom de la série centré avec le symbole < > au centre mort, parfaitement aligné verticalement avec le titre et le bouton */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-[calc(50%+4px)] sm:-translate-y-[calc(50%+5px)] flex items-center justify-center pointer-events-none max-w-[44vw] sm:max-w-[48vw]">
+            {(() => {
+              const title = currentDuo.documentaryTitle || '';
+              const parts = title.includes('< >') ? title.split('< >') : title.includes('<>') ? title.split('<>') : null;
+              return parts ? (
+                <div 
+                  key={`duo-series-header-${currentDuo.id}-${title}`}
+                  className="inline-flex items-center gap-1 sm:gap-2 h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-xs text-[10.5px] sm:text-xs text-white pointer-events-auto select-none"
+                  title={`${formatTitleCase(parts[0])} < > ${formatTitleCase(parts[1])}`}
                 >
-                  <span>&lt;</span>
-                  <span>&gt;</span>
-                </span>
-                <span className="font-sans font-bold text-white tracking-tight truncate max-w-[65px] sm:max-w-[130px] text-left">
-                  {formatTitleCase(parts[1])}
-                </span>
-              </div>
-            ) : (
-              <div className="inline-flex items-center h-7 sm:h-8 px-3 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-xs text-[10.5px] sm:text-xs text-white font-bold pointer-events-auto select-none truncate">
-                {formatTitleCase(title)}
-              </div>
-            );
-          })()}
-        </div>
+                  <span className="font-sans font-bold text-white tracking-tight truncate max-w-[65px] sm:max-w-[130px] text-right">
+                    {formatTitleCase(parts[0])}
+                  </span>
+                  <span 
+                    className="font-mono text-[9px] sm:text-[11px] font-black text-white/95 px-0.5 select-none shrink-0 tracking-wider flex items-center gap-0.5"
+                    title="Face à face"
+                  >
+                    <span>&lt;</span>
+                    <span>&gt;</span>
+                  </span>
+                  <span className="font-sans font-bold text-white tracking-tight truncate max-w-[65px] sm:max-w-[130px] text-left">
+                    {formatTitleCase(parts[1])}
+                  </span>
+                </div>
+              ) : (
+                <div className="inline-flex items-center h-7 sm:h-8 px-3 rounded-full bg-[#A2482B] border border-[#8A3B22] shadow-xs text-[10.5px] sm:text-xs text-white font-bold pointer-events-auto select-none truncate">
+                  {formatTitleCase(title)}
+                </div>
+              );
+            })()}
+          </div>
 
-        {/* Côté droit épuré : Onglet deck et drapeau du signalement UNIQUEMENT */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Bascule Vue Duo / Vue Deck */}
-          <button
-            onClick={() => setViewMode(prev => prev === 'duo' ? 'deck' : 'duo')}
-            className="flex items-center gap-1 h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-[11px] sm:text-xs font-semibold shadow-xs transition-all cursor-pointer active:scale-95 group/modetoggle shrink-0"
-            title={viewMode === 'duo' ? 'Passer en vue Deck (1 vidéo à la fois)' : 'Passer en vue Duo (2 vidéos côte à côte)'}
-          >
-            {viewMode === 'duo' ? (
-              <>
-                <Layers className="w-3.5 h-3.5 text-[#A2482B] group-hover/modetoggle:text-white transition-colors" />
-                <span className="hidden sm:inline">Deck</span>
-              </>
-            ) : (
-              <>
-                <LayoutGrid className="w-3.5 h-3.5 text-[#A2482B] group-hover/modetoggle:text-white transition-colors" />
-                <span className="hidden sm:inline">Duo</span>
-              </>
-            )}
-          </button>
+          {/* Côté droit épuré : Onglet deck et drapeau du signalement UNIQUEMENT */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Bascule Vue Duo / Vue Deck */}
+            <button
+              onClick={() => setViewMode(prev => prev === 'duo' ? 'deck' : 'duo')}
+              className="flex items-center gap-1 h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-[11px] sm:text-xs font-semibold shadow-xs transition-all cursor-pointer active:scale-95 group/modetoggle shrink-0"
+              title={viewMode === 'duo' ? 'Passer en vue Deck (1 vidéo à la fois)' : 'Passer en vue Duo (2 vidéos côte à côte)'}
+            >
+              {viewMode === 'duo' ? (
+                <>
+                  <Layers className="w-3.5 h-3.5 text-[#A2482B] group-hover/modetoggle:text-white transition-colors" />
+                  <span className="hidden sm:inline">Deck</span>
+                </>
+              ) : (
+                <>
+                  <LayoutGrid className="w-3.5 h-3.5 text-[#A2482B] group-hover/modetoggle:text-white transition-colors" />
+                  <span className="hidden sm:inline">Duo</span>
+                </>
+              )}
+            </button>
 
-          {/* Bouton de signalement */}
-          <button
-            onClick={() => setIsReportModalOpen(true)}
-            className="w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-red-50 text-stone-500 hover:text-red-600 border border-stone-200 hover:border-red-200 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
-            title="Signaler ce contenu vidéo"
-            id="btn-report-duo-content"
-          >
-            <Flag className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </header>
+            {/* Bouton de signalement */}
+            <button
+              onClick={() => setIsReportModalOpen(true)}
+              className="w-7.5 h-7.5 sm:w-8.5 sm:h-8.5 rounded-full bg-white hover:bg-red-50 text-stone-500 hover:text-red-600 border border-stone-200 hover:border-red-200 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
+              title="Signaler ce contenu vidéo"
+              id="btn-report-duo-content"
+            >
+              <Flag className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </header>
+      </div>
 
       {/* ========================================================================= */}
       {/* 2. ZONE PRINCIPALE : LE DUO EN FACE-À-FACE (DIPTYQUE PARFAIT)              */}
@@ -488,8 +493,20 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         )}
                       </div>
 
-                      {/* Vignettes d'action : Question au-dessus du profil bonhomme */}
+                      {/* Vignettes d'action : Générique, Question, Profil */}
                       <div className="flex flex-col items-center gap-1.5 shrink-0">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsCreditsModalOpen(true);
+                          }}
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95 shrink-0"
+                          title="Générique & Crédits de la séquence"
+                          id={`open-credits-a-${currentDuo.id}`}
+                        >
+                          <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        </button>
+
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -609,8 +626,20 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         )}
                       </div>
 
-                      {/* Vignettes d'action : Question au-dessus du profil bonhomme */}
+                      {/* Vignettes d'action : Générique, Question, Profil */}
                       <div className="flex flex-col items-center gap-1.5 shrink-0">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsCreditsModalOpen(true);
+                          }}
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95 shrink-0"
+                          title="Générique & Crédits de la séquence"
+                          id={`open-credits-b-${currentDuo.id}`}
+                        >
+                          <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        </button>
+
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -753,6 +782,17 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
                         {/* Boutons d'action sur la vidéo empilés verticalement comme en mode duo */}
                         <div className="flex flex-col items-center gap-1.5 sm:gap-2 shrink-0">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsCreditsModalOpen(true);
+                            }}
+                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
+                            title="Générique & Crédits de la séquence"
+                          >
+                            <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                          </button>
+
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

@@ -29,7 +29,7 @@
 1. **Èṣù < > Jésus** : `/assets/posters/Esu < > Jesus.png`
 2. **Finagnon < > Qosqorico** : `/assets/posters/Finagnon < > Qosqorico.png`
 3. **Blacks One < > Beyond Eve** : `/assets/posters/Blacks One < > Beyond Eve.png`
-4. **E Vivi < > Fiât Luxe** : `/assets/posters/E Vivi < > Fiat Luxe.png`
+4. **E Vivi < > Fiat Luxe** : `/assets/posters/E Vivi < > Fiat Luxe.png`
 5. **Investors < > Builders** : `/assets/posters/Investors < > Builders.png`
 6. **Other Eyes < > Sixth Sense** : `/assets/posters/Other eyes < > Sixth sense.png` *(nouvelle affiche mise à jour)*
 7. **Coaching < > Unlimited** : `/assets/posters/Coaching < > Unlimited.png` *(nouvelle série)*

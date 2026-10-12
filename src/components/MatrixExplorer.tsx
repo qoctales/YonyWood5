@@ -666,10 +666,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       <div className="absolute top-0 left-0 right-0 z-40 w-full pointer-events-none">
         <div className="w-full max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4">
           <header className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2 pointer-events-auto">
-            {/* Titre Héritage exactement au même gabarit et position que Studio et Productions */}
+            {/* Titre Héritages exactement au même gabarit et position que Studio et Productions */}
             <div className="flex items-center gap-2">
               <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
-                Héritage
+                Héritages
               </h1>
             </div>
 

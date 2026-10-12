@@ -111,7 +111,7 @@ export const PortfolioScreen: React.FC<PortfolioScreenProps> = ({
     {
       id: 'prod-4',
       seriesId: 'dixeat-fiat-luxe',
-      seriesTitle: 'E Vivi < > Fiât Luxe',
+      seriesTitle: 'E Vivi < > Fiat Luxe',
       sharesCount: 6,
       sharesOnSale: 2,
       startPrice: 45,

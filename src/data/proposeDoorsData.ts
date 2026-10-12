@@ -99,7 +99,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
       },
       {
         id: 'dixeat-fiat-luxe',
-        title: 'E Vivi < > Fiât Luxe',
+        title: 'E Vivi < > Fiat Luxe',
         subtitle: 'Artisans du goût et haute scénographie d’exception au service du détail.',
         synopsis: 'L’artisanat d’art et la haute gastronomie vus de l’intérieur. La rencontre de deux orfèvres du détail qui consacrent leur existence à la patience de la matière et à l’hospitalité sublime.',
         question: 'Quelle est la noblesse et le sens profond caché dans le geste de votre métier ?',

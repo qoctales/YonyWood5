@@ -23,6 +23,26 @@ const isProd = process.env.NODE_ENV === 'production';
 const inMemoryPledges: any[] = [];
 const inMemoryMessages: any[] = [];
 const inMemoryThreads: any[] = [];
+const inMemoryUsers: Map<string, any> = new Map([
+  ['qoctales@gmail.com', {
+    id: 'usr-admin-romeo',
+    email: 'qoctales@gmail.com',
+    name: 'Romeo Nonvide',
+    firstName: 'Romeo',
+    lastName: 'Nonvide',
+    role: 'ADMIN',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    bio: 'Fondateur & Directeur éditorial de YonyWood.',
+    territory: 'Cotonou & Paris',
+    country: 'Bénin',
+    messagePermission: 'all',
+    pushNewMessage: true,
+    messagePreview: true,
+    language: 'fr',
+    sharesCount: 125,
+    createdAt: '2026-01-15'
+  }]
+]);
 
 // Socket.IO
 const io = new Server(httpServer, {
@@ -222,16 +242,14 @@ app.get('/api/coproduction/simulation', (req: Request, res: Response) => {
   });
 });
 
-// Messaging
-app.get('/api/messaging/threads', (_req: Request, res: Response) => {
+// Messaging (and alias /api/messages)
+const handleGetThreads = (_req: Request, res: Response) => {
   res.json(inMemoryThreads);
-});
-
-app.get('/api/messaging/invitations', (_req: Request, res: Response) => {
+};
+const handleGetInvitations = (_req: Request, res: Response) => {
   res.json([]);
-});
-
-app.post('/api/messaging/threads/:id/messages', (req: Request, res: Response) => {
+};
+const handlePostMessage = (req: Request, res: Response) => {
   const { id } = req.params;
   const { text } = req.body;
   const message = {
@@ -243,17 +261,114 @@ app.post('/api/messaging/threads/:id/messages', (req: Request, res: Response) =>
   inMemoryMessages.push(message);
   io.to(`thread:${id}`).emit('message', message);
   res.status(201).json(message);
-});
+};
+
+app.get('/api/messaging/threads', handleGetThreads);
+app.get('/api/messages/threads', handleGetThreads);
+
+app.get('/api/messaging/invitations', handleGetInvitations);
+app.get('/api/messages/invitations', handleGetInvitations);
+
+app.post('/api/messaging/threads/:id/messages', handlePostMessage);
+app.post('/api/messages/threads/:id/messages', handlePostMessage);
 
 app.post('/api/messaging/invitations/:id/accept', (req: Request, res: Response) => {
+  res.json({ success: true, invitationId: req.params.id, status: 'accepted' });
+});
+app.post('/api/messages/invitations/:id/accept', (req: Request, res: Response) => {
   res.json({ success: true, invitationId: req.params.id, status: 'accepted' });
 });
 
 app.post('/api/messaging/invitations/:id/decline', (req: Request, res: Response) => {
   res.json({ success: true, invitationId: req.params.id, status: 'declined' });
 });
+app.post('/api/messages/invitations/:id/decline', (req: Request, res: Response) => {
+  res.json({ success: true, invitationId: req.params.id, status: 'declined' });
+});
 
-// User preferences
+// Authentication & User preferences
+app.post('/api/auth/register', (req: Request, res: Response) => {
+  const { email, firstName, lastName } = req.body || {};
+  if (!email) {
+    res.status(400).json({ error: 'Email requis' });
+    return;
+  }
+  const cleanEmail = email.trim().toLowerCase();
+  const existing = inMemoryUsers.get(cleanEmail);
+  if (existing) {
+    res.json({
+      message: 'Compte existant',
+      token: `demo-token-${existing.id}`,
+      user: existing,
+    });
+    return;
+  }
+  const newUser = {
+    id: `usr-${Date.now()}`,
+    email: cleanEmail,
+    name: `${firstName || ''} ${lastName || ''}`.trim() || cleanEmail.split('@')[0],
+    firstName: firstName || cleanEmail.split('@')[0],
+    lastName: lastName || '',
+    role: cleanEmail === 'qoctales@gmail.com' ? 'ADMIN' : 'USER',
+    sharesCount: 10,
+    messagePermission: 'all',
+    pushNewMessage: true,
+    messagePreview: true,
+    language: 'fr',
+    createdAt: new Date().toISOString().split('T')[0],
+  };
+  inMemoryUsers.set(cleanEmail, newUser);
+  res.status(201).json({
+    message: 'Compte créé avec succès',
+    token: `demo-token-${newUser.id}`,
+    user: newUser,
+  });
+});
+
+app.post('/api/auth/login', (req: Request, res: Response) => {
+  const { email } = req.body || {};
+  if (!email) {
+    res.status(400).json({ error: 'Email requis' });
+    return;
+  }
+  const cleanEmail = email.trim().toLowerCase();
+  let user = inMemoryUsers.get(cleanEmail);
+  if (!user) {
+    user = {
+      id: `usr-${Date.now()}`,
+      email: cleanEmail,
+      name: cleanEmail.split('@')[0],
+      firstName: cleanEmail.split('@')[0],
+      role: cleanEmail === 'qoctales@gmail.com' ? 'ADMIN' : 'USER',
+      sharesCount: 10,
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    inMemoryUsers.set(cleanEmail, user);
+  }
+  res.json({
+    message: 'Connexion réussie',
+    token: `demo-token-${user.id}`,
+    user,
+  });
+});
+
+app.get('/api/auth/me', (req: Request, res: Response) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    // Default to admin or guest
+    res.json(inMemoryUsers.get('qoctales@gmail.com') || null);
+    return;
+  }
+  // Try to find user from token
+  for (const user of inMemoryUsers.values()) {
+    if (authHeader.includes(user.id)) {
+      res.json(user);
+      return;
+    }
+  }
+  res.json(inMemoryUsers.get('qoctales@gmail.com') || null);
+});
+
 app.put('/api/auth/preferences', (req: Request, res: Response) => {
   res.json({ success: true, preferences: req.body });
 });

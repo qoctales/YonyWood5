@@ -890,7 +890,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     {
       id: 'prod-4',
       seriesId: 'dixeat-fiat-luxe',
-      seriesTitle: 'E Vivi < > Fiât Luxe',
+      seriesTitle: 'E Vivi < > Fiat Luxe',
       sharesCount: 6,
       sharesOnSale: 2,
       startPrice: 45,
@@ -1478,7 +1478,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
       if (lower.includes('finagnon')) return 'Finagnon';
       if (lower.includes('jesus') || lower.includes('jésus') || lower.includes('legba') || lower.includes('èṣù')) return 'Èṣù < > Jésus';
       if (lower.includes('blacks')) return 'Blacks One';
-      if (lower.includes('dixeat') || lower.includes('vivi') || lower.includes('fiât') || lower.includes('fiat')) return 'E Vivi < > Fiât Luxe';
+      if (lower.includes('dixeat') || lower.includes('vivi') || lower.includes('fiât') || lower.includes('fiat')) return 'E Vivi < > Fiat Luxe';
       const clean = name.split(/[:–—<]/)[0].trim();
       return clean.length > 18 ? clean.split(' ')[0] : clean;
     };

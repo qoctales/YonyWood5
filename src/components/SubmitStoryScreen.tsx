@@ -15,7 +15,8 @@ import {
   ChevronRight, 
   BookOpen,
   FileText,
-  Layers
+  Layers,
+  Film
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { PROPOSE_DOORS, ProposeDoor, ProposeSubject } from '../data/proposeDoorsData';
@@ -58,6 +59,11 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const [videographerCity, setVideographerCity] = useState('');
   const [videographerContact, setVideographerContact] = useState('');
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
+
+  // Crédits de la séquence (Casting, Réalisation, Post-production)
+  const [creditsCasting, setCreditsCasting] = useState('Moi-même (Témoin principal)');
+  const [creditsDirector, setCreditsDirector] = useState('Alain Kpatoukpa');
+  const [creditsPostProd, setCreditsPostProd] = useState('Sonia Dossou (Montage), Mathieu H. (Mixage son)');
 
   // Données courantes
   const currentDoor: ProposeDoor = PROPOSE_DOORS[doorIndex] || PROPOSE_DOORS[0];
@@ -722,23 +728,41 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
 
               {/* BAS : BOUTONS ADAPTÉS SANS DÉBORDEMENT */}
               <div className="relative z-10 flex items-center justify-between gap-1.5 pt-0.5">
-                {/* Cartouche SYNOPSIS (pour les Séries) ou QUESTION (pour les autres portes) */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowSubjectQuestion(true);
-                  }}
-                  className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
-                  title={isSeries ? "Découvrir le synopsis de la série" : "Découvrir la question à laquelle répondre"}
-                >
-                  {isSeries ? (
-                    <FileText className="w-3 h-3 text-[#FACC15] shrink-0" />
-                  ) : (
-                    <BookOpen className="w-3 h-3 text-[#FACC15] shrink-0" />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Cartouche SYNOPSIS (pour les Séries) ou QUESTION (pour les autres portes) */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowSubjectQuestion(true);
+                    }}
+                    className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
+                    title={isSeries ? "Découvrir le synopsis de la série" : "Découvrir la question à laquelle répondre"}
+                  >
+                    {isSeries ? (
+                      <FileText className="w-3 h-3 text-[#FACC15] shrink-0" />
+                    ) : (
+                      <BookOpen className="w-3 h-3 text-[#FACC15] shrink-0" />
+                    )}
+                    <span>{isSeries ? 'Synopsis' : 'Question'}</span>
+                  </button>
+
+                  {/* Bouton direct vers la page de la série */}
+                  {isSeries && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNavigate({ type: 'documentary_detail', documentaryId: currentSubject.id });
+                      }}
+                      className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
+                      title="Consulter la fiche officielle de la série (équipe, producteurs, etc.)"
+                    >
+                      <Film className="w-3 h-3 text-[#C89B3C] shrink-0" />
+                      <span>Voir la série</span>
+                    </button>
                   )}
-                  <span>{isSeries ? 'Synopsis' : 'Question'}</span>
-                </button>
+                </div>
 
                 {/* Bouton de choix contextualisé sans déborder */}
                 <button
@@ -791,6 +815,23 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                           ? (currentSubject.synopsis || currentSubject.subtitle) 
                           : `« ${currentSubject.question} »`}
                       </p>
+
+                      {isSeries && (
+                        <div className="pt-3">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowSubjectQuestion(false);
+                              onNavigate({ type: 'documentary_detail', documentaryId: currentSubject.id });
+                            }}
+                            className="w-full py-2.5 px-3 rounded-xl bg-white/10 hover:bg-[#A2482B] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer border border-white/20 hover:border-transparent"
+                          >
+                            <Film className="w-3.5 h-3.5 text-[#C89B3C]" />
+                            <span>Consulter la page officielle de la série</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1144,6 +1185,74 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     </div>
                   )}
                 </label>
+              </div>
+
+              {/* GÉNÉRIQUE & CRÉDITS DE LA SÉQUENCE */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-4 text-left">
+                <div className="flex items-center justify-between border-b border-stone-200/80 pb-2.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#A2482B]">
+                    <Film className="w-4 h-4" />
+                    <span>Générique & Attribution des rôles</span>
+                  </div>
+                  <span className="text-[10px] text-stone-400 font-mono">Filiation & Droits</span>
+                </div>
+                
+                <p className="text-xs text-stone-500 font-light leading-relaxed">
+                  Précisez les intervenants pour attribuer automatiquement les droits, les mentions et la traçabilité économique sur YonyWood.
+                </p>
+
+                <div className="space-y-3.5 pt-1">
+                  {/* Casting */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-stone-800 block">
+                      Casting / Témoins à l'écran
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Mireille Houndé (Témoin principal), Koffi Mensah"
+                      value={creditsCasting}
+                      onChange={(e) => setCreditsCasting(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
+                    />
+                    <span className="text-[10px] text-stone-400 block">
+                      Saisissez le nom ou pseudo des personnes visibles à l'image.
+                    </span>
+                  </div>
+
+                  {/* Réalisation */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-stone-800 block">
+                      Réalisation / Prise de vue
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Alain Kpatoukpa"
+                      value={creditsDirector}
+                      onChange={(e) => setCreditsDirector(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
+                    />
+                    <span className="text-[10px] text-stone-400 block">
+                      Personne responsable du cadrage et de la réalisation.
+                    </span>
+                  </div>
+
+                  {/* Post-production */}
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-stone-800 block">
+                      Post-Production (Montage, Son, Étalonnage)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Sonia Dossou (Montage), Mathieu H. (Mixage sonore)"
+                      value={creditsPostProd}
+                      onChange={(e) => setCreditsPostProd(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
+                    />
+                    <span className="text-[10px] text-stone-400 block">
+                      Équipe technique ayant participé à la finition de la vidéo.
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Actions : Retour / Transmettre */}

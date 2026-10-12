@@ -90,6 +90,12 @@ export interface Protagonist {
   transmissionsCount?: number;
   projectsCount?: number;
   socialLinks?: any;
+  seriesRoles?: Array<{
+    role: 'producteur' | 'effigie' | 'auteur' | 'scenariste' | 'realisateur' | 'distributeur';
+    roleLabel: string;
+    seriesId: string;
+    seriesTitle: string;
+  }>;
   tree?: {
     passeurs?: ProtagonistPasseur[];
     heritiers?: ProtagonistPasseur[];
@@ -181,6 +187,81 @@ export interface OfferItem {
   origin?: string;
 }
 
+export interface SeriesAuthor {
+  id?: string;
+  name: string;
+  avatarUrl?: string;
+  bio?: string;
+  protagonistId?: string;
+}
+
+export interface SeriesScreenwriter {
+  id?: string;
+  name: string;
+  avatarUrl?: string;
+  bio?: string;
+  protagonistId?: string;
+}
+
+export interface SeriesDirector {
+  id?: string;
+  name: string;
+  avatarUrl?: string;
+  bio?: string;
+  protagonistId?: string;
+}
+
+export interface SeriesProducerUser {
+  id: string;
+  name: string;
+  avatarUrl: string;
+  roleTitle: string;
+  pledgeAmount?: number;
+  joinedAt: string;
+  bio?: string;
+  videoPresentationUrl?: string;
+  protagonistId?: string;
+}
+
+export interface SeriesDistributor {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  roleOrChannel: string;
+  protagonistId?: string;
+}
+
+export interface SeriesSponsor {
+  id: string;
+  companyName: string;
+  logoUrl?: string;
+  websiteUrl?: string;
+  partnershipType: string;
+  description?: string;
+}
+
+export interface SequenceCredits {
+  casting: Array<{
+    name: string;
+    roleOrCharacter: string;
+    avatarUrl?: string;
+    protagonistId?: string;
+    age?: number;
+  }>;
+  director: {
+    name: string;
+    roleTitle?: string;
+    avatarUrl?: string;
+    protagonistId?: string;
+  };
+  postProduction: Array<{
+    name: string;
+    role: string;
+    avatarUrl?: string;
+    protagonistId?: string;
+  }>;
+}
+
 export interface Documentary {
   id: string;
   slug: string;
@@ -199,6 +280,12 @@ export interface Documentary {
   protagonistsCount: number;
   territories: string[];
   effigies?: SeriesEffigie[];
+  author?: SeriesAuthor;
+  screenwriter?: SeriesScreenwriter;
+  director?: SeriesDirector;
+  producers?: SeriesProducerUser[];
+  distributors?: SeriesDistributor[];
+  sponsors?: SeriesSponsor[];
 }
 
 export interface Duo {
@@ -218,6 +305,7 @@ export interface Duo {
   storyA: ProtagonistStory;
   storyB: ProtagonistStory;
   editorialReflection: string;
+  credits?: SequenceCredits;
 }
 
 export interface Videographer {
@@ -571,4 +659,9 @@ export type ViewScreen =
   | { type: 'forest_reviews' }
   | { type: 'site_map' }
   | { type: 'editorial_backoffice' }
-  | { type: 'admin_dashboard'; tab?: 'series' | 'moderation' | 'users' | 'finances' };
+  | { 
+      type: 'admin_dashboard'; 
+      tab?: 'overview' | 'users' | 'heritage' | 'series' | 'producers' | 'cooptations' | 'advertising' | 'finances' | 'moderation' | 'audit' | string;
+      filterId?: string;
+      seriesId?: string;
+    };

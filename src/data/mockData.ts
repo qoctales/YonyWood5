@@ -9,6 +9,7 @@ import {
   SeriesAffiliationTree,
   AffiliationPerson
 } from '../types';
+import { ALL_SERIES_TEAMS, getSeriesCredits } from './seriesTeamData';
 
 const INITIAL_DOCUMENTARIES: Documentary[] = [
   {
@@ -349,11 +350,11 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
   {
     id: 'dixeat-fiat-luxe',
     slug: 'dixeat-fiat-luxe',
-    title: 'E Vivi < > Fiât Luxe',
+    title: 'E Vivi < > Fiat Luxe',
     subtitle: 'Ceux qui nourrissent les autres < > ceux qui créent des expériences d\'exception.',
     centralQuestion: 'L\'expérience',
     shortSynopsis: 'Des marmites populaires de Dantokpa aux tables d’exception à Paris et Milan, des artisans de bouche et scénographes révèlent l’art du don, du détail et du souvenir impérissable.',
-    description: 'Dans la fumée des marmites de Dantokpa à Cotonou, E Vivi incarne l\'artisanat nourricier populaire : des femmes et cuisiniers qui se lèvent à 4h du matin pour offrir réconfort et dignité à des centaines de travailleurs avec une sauce gombo ou un igname pilé. En écho, Fiât Luxe explore la haute précision des arts de la table, de la scénographie olfactive et de l\'hospitalité d\'exception à Paris, Marrakech et Milan. Tout les sépare en apparence, sauf l\'essentiel : l\'obsession du détail, la générosité du don et la grâce de transformer un simple repas en un souvenir inoubliable.',
+    description: 'Dans la fumée des marmites de Dantokpa à Cotonou, E Vivi incarne l\'artisanat nourricier populaire : des femmes et cuisiniers qui se lèvent à 4h du matin pour offrir réconfort et dignité à des centaines de travailleurs avec une sauce gombo ou un igname pilé. En écho, Fiat Luxe explore la haute précision des arts de la table, de la scénographie olfactive et de l\'hospitalité d\'exception à Paris, Marrakech et Milan. Tout les sépare en apparence, sauf l\'essentiel : l\'obsession du détail, la générosité du don et la grâce de transformer un simple repas en un souvenir inoubliable.',
     coverImage: '/assets/posters/E Vivi < > Fiat Luxe.png',
     posterUrl: '/assets/posters/E Vivi < > Fiat Luxe.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
@@ -366,7 +367,7 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
         territory: 'Cotonou, Dantokpa & marchés ouest-africains'
       },
       {
-        name: 'Fiât Luxe',
+        name: 'Fiat Luxe',
         tagline: 'La haute scénographie du détail et le temps suspendu',
         description: 'L’orfèvrerie des arts de la table, la scénographie olfactive, la précision du geste qui transforme l’éphémère en mémoire inoubliable.',
         territory: 'Paris, Marrakech, Milan'
@@ -416,7 +417,7 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
         prompt: 'Racontez-nous une fois où vous avez voulu surprendre quelqu\'un et où les choses ne se sont pas passées exactement comme prévu. Qu\'avez-vous découvert à ce moment-là ?',
         audioDuration: '0:46',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        audioVoiceName: 'Scénographe Fiât Luxe',
+        audioVoiceName: 'Scénographe Fiat Luxe',
         translations: [
           { lang: 'fr', label: 'Français', prompt: 'Racontez-nous une fois où vous avez voulu surprendre quelqu\'un et où les choses ne se sont pas passées exactement comme prévu.' },
           { lang: 'en', label: 'English', prompt: 'Tell us about a time you wanted to surprise someone and things did not go as planned.' }
@@ -722,8 +723,8 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     effigies: [
       {
         id: 'eff-jennifer-rescuer',
-        name: 'Capitaine Jennifer',
-        role: 'Pompière d’intervention & Formatrice secours',
+        name: 'Capitaine Idriss Collins',
+        role: 'Pompier d’intervention & Formateur secours',
         photoUrl: '/assets/duos/firefighter-safer.jpg',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
         status: 'EFFIGIE_PRINCIPALE'
@@ -801,12 +802,12 @@ export const getCustomDocumentaries = (): Documentary[] => {
                 ] as [Documentary['universes'][0], Documentary['universes'][1]]
               };
             }
-            if (doc.id === 'dixeat-fiat-luxe' && (doc.title.includes('Dixeat') || doc.title !== 'E Vivi < > Fiât Luxe')) {
+            if (doc.id === 'dixeat-fiat-luxe' && (doc.title.includes('Dixeat') || doc.title !== 'E Vivi < > Fiat Luxe')) {
               migrated = true;
               return {
                 ...doc,
-                title: 'E Vivi < > Fiât Luxe',
-                description: doc.description ? doc.description.replace(/Dixeat/g, 'E Vivi').replace(/Fiat Luxe/g, 'Fiât Luxe') : doc.description,
+                title: 'E Vivi < > Fiat Luxe',
+                description: doc.description ? doc.description.replace(/Dixeat/g, 'E Vivi').replace(/Fiat Luxe/g, 'Fiat Luxe') : doc.description,
                 universes: [
                   {
                     name: 'E Vivi',
@@ -815,7 +816,7 @@ export const getCustomDocumentaries = (): Documentary[] => {
                     territory: 'Cotonou, Dantokpa & marchés ouest-africains'
                   },
                   {
-                    name: 'Fiât Luxe',
+                    name: 'Fiat Luxe',
                     tagline: 'La haute scénographie du détail et le temps suspendu',
                     description: 'L’orfèvrerie des arts de la table, la scénographie olfactive, la précision du geste qui transforme l’éphémère en mémoire inoubliable.',
                     territory: 'Paris, Marrakech, Milan'
@@ -866,14 +867,31 @@ export const getCustomDocumentaries = (): Documentary[] => {
           if (migrated) {
             localStorage.setItem('yonywood_custom_series', JSON.stringify(updated));
           }
-          return updated;
+          return updated.map((doc: Documentary) => {
+            const team = ALL_SERIES_TEAMS[doc.id];
+            if (team) {
+              return {
+                ...doc,
+                author: doc.author || team.author,
+                screenwriter: doc.screenwriter || team.screenwriter,
+                director: doc.director || team.director,
+                producers: (doc.producers && doc.producers.length > 0) ? doc.producers : team.producers,
+                distributors: (doc.distributors && doc.distributors.length > 0) ? doc.distributors : team.distributors,
+                sponsors: (doc.sponsors && doc.sponsors.length > 0) ? doc.sponsors : team.sponsors
+              };
+            }
+            return doc;
+          });
         }
       }
     } catch {
       // ignore
     }
   }
-  return INITIAL_DOCUMENTARIES;
+  return INITIAL_DOCUMENTARIES.map(doc => {
+    const team = ALL_SERIES_TEAMS[doc.id];
+    return team ? { ...doc, ...team } : doc;
+  });
 };
 
 export const DOCUMENTARIES: Documentary[] = getCustomDocumentaries();
@@ -1754,7 +1772,7 @@ export const PROTAGONISTS: Protagonist[] = [
     bio: 'Passée par les palaces parisiens et les riads d’exception de Marrakech, Hélène conçoit l’hospitalité comme une dramaturgie invisible. Pour elle, la lumière d’une bougie, l’inclinaison d’un verre ou le silence d’un accueil constituent le véritable luxe.',
     photoUrl: '/assets/protagonists/helene-saint-amand.jpg',
     documentaryId: 'dixeat-fiat-luxe',
-    universeTag: 'Fiât Luxe',
+    universeTag: 'Fiat Luxe',
     quote: '« Le luxe n’est pas ce qui brille : c’est l’attention totale portée à l’instant où quelqu’un pose enfin son fardeau pour se laisser nourrir. »',
     tree: {
       transmissions: [
@@ -2351,26 +2369,26 @@ export const PROTAGONISTS: Protagonist[] = [
   {
     id: 'firefighter-jennifer',
     slug: 'firefighter-jennifer',
-    name: 'Capitaine Jennifer Collins',
-    firstName: 'Jennifer',
+    name: 'Capitaine Idriss Collins',
+    firstName: 'Idriss',
     age: 41,
-    role: 'Officière sapeur-pompier & Commandante des opérations',
-    country: 'États-Unis',
-    territory: 'Chicago & Cotonou',
-    flag: '🇺🇸',
+    role: 'Commandant sapeur-pompier & Formateur secours',
+    country: 'Bénin & France',
+    territory: 'Cotonou & Marseille',
+    flag: '🇧🇯',
     photo: '/assets/duos/firefighter-safer.jpg',
     photoUrl: '/assets/duos/firefighter-safer.jpg',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     quote: '« Dans la fumée épaisse, on n’avance pas avec la peur de mourir mais avec l’urgence furieuse que quelqu’un respire encore. »',
-    bio: 'Dix-huit ans de service au feu, formatrice internationale en techniques de sauvetage en milieu clos et pionnière des brigades mixtes.',
+    bio: 'Dix-huit ans de service au feu, sauveteur émérite et protecteur intrépide des vies de la communauté.',
     universeTag: 'Safer',
     centralQuestion: 'Que ressent-on quand on franchit le rideau de flammes vers un inconnu ?',
     storiesCount: 6,
     transmissionsCount: 4,
     projectsCount: 2,
     details: {
-      bioExtended: 'Jennifer commande l’une des casernes les plus actives, alliant sang-froid tactique et attention paternelle et fraternelle à ses équipes.',
+      bioExtended: 'Idriss commande l’une des casernes les plus actives, alliant sang-froid tactique et attention fraternelle à ses équipes.',
       universeDescription: 'Le dévouement immédiat face au danger et la protection sans condition des citoyens.',
       transmissions: [],
       duos: [
@@ -2517,7 +2535,7 @@ export const DUOS: Duo[] = [
     id: 'duo-dixeat-fiat-luxe-01',
     slug: 'duo-dixeat-fiat-luxe-01',
     documentaryId: 'dixeat-fiat-luxe',
-    documentaryTitle: 'E Vivi < > Fiât Luxe',
+    documentaryTitle: 'E Vivi < > Fiat Luxe',
     episodeNumber: 'ÉPISODE 01',
     protagonistA: PROTAGONISTS.find(p => p.id === 'chef-koffi') || PROTAGONISTS[0],
     protagonistB: PROTAGONISTS.find(p => p.id === 'helene-saint-amand') || PROTAGONISTS[1],
@@ -2677,18 +2695,18 @@ export const DUOS: Duo[] = [
     episodeNumber: 'ÉPISODE 01',
     protagonistA: {
       id: 'firefighter-jennifer',
-      name: 'Jennifer Collins',
-      firstName: 'Jennifer',
+      name: 'Idriss Collins',
+      firstName: 'Idriss',
       age: 41,
-      role: 'Commandante sapeur-pompier',
-      country: 'États-Unis',
-      territory: 'Chicago & Cotonou',
-      flag: '🇺🇸',
+      role: 'Commandant sapeur-pompier',
+      country: 'Bénin & France',
+      territory: 'Cotonou & Marseille',
+      flag: '🇧🇯',
       photo: '/assets/duos/firefighter-safer.jpg',
       photoUrl: '/assets/duos/firefighter-safer.jpg',
       videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
       quote: '« Dans la fumée épaisse, on n’avance pas avec la peur de mourir mais avec l’urgence furieuse que quelqu’un respire encore. »',
-      bio: 'Dix-huit ans au feu, protectrice intrépide des vies de la cité.',
+      bio: 'Dix-huit ans au feu, protecteur intrépide des vies de la cité.',
       universeTag: 'Safer',
       centralQuestion: 'Que ressent-on quand on franchit le rideau de flammes vers un inconnu ?',
       storiesCount: 6,
@@ -2702,9 +2720,9 @@ export const DUOS: Duo[] = [
           questionTitle: 'Le Premier Secours',
           duration: '09:10',
           videoDurationSeconds: 550,
-          summary: 'Jennifer revient sur un sauvetage nocturne au péril de sa vie.',
+          summary: 'Idriss revient sur un sauvetage nocturne au péril de sa vie.',
           videoCoverUrl: '/assets/duos/firefighter-safer.jpg',
-          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Jennifer Collins' }]
+          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Idriss Collins' }]
         }
       ]
     } as any,
@@ -2772,6 +2790,13 @@ export const DUOS: Duo[] = [
     editorialReflection: 'D’un côté, la témérité de l’officière pompière qui s’interpose entre le citoyen et les flammes ; de l’autre, la tendresse experte du médecin qui recoud les plaies et guérit les cœurs. Deux gardiennes de notre vulnérabilité commune.'
   }
 ];
+
+// Enrichir automatiquement chaque Duo avec ses crédits complets de séquence (casting, réalisation, post-production)
+DUOS.forEach(duo => {
+  if (!duo.credits) {
+    duo.credits = getSeriesCredits(duo.documentaryId, duo.questionTitle);
+  }
+});
 
 export const VIDEOGRAPHERS: Videographer[] = [
   {
@@ -3013,7 +3038,7 @@ export const BACKOFFICE_APPLICATIONS: BackOfficeApplication[] = [
     territory: 'France (Paris)',
     documentaryId: 'dixeat-fiat-luxe',
     documentaryTitle: 'E VIVI × FIÂT LUXE',
-    universeGroup: 'Fiât Luxe',
+    universeGroup: 'Fiat Luxe',
     status: 'REVISIONS',
     submittedDate: '04 Septembre 2026',
     assignedReviewer: 'Équipe Son/Image',
@@ -3573,7 +3598,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
   },
   {
     seriesId: 'dixeat-fiat-luxe',
-    seriesTitle: 'E Vivi < > Fiât Luxe',
+    seriesTitle: 'E Vivi < > Fiat Luxe',
     subtitle: 'Ceux qui nourrissent les autres < > ceux qui créent des expériences d\'exception.',
     description: 'Le pont inattendu entre les géantes du feu de bois à Cotonou et les orfèvres des réceptions étoilées à Paris et Marrakech : comment chacun s\'est passé le flambeau de la délicatesse.',
     centralQuestion: 'L\'expérience',
@@ -3649,11 +3674,11 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
         territory: 'Paris / Marrakech',
         country: 'France & Maroc',
         flag: '🇫🇷',
-        universeTag: 'Fiât Luxe',
+        universeTag: 'Fiat Luxe',
         photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
         isPioneer: true,
         badge: 'Première effigie',
-        invitationStory: 'Première effigie de Fiât Luxe. Crée des dîners pour 12 convives où chaque assiette, odeur et bougie est pensée comme une partition théâtrale pour susciter l’émotion pure.',
+        invitationStory: 'Première effigie de Fiat Luxe. Crée des dîners pour 12 convives où chaque assiette, odeur et bougie est pensée comme une partition théâtrale pour susciter l’émotion pure.',
         duoPartnerName: 'Chef Koffi',
         duoPartnerPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
         duoId: 'duo-dixeat-fiat-luxe-01',
@@ -3668,7 +3693,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
             territory: 'Paris',
             country: 'France',
             flag: '🇫🇷',
-            universeTag: 'Fiât Luxe',
+            universeTag: 'Fiat Luxe',
             photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
             badge: 'Invité(e)',
             invitedById: 'helene-saint-amand',
@@ -3687,7 +3712,7 @@ export const SERIES_AFFILIATION_TREES: SeriesAffiliationTree[] = [
                 territory: 'Marrakech',
                 country: 'Maroc',
                 flag: '🇲🇦',
-                universeTag: 'Fiât Luxe',
+                universeTag: 'Fiat Luxe',
                 photoUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80',
                 badge: 'Invité(e)',
                 invitedById: 'marc-antoine-sommelier',

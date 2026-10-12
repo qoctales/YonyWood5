@@ -178,7 +178,7 @@ const seriesList: ExplorerCatalogItem[] = [
   {
     "id": "dixeat-fiat-luxe",
     "category": "series",
-    "title": "E Vivi < > Fiât Luxe",
+    "title": "E Vivi < > Fiat Luxe",
     "subtitle": "Quand la matière brute devient or, goût et lumière.",
     "question": "À quel instant précis avez-vous compris que transformer la matière brute était un acte de pure alchimie spirituelle ?",
     "photoUrl": "/assets/posters/dixeat-fiat-luxe.png",
