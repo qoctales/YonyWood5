@@ -64,6 +64,7 @@ import { ProfileLineageFrise } from './ProfileLineageFrise';
 import { ViewScreen, AffiliationPerson, Protagonist } from '../types';
 import { PROTAGONISTS, DOCUMENTARIES, DUOS } from '../data/mockData';
 import { MATRIX_SERIES_DATA } from '../data/matrixData';
+import { ALL_SERIES_TEAMS } from '../data/seriesTeamData';
 
 export type ProfileCategory = 'recit' | 'production' | 'offre' | 'appel';
 export type DimensionTab = ProfileCategory | 'episodes' | 'productions' | 'creations' | 'initiatives' | 'appels';
@@ -1585,6 +1586,71 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
     }
   };
 
+  // Badges de rôle discrets & typographiques associés aux séries
+  const userSeriesRoles = useMemo(() => {
+    const roles: Array<{ role: string; seriesTitle: string; seriesId: string }> = [];
+
+    if (targetProtagonist) {
+      const directDoc = DOCUMENTARIES.find(d => d.id === targetProtagonist.documentaryId);
+      if (directDoc) {
+        const isEffigie = directDoc.effigies?.some(e => e.id === targetProtagonist.id || e.name.toLowerCase() === targetProtagonist.name.toLowerCase());
+        roles.push({
+          role: isEffigie ? 'Effigie' : (targetProtagonist.role ? targetProtagonist.role.split('·')[0].split('-')[0].trim() : 'Témoin'),
+          seriesTitle: directDoc.title,
+          seriesId: directDoc.id,
+        });
+      }
+
+      Object.entries(ALL_SERIES_TEAMS).forEach(([sId, bundle]) => {
+        const sDoc = DOCUMENTARIES.find(d => d.id === sId);
+        if (!sDoc) return;
+        if (bundle.author.protagonistId === targetProtagonist.id || bundle.author.name.toLowerCase() === targetProtagonist.name.toLowerCase()) {
+          if (!roles.some(r => r.seriesId === sId && r.role === 'Auteur')) {
+            roles.push({ role: 'Auteur', seriesTitle: sDoc.title, seriesId: sId });
+          }
+        }
+        if (bundle.screenwriter.protagonistId === targetProtagonist.id || bundle.screenwriter.name.toLowerCase() === targetProtagonist.name.toLowerCase()) {
+          if (!roles.some(r => r.seriesId === sId && r.role === 'Scénariste')) {
+            roles.push({ role: 'Scénariste', seriesTitle: sDoc.title, seriesId: sId });
+          }
+        }
+        if (bundle.director.protagonistId === targetProtagonist.id || bundle.director.name.toLowerCase() === targetProtagonist.name.toLowerCase()) {
+          if (!roles.some(r => r.seriesId === sId && r.role === 'Réalisation')) {
+            roles.push({ role: 'Réalisation', seriesTitle: sDoc.title, seriesId: sId });
+          }
+        }
+        bundle.producers.forEach(p => {
+          if (p.protagonistId === targetProtagonist.id || p.name.toLowerCase() === targetProtagonist.name.toLowerCase()) {
+            if (!roles.some(r => r.seriesId === sId && r.role.includes('Product'))) {
+              roles.push({ role: p.roleTitle || 'Producteur', seriesTitle: sDoc.title, seriesId: sId });
+            }
+          }
+        });
+      });
+    } else if (currentUser) {
+      const isRomeo = currentUser.email?.toLowerCase() === 'qoctales@gmail.com' || currentUser.name?.includes('Romeo');
+      if (isRomeo) {
+        roles.push({ role: 'Auteur & Concepteur', seriesTitle: 'Èṣù < > Jésus', seriesId: 'jesus-legba' });
+        roles.push({ role: 'Producteur', seriesTitle: 'Finagnon < > Qosqorico', seriesId: 'finagnon-qosqorico' });
+      } else {
+        productions.forEach(share => {
+          if (!roles.some(r => r.seriesId === share.seriesId)) {
+            roles.push({
+              role: 'Producteur',
+              seriesTitle: share.seriesTitle,
+              seriesId: share.seriesId
+            });
+          }
+        });
+        if (roles.length === 0) {
+          roles.push({ role: 'Coproducteur citoyen', seriesTitle: 'Èṣù < > Jésus', seriesId: 'jesus-legba' });
+        }
+      }
+    }
+
+    return roles;
+  }, [targetProtagonist, currentUser, productions]);
+
   return (
     <div className="max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 pb-20 sm:pb-24 pt-safe pb-safe h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between text-[#1C1917]">
       
@@ -1697,6 +1763,29 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   </button>
                 )}
               </div>
+
+              {/* Badges de rôle discrets & typographiques avec accès direct aux séries */}
+              {userSeriesRoles.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap text-[11px] sm:text-xs text-stone-500 font-medium mt-0.5 leading-snug">
+                  {userSeriesRoles.map((item, idx) => (
+                    <React.Fragment key={idx}>
+                      {idx > 0 && <span className="text-stone-300">·</span>}
+                      <span className="inline-flex items-center gap-1">
+                        <span className="text-[#A2482B] font-semibold">{item.role}</span>
+                        <span className="text-stone-300">·</span>
+                        <button
+                          type="button"
+                          onClick={() => onNavigate({ type: 'documentary_detail', documentaryId: item.seriesId })}
+                          className="hover:text-[#A2482B] hover:underline transition-colors cursor-pointer text-stone-600 truncate max-w-[140px] sm:max-w-none text-left"
+                          title={`Consulter la fiche officielle de ${item.seriesTitle}`}
+                        >
+                          {item.seriesTitle}
+                        </button>
+                      </span>
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -1721,7 +1810,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
               </button>
             )}
 
-            {/* Bouton Revenir au Duo placé à côté des actions (sur desktop) */}
+            {/* Bouton Revenir au Duo placé à côté des actions (mobile & desktop) */}
             {returnToDuoId && (
               <button
                 type="button"
@@ -1730,12 +1819,13 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
                   currentDuoIndex: returnToDuoIndex ?? 0,
                   selectedDocId: returnToDocId
                 })}
-                className="group hidden sm:flex h-8 sm:h-8.5 px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-xs font-semibold transition-all shadow-xs items-center gap-1.5 cursor-pointer whitespace-nowrap"
-                title="Revenir au Duo"
+                className="group flex h-8 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-xs font-semibold transition-all shadow-xs items-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap active:scale-95"
+                title="Revenir au visionnage du Duo"
                 id="btn-return-to-duo-actions"
               >
                 <ChevronLeft className="w-3.5 h-3.5 text-stone-700 group-hover:text-white stroke-[2.2] transition-colors" />
-                <span>Revenir au Duo</span>
+                <span className="hidden sm:inline">Revenir au Duo</span>
+                <span className="sm:hidden">Duo</span>
               </button>
             )}
 

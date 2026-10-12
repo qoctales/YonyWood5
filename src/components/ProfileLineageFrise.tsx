@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, ArrowRight, X, Award, BookOpen, User, Sparkles } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, ArrowRight, X, Award, BookOpen, User, Sparkles, Clapperboard } from 'lucide-react';
 import { getLineageTree, LineageMember, LINEAGE_COLORS } from '../utils/lineageService';
 import { ResonanceModal } from './ResonanceModal';
+import { SequenceCreditsModal } from './SequenceCreditsModal';
+import { getSeriesCredits } from '../data/seriesTeamData';
 
 interface ProfileLineageFriseProps {
   personIdOrName: string;
@@ -20,6 +22,7 @@ export const ProfileLineageFrise: React.FC<ProfileLineageFriseProps> = ({
   const [isMuted, setIsMuted] = useState(false);
   const [isResonanceModalOpen, setIsResonanceModalOpen] = useState(false);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
+  const [isCreditsModalOpen, setIsCreditsModalOpen] = useState(false);
   const [personResonancePct, setPersonResonancePct] = useState<number | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -363,7 +366,21 @@ export const ProfileLineageFrise: React.FC<ProfileLineageFriseProps> = ({
               </div>
 
               <div className="flex flex-col items-center gap-2.5 sm:gap-3 shrink-0">
-                {/* 1. Bouton Évaluer (Award en Terre Cuite) */}
+                {/* 1. Bouton Générique & Crédits (Clapperboard) */}
+                <button
+                  type="button"
+                  id={`btn-credits-${videoModalMember.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsCreditsModalOpen(true);
+                  }}
+                  className="w-10 h-10 rounded-full bg-black/50 hover:bg-[#A2482B] backdrop-blur-md border border-white/25 hover:border-[#A2482B] text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95 shrink-0"
+                  title="Générique & Crédits de la séquence"
+                >
+                  <Clapperboard className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                </button>
+
+                {/* 2. Bouton Évaluer (Award en Terre Cuite) */}
                 <button
                   type="button"
                   id={`btn-eval-resonance-${videoModalMember.id}`}
@@ -423,6 +440,20 @@ export const ProfileLineageFrise: React.FC<ProfileLineageFriseProps> = ({
               initialPercentage={personResonancePct}
               onRatingSubmitted={(pct) => {
                 setPersonResonancePct(pct);
+              }}
+            />
+
+            {/* Volet modal des crédits & générique de la séquence */}
+            <SequenceCreditsModal
+              isOpen={isCreditsModalOpen}
+              onClose={() => setIsCreditsModalOpen(false)}
+              title={videoModalMember.name}
+              seriesTitle="Lignée & Transmission"
+              credits={getSeriesCredits(videoModalMember.seriesId || 'jesus-legba', videoModalMember.name)}
+              onNavigateToProfile={(protagonistId) => {
+                setIsCreditsModalOpen(false);
+                setVideoModalMember(null);
+                onNavigateToPerson(protagonistId);
               }}
             />
 

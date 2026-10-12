@@ -14,12 +14,36 @@ import {
   ChevronLeft, 
   ChevronRight, 
   BookOpen,
-  FileText,
-  Layers,
-  Film
+  Film,
+  GalleryVerticalEnd,
+  ScrollText,
+  HandCoins,
+  Building2,
+  MessageSquare,
+  Star,
+  MapPin,
+  Send,
+  User,
+  Calendar,
+  ShieldCheck
 } from 'lucide-react';
-import { ViewScreen } from '../types';
+import { ViewScreen, Videographer } from '../types';
 import { PROPOSE_DOORS, ProposeDoor, ProposeSubject } from '../data/proposeDoorsData';
+import { DOCUMENTARIES, VIDEOGRAPHERS } from '../data/mockData';
+import { ALL_SERIES_TEAMS } from '../data/seriesTeamData';
+
+// Illustrations d'accroche 9:16 créées par IA pour les deux choix en face-à-face
+import uploadVideoGuideImg from '../assets/images/upload_video_guide_1791825848813.jpg';
+import recruitVideographerImg from '../assets/images/recruit_videographer_1791825865262.jpg';
+
+// Visuels dédiés pour la présentation vidéo des sponsors & partenaires officiels
+const SPONSOR_POSTERS: Record<string, string> = {
+  'jesus-legba': 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=800&q=80',
+  'finagnon-qosqorico': 'https://images.unsplash.com/photo-1532619675605-1ede6c2ed2b0?auto=format&fit=crop&w=800&q=80',
+  'blacks-one-beyond-eve': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
+  'dixeat-fiat-luxe': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
+  'investors-builders': 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80',
+};
 
 interface SubmitStoryScreenProps {
   preselectedDocumentaryId?: string;
@@ -45,19 +69,40 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const [isSubjectVideoPlaying, setIsSubjectVideoPlaying] = useState(false);
   const [isSubjectMuted, setIsSubjectMuted] = useState(true);
   const [showSubjectQuestion, setShowSubjectQuestion] = useState(false);
+  const [activeSeriesOverlay, setActiveSeriesOverlay] = useState<'episodes' | 'synopsis' | 'generique' | 'sponsors' | null>(null);
+  const [activeEpisodeIndex, setActiveEpisodeIndex] = useState(0);
+  const [isEpisodeVideoPlaying, setIsEpisodeVideoPlaying] = useState(false);
+  const [isEpisodeMuted, setIsEpisodeMuted] = useState(false);
+  const [isCreditsRolling, setIsCreditsRolling] = useState(true);
+  const [activeTooltipCat, setActiveTooltipCat] = useState<string | null>(null);
+  const creditsScrollRef = useRef<HTMLDivElement>(null);
 
   // Form submission (Étape 3)
-  // formatCardIndex: 0 = "J'ai ma vidéo", 1 = "Se faire filmer"
-  const [formatCardIndex, setFormatCardIndex] = useState<0 | 1>(0);
-  const [isFormatVideoPlaying, setIsFormatVideoPlaying] = useState(false);
-  const [isFormatMuted, setIsFormatMuted] = useState(true);
-  const [showFormatDetails, setShowFormatDetails] = useState(false);
-  const [chosenFlow, setChosenFlow] = useState<'UPLOAD_DIRECT' | 'REQUEST_CREW' | null>(null);
+  // Étape 3 : Choix du mode en face-à-face ("J'ai ma vidéo" vs "Recruter un vidéaste")
+  const [chosenFlow, setChosenFlow] = useState<'UPLOAD_DIRECT' | 'BROWSE_VIDEOGRAPHERS' | null>(null);
+  const [isChoiceAVideoPlaying, setIsChoiceAVideoPlaying] = useState(false);
+  const [isChoiceBVideoPlaying, setIsChoiceBVideoPlaying] = useState(false);
+  const [isChoiceAMuted, setIsChoiceAMuted] = useState(true);
+  const [isChoiceBMuted, setIsChoiceBMuted] = useState(true);
+  const [showDetailsA, setShowDetailsA] = useState(false);
+  const [showDetailsB, setShowDetailsB] = useState(false);
 
+  // Vidéastes (Parcours swipe et contact direct)
+  const [activeVideographerIndex, setActiveVideographerIndex] = useState(0);
+  const [isVideographerVideoPlaying, setIsVideographerVideoPlaying] = useState(false);
+  const [isVideographerMuted, setIsVideographerMuted] = useState(true);
+  const [contactingVideographer, setContactingVideographer] = useState<Videographer | null>(null);
+  const [contactMessage, setContactMessage] = useState('');
+  const [contactDate, setContactDate] = useState('');
+  const [contactLocation, setContactLocation] = useState('');
+  const [contactUserPhone, setContactUserPhone] = useState('');
+  const [contactUserName, setContactUserName] = useState('');
+  const [contactSuccess, setContactSuccess] = useState(false);
+  const [showingVideographerProfile, setShowingVideographerProfile] = useState<Videographer | null>(null);
+
+  // Formulaire dépôt direct de vidéo
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-  const [videographerName, setVideographerName] = useState('');
-  const [videographerCity, setVideographerCity] = useState('');
-  const [videographerContact, setVideographerContact] = useState('');
+  const [storySubmissionTitle, setStorySubmissionTitle] = useState('');
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
 
   // Crédits de la séquence (Casting, Réalisation, Post-production)
@@ -69,14 +114,20 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   const currentDoor: ProposeDoor = PROPOSE_DOORS[doorIndex] || PROPOSE_DOORS[0];
   const currentSubject: ProposeSubject = currentDoor.subjects[subjectIndex] || currentDoor.subjects[0];
   const isSeries = currentDoor.id === 'series';
+  const currentDoc = DOCUMENTARIES.find(d => d.id === currentSubject.id) || DOCUMENTARIES[0];
+  const currentTeam = ALL_SERIES_TEAMS[currentSubject.id] || ALL_SERIES_TEAMS[currentSubject.id.replace('e-vivi', 'dixeat')] || ALL_SERIES_TEAMS['jesus-legba'];
+  const docQuestions = currentDoc.questions || [];
+  const totalEpisodes = docQuestions.length;
+  const safeEpisodeIndex = Math.min(Math.max(0, activeEpisodeIndex), Math.max(0, Math.max(0, totalEpisodes - 1)));
+  const currentEpisode = docQuestions[safeEpisodeIndex] || docQuestions[0];
 
-  // Gestures pour l'Étape 3 (Swipe Format : J'ai ma vidéo vs Se faire filmer)
-  const [fmtTouchStartX, setFmtTouchStartX] = useState<number | null>(null);
-  const [fmtTouchEndX, setFmtTouchEndX] = useState<number | null>(null);
-  const [fmtMouseStartX, setFmtMouseStartX] = useState<number | null>(null);
-  const [isFmtMouseDown, setIsFmtMouseDown] = useState(false);
-  const [fmtSwipeOffset, setFmtSwipeOffset] = useState(0);
-  const fmtHasDraggedRef = useRef(false);
+  // Gestures pour l'Étape 3 (Swipe Vidéastes)
+  const [vidTouchStartX, setVidTouchStartX] = useState<number | null>(null);
+  const [vidTouchEndX, setVidTouchEndX] = useState<number | null>(null);
+  const [vidMouseStartX, setVidMouseStartX] = useState<number | null>(null);
+  const [isVidMouseDown, setIsVidMouseDown] = useState(false);
+  const [vidSwipeOffset, setVidSwipeOffset] = useState(0);
+  const vidHasDraggedRef = useRef(false);
 
   const minSwipeDistance = 45;
   const hasDraggedRef = useRef(false);
@@ -104,6 +155,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
     setSubjectIndex(0);
     setIsDoorVideoPlaying(false);
     setShowDoorAdvantages(false);
+    setActiveSeriesOverlay(null);
+    setActiveEpisodeIndex(0);
+    setIsEpisodeVideoPlaying(false);
+    setIsCreditsRolling(true);
   };
   const handleNextDoor = () => goToDoor(doorIndex + 1);
   const handlePrevDoor = () => goToDoor(doorIndex - 1);
@@ -116,58 +171,82 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
     setSubjectIndex(safe);
     setIsSubjectVideoPlaying(false);
     setShowSubjectQuestion(false);
+    setActiveSeriesOverlay(null);
+    setActiveEpisodeIndex(0);
+    setIsEpisodeVideoPlaying(false);
+    setIsCreditsRolling(true);
   };
   const handleNextSubject = () => goToSubject(subjectIndex + 1);
   const handlePrevSubject = () => goToSubject(subjectIndex - 1);
 
-  // Navigation entre les 2 formats de l'Étape 3
-  const handleToggleFormat = () => {
-    setFormatCardIndex(prev => (prev === 0 ? 1 : 0));
-    setIsFormatVideoPlaying(false);
-    setShowFormatDetails(false);
+  // Défilement automatique du générique simulé
+  useEffect(() => {
+    if (activeSeriesOverlay !== 'generique' || !isCreditsRolling) return;
+    const interval = setInterval(() => {
+      if (creditsScrollRef.current) {
+        const el = creditsScrollRef.current;
+        if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+          el.scrollTop = 0;
+        } else {
+          el.scrollTop += 1;
+        }
+      }
+    }, 35);
+    return () => clearInterval(interval);
+  }, [activeSeriesOverlay, isCreditsRolling]);
+
+  // Swipe Vidéastes (Étape 3)
+  const handleNextVideographer = () => {
+    setActiveVideographerIndex(prev => (prev + 1) % VIDEOGRAPHERS.length);
+    setIsVideographerVideoPlaying(false);
+  };
+  const handlePrevVideographer = () => {
+    setActiveVideographerIndex(prev => (prev - 1 + VIDEOGRAPHERS.length) % VIDEOGRAPHERS.length);
+    setIsVideographerVideoPlaying(false);
   };
 
-  // Swipe Étape 3 (Formats)
-  const onFmtTouchStart = (e: React.TouchEvent) => {
-    fmtHasDraggedRef.current = false;
-    setFmtTouchEndX(null);
-    setFmtTouchStartX(e.targetTouches[0].clientX);
+  const onVidTouchStart = (e: React.TouchEvent) => {
+    vidHasDraggedRef.current = false;
+    setVidTouchEndX(null);
+    setVidTouchStartX(e.targetTouches[0].clientX);
   };
-  const onFmtTouchMove = (e: React.TouchEvent) => {
-    setFmtTouchEndX(e.targetTouches[0].clientX);
-    if (fmtTouchStartX !== null) {
-      const diff = e.targetTouches[0].clientX - fmtTouchStartX;
-      if (Math.abs(diff) > 8) fmtHasDraggedRef.current = true;
-      setFmtSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
+  const onVidTouchMove = (e: React.TouchEvent) => {
+    setVidTouchEndX(e.targetTouches[0].clientX);
+    if (vidTouchStartX !== null) {
+      const diff = e.targetTouches[0].clientX - vidTouchStartX;
+      if (Math.abs(diff) > 8) vidHasDraggedRef.current = true;
+      setVidSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
     }
   };
-  const onFmtTouchEnd = () => {
-    setFmtSwipeOffset(0);
-    if (!fmtTouchStartX || !fmtTouchEndX) return;
-    const distance = fmtTouchStartX - fmtTouchEndX;
-    if (Math.abs(distance) > minSwipeDistance) handleToggleFormat();
+  const onVidTouchEnd = () => {
+    setVidSwipeOffset(0);
+    if (!vidTouchStartX || !vidTouchEndX) return;
+    const distance = vidTouchStartX - vidTouchEndX;
+    if (distance > minSwipeDistance) handleNextVideographer();
+    else if (distance < -minSwipeDistance) handlePrevVideographer();
   };
 
-  const onFmtMouseDown = (e: React.MouseEvent) => {
+  const onVidMouseDown = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('button, a, video, input, label')) return;
-    fmtHasDraggedRef.current = false;
-    setIsFmtMouseDown(true);
-    setFmtMouseStartX(e.clientX);
+    vidHasDraggedRef.current = false;
+    setIsVidMouseDown(true);
+    setVidMouseStartX(e.clientX);
   };
-  const onFmtMouseMove = (e: React.MouseEvent) => {
-    if (!isFmtMouseDown || fmtMouseStartX === null) return;
-    const diff = e.clientX - fmtMouseStartX;
-    if (Math.abs(diff) > 8) fmtHasDraggedRef.current = true;
-    setFmtSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
+  const onVidMouseMove = (e: React.MouseEvent) => {
+    if (!isVidMouseDown || vidMouseStartX === null) return;
+    const diff = e.clientX - vidMouseStartX;
+    if (Math.abs(diff) > 8) vidHasDraggedRef.current = true;
+    setVidSwipeOffset(Math.max(-90, Math.min(90, diff * 0.4)));
   };
-  const onFmtMouseUp = (e: React.MouseEvent) => {
-    if (!isFmtMouseDown) return;
-    setIsFmtMouseDown(false);
-    setFmtSwipeOffset(0);
-    if (fmtMouseStartX === null) return;
-    const distance = fmtMouseStartX - e.clientX;
-    if (Math.abs(distance) > minSwipeDistance) handleToggleFormat();
-    setFmtMouseStartX(null);
+  const onVidMouseUp = (e: React.MouseEvent) => {
+    if (!isVidMouseDown) return;
+    setIsVidMouseDown(false);
+    setVidSwipeOffset(0);
+    if (vidMouseStartX === null) return;
+    const distance = vidMouseStartX - e.clientX;
+    if (distance > minSwipeDistance) handleNextVideographer();
+    else if (distance < -minSwipeDistance) handlePrevVideographer();
+    setVidMouseStartX(null);
   };
 
   // Clavier (Flèches gauche/droite)
@@ -179,13 +258,14 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       } else if (step === 2) {
         if (e.key === 'ArrowRight') handleNextSubject();
         else if (e.key === 'ArrowLeft') handlePrevSubject();
-      } else if (step === 3 && !chosenFlow) {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') handleToggleFormat();
+      } else if (step === 3 && chosenFlow === 'BROWSE_VIDEOGRAPHERS') {
+        if (e.key === 'ArrowRight') handleNextVideographer();
+        else if (e.key === 'ArrowLeft') handlePrevVideographer();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [step, doorIndex, subjectIndex, currentDoor, chosenFlow]);
+  }, [step, doorIndex, subjectIndex, currentDoor, chosenFlow, activeVideographerIndex]);
 
   // Swipe Étape 1
   const onTouchStart = (e: React.TouchEvent) => {
@@ -304,7 +384,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
           <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
             <span className="text-stone-500">Format retenu :</span>
             <span className="font-medium text-[#A2482B]">
-              {chosenFlow === 'UPLOAD_DIRECT' ? `Vidéo transmise (${uploadedFileName})` : `Tournage par cadreur (${videographerCity || 'Sur site'})`}
+              {chosenFlow === 'UPLOAD_DIRECT' ? `Vidéo transmise (${uploadedFileName})` : `Mise en relation cinéaste (${VIDEOGRAPHERS[activeVideographerIndex]?.name || 'Sur site'})`}
             </span>
           </div>
         </div>
@@ -328,7 +408,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
   }
 
   return (
-    <div className={`max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 pb-20 sm:pb-24 pt-safe pb-safe overflow-x-hidden ${step === 3 ? 'min-h-[100dvh] flex flex-col' : 'h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between'} text-[#1C1917]`}>
+    <div className={`max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4 pb-20 sm:pb-24 pt-safe pb-safe overflow-x-hidden ${step === 3 && chosenFlow === 'UPLOAD_DIRECT' ? 'min-h-[100dvh] flex flex-col' : 'h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col justify-between'} text-[#1C1917]`}>
       
       {/* En-tête dynamique du Studio : Choix progressifs validés (Porte, Sujet, Format) avec bouton Modifier */}
       <div className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2">
@@ -352,6 +432,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   setStep(1);
                   setIsSubjectVideoPlaying(false);
                   setShowSubjectQuestion(false);
+                  setActiveSeriesOverlay(null);
                 }}
                 id="header-edit-door-btn"
                 className="h-6.5 px-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#A2482B] hover:text-[#8B3B20] text-[10.5px] sm:text-xs font-semibold border border-stone-200/90 transition-colors cursor-pointer shrink-0"
@@ -374,8 +455,9 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               <button
                 onClick={() => {
                   setChosenFlow(null);
-                  setShowFormatDetails(false);
-                  setIsFormatVideoPlaying(false);
+                  setIsChoiceAVideoPlaying(false);
+                  setIsChoiceBVideoPlaying(false);
+                  setIsVideographerVideoPlaying(false);
                   setStep(2);
                 }}
                 id="header-edit-subject-btn"
@@ -532,7 +614,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     <span>Avantages</span>
                   </button>
 
-                  {/* Bouton Choisir cette porte : compact sur mobile pour éviter tout débordement */}
+                  {/* Bouton Choisir cette porte : affiché entièrement sans troncature */}
                   <button
                     type="button"
                     onClick={(e) => {
@@ -540,13 +622,12 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       setSubjectIndex(0);
                       setStep(2);
                     }}
-                    className="h-7.5 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-white/90 hover:bg-[#A2482B] text-stone-900 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1 shadow-sm border border-white/40 hover:border-transparent cursor-pointer active:scale-95 group/btn shrink-0"
+                    className="h-7.5 sm:h-8.5 px-3.5 sm:px-4 rounded-full bg-white/95 hover:bg-[#A2482B] text-stone-900 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm border border-white/40 hover:border-transparent cursor-pointer active:scale-95 group/btn shrink-0"
                     title={currentDoor.actionDoorLabel}
                     id={`choose-door-btn-${currentDoor.id}`}
                   >
-                    <span className="sm:hidden">Choisir</span>
-                    <span className="hidden sm:inline">{currentDoor.actionDoorLabel}</span>
-                    <ArrowRight className="w-3 h-3 text-stone-600 group-hover/btn:text-white transition-colors shrink-0" />
+                    <span>{currentDoor.actionDoorLabel}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-stone-600 group-hover/btn:text-white transition-colors shrink-0" />
                   </button>
                 </div>
 
@@ -659,11 +740,23 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between p-2.5 sm:p-4.5 transition-transform duration-150 ease-out select-none cursor-pointer shrink-0"
               id={`current-subject-card-${currentSubject.id}`}
             >
-              {/* Vidéo ou affiche officielle de fond */}
+              {/* Vidéo ou affiche officielle de fond selon le mode actif */}
               {isSubjectVideoPlaying ? (
                 <video
-                  src={currentSubject.videoUrl}
-                  poster={currentSubject.posterUrl}
+                  src={
+                    isSeries && activeSeriesOverlay === 'episodes'
+                      ? (currentEpisode?.videoAvatarUrl || currentEpisode?.videoUrl || currentSubject.videoUrl)
+                      : isSeries && activeSeriesOverlay === 'sponsors'
+                      ? (currentTeam.producers?.[0]?.videoPresentationUrl || currentSubject.videoUrl)
+                      : currentSubject.videoUrl
+                  }
+                  poster={
+                    isSeries && activeSeriesOverlay === 'episodes'
+                      ? (currentEpisode?.posterUrl || currentSubject.posterUrl)
+                      : isSeries && activeSeriesOverlay === 'sponsors'
+                      ? (SPONSOR_POSTERS[currentSubject.id] || SPONSOR_POSTERS['jesus-legba'])
+                      : currentSubject.posterUrl
+                  }
                   autoPlay
                   loop
                   muted={isSubjectMuted}
@@ -672,7 +765,13 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 />
               ) : (
                 <img
-                  src={currentSubject.posterUrl}
+                  src={
+                    isSeries && activeSeriesOverlay === 'episodes'
+                      ? (currentEpisode?.posterUrl || currentSubject.posterUrl)
+                      : isSeries && activeSeriesOverlay === 'sponsors'
+                      ? (SPONSOR_POSTERS[currentSubject.id] || SPONSOR_POSTERS['jesus-legba'])
+                      : currentSubject.posterUrl
+                  }
                   alt={currentSubject.title}
                   className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                 />
@@ -681,11 +780,27 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               {/* Voile cinématographique harmonisé (modèle Coproduction : plus lumineux et clair) */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/25 pointer-events-none" />
 
-              {/* HAUT : Cartouche sobre du sujet & Son discret */}
+              {/* HAUT : Cartouche sobre du sujet/média & Son discret */}
               <div className="relative z-10 flex items-center justify-between">
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-white shadow-sm">
-                  <CurrentDoorIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  <span className="truncate max-w-[160px] sm:max-w-none">{currentSubject.title}</span>
+                  {isSeries && activeSeriesOverlay === 'episodes' ? (
+                    <>
+                      <GalleryVerticalEnd className="w-3.5 h-3.5 text-[#C89B3C]" />
+                      <span className="truncate max-w-[170px] sm:max-w-none">
+                        Épisode {currentEpisode?.number || (safeEpisodeIndex + 1)} : {currentEpisode?.title || 'Extrait'}
+                      </span>
+                    </>
+                  ) : isSeries && activeSeriesOverlay === 'sponsors' ? (
+                    <>
+                      <HandCoins className="w-3.5 h-3.5 text-[#C89B3C]" />
+                      <span className="truncate max-w-[170px] sm:max-w-none">Sponsors & Partenaires</span>
+                    </>
+                  ) : (
+                    <>
+                      <CurrentDoorIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
+                      <span className="truncate max-w-[160px] sm:max-w-none">{currentSubject.title}</span>
+                    </>
+                  )}
                 </div>
 
                 {isSubjectVideoPlaying && (
@@ -715,7 +830,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       ? 'border border-white/40 ring-2 ring-white/20 bg-black/60 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
                       : 'border border-white/25 hover:border-white hover:ring-2 hover:ring-white/30 bg-black/45 hover:bg-black/65'
                   }`}
-                  title={isSubjectVideoPlaying ? 'Pause' : `Visionner ${currentSubject.title}`}
+                  title={isSubjectVideoPlaying ? 'Pause' : `Visionner la vidéo`}
                   id={`play-subject-btn-${currentSubject.id}`}
                 >
                   {isSubjectVideoPlaying ? (
@@ -726,10 +841,209 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 </button>
               </div>
 
-              {/* BAS : BOUTONS ADAPTÉS SANS DÉBORDEMENT */}
-              <div className="relative z-10 flex items-center justify-between gap-1.5 pt-0.5">
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {/* Cartouche SYNOPSIS (pour les Séries) ou QUESTION (pour les autres portes) */}
+              {/* ================================================================= */}
+              {/* 3 BOUTONS SUR LE CÔTÉ DROIT DE LA VIDÉO (STYLE PROFIL)            */}
+              {/* 1. Épisodes (GalleryVerticalEnd)                                  */}
+              {/* 2. Générique (ScrollText)                                         */}
+              {/* 3. Sponsors (HandCoins)                                           */}
+              {/* ================================================================= */}
+              {isSeries && (
+                <div 
+                  className={`absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-2.5 sm:gap-3 transition-all duration-300 pointer-events-auto ${
+                    isSubjectVideoPlaying ? 'opacity-75 hover:opacity-100' : 'opacity-100'
+                  }`}
+                >
+                  {/* 1. Épisodes */}
+                  <div className="relative group/sb flex items-center">
+                    <div 
+                      className={`absolute right-11 top-1/2 -translate-y-1/2 z-40 pointer-events-none transition-all duration-200 ${
+                        activeTooltipCat === 'episodes' 
+                          ? 'opacity-100 translate-x-0' 
+                          : 'opacity-0 translate-x-1 group-hover/sb:opacity-100 group-hover/sb:translate-x-0'
+                      }`}
+                    >
+                      <div className="px-2.5 py-1 rounded-lg bg-black/90 text-white text-[10.5px] font-semibold whitespace-nowrap shadow-xl border border-white/15">
+                        Épisodes
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsSubjectVideoPlaying(false);
+                        setActiveSeriesOverlay(prev => prev === 'episodes' ? null : 'episodes');
+                        setActiveTooltipCat(prev => prev === 'episodes' ? null : 'episodes');
+                      }}
+                      onMouseEnter={() => setActiveTooltipCat('episodes')}
+                      onMouseLeave={() => setActiveTooltipCat(null)}
+                      id={`btn-series-episodes-${currentSubject.id}`}
+                      title="Découvrir les épisodes"
+                      className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md active:scale-90 ${
+                        activeSeriesOverlay === 'episodes'
+                          ? 'bg-[#A2482B] border border-[#A2482B] text-white scale-105 shadow-[0_2px_12px_rgba(162,72,43,0.45)]'
+                          : 'bg-black/55 hover:bg-[#A2482B] border border-white/20 hover:border-[#A2482B] text-white'
+                      }`}
+                    >
+                      <GalleryVerticalEnd className="w-4 h-4 stroke-[2.2]" />
+                    </button>
+                  </div>
+
+                  {/* 2. Générique */}
+                  <div className="relative group/sb flex items-center">
+                    <div 
+                      className={`absolute right-11 top-1/2 -translate-y-1/2 z-40 pointer-events-none transition-all duration-200 ${
+                        activeTooltipCat === 'generique' 
+                          ? 'opacity-100 translate-x-0' 
+                          : 'opacity-0 translate-x-1 group-hover/sb:opacity-100 group-hover/sb:translate-x-0'
+                      }`}
+                    >
+                      <div className="px-2.5 py-1 rounded-lg bg-black/90 text-white text-[10.5px] font-semibold whitespace-nowrap shadow-xl border border-white/15">
+                        Générique
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsSubjectVideoPlaying(false);
+                        setActiveSeriesOverlay(prev => prev === 'generique' ? null : 'generique');
+                        setActiveTooltipCat(prev => prev === 'generique' ? null : 'generique');
+                      }}
+                      onMouseEnter={() => setActiveTooltipCat('generique')}
+                      onMouseLeave={() => setActiveTooltipCat(null)}
+                      id={`btn-series-generique-${currentSubject.id}`}
+                      title="Générique officiel"
+                      className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md active:scale-90 ${
+                        activeSeriesOverlay === 'generique'
+                          ? 'bg-[#A2482B] border border-[#A2482B] text-white scale-105 shadow-[0_2px_12px_rgba(162,72,43,0.45)]'
+                          : 'bg-black/55 hover:bg-[#A2482B] border border-white/20 hover:border-[#A2482B] text-white'
+                      }`}
+                    >
+                      <ScrollText className="w-4 h-4 stroke-[2.2]" />
+                    </button>
+                  </div>
+
+                  {/* 3. Sponsors */}
+                  <div className="relative group/sb flex items-center">
+                    <div 
+                      className={`absolute right-11 top-1/2 -translate-y-1/2 z-40 pointer-events-none transition-all duration-200 ${
+                        activeTooltipCat === 'sponsors' 
+                          ? 'opacity-100 translate-x-0' 
+                          : 'opacity-0 translate-x-1 group-hover/sb:opacity-100 group-hover/sb:translate-x-0'
+                      }`}
+                    >
+                      <div className="px-2.5 py-1 rounded-lg bg-black/90 text-white text-[10.5px] font-semibold whitespace-nowrap shadow-xl border border-white/15">
+                        Sponsors
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsSubjectVideoPlaying(false);
+                        setActiveSeriesOverlay(prev => prev === 'sponsors' ? null : 'sponsors');
+                        setActiveTooltipCat(prev => prev === 'sponsors' ? null : 'sponsors');
+                      }}
+                      onMouseEnter={() => setActiveTooltipCat('sponsors')}
+                      onMouseLeave={() => setActiveTooltipCat(null)}
+                      id={`btn-series-sponsors-${currentSubject.id}`}
+                      title="Sponsors & Partenaires"
+                      className={`w-9 h-9 rounded-xl backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md active:scale-90 ${
+                        activeSeriesOverlay === 'sponsors'
+                          ? 'bg-[#A2482B] border border-[#A2482B] text-white scale-105 shadow-[0_2px_12px_rgba(162,72,43,0.45)]'
+                          : 'bg-black/55 hover:bg-[#A2482B] border border-white/20 hover:border-[#A2482B] text-white'
+                      }`}
+                    >
+                      <HandCoins className="w-4 h-4 stroke-[2.2]" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* SÉLECTEUR DISCRET D'ÉPISODES EN BAS DU CADRE LORSQUE LE MODE ÉPISODES EST ACTIF */}
+              {isSeries && activeSeriesOverlay === 'episodes' && totalEpisodes > 1 && (
+                <div 
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative z-10 flex items-center justify-center gap-1.5 py-0.5 pointer-events-auto"
+                >
+                  <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/65 backdrop-blur-md border border-white/20 shadow-md">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveEpisodeIndex(prev => (prev - 1 + totalEpisodes) % totalEpisodes);
+                        setIsSubjectVideoPlaying(false);
+                      }}
+                      className="p-0.5 rounded-full text-white/70 hover:text-white cursor-pointer"
+                      title="Épisode précédent"
+                    >
+                      <ChevronLeft className="w-3 h-3" />
+                    </button>
+                    <div className="flex items-center gap-1 px-1">
+                      {docQuestions.map((q, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setActiveEpisodeIndex(idx);
+                            setIsSubjectVideoPlaying(false);
+                          }}
+                          className={`h-4.5 px-1.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                            idx === safeEpisodeIndex
+                              ? 'bg-[#A2482B] text-white shadow-xs scale-105'
+                              : 'bg-white/15 text-stone-300 hover:bg-white/30'
+                          }`}
+                          title={`Épisode ${q.number}: ${q.title}`}
+                        >
+                          {q.number || `0${idx + 1}`}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveEpisodeIndex(prev => (prev + 1) % totalEpisodes);
+                        setIsSubjectVideoPlaying(false);
+                      }}
+                      className="p-0.5 rounded-full text-white/70 hover:text-white cursor-pointer"
+                      title="Épisode suivant"
+                    >
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* BANDEAU DISCRET DES SPONSORS EN BAS DU CADRE LORSQUE LE MODE SPONSORS EST ACTIF */}
+              {isSeries && activeSeriesOverlay === 'sponsors' && currentTeam.sponsors && currentTeam.sponsors.length > 0 && (
+                <div className="relative z-10 flex items-center justify-center py-0.5 pointer-events-none">
+                  <div className="max-w-[90%] px-3 py-0.5 rounded-full bg-black/65 backdrop-blur-md border border-white/20 text-center shadow-md">
+                    <span className="text-[10px] text-stone-200 font-medium truncate block">
+                      {currentTeam.sponsors.map(s => s.companyName).join(' • ')}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* BAS : BOUTON PRINCIPAL DANS SON DESIGN EXACT D'ORIGINE */}
+              {isSeries ? (
+                <div className="relative z-10 flex items-center justify-center pt-0.5">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setStep(3);
+                      setChosenFlow(null);
+                    }}
+                    className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent shadow-md active:scale-95 group/btn shrink-0"
+                    title="Choisir cette série"
+                    id={`choose-subject-btn-${currentSubject.id}`}
+                  >
+                    <span>Choisir cette série</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-white/90 group-hover/btn:text-white group-hover/btn:translate-x-0.5 transition-all shrink-0" />
+                  </button>
+                </div>
+              ) : (
+                <div className="relative z-10 flex items-center justify-between gap-1.5 pt-0.5">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -737,51 +1051,211 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       setShowSubjectQuestion(true);
                     }}
                     className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
-                    title={isSeries ? "Découvrir le synopsis de la série" : "Découvrir la question à laquelle répondre"}
+                    title="Découvrir la question à laquelle répondre"
                   >
-                    {isSeries ? (
-                      <FileText className="w-3 h-3 text-[#FACC15] shrink-0" />
-                    ) : (
-                      <BookOpen className="w-3 h-3 text-[#FACC15] shrink-0" />
-                    )}
-                    <span>{isSeries ? 'Synopsis' : 'Question'}</span>
+                    <BookOpen className="w-3 h-3 text-[#FACC15] shrink-0" />
+                    <span>Question</span>
                   </button>
 
-                  {/* Bouton direct vers la page de la série */}
-                  {isSeries && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onNavigate({ type: 'documentary_detail', documentaryId: currentSubject.id });
-                      }}
-                      className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-black/50 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-sm active:scale-95 shrink-0"
-                      title="Consulter la fiche officielle de la série (équipe, producteurs, etc.)"
-                    >
-                      <Film className="w-3 h-3 text-[#C89B3C] shrink-0" />
-                      <span>Voir la série</span>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setStep(3);
+                      setChosenFlow(null);
+                    }}
+                    className="h-7.5 sm:h-8.5 px-3.5 sm:px-4 rounded-full bg-white/90 hover:bg-[#A2482B] text-stone-900 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1 shadow-sm border border-white/40 hover:border-transparent cursor-pointer active:scale-95 group/btn shrink-0"
+                    title={currentSubject.actionLabel}
+                    id={`choose-subject-btn-${currentSubject.id}`}
+                  >
+                    <span>{currentSubject.actionLabel}</span>
+                    <ArrowRight className="w-3 h-3 text-stone-600 group-hover/btn:text-white transition-colors shrink-0" />
+                  </button>
                 </div>
+              )}
 
-                {/* Bouton de choix contextualisé sans déborder */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setStep(3);
-                  }}
-                  className="h-7.5 sm:h-8.5 px-3 sm:px-3.5 rounded-full bg-white/90 hover:bg-[#A2482B] text-stone-900 hover:text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1 shadow-sm border border-white/40 hover:border-transparent cursor-pointer active:scale-95 group/btn shrink-0"
-                  title={currentSubject.actionLabel}
-                  id={`choose-subject-btn-${currentSubject.id}`}
+              {/* OVERLAY : GÉNÉRIQUE OFFICIEL CINÉMATOGRAPHIQUE (CONSERVÉ COMME VALIDÉ PAR L'UTILISATEUR) */}
+              {activeSeriesOverlay === 'generique' && (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="details-overlay absolute inset-0 bg-black/95 backdrop-blur-md z-40 flex flex-col justify-between p-3.5 sm:p-5 text-white animate-in fade-in duration-200"
                 >
-                  <span className="truncate max-w-[105px] sm:max-w-none">{currentSubject.actionLabel}</span>
-                  <ArrowRight className="w-3 h-3 text-stone-600 group-hover/btn:text-white transition-colors shrink-0" />
-                </button>
-              </div>
+                  {/* Fond vidéo discret simulé en boucle */}
+                  <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
+                    <video
+                      src={currentSubject.videoUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover scale-105 filter blur-xs"
+                    />
+                    <div className="absolute inset-0 bg-black/70" />
+                  </div>
 
-              {/* OVERLAY DU SYNOPSIS DE LA SÉRIE OU DE LA QUESTION DU SUJET */}
-              {showSubjectQuestion && (
+                  {/* En-tête */}
+                  <div className="relative z-10 flex items-center justify-between pb-2 border-b border-white/15 shrink-0">
+                    <div className="flex items-center gap-2">
+                      <ScrollText className="w-4 h-4 text-[#C89B3C]" />
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
+                        Générique officiel
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setIsCreditsRolling(!isCreditsRolling)}
+                        className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[10px] text-stone-300 font-medium cursor-pointer transition-colors"
+                        title={isCreditsRolling ? 'Mettre en pause le défilement' : 'Relancer le défilement'}
+                      >
+                        {isCreditsRolling ? 'Pause' : 'Défiler'}
+                      </button>
+                      <button
+                        onClick={() => setActiveSeriesOverlay(null)}
+                        className="p-1 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer"
+                        title="Fermer"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* DÉFILEMENT DU GÉNÉRIQUE SIMULÉ */}
+                  <div
+                    ref={creditsScrollRef}
+                    className="relative z-10 flex-1 my-3 overflow-y-auto pr-1 space-y-6 text-center select-none scroll-smooth py-4"
+                    style={{ scrollbarWidth: 'none' }}
+                  >
+                    <div className="space-y-1 pt-2">
+                      <span className="text-[10px] uppercase font-mono tracking-widest text-stone-400">
+                        YONYWOOD PRÉSENTE
+                      </span>
+                      <h3 className="font-editorial text-xl sm:text-2xl font-bold text-white tracking-wide">
+                        {currentSubject.title}
+                      </h3>
+                      <p className="text-xs text-stone-300 italic max-w-xs mx-auto">
+                        {currentSubject.subtitle}
+                      </p>
+                    </div>
+
+                    <div className="w-12 h-px bg-white/20 mx-auto" />
+
+                    {/* Conception & Auteur */}
+                    <div className="space-y-1">
+                      <div className="text-[10px] uppercase tracking-widest text-[#C89B3C] font-semibold">
+                        Conception & Idée Originale
+                      </div>
+                      <div className="font-editorial text-base sm:text-lg font-bold text-white">
+                        {currentTeam.author?.name || 'Romeo Nonvide'}
+                      </div>
+                      {currentTeam.author?.bio && (
+                        <div className="text-[11px] text-stone-400 italic max-w-xs mx-auto">
+                          {currentTeam.author.bio}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Scénario & Recherche */}
+                    <div className="space-y-1">
+                      <div className="text-[10px] uppercase tracking-widest text-[#C89B3C] font-semibold">
+                        Scénario & Anthropologie
+                      </div>
+                      <div className="font-editorial text-base sm:text-lg font-bold text-white">
+                        {currentTeam.screenwriter?.name || 'Dieudonné Dossou'}
+                      </div>
+                      {currentTeam.screenwriter?.bio && (
+                        <div className="text-[11px] text-stone-400 italic max-w-xs mx-auto">
+                          {currentTeam.screenwriter.bio}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Réalisation */}
+                    <div className="space-y-1">
+                      <div className="text-[10px] uppercase tracking-widest text-[#C89B3C] font-semibold">
+                        Réalisation & Cadre 9:16
+                      </div>
+                      <div className="font-editorial text-base sm:text-lg font-bold text-white">
+                        {currentTeam.director?.name || 'Alain Kpatoukpa'}
+                      </div>
+                      {currentTeam.director?.bio && (
+                        <div className="text-[11px] text-stone-400 italic max-w-xs mx-auto">
+                          {currentTeam.director.bio}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="w-12 h-px bg-white/20 mx-auto" />
+
+                    {/* Collège des Producteurs - NOMS SEULEMENT (AUCUN MONTANT D'INVESTISSEMENT) */}
+                    <div className="space-y-2">
+                      <div className="text-[10px] uppercase tracking-widest text-[#C89B3C] font-semibold">
+                        Collège des Producteurs Citoyens
+                      </div>
+                      <div className="space-y-1.5">
+                        {currentTeam.producers && currentTeam.producers.length > 0 ? (
+                          currentTeam.producers.map((prod) => (
+                            <div key={prod.id} className="text-xs sm:text-sm font-medium text-white/95">
+                              <span>{prod.name}</span>
+                              {prod.roleTitle && (
+                                <span className="text-[11px] text-stone-400 font-normal"> — {prod.roleTitle}</span>
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-xs text-stone-400">Collectif des producteurs YonyWood</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Diffusion & Ambassadeurs */}
+                    {currentTeam.distributors && currentTeam.distributors.length > 0 && (
+                      <div className="space-y-1.5">
+                        <div className="text-[10px] uppercase tracking-widest text-[#C89B3C] font-semibold">
+                          Diffusion & Réseaux
+                        </div>
+                        {currentTeam.distributors.map((dist) => (
+                          <div key={dist.id} className="text-xs text-stone-300">
+                            <span className="font-medium text-white">{dist.name}</span>
+                            {dist.roleOrChannel && <span className="text-stone-400"> ({dist.roleOrChannel})</span>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Partenaires & Sponsors */}
+                    {currentTeam.sponsors && currentTeam.sponsors.length > 0 && (
+                      <div className="space-y-1.5">
+                        <div className="text-[10px] uppercase tracking-widest text-[#C89B3C] font-semibold">
+                          Partenaires & Soutiens
+                        </div>
+                        {currentTeam.sponsors.map((spons) => (
+                          <div key={spons.id} className="text-xs text-stone-300">
+                            <span className="font-medium text-white">{spons.companyName}</span>
+                            {spons.partnershipType && <span className="text-stone-400"> ({spons.partnershipType})</span>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="pt-4 pb-2 text-[10px] tracking-wider text-stone-400 uppercase">
+                      Une coproduction citoyenne YonyWood © 2026
+                    </div>
+                  </div>
+
+                  {/* Bas */}
+                  <div className="relative z-10 pt-2 border-t border-white/15 flex justify-center shrink-0">
+                    <button
+                      onClick={() => setActiveSeriesOverlay(null)}
+                      className="px-5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-medium cursor-pointer transition-colors"
+                    >
+                      Fermer le générique
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* OVERLAY DE QUESTION POUR LES AUTRES PORTES (NON-SÉRIES) */}
+              {!isSeries && showSubjectQuestion && (
                 <div 
                   onClick={(e) => e.stopPropagation()}
                   className="details-overlay absolute inset-0 bg-black/92 backdrop-blur-md z-20 flex flex-col justify-between p-6 text-white animate-in fade-in duration-200"
@@ -789,7 +1263,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   <div className="space-y-4 overflow-y-auto max-h-[82%] pr-1">
                     <div className="flex items-center justify-between pb-2 border-b border-white/15">
                       <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
-                        {isSeries ? 'Synopsis' : 'Question de témoignage'}
+                        Question de témoignage
                       </span>
                       <button
                         onClick={() => setShowSubjectQuestion(false)}
@@ -802,36 +1276,11 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
 
                     <div className="space-y-2 pt-1">
                       <span className="text-xs text-stone-400 font-medium">
-                        {isSeries 
-                          ? `Synopsis de ${currentSubject.title} :`
-                          : `Pour votre contribution sur ${currentSubject.title} :`}
+                        Pour votre contribution sur {currentSubject.title} :
                       </span>
-                      <p className={`font-editorial text-white leading-relaxed pt-1 ${
-                        isSeries 
-                          ? 'text-sm sm:text-base font-normal text-stone-200 not-italic' 
-                          : 'text-lg font-medium italic'
-                      }`}>
-                        {isSeries 
-                          ? (currentSubject.synopsis || currentSubject.subtitle) 
-                          : `« ${currentSubject.question} »`}
+                      <p className="font-editorial text-white leading-relaxed pt-1 text-lg font-medium italic">
+                        « {currentSubject.question} »
                       </p>
-
-                      {isSeries && (
-                        <div className="pt-3">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowSubjectQuestion(false);
-                              onNavigate({ type: 'documentary_detail', documentaryId: currentSubject.id });
-                            }}
-                            className="w-full py-2.5 px-3 rounded-xl bg-white/10 hover:bg-[#A2482B] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer border border-white/20 hover:border-transparent"
-                          >
-                            <Film className="w-3.5 h-3.5 text-[#C89B3C]" />
-                            <span>Consulter la page officielle de la série</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
 
@@ -875,260 +1324,614 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* ÉTAPE 3 : CHOISIR LE FORMAT VIDÉO PAR SWIPE & FORMULAIRE ÉPURÉ DÉDIÉ     */}
+      {/* ÉTAPE 3 : DEUX VIDÉOS EN FACE-À-FACE (COMME DANS LES DUOS) & PARCOURS DÉDIÉS */}
       {/* ========================================================================= */}
       {step === 3 && (
-        <div className="space-y-4 animate-in fade-in duration-200">
-
-            {/* SOUS-ÉCRAN 1 : LE SWIPE VIDÉO ENTRE "J'AI MA VIDÉO" ET "SE FAIRE FILMER" */}
+        <>
+          {/* 1. VUE FACE-À-FACE : DIPTYQUE "J'AI MA VIDÉO" VS "RECRUTER UN VIDÉASTE" */}
           {!chosenFlow && (
-            <div className="w-full max-w-xl mx-auto flex flex-col items-center">
-              {/* CONTENEUR DU SWIPE FORMAT AVEC FLÈCHES LATÉRALES TOUJOURS VISIBLES */}
-              <div className="relative w-full flex items-center justify-center py-1 sm:py-2">
+            <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
+              <div className="relative w-full h-full flex flex-col items-center justify-center">
                 
-                {/* Flèche précédente - repositionnée et visible sur mobile comme desktop */}
-                <button
-                  type="button"
-                  onClick={handleToggleFormat}
-                  aria-label="Format précédent"
-                  className="absolute left-1 sm:left-2 md:-left-12 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white flex items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105 active:scale-95"
-                  title="Option précédente"
-                >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
+                {/* Barre discrète de rappel et retour */}
+                <div className="w-full max-w-[min(720px,calc((100dvh-200px)*9/8+32px))] flex items-center justify-between mb-2 sm:mb-3 px-1">
+                  <button
+                    onClick={() => {
+                      setIsChoiceAVideoPlaying(false);
+                      setIsChoiceBVideoPlaying(false);
+                      setStep(2);
+                    }}
+                    className="px-3 py-1.5 rounded-full bg-white/90 hover:bg-[#1C1917] hover:text-white text-stone-800 text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 border border-stone-200 shadow-sm cursor-pointer"
+                    title="Revenir au choix de la série"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Retour à la série</span>
+                  </button>
 
-                {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL AVEC SUPPORT DU SWIPE */}
-                <div
-                  style={{ transform: `translateX(${fmtSwipeOffset}px)` }}
-                  onTouchStart={onFmtTouchStart}
-                  onTouchMove={onFmtTouchMove}
-                  onTouchEnd={onFmtTouchEnd}
-                  onMouseDown={onFmtMouseDown}
-                  onMouseMove={onFmtMouseMove}
-                  onMouseUp={onFmtMouseUp}
-                  className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between p-3 sm:p-5 transition-transform duration-150 ease-out select-none cursor-pointer shrink-0"
-                  id={`current-format-card-${formatCardIndex}`}
-                >
-                  {/* Vidéo ou affiche officielle de fond selon le format */}
-                  {isFormatVideoPlaying ? (
-                    <video
-                      src={formatCardIndex === 0 
-                        ? "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" 
-                        : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"}
-                      poster={formatCardIndex === 0 
-                        ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" 
-                        : "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80"}
-                      autoPlay
-                      loop
-                      muted={isFormatMuted}
-                      playsInline
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  ) : (
-                    <img
-                      src={formatCardIndex === 0 
-                        ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" 
-                        : "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80"}
-                      alt={formatCardIndex === 0 ? "J'ai ma vidéo" : "Se faire filmer"}
-                      className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                    />
-                  )}
+                  <div className="flex items-center gap-1.5 text-xs text-stone-600">
+                    <span className="hidden sm:inline">Série :</span>
+                    <span className="font-bold text-[#A2482B] truncate max-w-[180px] sm:max-w-[260px]">{currentSubject.title}</span>
+                  </div>
+                </div>
 
-                  {/* Voile cinématographique harmonisé (modèle Coproduction : plus lumineux et clair) */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/25 pointer-events-none" />
+                {/* LES DEUX VIDÉOS EN FACE-À-FACE (DIPTYQUE COMME DANS LA PARTIE DUO) */}
+                <div className="flex items-center justify-center gap-2 sm:gap-5 md:gap-8 relative w-full px-1">
+                  
+                  {/* CARTE 1 : J'AI MA VIDÉO (Dépôt autonome) */}
+                  <div 
+                    onClick={() => {
+                      setIsChoiceBVideoPlaying(false);
+                      setIsChoiceAVideoPlaying(prev => !prev);
+                    }}
+                    className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/16] w-[calc((100vw-28px)/2)] max-w-[195px] sm:max-w-none sm:w-[min(340px,calc((100dvh-200px)*9/16))] sm:h-[min(604px,calc(100dvh-200px))] shrink-0 transition-all duration-300 cursor-pointer select-none p-2.5 sm:p-4.5"
+                    id="card-choice-upload-direct"
+                  >
+                    {/* Média : Vidéo animée ou illustration IA 9:16 */}
+                    {isChoiceAVideoPlaying ? (
+                      <video
+                        src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                        poster={uploadVideoGuideImg}
+                        autoPlay
+                        loop
+                        playsInline
+                        muted={isChoiceAMuted}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img
+                        src={uploadVideoGuideImg}
+                        alt="J'ai ma vidéo"
+                        referrerPolicy="no-referrer"
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/35 pointer-events-none" />
 
-                  {/* HAUT : Badge du format & Bouton Son */}
-                  <div className="relative z-10 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
-                      {formatCardIndex === 0 ? (
-                        <>
-                          <UploadCloud className="w-3.5 h-3.5 text-[#C89B3C]" />
-                          <span>J'ai ma vidéo</span>
-                        </>
-                      ) : (
-                        <>
-                          <Camera className="w-3.5 h-3.5 text-[#C89B3C]" />
-                          <span>Se faire filmer</span>
-                        </>
+                    {/* HAUT : Badge & Contrôle Son */}
+                    <div className="relative z-10 flex items-center justify-between">
+                      <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-bold text-white shadow-sm">
+                        <UploadCloud className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#C89B3C]" />
+                        <span className="truncate">J'ai ma vidéo</span>
+                      </div>
+
+                      {isChoiceAVideoPlaying && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsChoiceAMuted(!isChoiceAMuted);
+                          }}
+                          className="p-1.5 sm:p-2 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                          title={isChoiceAMuted ? 'Activer le son' : 'Couper le son'}
+                        >
+                          {isChoiceAMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                        </button>
                       )}
                     </div>
 
-                    {isFormatVideoPlaying && (
+                    {/* CENTRE : BOUTON PLAY/PAUSE */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setIsFormatMuted(!isFormatMuted);
+                          setIsChoiceBVideoPlaying(false);
+                          setIsChoiceAVideoPlaying(!isChoiceAVideoPlaying);
                         }}
-                        className="p-2 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 hover:border-[#A2482B] transition-colors cursor-pointer"
-                        title={isFormatMuted ? 'Activer le son' : 'Couper le son'}
+                        className={`pointer-events-auto group/btn relative w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
+                          isChoiceAVideoPlaying
+                            ? 'border border-white/40 ring-2 ring-white/20 bg-black/60 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                            : 'border border-white/25 hover:border-white hover:ring-2 hover:ring-white/30 bg-black/45 hover:bg-black/65'
+                        }`}
+                        title={isChoiceAVideoPlaying ? 'Pause' : 'Lire la vidéo'}
                       >
-                        {isFormatMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                        {isChoiceAVideoPlaying ? (
+                          <Pause className="w-5 sm:w-6 h-5 sm:h-6 text-white fill-white transition-transform group-hover/btn:scale-110" />
+                        ) : (
+                          <Play className="w-5 sm:w-6 h-5 sm:h-6 text-white fill-white translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                        )}
                       </button>
+                    </div>
+
+                    {/* BAS : BOUTON DÉTAILS ET BOUTON CHOIX */}
+                    <div className="relative z-10 flex items-center justify-between gap-1 sm:gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowDetailsA(true);
+                        }}
+                        className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-[10px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center justify-center border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                        title="Détails"
+                      >
+                        <span>Détails</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsChoiceAVideoPlaying(false);
+                          setIsChoiceBVideoPlaying(false);
+                          setChosenFlow('UPLOAD_DIRECT');
+                        }}
+                        className="px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-[10px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 sm:gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
+                        title="J'ai ma vidéo"
+                        id="btn-choose-direct-upload"
+                      >
+                        <span className="truncate">J'ai ma vidéo</span>
+                        <ArrowRight className="w-3 sm:w-3.5 h-3 sm:h-3.5 shrink-0" />
+                      </button>
+                    </div>
+
+                    {/* OVERLAY DÉTAILS OPTION A */}
+                    {showDetailsA && (
+                      <div 
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute inset-0 bg-black/92 backdrop-blur-md z-20 flex flex-col justify-between p-4 sm:p-5 text-white animate-in fade-in duration-200"
+                      >
+                        <div className="space-y-3 overflow-y-auto max-h-[82%] pr-1">
+                          <div className="flex items-center justify-between pb-2 border-b border-white/15">
+                            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
+                              Dépôt autonome
+                            </span>
+                            <button
+                              onClick={() => setShowDetailsA(false)}
+                              className="p-1 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          <h4 className="font-editorial text-base sm:text-lg font-bold text-white flex items-center gap-1.5">
+                            <UploadCloud className="w-4 h-4 text-[#C89B3C]" />
+                            <span>J'ai ma vidéo</span>
+                          </h4>
+
+                          <div className="space-y-2 pt-1 text-[11px] sm:text-xs text-white/90">
+                            <div className="flex items-start gap-2">
+                              <span className="w-3.5 h-3.5 rounded-full bg-white/20 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                              <p>Vidéo déjà tournée au smartphone ou à la caméra</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="w-3.5 h-3.5 rounded-full bg-white/20 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                              <p>Format vertical 9:16 privilégié</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="w-3.5 h-3.5 rounded-full bg-white/20 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                              <p>Fichiers acceptés : MP4, MOV, WebM</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="w-3.5 h-3.5 rounded-full bg-white/20 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+                              <p>Intégration directe après validation éditoriale</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-white/15 flex items-center justify-between gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setShowDetailsA(false)}
+                            className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[10px] sm:text-xs text-white"
+                          >
+                            Fermer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowDetailsA(false);
+                              setIsChoiceAVideoPlaying(false);
+                              setIsChoiceBVideoPlaying(false);
+                              setChosenFlow('UPLOAD_DIRECT');
+                            }}
+                            className="px-3 sm:px-4 py-1.5 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-[10px] sm:text-xs font-semibold backdrop-blur-md flex items-center gap-1"
+                          >
+                            <span>J'ai ma vidéo</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  {/* CENTRE : BOUTON PLAY/PAUSE CENTRALISÉ */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsFormatVideoPlaying(!isFormatVideoPlaying);
-                      }}
-                      className={`pointer-events-auto group/btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
-                        isFormatVideoPlaying
-                          ? 'border border-white/40 ring-2 ring-white/20 bg-black/60 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
-                          : 'border border-white/25 hover:border-white hover:ring-2 hover:ring-white/30 bg-black/45 hover:bg-black/65'
-                      }`}
-                      title={isFormatVideoPlaying ? 'Pause' : 'Lire la vidéo'}
-                      id={`play-format-video-${formatCardIndex}`}
-                    >
-                      {isFormatVideoPlaying ? (
-                        <Pause className="w-6 h-6 text-white fill-white transition-transform group-hover/btn:scale-110" />
-                      ) : (
-                        <Play className="w-6 h-6 text-white fill-white translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                  {/* CARTE 2 : RECRUTER UN VIDÉASTE */}
+                  <div 
+                    onClick={() => {
+                      setIsChoiceAVideoPlaying(false);
+                      setIsChoiceBVideoPlaying(prev => !prev);
+                    }}
+                    className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between aspect-[9/16] w-[calc((100vw-28px)/2)] max-w-[195px] sm:max-w-none sm:w-[min(340px,calc((100dvh-200px)*9/16))] sm:h-[min(604px,calc(100dvh-200px))] shrink-0 transition-all duration-300 cursor-pointer select-none p-2.5 sm:p-4.5"
+                    id="card-choice-recruit-videographer"
+                  >
+                    {/* Média : Vidéo animée ou illustration IA 9:16 */}
+                    {isChoiceBVideoPlaying ? (
+                      <video
+                        src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+                        poster={recruitVideographerImg}
+                        autoPlay
+                        loop
+                        playsInline
+                        muted={isChoiceBMuted}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img
+                        src={recruitVideographerImg}
+                        alt="Recruter un vidéaste"
+                        referrerPolicy="no-referrer"
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-black/35 pointer-events-none" />
+
+                    {/* HAUT : Badge & Contrôle Son */}
+                    <div className="relative z-10 flex items-center justify-between">
+                      <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-bold text-white shadow-sm">
+                        <Camera className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#C89B3C]" />
+                        <span className="truncate">Recruter un vidéaste</span>
+                      </div>
+
+                      {isChoiceBVideoPlaying && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsChoiceBMuted(!isChoiceBMuted);
+                          }}
+                          className="p-1.5 sm:p-2 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                          title={isChoiceBMuted ? 'Activer le son' : 'Couper le son'}
+                        >
+                          {isChoiceBMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                        </button>
                       )}
-                    </button>
-                  </div>
+                    </div>
 
-                  {/* BAS : UNIQUEMENT LES DEUX BOUTONS (DÉTAILS SANS ICÔNE + CHOIX) */}
-                  <div className="relative z-10 flex items-center justify-between gap-2 pt-1">
-                    {/* Bouton Détails : Texte pur, sans icône */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowFormatDetails(true);
-                      }}
-                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center justify-center border border-white/25 hover:border-transparent cursor-pointer shadow-md"
-                      title="Découvrir les détails de cette option"
-                    >
-                      <span>Détails</span>
-                    </button>
+                    {/* CENTRE : BOUTON PLAY/PAUSE */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsChoiceAVideoPlaying(false);
+                          setIsChoiceBVideoPlaying(!isChoiceBVideoPlaying);
+                        }}
+                        className={`pointer-events-auto group/btn relative w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
+                          isChoiceBVideoPlaying
+                            ? 'border border-white/40 ring-2 ring-white/20 bg-black/60 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                            : 'border border-white/25 hover:border-white hover:ring-2 hover:ring-white/30 bg-black/45 hover:bg-black/65'
+                        }`}
+                        title={isChoiceBVideoPlaying ? 'Pause' : 'Lire la vidéo'}
+                      >
+                        {isChoiceBVideoPlaying ? (
+                          <Pause className="w-5 sm:w-6 h-5 sm:h-6 text-white fill-white transition-transform group-hover/btn:scale-110" />
+                        ) : (
+                          <Play className="w-5 sm:w-6 h-5 sm:h-6 text-white fill-white translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                        )}
+                      </button>
+                    </div>
 
-                    {/* Bouton Choisir : fond translucide -> marron terre cuite au survol */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (formatCardIndex === 0) {
-                          setChosenFlow('UPLOAD_DIRECT');
-                        } else {
-                          setChosenFlow('REQUEST_CREW');
-                        }
-                      }}
-                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
-                      title={formatCardIndex === 0 ? "J'ai ma vidéo" : "Se faire filmer"}
-                      id={`choose-format-btn-${formatCardIndex}`}
-                    >
-                      <span>{formatCardIndex === 0 ? "J'ai ma vidéo" : "Se faire filmer"}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                    {/* BAS : BOUTON DÉTAILS ET BOUTON CHOIX */}
+                    <div className="relative z-10 flex items-center justify-between gap-1 sm:gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowDetailsB(true);
+                        }}
+                        className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-[10px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center justify-center border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                        title="Détails"
+                      >
+                        <span>Détails</span>
+                      </button>
 
-                  {/* OVERLAY DES DÉTAILS DU FORMAT */}
-                  {showFormatDetails && (
-                    <div 
-                      onClick={(e) => e.stopPropagation()}
-                      className="details-overlay absolute inset-0 bg-black/92 backdrop-blur-md z-20 flex flex-col justify-between p-6 text-white animate-in fade-in duration-200"
-                    >
-                      <div className="space-y-4 overflow-y-auto max-h-[82%] pr-1">
-                        <div className="flex items-center justify-between pb-2 border-b border-white/15">
-                          <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
-                            {formatCardIndex === 0 ? "Option dépôt autonome" : "Option tournage accompagné"}
-                          </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsChoiceAVideoPlaying(false);
+                          setIsChoiceBVideoPlaying(false);
+                          setChosenFlow('BROWSE_VIDEOGRAPHERS');
+                        }}
+                        className="px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-[10px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 sm:gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
+                        title="Recruter un vidéaste"
+                        id="btn-choose-recruit-videographer"
+                      >
+                        <span className="truncate">Recruter un vidéaste</span>
+                        <ArrowRight className="w-3 sm:w-3.5 h-3 sm:h-3.5 shrink-0" />
+                      </button>
+                    </div>
+
+                    {/* OVERLAY DÉTAILS OPTION B */}
+                    {showDetailsB && (
+                      <div 
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute inset-0 bg-black/92 backdrop-blur-md z-20 flex flex-col justify-between p-4 sm:p-5 text-white animate-in fade-in duration-200"
+                      >
+                        <div className="space-y-3 overflow-y-auto max-h-[82%] pr-1">
+                          <div className="flex items-center justify-between pb-2 border-b border-white/15">
+                            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
+                              Réseau des Artisans
+                            </span>
+                            <button
+                              onClick={() => setShowDetailsB(false)}
+                              className="p-1 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          <h4 className="font-editorial text-base sm:text-lg font-bold text-white flex items-center gap-1.5">
+                            <Camera className="w-4 h-4 text-[#C89B3C]" />
+                            <span>Recruter un vidéaste</span>
+                          </h4>
+
+                          <div className="space-y-2 pt-1 text-[11px] sm:text-xs text-white/90">
+                            <div className="flex items-start gap-2">
+                              <span className="w-3.5 h-3.5 rounded-full bg-white/20 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                              <p>Mise en relation avec un cadreur ou documentariste local certifié</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="w-3.5 h-3.5 rounded-full bg-white/20 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                              <p>Tournage sur votre lieu de vie ou de transmission</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="w-3.5 h-3.5 rounded-full bg-white/20 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                              <p>Caméras cinéma 4K & prise de son binaurale en lumière naturelle</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="w-3.5 h-3.5 rounded-full bg-white/20 text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+                              <p>Prise en charge intégrale ou subventionnée par la forêt YonyWood</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-white/15 flex items-center justify-between gap-2">
                           <button
-                            onClick={() => setShowFormatDetails(false)}
-                            className="p-1.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer"
-                            title="Fermer"
+                            type="button"
+                            onClick={() => setShowDetailsB(false)}
+                            className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[10px] sm:text-xs text-white"
                           >
-                            <X className="w-4 h-4" />
+                            Fermer
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowDetailsB(false);
+                              setIsChoiceAVideoPlaying(false);
+                              setIsChoiceBVideoPlaying(false);
+                              setChosenFlow('BROWSE_VIDEOGRAPHERS');
+                            }}
+                            className="px-3 sm:px-4 py-1.5 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-[10px] sm:text-xs font-semibold backdrop-blur-md flex items-center gap-1"
+                          >
+                            <span>Découvrir les vidéastes</span>
+                            <ArrowRight className="w-3 h-3" />
                           </button>
                         </div>
-
-                        <h4 className="font-editorial text-lg font-bold text-white flex items-center gap-2">
-                          {formatCardIndex === 0 ? (
-                            <>
-                              <UploadCloud className="w-4 h-4 text-[#C89B3C]" />
-                              <span>J'ai ma vidéo</span>
-                            </>
-                          ) : (
-                            <>
-                              <Camera className="w-4 h-4 text-[#C89B3C]" />
-                              <span>Se faire filmer</span>
-                            </>
-                          )}
-                        </h4>
-
-                        <div className="space-y-2.5 pt-1">
-                          {(formatCardIndex === 0 ? [
-                            "Vidéo déjà tournée au smartphone ou à la caméra",
-                            "Format vertical 9:16 privilégié",
-                            "Fichiers acceptés : MP4, MOV, WebM",
-                            "Intégration directe après validation éditoriale"
-                          ] : [
-                            "Mise en relation avec un cadreur partenaire local",
-                            "Tournage sur votre lieu de vie ou de travail",
-                            "Cadrage et prise de son professionnels assurés",
-                            "Prise en charge intégrale de la captation"
-                          ]).map((item, idx) => (
-                            <div key={idx} className="flex items-start gap-2.5 text-xs text-white/95">
-                              <span className="w-4 h-4 rounded-full bg-white/20 border border-white/30 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                                {idx + 1}
-                              </span>
-                              <p className="leading-snug">{item}</p>
-                            </div>
-                          ))}
-                        </div>
                       </div>
-
-                      <div className="pt-3 border-t border-white/15 flex items-center justify-between gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setShowFormatDetails(false)}
-                          className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium text-white transition-colors cursor-pointer"
-                        >
-                          Fermer
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowFormatDetails(false);
-                            if (formatCardIndex === 0) {
-                              setChosenFlow('UPLOAD_DIRECT');
-                            } else {
-                              setChosenFlow('REQUEST_CREW');
-                            }
-                          }}
-                          className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
-                        >
-                          <span>{formatCardIndex === 0 ? "J'ai ma vidéo" : "Se faire filmer"}</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                 </div>
-
-                {/* Flèche suivante - repositionnée et visible sur mobile comme desktop */}
-                <button
-                  type="button"
-                  onClick={handleToggleFormat}
-                  aria-label="Format suivant"
-                  className="absolute right-1 sm:right-2 md:-right-12 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white flex items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105 active:scale-95"
-                  title="Option suivante"
-                >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
 
               </div>
             </div>
           )}
 
-          {/* SOUS-ÉCRAN 2A : J'AI MA VIDÉO -> TÉLÉCHARGER LA VIDÉO ET TRANSMETTRE (SIMPLE ET DIRECT) */}
+          {/* 2. VUE SWIPE VIDÉASTES : PROFILES EN VIDÉO 9:16 AVEC CONTACT DIRECT ET MESSAGERIE */}
+          {chosenFlow === 'BROWSE_VIDEOGRAPHERS' && (
+            <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
+              <div className="relative w-full h-full flex flex-col items-center justify-center">
+
+                {/* Barre supérieure : Retour & Indicateur de swipe */}
+                <div className="w-full max-w-[min(380px,calc((100dvh-200px)*9/16+40px))] flex items-center justify-between mb-2 px-1">
+                  <button
+                    onClick={() => {
+                      setIsVideographerVideoPlaying(false);
+                      setChosenFlow(null);
+                    }}
+                    className="px-3 py-1.5 rounded-full bg-white/90 hover:bg-[#1C1917] hover:text-white text-stone-800 text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 border border-stone-200 shadow-sm cursor-pointer"
+                    title="Revenir au choix du mode"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Retour</span>
+                  </button>
+
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 border border-stone-200 text-[11px] font-semibold text-stone-700">
+                    <Camera className="w-3.5 h-3.5 text-[#A2482B]" />
+                    <span>Vidéaste {activeVideographerIndex + 1} / {VIDEOGRAPHERS.length}</span>
+                  </div>
+                </div>
+
+                {/* CONTENEUR DU SWIPE VIDÉASTE AVEC FLÈCHES LATÉRALES */}
+                <div className="relative w-full flex items-center justify-center">
+                  
+                  {/* Flèche gauche */}
+                  <button
+                    type="button"
+                    onClick={handlePrevVideographer}
+                    aria-label="Vidéaste précédent"
+                    className="hidden sm:flex absolute left-2 sm:left-4 lg:left-8 z-30 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+                    title="Vidéaste précédent"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+
+                  {/* CARTE 9:16 UNIQUE VIDÉASTE */}
+                  {(() => {
+                    const v = VIDEOGRAPHERS[activeVideographerIndex] || VIDEOGRAPHERS[0];
+                    const sampleVideos = [
+                      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+                      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+                      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4"
+                    ];
+                    const vidUrl = sampleVideos[activeVideographerIndex % sampleVideos.length];
+
+                    return (
+                      <div
+                        style={{ transform: `translateX(${vidSwipeOffset}px)` }}
+                        onTouchStart={onVidTouchStart}
+                        onTouchMove={onVidTouchMove}
+                        onTouchEnd={onVidTouchEnd}
+                        onMouseDown={onVidMouseDown}
+                        onMouseMove={onVidMouseMove}
+                        onMouseUp={onVidMouseUp}
+                        onClick={() => {
+                          if (!vidHasDraggedRef.current) {
+                            setIsVideographerVideoPlaying(prev => !prev);
+                          }
+                        }}
+                        className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between p-3 sm:p-5 transition-transform duration-150 ease-out select-none cursor-pointer shrink-0 relative"
+                        id={`videographer-card-${v.id}`}
+                      >
+                        {/* Vidéo ou Affiche de présentation */}
+                        {isVideographerVideoPlaying ? (
+                          <video
+                            src={vidUrl}
+                            poster={v.photoUrl || v.photo}
+                            autoPlay
+                            loop
+                            playsInline
+                            muted={isVideographerMuted}
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img
+                            src={v.photoUrl || v.photo}
+                            alt={v.name}
+                            referrerPolicy="no-referrer"
+                            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                          />
+                        )}
+
+                        {/* Voile cinématographique */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/45 pointer-events-none" />
+
+                        {/* HAUT : Badge du vidéaste & Bouton Son */}
+                        <div className="relative z-10 flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-sm">
+                            <ShieldCheck className="w-3.5 h-3.5 text-[#C89B3C]" />
+                            <span className="truncate">{v.name}</span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-semibold text-stone-200">
+                              <MapPin className="w-3 h-3 text-[#C89B3C]" />
+                              <span className="truncate max-w-[120px]">{v.country || v.territory.split('(')[0].trim()}</span>
+                            </div>
+
+                            {isVideographerVideoPlaying && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setIsVideographerMuted(!isVideographerMuted);
+                                }}
+                                className="p-1.5 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 transition-colors cursor-pointer"
+                                title={isVideographerMuted ? 'Activer le son' : 'Couper le son'}
+                              >
+                                {isVideographerMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* CENTRE : BOUTON PLAY/PAUSE */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsVideographerVideoPlaying(!isVideographerVideoPlaying);
+                            }}
+                            className={`pointer-events-auto group/btn relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer shadow-2xl backdrop-blur-md ${
+                              isVideographerVideoPlaying
+                                ? 'border border-white/40 ring-2 ring-white/20 bg-black/60 shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                                : 'border border-white/25 hover:border-white hover:ring-2 hover:ring-white/30 bg-black/45 hover:bg-black/65'
+                            }`}
+                            title={isVideographerVideoPlaying ? 'Pause' : 'Lire la vidéo de présentation'}
+                          >
+                            {isVideographerVideoPlaying ? (
+                              <Pause className="w-6 h-6 text-white fill-white transition-transform group-hover/btn:scale-110" />
+                            ) : (
+                              <Play className="w-6 h-6 text-white fill-white translate-x-0.5 transition-transform group-hover/btn:scale-115" />
+                            )}
+                          </button>
+                        </div>
+
+                        {/* BAS : INFOS VIDÉASTE ET BOUTONS D'ACTION */}
+                        <div className="relative z-10 space-y-2.5">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 text-[11px] font-bold text-[#FACC15]">
+                                <Star className="w-3.5 h-3.5 fill-[#FACC15]" />
+                                <span>{v.rating || 4.9}</span>
+                              </div>
+                              <span className="text-white/40 text-xs">•</span>
+                              <span className="text-white/80 text-[11px] font-medium">
+                                {v.completedShoots || v.storiesShot || 12} tournages certifiés
+                              </span>
+                            </div>
+                            <p className="text-xs text-white/90 line-clamp-2 leading-snug">
+                              {v.bio}
+                            </p>
+                            <div className="flex items-center gap-1.5 text-[10px] text-[#C89B3C] font-semibold truncate">
+                              <span>Caméra : {v.gear ? v.gear.split(',')[0] : 'Cinéma 4K'}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/15">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowingVideographerProfile(v);
+                              }}
+                              className="px-3.5 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center justify-center border border-white/25 hover:border-transparent cursor-pointer shadow-md"
+                              title="Voir le profil complet"
+                            >
+                              <span>Voir profil</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setContactingVideographer(v);
+                                setContactMessage(`Bonjour ${v.name}, je prépare un récit pour la série « ${currentSubject.title} ». Seriez-vous disponible pour un tournage en lumière naturelle ?`);
+                                setContactSuccess(false);
+                              }}
+                              className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer shrink-0"
+                              title="Contacter ce vidéaste"
+                              id={`btn-contact-videographer-${v.id}`}
+                            >
+                              <MessageSquare className="w-3.5 h-3.5" />
+                              <span>Contacter ce vidéaste</span>
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+                    );
+                  })()}
+
+                  {/* Flèche droite */}
+                  <button
+                    type="button"
+                    onClick={handleNextVideographer}
+                    aria-label="Vidéaste suivant"
+                    className="hidden sm:flex absolute right-2 sm:right-4 lg:right-8 z-30 w-11 h-11 rounded-full bg-white/95 border border-[#E7E5E4] hover:border-[#A2482B] text-[#1C1917] hover:bg-[#A2482B] hover:text-white items-center justify-center shadow-lg transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+                    title="Vidéaste suivant"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* 3. VUE J'AI MA VIDÉO : TÉLÉCHARGER LA VIDÉO ET ATTRIBUER LES CRÉDITS */}
           {chosenFlow === 'UPLOAD_DIRECT' && (
-            <div className="space-y-5 bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+            <div className="max-w-xl mx-auto space-y-5 bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm animate-in fade-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-[#A2482B]/10 text-[#A2482B]">
@@ -1139,14 +1942,14 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       Téléverser votre vidéo
                     </h3>
                     <p className="text-xs text-stone-500">
-                      Format vertical 9:16 recommandé
+                      Format vertical 9:16 recommandé pour la série {currentSubject.title}
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setChosenFlow(null)}
-                  className="p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors"
+                  className="p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
                   title="Changer de choix"
                 >
                   <X className="w-5 h-5" />
@@ -1154,7 +1957,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               </div>
 
               {/* Zone Drag & Drop ou Clic */}
-              <div className="border-2 border-dashed border-stone-300 hover:border-[#A2482B] rounded-2xl p-8 text-center transition-all bg-stone-50/50 hover:bg-stone-50 group">
+              <div className="border-2 border-dashed border-stone-300 hover:border-[#A2482B] rounded-2xl p-7 text-center transition-all bg-stone-50/50 hover:bg-stone-50 group">
                 <input
                   type="file"
                   id="direct-video-upload"
@@ -1167,8 +1970,8 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   }}
                 />
                 <label htmlFor="direct-video-upload" className="cursor-pointer block space-y-3">
-                  <div className="w-14 h-14 mx-auto rounded-full bg-[#A2482B]/10 text-[#A2482B] group-hover:scale-110 flex items-center justify-center transition-transform">
-                    <UploadCloud className="w-7 h-7" />
+                  <div className="w-13 h-13 mx-auto rounded-full bg-[#A2482B]/10 text-[#A2482B] group-hover:scale-110 flex items-center justify-center transition-transform">
+                    <UploadCloud className="w-6 h-6" />
                   </div>
                   <div>
                     <span className="text-sm font-semibold text-[#1C1917] block">
@@ -1181,15 +1984,29 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   {uploadedFileName && (
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
                       <Check className="w-3.5 h-3.5" />
-                      <span>Fichier prêt à être transmis</span>
+                      <span>Fichier prêt : {uploadedFileName}</span>
                     </div>
                   )}
                 </label>
               </div>
 
+              {/* Titre optionnel */}
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-stone-800 block">
+                  Titre de votre proposition (optionnel) :
+                </label>
+                <input
+                  type="text"
+                  placeholder={`Ex: Mon témoignage pour ${currentSubject.title}`}
+                  value={storySubmissionTitle}
+                  onChange={(e) => setStorySubmissionTitle(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
+                />
+              </div>
+
               {/* GÉNÉRIQUE & CRÉDITS DE LA SÉQUENCE */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-4 text-left">
-                <div className="flex items-center justify-between border-b border-stone-200/80 pb-2.5">
+              <div className="p-4 sm:p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-3.5 text-left">
+                <div className="flex items-center justify-between border-b border-stone-200/80 pb-2">
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#A2482B]">
                     <Film className="w-4 h-4" />
                     <span>Générique & Attribution des rôles</span>
@@ -1201,8 +2018,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   Précisez les intervenants pour attribuer automatiquement les droits, les mentions et la traçabilité économique sur YonyWood.
                 </p>
 
-                <div className="space-y-3.5 pt-1">
-                  {/* Casting */}
+                <div className="space-y-3 pt-1">
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-stone-800 block">
                       Casting / Témoins à l'écran
@@ -1212,14 +2028,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       placeholder="Ex: Mireille Houndé (Témoin principal), Koffi Mensah"
                       value={creditsCasting}
                       onChange={(e) => setCreditsCasting(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
                     />
-                    <span className="text-[10px] text-stone-400 block">
-                      Saisissez le nom ou pseudo des personnes visibles à l'image.
-                    </span>
                   </div>
 
-                  {/* Réalisation */}
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-stone-800 block">
                       Réalisation / Prise de vue
@@ -1229,14 +2041,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       placeholder="Ex: Alain Kpatoukpa"
                       value={creditsDirector}
                       onChange={(e) => setCreditsDirector(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
                     />
-                    <span className="text-[10px] text-stone-400 block">
-                      Personne responsable du cadrage et de la réalisation.
-                    </span>
                   </div>
 
-                  {/* Post-production */}
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-stone-800 block">
                       Post-Production (Montage, Son, Étalonnage)
@@ -1246,11 +2054,8 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       placeholder="Ex: Sonia Dossou (Montage), Mathieu H. (Mixage sonore)"
                       value={creditsPostProd}
                       onChange={(e) => setCreditsPostProd(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
+                      className="w-full px-3.5 py-2 rounded-xl bg-white border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] shadow-xs"
                     />
-                    <span className="text-[10px] text-stone-400 block">
-                      Équipe technique ayant participé à la finition de la vidéo.
-                    </span>
                   </div>
                 </div>
               </div>
@@ -1275,113 +2080,282 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   }`}
                   id="btn-upload-direct-submit"
                 >
-                  <span>Transmettre</span>
+                  <span>Transmettre mon récit</span>
                   <Check className="w-4 h-4" />
                 </button>
               </div>
             </div>
           )}
 
-          {/* SOUS-ÉCRAN 2B : SE FAIRE FILMER -> FORMULAIRE SIMPLE POUR COORDONNÉES */}
-          {chosenFlow === 'REQUEST_CREW' && (
-            <div className="space-y-5 bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm animate-in fade-in zoom-in-95 duration-200">
-              <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-[#A2482B]/10 text-[#A2482B]">
-                    <Camera className="w-5 h-5" />
+          {/* MODAL : CONTACTER CE VIDÉASTE */}
+          {contactingVideographer && (
+            <div 
+              onClick={() => setContactingVideographer(null)}
+              className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full space-y-5 shadow-2xl border border-stone-200 text-left"
+              >
+                <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border border-stone-200 shrink-0">
+                      <img 
+                        src={contactingVideographer.photoUrl || contactingVideographer.photo} 
+                        alt={contactingVideographer.name}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917]">
+                        Contacter {contactingVideographer.name}
+                      </h3>
+                      <p className="text-[11px] text-[#A2482B] font-medium">
+                        Pour la série : {currentSubject.title}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
-                      Se faire filmer par un cadreur
-                    </h3>
-                    <p className="text-xs text-stone-500">
-                      Nous vous mettons en relation avec un cinéaste partenaire
+                  <button
+                    onClick={() => setContactingVideographer(null)}
+                    className="p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {contactSuccess ? (
+                  <div className="py-6 text-center space-y-4 animate-in fade-in">
+                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
+                      <Check className="w-6 h-6 stroke-[2.5]" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-editorial text-lg font-bold text-stone-900">
+                        Demande transmise avec succès !
+                      </h4>
+                      <p className="text-xs text-stone-600 max-w-sm mx-auto">
+                        {contactingVideographer.name} a reçu votre sollicitation pour la série « {currentSubject.title} ».
+                      </p>
+                    </div>
+                    <div className="pt-3 flex flex-wrap justify-center gap-2.5">
+                      <button
+                        onClick={() => {
+                          setContactingVideographer(null);
+                          onNavigate({ type: 'messaging' });
+                        }}
+                        className="px-5 py-2.5 rounded-full bg-[#A2482B] hover:bg-[#8B3B20] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>Ouvrir la messagerie</span>
+                      </button>
+                      <button
+                        onClick={() => setContactingVideographer(null)}
+                        className="px-4 py-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium cursor-pointer"
+                      >
+                        Retour au swipe
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-stone-800 block">
+                        Votre message à l'attention du cinéaste :
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={contactMessage}
+                        onChange={(e) => setContactMessage(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B] resize-none"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-stone-800 block">
+                          Votre nom / prénom :
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Ex: Mireille Houndé"
+                          value={contactUserName}
+                          onChange={(e) => setContactUserName(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-stone-800 block">
+                          Téléphone WhatsApp / Email :
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Ex: +229 97 00 00 00"
+                          value={contactUserPhone}
+                          onChange={(e) => setContactUserPhone(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-900 focus:outline-none focus:border-[#A2482B]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 space-y-1">
+                      <div className="font-semibold flex items-center gap-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+                        <span>Prise en charge Forêt YonyWood</span>
+                      </div>
+                      <p className="text-amber-800/90 leading-relaxed">
+                        {contactingVideographer.rateInfo || "Accompagnement subventionné par la forêt YonyWood (Prise en charge 70%)."}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 flex items-center justify-between gap-2 border-t border-stone-100">
+                      <button
+                        onClick={() => {
+                          setContactingVideographer(null);
+                          onNavigate({ type: 'messaging' });
+                        }}
+                        className="text-xs text-[#A2482B] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                        title="Échanger directement par messagerie"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>Passer par la messagerie</span>
+                      </button>
+
+                      <button
+                        onClick={() => setContactSuccess(true)}
+                        className="px-5 py-2.5 rounded-full bg-[#A2482B] hover:bg-[#8B3B20] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Envoyer la demande</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* MODAL : PROFIL COMPLET DU VIDÉASTE */}
+          {showingVideographerProfile && (
+            <div 
+              onClick={() => setShowingVideographerProfile(null)}
+              className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+            >
+              <div 
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full space-y-5 shadow-2xl border border-stone-200 text-left max-h-[90vh] overflow-y-auto"
+              >
+                <div className="flex items-start justify-between border-b border-stone-100 pb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-2xl overflow-hidden border border-stone-200 shadow-sm shrink-0">
+                      <img 
+                        src={showingVideographerProfile.photoUrl || showingVideographerProfile.photo} 
+                        alt={showingVideographerProfile.name}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <h3 className="font-editorial text-lg font-bold text-[#1C1917]">
+                          {showingVideographerProfile.name}
+                        </h3>
+                        <ShieldCheck className="w-4 h-4 text-[#C89B3C]" />
+                      </div>
+                      <p className="text-xs text-stone-500 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-[#A2482B]" />
+                        <span>{showingVideographerProfile.territory}</span>
+                      </p>
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-[#FACC15] mt-0.5">
+                        <Star className="w-3 h-3 fill-[#FACC15]" />
+                        <span className="text-stone-700">{showingVideographerProfile.rating || 4.9}</span>
+                        <span className="text-stone-400 font-normal ml-1">({showingVideographerProfile.completedShoots || 12} tournages certifiés)</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowingVideographerProfile(null)}
+                    className="p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-4 text-xs text-stone-700">
+                  <div className="space-y-1">
+                    <h5 className="font-bold text-stone-900 uppercase tracking-wider text-[10.5px]">
+                      Biographie & Démarche
+                    </h5>
+                    <p className="leading-relaxed text-stone-600">
+                      {showingVideographerProfile.bio}
                     </p>
                   </div>
+
+                  <div className="space-y-1">
+                    <h5 className="font-bold text-stone-900 uppercase tracking-wider text-[10.5px]">
+                      Équipement & Prise de son
+                    </h5>
+                    <p className="leading-relaxed text-stone-600 bg-stone-50 p-2.5 rounded-xl border border-stone-100">
+                      {showingVideographerProfile.gear || showingVideographerProfile.equipment || "Caméra cinéma 4K, micros cravates HF, stabilisateur et lumière naturelle."}
+                    </p>
+                  </div>
+
+                  {showingVideographerProfile.specialties && (
+                    <div className="space-y-1.5">
+                      <h5 className="font-bold text-stone-900 uppercase tracking-wider text-[10.5px]">
+                        Spécialités
+                      </h5>
+                      <div className="flex flex-wrap gap-1.5">
+                        {showingVideographerProfile.specialties.map((s, idx) => (
+                          <span key={idx} className="px-2.5 py-1 rounded-full bg-stone-100 text-stone-700 text-[11px] font-medium">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {showingVideographerProfile.languages && (
+                    <div className="space-y-1">
+                      <h5 className="font-bold text-stone-900 uppercase tracking-wider text-[10.5px]">
+                        Langues parlées
+                      </h5>
+                      <p className="text-stone-600">
+                        {showingVideographerProfile.languages.join(', ')}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                <button
-                  onClick={() => setChosenFlow(null)}
-                  className="p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors"
-                  title="Changer de choix"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+                <div className="pt-3 border-t border-stone-100 flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => {
+                      const v = showingVideographerProfile;
+                      setShowingVideographerProfile(null);
+                      setContactingVideographer(v);
+                      setContactMessage(`Bonjour ${v.name}, je prépare un récit pour la série « ${currentSubject.title} ». Seriez-vous disponible pour un tournage en lumière naturelle ?`);
+                      setContactSuccess(false);
+                    }}
+                    className="px-4 py-2.5 rounded-full bg-[#A2482B] hover:bg-[#8B3B20] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>Contacter ce vidéaste</span>
+                  </button>
 
-              {/* Formulaire simple de mise en relation */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    Votre prénom & nom :
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: Aïcha Diop"
-                    value={videographerName}
-                    onChange={(e) => setVideographerName(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-xs bg-white text-[#1C1917] outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B]"
-                  />
+                  <button
+                    onClick={() => {
+                      setShowingVideographerProfile(null);
+                      onNavigate({ type: 'messaging' });
+                    }}
+                    className="px-4 py-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Ouvrir la messagerie</span>
+                  </button>
                 </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    Ville ou région où vous êtes basé(e) :
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: Cotonou, Dakar, Abidjan, Bamako, Paris..."
-                    value={videographerCity}
-                    onChange={(e) => setVideographerCity(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-xs bg-white text-[#1C1917] outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                    Téléphone (WhatsApp) ou adresse e-mail :
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: +221 77 000 00 00 ou contact@exemple.org"
-                    value={videographerContact}
-                    onChange={(e) => setVideographerContact(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-xs bg-white text-[#1C1917] outline-none focus:border-[#A2482B] focus:ring-1 focus:ring-[#A2482B]"
-                  />
-                </div>
-              </div>
-
-              {/* Actions : Retour / Valider la demande */}
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  onClick={() => setChosenFlow(null)}
-                  className="px-5 py-2.5 rounded-full bg-white hover:bg-stone-50 border border-stone-200 text-xs font-medium text-[#1C1917] flex items-center gap-2 cursor-pointer"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Retour</span>
-                </button>
-
-                <button
-                  disabled={!videographerName.trim() || !videographerCity.trim() || !videographerContact.trim()}
-                  onClick={() => setSubmittedSuccess(true)}
-                  className={`px-7 py-2.5 rounded-full text-xs font-semibold transition-all flex items-center gap-2 shadow-sm ${
-                    videographerName.trim() && videographerCity.trim() && videographerContact.trim()
-                      ? 'bg-[#A2482B] hover:bg-[#8B3B20] text-white cursor-pointer transform hover:scale-105'
-                      : 'bg-stone-200 text-stone-400 opacity-60 cursor-not-allowed'
-                  }`}
-                  id="btn-request-crew-submit"
-                >
-                  <span>Demander un tournage</span>
-                  <Check className="w-4 h-4" />
-                </button>
               </div>
             </div>
           )}
-
-        </div>
+        </>
       )}
 
     </div>
