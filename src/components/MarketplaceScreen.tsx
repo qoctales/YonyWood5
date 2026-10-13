@@ -99,8 +99,8 @@ const PRODUCTIONS: ProductionPoster[] = [
   },
   {
     id: 'safer-healer',
-    title: 'Safer < > healer',
-    posterImage: '/assets/posters/Safer < > healer.png',
+    title: 'Safer < > Healer',
+    posterImage: '/assets/posters/Safer < > Healer.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharePrice: 58
   }
@@ -189,8 +189,8 @@ const INITIAL_PEER_OFFERS: PeerOffer[] = [
     sellerId: 'jennifer-rescuer-seller',
     sellerName: 'Jennifer',
     sellerPhoto: '/assets/duos/firefighter-safer.jpg',
-    seriesTitle: 'Safer < > healer',
-    posterImage: '/assets/posters/Safer < > healer.png',
+    seriesTitle: 'Safer < > Healer',
+    posterImage: '/assets/posters/Safer < > Healer.png',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharesCount: 5,
     unitPrice: 58

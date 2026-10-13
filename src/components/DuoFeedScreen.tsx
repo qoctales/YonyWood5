@@ -13,16 +13,13 @@ import {
   Layers,
   LayoutGrid,
   ArrowRightLeft,
-  Flag,
-  Clapperboard
+  Flag
 } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'motion/react';
 import { apiService } from '../services/api';
 import { ViewScreen, Duo, Protagonist } from '../types';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 import { ReportModal } from './ReportModal';
-import { SequenceCreditsModal } from './SequenceCreditsModal';
-import { getSeriesCredits } from '../data/seriesTeamData';
 
 interface DuoFeedScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -53,7 +50,6 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [isCreditsModalOpen, setIsCreditsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'duo' | 'deck'>('duo');
   const [deckActiveSide, setDeckActiveSide] = useState<'A' | 'B'>('A');
 
@@ -494,19 +490,8 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         )}
                       </div>
 
-                      {/* Vignettes d'action : Générique, Question, Profil */}
+                      {/* Vignettes d'action : Question, Profil */}
                       <div className="flex flex-col items-center gap-1.5 shrink-0">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsCreditsModalOpen(true);
-                          }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95 shrink-0"
-                          title="Générique & Crédits de la séquence"
-                          id={`open-credits-a-${currentDuo.id}`}
-                        >
-                          <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                        </button>
 
                         <button
                           onClick={(e) => {
@@ -627,19 +612,8 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         )}
                       </div>
 
-                      {/* Vignettes d'action : Générique, Question, Profil */}
+                      {/* Vignettes d'action : Question, Profil */}
                       <div className="flex flex-col items-center gap-1.5 shrink-0">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsCreditsModalOpen(true);
-                          }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95 shrink-0"
-                          title="Générique & Crédits de la séquence"
-                          id={`open-credits-b-${currentDuo.id}`}
-                        >
-                          <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                        </button>
 
                         <button
                           onClick={(e) => {
@@ -783,16 +757,6 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
                         {/* Boutons d'action sur la vidéo empilés verticalement comme en mode duo */}
                         <div className="flex flex-col items-center gap-1.5 sm:gap-2 shrink-0">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setIsCreditsModalOpen(true);
-                            }}
-                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
-                            title="Générique & Crédits de la séquence"
-                          >
-                            <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                          </button>
 
                           <button
                             onClick={(e) => {
@@ -925,16 +889,6 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
 
                         {/* Boutons d'action sur la vidéo empilés verticalement comme en mode duo */}
                         <div className="flex flex-col items-center gap-1.5 sm:gap-2 shrink-0">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setIsCreditsModalOpen(true);
-                            }}
-                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
-                            title="Générique & Crédits de la séquence"
-                          >
-                            <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                          </button>
 
                           <button
                             onClick={(e) => {
@@ -1026,27 +980,6 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
           targetType="duo"
           targetId={currentDuo.id}
           targetTitle={`${currentDuo.documentaryTitle} (${currentDuo.protagonistA.name} <> ${currentDuo.protagonistB.name})`}
-        />
-      )}
-
-      {/* Volet modal des crédits & générique de la séquence */}
-      {currentDuo && (
-        <SequenceCreditsModal
-          isOpen={isCreditsModalOpen}
-          onClose={() => setIsCreditsModalOpen(false)}
-          title={`${currentDuo.protagonistA.name} · ${currentDuo.protagonistB.name} (${currentDuo.questionTitle})`}
-          seriesTitle={currentDuo.documentaryTitle}
-          credits={getSeriesCredits(currentDuo.documentaryId, currentDuo.questionTitle)}
-          onNavigateToProfile={(protagonistId) => {
-            setIsCreditsModalOpen(false);
-            onNavigate({
-              type: 'protagonist_profile',
-              protagonistId,
-              returnToDuoId: currentDuo.id,
-              returnToDuoIndex: safeIndex,
-              returnToDocId: selectedDocId || currentDuo.documentaryId
-            });
-          }}
         />
       )}
     </div>

@@ -411,18 +411,18 @@ export const DuocumentairesTvIcon: React.FC<IconProps> = ({
       aria-hidden="true"
     >
       {/* Cadre du téléviseur / meuble vintage arrondi */}
-      <rect x="4" y="5" width="16" height="11" rx="2.5" />
+      <rect x="4" y="5" width="16" height="11" rx="2" />
       
       {/* Séparation centrale verticale (l'écran divisé en deux mondes/voix) */}
       <line x1="12" y1="5" x2="12" y2="16" />
 
       {/* Deux petits boutons / témoins caméra au centre de chaque moitié d'écran */}
-      <circle cx="8" cy="10.5" r="0.8" fill="currentColor" stroke="none" />
-      <circle cx="16" cy="10.5" r="0.8" fill="currentColor" stroke="none" />
+      <circle cx="7.5" cy="10.5" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="16.5" cy="10.5" r="0.9" fill="currentColor" stroke="none" />
 
       {/* Piétement vintage : deux pieds inclinés uniquement, sans traverse */}
-      <path d="M 6.8 16 L 4.6 20.5" />
-      <path d="M 17.2 16 L 19.4 20.5" />
+      <path d="M 8 16 L 6.5 20.5" />
+      <path d="M 16 16 L 17.5 20.5" />
     </svg>
   );
 };
@@ -481,4 +481,130 @@ export const YonywoodDefinitiveLogo: React.FC<{ className?: string }> = ({
     </svg>
   );
 };
+
+/**
+ * DirectorChairIcon:
+ * Symbole « Studio » : Fauteuil de réalisateur officiel YonyWood,
+ * directement calibré sur la planche d'exploration (Variante 2/6 et exemple barre de nav) :
+ * montants verticaux fins, dossier en toile tendue AVEC COULEUR/REMPLISSAGE PLEIN,
+ * accoudoirs extérieurs dégagés, assise nette et piétement ciseau en X.
+ */
+export const DirectorChairIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.75 
+}) => {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Montants verticaux arrière (dépassent légèrement en haut avec petits embouts) */}
+      <line x1="7" y1="3" x2="7" y2="13.5" />
+      <line x1="17" y1="3" x2="17" y2="13.5" />
+
+      {/* Dossier en toile tendue - AVEC COULEUR PLEINE (fill="currentColor") comme demandé */}
+      <rect x="7" y="4.5" width="10" height="4.5" rx="0.5" fill="currentColor" />
+
+      {/* Accoudoirs extérieurs gauche et droite (espace central bien dégagé) */}
+      <line x1="3.5" y1="10" x2="7" y2="10" />
+      <line x1="17" y1="10" x2="20.5" y2="10" />
+
+      {/* Barre d'assise horizontale */}
+      <line x1="5" y1="13.5" x2="19" y2="13.5" />
+
+      {/* Piétement en X (ciseaux de chaise de réalisateur) */}
+      <line x1="7" y1="13.5" x2="17" y2="21.5" />
+      <line x1="17" y1="13.5" x2="7" y2="21.5" />
+    </svg>
+  );
+};
+
+/**
+ * FilmReelIcon:
+ * Symbole « Héritages » : Bobine de film épurée et d'une clarté immédiate,
+ * avec un grand cercle précis, son moyeu central, 4 perforations circulaires équilibrées
+ * et bien visibles en petite taille (nord, est, sud, ouest), et une traîne horizontale
+ * nette à la base symbolisant l'amorce de pellicule déroulée.
+ */
+export const FilmReelIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.75 
+}) => {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Grand cercle de la bobine de film (diamètre généreux pour lisibilité parfaite) */}
+      <circle cx="11" cy="10.5" r="8.5" />
+      
+      {/* Moyeu / axe central */}
+      <circle cx="11" cy="10.5" r="1.5" fill="currentColor" stroke="none" />
+      
+      {/* 4 perforations bien proportionnées et contrastées (4 points cardinaux) */}
+      <circle cx="11" cy="5.7" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="15.8" cy="10.5" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="11" cy="15.3" r="1.5" fill="currentColor" stroke="none" />
+      <circle cx="6.2" cy="10.5" r="1.5" fill="currentColor" stroke="none" />
+      
+      {/* Traîne de pellicule horizontale et nette à la base */}
+      <line x1="10" y1="19" x2="21.5" y2="19" />
+    </svg>
+  );
+};
+
+/**
+ * ClapCinemaIcon:
+ * Symbole « Productions » : Clap de cinéma avec partie supérieure entrouverte,
+ * bandes biseautées et ardoise de tournage inférieure.
+ */
+export const ClapCinemaIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.5 
+}) => {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Ardoise inférieure du clap */}
+      <rect x="4" y="11" width="16" height="9.5" rx="1.5" />
+      
+      {/* Séparateur supérieur de l'ardoise */}
+      <line x1="4" y1="14" x2="20" y2="14" />
+      
+      {/* Rayures du bandeau fixe de l'ardoise */}
+      <line x1="8" y1="11" x2="10" y2="14" />
+      <line x1="13" y1="11" x2="15" y2="14" />
+      <line x1="18" y1="11" x2="20" y2="14" />
+
+      {/* Bras supérieur entrouvert du clap (charnière à gauche en x=4) */}
+      <path d="M 4 10.5 L 18.8 6.5 C 19.4 6.3 20.1 6.7 20.3 7.3 L 20.5 8.1 C 20.7 8.7 20.3 9.4 19.7 9.6 L 4.9 13.5" />
+      
+      {/* Rayures du bras mobile supérieur */}
+      <line x1="8.5" y1="9.4" x2="7.5" y2="6.8" />
+      <line x1="13.2" y1="8.1" x2="12.2" y2="5.5" />
+      <line x1="17.9" y1="6.8" x2="16.9" y2="4.2" />
+    </svg>
+  );
+};
+
 

@@ -697,13 +697,13 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
   {
     id: 'safer-healer',
     slug: 'safer-healer',
-    title: 'Safer < > healer',
+    title: 'Safer < > Healer',
     subtitle: 'La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.',
     centralQuestion: 'La Vocation',
     shortSynopsis: 'Quand le courage intrépide d’une pompière face aux flammes rencontre la science compatissante d’une femme médecin à l’hôpital : deux gardiennes de la vie humaine.',
     description: 'D’un côté, Capitaine Jennifer, pompière d’élite en tenue d’intervention qui plonge dans le brasier pour arracher des vies au néant et sécuriser la communauté (Safer). De l’autre côté, Dr. Aminata Sharma, médecin dévouée au chevet des souffrances, diagnostiquant avec finesse et soignant avec humanité dans les couloirs hospitaliers (Healer). Deux faces d’une même noblesse : celle de ceux qui veillent sur la vie des autres.',
-    coverImage: '/assets/posters/Safer < > healer.png',
-    posterUrl: '/assets/posters/Safer < > healer.png',
+    coverImage: '/assets/posters/Safer < > Healer.png',
+    posterUrl: '/assets/posters/Safer < > Healer.png',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     teaserDuration: '1:32',
     universes: [
@@ -2691,7 +2691,7 @@ export const DUOS: Duo[] = [
     id: 'duo-safer-healer-01',
     slug: 'duo-safer-healer-01',
     documentaryId: 'safer-healer',
-    documentaryTitle: 'Safer < > healer',
+    documentaryTitle: 'Safer < > Healer',
     episodeNumber: 'ÉPISODE 01',
     protagonistA: {
       id: 'firefighter-jennifer',
@@ -2764,7 +2764,7 @@ export const DUOS: Duo[] = [
     centralQuestion: '« Racontez-nous un moment où vous avez tenu la main de quelqu’un en détresse et où vous avez su que votre présence faisait la différence entre la peur et l’espoir. »',
     quoteA: '« Quand tu extirpes un enfant d’un brasier et que son regard croise le tien à travers ta visière, tu comprends pourquoi tu as choisi d’enfiler cet uniforme. »',
     quoteB: '« Poser le stéthoscope et écouter les battements qui reviennent, c’est le moment le plus sacré du monde. Nous sommes là pour réparer ce que la vie a heurté. »',
-    coverImage: '/assets/posters/Safer < > healer.png',
+    coverImage: '/assets/posters/Safer < > Healer.png',
     storyA: {
       id: 'story-firefighter-jennifer-01',
       title: 'Le cri dans le sous-sol inondé',

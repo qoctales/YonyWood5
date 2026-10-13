@@ -1,0 +1,6 @@
+{
+  "summary": "Plan d'implémentation pour l'actualisation de la barre de navigation et de la page Héritages :\n- Nouveaux symboles cinématographiques cohérents : Fauteuil de réalisateur pour le Studio, Bobine de film avec petits cercles pour Héritages, Clap de cinéma pour Productions.\n- Maintien des icônes existantes pour Duocumentaires (TV vintage) et Profil (Utilisateur).\n- Évolution graphique de la page Héritages : remplacement de la géométrie hexagonale (alvéoles) par des médaillons circulaires purs et harmonieux, en parfaite résonance avec la bobine de film et l'astrolabe.",
+  "updatedAt": "2026-10-12T22:19:02.216445352Z",
+  "requestFeedback": true,
+  "userFacing": true
+}

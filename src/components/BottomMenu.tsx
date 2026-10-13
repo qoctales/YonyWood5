@@ -5,9 +5,9 @@ import {
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { 
-  AgoraAlveolesIcon,
-  DuocumentairesTvIcon,
-  ProductionTokenIcon 
+  DirectorChairIcon,
+  FilmReelIcon,
+  DuocumentairesTvIcon
 } from './YonywoodBrandIcons';
 
 interface BottomMenuProps {
@@ -41,18 +41,22 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     {
       id: 'studio',
       label: 'Studio',
-      icon: Clapperboard,
+      icon: DirectorChairIcon,
       isActive: isStudioActive,
       onClick: () => onNavigate({ type: 'submit_story' }),
-      screenId: 'menu-item-studio'
+      screenId: 'menu-item-studio',
+      iconClassName: 'w-[21px] h-[21px] sm:w-[22px] sm:h-[22px]',
+      strokeWidth: 1.6
     },
     {
       id: 'agora',
       label: 'Héritages',
-      icon: AgoraAlveolesIcon,
+      icon: FilmReelIcon,
       isActive: isAgoraActive,
       onClick: () => onNavigate({ type: 'home' }),
-      screenId: 'menu-item-agora'
+      screenId: 'menu-item-agora',
+      iconClassName: 'w-[22px] h-[22px] sm:w-[23px] sm:h-[23px]',
+      strokeWidth: 1.7
     },
     {
       id: 'duocumentaires',
@@ -60,15 +64,19 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       icon: DuocumentairesTvIcon,
       isActive: isDuocumentairesActive,
       onClick: () => onNavigate({ type: 'duo_feed' }),
-      screenId: 'menu-item-duocumentaires'
+      screenId: 'menu-item-duocumentaires',
+      iconClassName: 'w-5 h-5',
+      strokeWidth: 1.5
     },
     {
       id: 'productions',
       label: 'Productions',
-      icon: ProductionTokenIcon,
+      icon: Clapperboard,
       isActive: isMarcheActive,
       onClick: () => onNavigate({ type: 'marketplace' }),
-      screenId: 'menu-item-productions'
+      screenId: 'menu-item-productions',
+      iconClassName: 'w-[19.5px] h-[19.5px] sm:w-[20px] sm:h-[20px]',
+      strokeWidth: 1.5
     },
     {
       id: 'profil',
@@ -76,7 +84,9 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       icon: User,
       isActive: isProfilActive,
       onClick: () => onNavigate({ type: 'profile' }),
-      screenId: 'menu-item-profil'
+      screenId: 'menu-item-profil',
+      iconClassName: 'w-[19.5px] h-[19.5px] sm:w-[20px] sm:h-[20px]',
+      strokeWidth: 1.55
     }
   ];
 
@@ -111,8 +121,8 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
                 }`}
               >
                 <Icon 
-                  className="w-5 h-5 transition-transform duration-200" 
-                  strokeWidth={1.5} 
+                  className={`${item.iconClassName} transition-transform duration-200`} 
+                  strokeWidth={item.strokeWidth} 
                 />
               </div>
 

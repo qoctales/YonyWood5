@@ -139,12 +139,12 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
       },
       {
         id: 'safer-healer',
-        title: 'Safer < > healer',
+        title: 'Safer < > Healer',
         subtitle: 'La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.',
         synopsis: 'Entre le courage intrépide d’une pompière face aux flammes et le dévouement méthodique d’une femme médecin en hôpital : veiller sur la vie d’autrui.',
         question: 'Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ?',
         videoUrl: STOCK_VIDEOS[3],
-        posterUrl: '/assets/posters/Safer < > healer.png',
+        posterUrl: '/assets/posters/Safer < > Healer.png',
         actionLabel: 'Choisir cette série'
       }
     ]

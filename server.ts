@@ -1,5 +1,17 @@
+import { spawn } from 'child_process';
+
+if (process.env.__TSX_BOOTSTRAP !== '1' && !process.execArgv.some((a) => a.includes('tsx'))) {
+  const child = spawn(process.execPath, ['--import', 'tsx', ...process.argv.slice(1)], {
+    stdio: 'inherit',
+    env: { ...process.env, __TSX_BOOTSTRAP: '1' },
+  });
+  child.on('exit', (code) => process.exit(code ?? 0));
+  await new Promise(() => {});
+}
+
 import 'dotenv/config';
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
@@ -7,8 +19,12 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
-import { DOCUMENTARIES, DUOS, PROTAGONISTS } from './src/data/mockData';
-import { EXPLORER_CATEGORIES, EXPLORER_CATALOG } from './src/data/explorerTopicsData';
+
+let DOCUMENTARIES: any[] = [];
+let DUOS: any[] = [];
+let PROTAGONISTS: any[] = [];
+let EXPLORER_CATEGORIES: any[] = [];
+let EXPLORER_CATALOG: any = {};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -375,6 +391,20 @@ app.put('/api/auth/preferences', (req: Request, res: Response) => {
 
 // Start server helper
 async function startServer() {
+  try {
+    const [mockModule, topicsModule] = await Promise.all([
+      import('./src/data/mockData'),
+      import('./src/data/explorerTopicsData'),
+    ]);
+    DOCUMENTARIES = mockModule.DOCUMENTARIES || [];
+    DUOS = mockModule.DUOS || [];
+    PROTAGONISTS = mockModule.PROTAGONISTS || [];
+    EXPLORER_CATEGORIES = topicsModule.EXPLORER_CATEGORIES || [];
+    EXPLORER_CATALOG = topicsModule.EXPLORER_CATALOG || {};
+  } catch (err) {
+    console.warn('[server] Warning loading data modules:', err);
+  }
+
   if (!isProd) {
     try {
       const clientMjs = path.resolve(__dirname, 'node_modules/vite/dist/client/client.mjs');

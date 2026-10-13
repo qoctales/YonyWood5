@@ -30,8 +30,7 @@ import {
   Fingerprint,
   Sprout,
   Star,
-  BookOpen,
-  Gift
+  BookOpen
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
@@ -72,18 +71,7 @@ const R_INNER = 145; // Anneau 1 : Sujets de la Porte active (5 séries, 16 drap
 const R_OUTER = 280; // Anneau 2 : 16 Voix / Protagonistes
 const ORBIT_RADII = [145, 280, 375, 465, 555, 645, 735, 825, 915];
 
-// Helpers pour calculer la géométrie des alvéoles hexagonales (Rayon de miel)
-const getHexagonPoints = (cx: number, cy: number, r: number): string => {
-  const dx = Number((r * 0.866025).toFixed(2));
-  const dy = Number((r * 0.5).toFixed(2));
-  return `${cx},${cy - r} ${cx + dx},${cy - dy} ${cx + dx},${cy + dy} ${cx},${cy + r} ${cx - dx},${cy + dy} ${cx - dx},${cy - dy}`;
-};
 
-const getHexagonPosterPoints = (cx: number, cy: number, halfW: number = 22, halfH: number = 33): string => {
-  const peakY = halfH;
-  const shoulderY = Math.round(halfH * 0.55);
-  return `${cx},${cy - peakY} ${cx + halfW},${cy - shoulderY} ${cx + halfW},${cy + shoulderY} ${cx},${cy + peakY} ${cx - halfW},${cy + shoulderY} ${cx - halfW},${cy - shoulderY}`;
-};
 
 const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string }>> = {
   series: Film,
@@ -91,7 +79,7 @@ const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string
   territoires: Mountain,
   expertises: GraduationCap,
   personnalites: Star,
-  'produits-services': Gift,
+  'produits-services': ShoppingBag,
   marques: Gem,
   projets: Sprout,
   // Alias de rétrocompatibilité
@@ -101,7 +89,7 @@ const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string
   personalities: Star,
   brands: Gem,
   projects: Sprout,
-  offers: Gift
+  offers: ShoppingBag
 };
 
 export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ 
@@ -764,17 +752,17 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 </feMerge>
               </filter>
 
-              {/* ClipPaths alvéolaires hexagonaux pour les personnes sur tous les anneaux */}
+              {/* ClipPaths circulaires pour les personnes sur tous les anneaux */}
               {nodesByGeneration.flatMap(nodes => nodes).map((node, nodeIdx) => {
                 const radius = node.gen === 1 ? 23 : Math.max(16, 21 - Math.min(node.gen, 8) * 0.6);
                 return (
                   <clipPath key={`clip-defs-${node.clipId}-${nodeIdx}`} id={node.clipId}>
-                    <polygon points={getHexagonPoints(node.x, node.y, radius)} />
+                    <circle cx={node.x} cy={node.y} r={radius} />
                   </clipPath>
                 );
               })}
 
-              {/* ClipPaths alvéolaires pour les sujets sur l'anneau intérieur (affiches alvéolaires pour séries, alvéoles r=21 pour autres) */}
+              {/* ClipPaths pour les sujets sur l'anneau intérieur (rectangles arrondis pour affiches de séries, cercles pour autres) */}
               {topicsForCategory.map((topic, idx) => {
                 const angle = -90 + idx * (360 / topicsForCategory.length);
                 const rad = (angle * Math.PI) / 180;
@@ -783,13 +771,13 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 if (activeCategory === 'series') {
                   return (
                     <clipPath key={`clip-poster-${topic.id}`} id={`clip-poster-${topic.id}`}>
-                      <polygon points={getHexagonPosterPoints(x, y, 22, 33)} />
+                      <rect x={x - 22} y={y - 32} width="44" height="64" rx="6" />
                     </clipPath>
                   );
                 }
                 return (
                   <clipPath key={`clip-inner-circle-${topic.id}`} id={`clip-inner-circle-${topic.id}`}>
-                    <polygon points={getHexagonPoints(x, y, 21)} />
+                    <circle cx={x} cy={y} r="20" />
                   </clipPath>
                 );
               })}
@@ -1359,38 +1347,48 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                         }}
                         onMouseEnter={() => celestialAudio.playOrbHover(540)}
                       >
-                        {/* Zone tactile hexagonale */}
-                        <polygon 
-                          points={getHexagonPoints(node.x, node.y, radius + 8)} 
+                        {/* Zone tactile circulaire */}
+                        <circle 
+                          cx={node.x} 
+                          cy={node.y} 
+                          r={radius + 8} 
                           fill="transparent" 
                         />
 
-                        {/* Rétro-éclairage lumineux Alvéole (drop-glow ambré scénique par l'arrière) */}
+                        {/* Rétro-éclairage lumineux Circulaire (drop-glow ambré scénique par l'arrière) */}
                         {isSelected && (
                           <g className="scenic-backlight pointer-events-none">
-                            <polygon 
-                              points={getHexagonPoints(node.x, node.y, radius + 14)} 
+                            <circle 
+                              cx={node.x} 
+                              cy={node.y} 
+                              r={radius + 12} 
                               fill="#D97706" 
                               opacity="0.38" 
                               filter="url(#amberScenicBacklight)" 
                             />
-                            <polygon 
-                              points={getHexagonPoints(node.x, node.y, radius + 7)} 
+                            <circle 
+                              cx={node.x} 
+                              cy={node.y} 
+                              r={radius + 6} 
                               fill="#F59E0B" 
                               opacity="0.75" 
                               filter="url(#amberScenicBacklight)" 
                             />
-                            <polygon 
-                              points={getHexagonPoints(node.x, node.y, radius + 2)} 
+                            <circle 
+                              cx={node.x} 
+                              cy={node.y} 
+                              r={radius + 2} 
                               fill="#FDE68A" 
                               opacity="0.9" 
                             />
                           </g>
                         )}
 
-                        {/* Anneau délicat hexagonal au survol */}
-                        <polygon 
-                          points={getHexagonPoints(node.x, node.y, radius + 3)} 
+                        {/* Anneau délicat circulaire au survol */}
+                        <circle 
+                          cx={node.x} 
+                          cy={node.y} 
+                          r={radius + 3} 
                           fill="none" 
                           stroke="#C89B3C" 
                           strokeWidth="1.2" 
@@ -1398,16 +1396,18 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                           className="opacity-0 group-hover:opacity-100 transition-opacity duration-200" 
                         />
 
-                        {/* Alvéole blanche de fond */}
-                        <polygon 
-                          points={getHexagonPoints(node.x, node.y, radius + 1)} 
+                        {/* Médaillon blanc de fond */}
+                        <circle 
+                          cx={node.x} 
+                          cy={node.y} 
+                          r={radius + 1} 
                           fill="#FFFFFF" 
                           stroke={isSelected ? '#C89B3C' : '#E7E5E4'} 
                           strokeWidth={isSelected ? '2' : '1'} 
                           filter="drop-shadow(0 2px 5px rgba(0,0,0,0.12))" 
                         />
 
-                        {/* Photo de profil découpée en alvéole hexagonale (toujours orientée vers le haut grâce à la contre-rotation) */}
+                        {/* Photo de profil découpée en médaillon circulaire */}
                         <image 
                           href={node.person.photoUrl} 
                           x={node.x - radius} 
@@ -1418,16 +1418,20 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                           preserveAspectRatio="xMidYMid slice" 
                         />
 
-                        {/* Liseré fin doré qui épouse délicatement la forme hexagonale/alvéolaire */}
-                        <polygon 
-                          points={getHexagonPoints(node.x, node.y, radius)} 
+                        {/* Liseré fin doré ou terre cuite qui épouse le médaillon circulaire */}
+                        <circle 
+                          cx={node.x} 
+                          cy={node.y} 
+                          r={radius} 
                           fill="none" 
                           stroke={isSelected ? '#C89B3C' : (node.roleInLineage === 'descendant' ? '#A2482B' : '#E7E5E4')} 
                           strokeWidth={isSelected ? '2' : '1.2'} 
                         />
                         {isSelected && (
-                          <polygon 
-                            points={getHexagonPoints(node.x, node.y, radius - 1.5)} 
+                          <circle 
+                            cx={node.x} 
+                            cy={node.y} 
+                            r={radius - 1.5} 
                             fill="none" 
                             stroke="#FDE68A" 
                             strokeWidth="0.8" 

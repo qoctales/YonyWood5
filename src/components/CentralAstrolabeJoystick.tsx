@@ -9,9 +9,9 @@ import {
   Star,
   Gem,
   Sprout,
-  Gift
+  ShoppingBag
 } from 'lucide-react';
-import { AgoraAlveolesIcon } from './YonywoodBrandIcons';
+import { FilmReelIcon } from './YonywoodBrandIcons';
 
 const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
   series: Film,
@@ -19,7 +19,7 @@ const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
   territoires: Mountain,
   expertises: GraduationCap,
   personnalites: Star,
-  'produits-services': Gift,
+  'produits-services': ShoppingBag,
   marques: Gem,
   projets: Sprout,
   // Rétrocompatibilité
@@ -29,7 +29,7 @@ const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
   personalities: Star,
   brands: Gem,
   projects: Sprout,
-  offers: Gift,
+  offers: ShoppingBag,
 };
 
 interface CentralAstrolabeJoystickProps {
@@ -251,7 +251,7 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
             /* L'icône de la porte survolée prend la place centrale */
             <div className="relative w-full h-full rounded-full flex items-center justify-center pointer-events-none z-10 animate-in zoom-in-90 duration-200">
               {(() => {
-                const IconComp = CATEGORY_ICONS[hoveredCategory.id] || AgoraAlveolesIcon;
+                const IconComp = CATEGORY_ICONS[hoveredCategory.id] || FilmReelIcon;
                 return (
                   <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner">
                     <IconComp className="w-6 h-6 sm:w-7 sm:h-7 text-white stroke-[2.2] drop-shadow-md transition-transform group-hover:scale-110" />
@@ -260,16 +260,16 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
               })()}
             </div>
           ) : (
-            /* Au repos : Cœur de l'astrolabe / Alvéoles blanches sur fond Terre Cuite */
+            /* Au repos : Cœur de l'astrolabe / Bobine blanche sur fond Terre Cuite */
             <div className="relative w-full h-full rounded-full flex items-center justify-center pointer-events-none">
               {/* Repères cardinaux et anneau d'astrolabe discrets */}
               <div className="absolute inset-2 rounded-full border border-dashed border-white/25" />
               <div className="absolute w-[1px] h-full bg-white/15" />
               <div className="absolute h-[1px] w-full bg-white/15" />
 
-              {/* Médaillon central : fond terre cuite et icône alvéoles en blanc */}
+              {/* Médaillon central : fond terre cuite et icône bobine de film en blanc */}
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner">
-                <AgoraAlveolesIcon className={`w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform ${isInteracting ? 'scale-110' : ''}`} strokeWidth={1.8} />
+                <FilmReelIcon className={`w-5 h-5 sm:w-6 sm:h-6 text-white transition-transform ${isInteracting ? 'scale-110' : ''}`} strokeWidth={1.8} />
               </div>
             </div>
           )}
