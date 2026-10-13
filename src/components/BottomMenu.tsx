@@ -1,13 +1,13 @@
 import React from 'react';
 import { 
-  Clapperboard,
-  User
+  Clapperboard
 } from 'lucide-react';
 import { ViewScreen } from '../types';
 import { 
   DirectorChairIcon,
   FilmReelIcon,
-  DuocumentairesTvIcon
+  DuocumentairesTvIcon,
+  ProfileSoloIcon
 } from './YonywoodBrandIcons';
 
 interface BottomMenuProps {
@@ -65,8 +65,8 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
       isActive: isDuocumentairesActive,
       onClick: () => onNavigate({ type: 'duo_feed' }),
       screenId: 'menu-item-duocumentaires',
-      iconClassName: 'w-5 h-5',
-      strokeWidth: 1.5
+      iconClassName: 'w-[20.5px] h-[20.5px] sm:w-[21.5px] sm:h-[21.5px]',
+      strokeWidth: 1.55
     },
     {
       id: 'productions',
@@ -81,11 +81,11 @@ export const BottomMenu: React.FC<BottomMenuProps> = ({ currentScreen, onNavigat
     {
       id: 'profil',
       label: 'Profil',
-      icon: User,
+      icon: ProfileSoloIcon,
       isActive: isProfilActive,
       onClick: () => onNavigate({ type: 'profile' }),
       screenId: 'menu-item-profil',
-      iconClassName: 'w-[19.5px] h-[19.5px] sm:w-[20px] sm:h-[20px]',
+      iconClassName: 'w-[20.5px] h-[20.5px] sm:w-[21.5px] sm:h-[21.5px]',
       strokeWidth: 1.55
     }
   ];

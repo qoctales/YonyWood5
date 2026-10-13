@@ -422,7 +422,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
             "question": "Quelle tradition ou force tellurique de Ghana a profondément forgé votre regard sur le monde ?",
             "synopsis": "Récit territorial enraciné dans Ghana. Découverte des savoirs, paysages et communautés locales.",
             "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1575881875475-31024b476d38?auto=format&fit=crop&w=800&q=80",
+            "posterUrl": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80",
             "actionLabel": "Choisir ce territoire",
             "doorId": "territoires",
             "group": "afrique"
@@ -592,252 +592,276 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
     ],
     subjects: [
       {
-            "id": "bois",
-            "title": "Bois",
-            "subtitle": "ébénisterie • charpente • sculpture",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Bois » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Bois (ébénisterie, charpente, sculpture).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "ébénisterie",
-                  "charpente",
-                  "sculpture"
-            ]
-      },
-      {
-            "id": "tissage",
-            "title": "Tissage",
-            "subtitle": "soie • teintures végétales • textile",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Tissage » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Tissage (soie, teintures végétales, textile).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1528458909336-e7a0adfed0a5?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "soie",
-                  "teintures végétales",
-                  "textile"
-            ]
-      },
-      {
-            "id": "terre",
-            "title": "Terre",
-            "subtitle": "poterie • céramique • banco",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Terre » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Terre (poterie, céramique, banco).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "poterie",
-                  "céramique",
-                  "banco"
-            ]
-      },
-      {
-            "id": "metal",
-            "title": "Métal",
-            "subtitle": "forge • fonderie • orfèvrerie",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Métal » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Métal (forge, fonderie, orfèvrerie).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "forge",
-                  "fonderie",
-                  "orfèvrerie"
-            ]
-      },
-      {
-            "id": "cuir",
-            "title": "Cuir",
-            "subtitle": "maroquinerie • sellerie",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Cuir » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Cuir (maroquinerie, sellerie).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "maroquinerie",
-                  "sellerie"
-            ]
-      },
-      {
-            "id": "agroecologie",
-            "title": "Agroécologie",
-            "subtitle": "semences paysannes • maraîchage",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Agroécologie » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Agroécologie (semences paysannes, maraîchage).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "semences paysannes",
-                  "maraîchage"
-            ]
-      },
-      {
-            "id": "cuisine",
-            "title": "Cuisine",
-            "subtitle": "terroir • fermentations",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Cuisine » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Cuisine (terroir, fermentations).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "terroir",
-                  "fermentations"
-            ]
-      },
-      {
-            "id": "apiculture",
-            "title": "Apiculture",
-            "subtitle": "abeilles • miel",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Apiculture » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Apiculture (abeilles, miel).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "abeilles",
-                  "miel"
-            ]
-      },
-      {
-            "id": "peche",
-            "title": "Pêche",
-            "subtitle": "pêche artisanale • construction de pirogues",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Pêche » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Pêche (pêche artisanale, construction de pirogues).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "pêche artisanale",
-                  "construction de pirogues"
-            ]
-      },
-      {
-            "id": "herboristerie",
-            "title": "Herboristerie",
-            "subtitle": "plantes médicinales • tisanes",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Herboristerie » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Herboristerie (plantes médicinales, tisanes).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "plantes médicinales",
-                  "tisanes"
-            ]
-      },
-      {
-            "id": "soins",
-            "title": "Soins",
-            "subtitle": "massage • pratiques somatiques • respiration",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Soins » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Soins (massage, pratiques somatiques, respiration).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "massage",
-                  "pratiques somatiques",
-                  "respiration"
-            ]
-      },
-      {
-            "id": "musique",
-            "title": "Musique",
-            "subtitle": "lutherie • sonothérapie • percussion",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Musique » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Musique (lutherie, sonothérapie, percussion).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "lutherie",
-                  "sonothérapie",
-                  "percussion"
-            ]
-      },
-      {
-            "id": "construction",
-            "title": "Construction",
-            "subtitle": "éco-construction • architecture bioclimatique",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Construction » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Construction (éco-construction, architecture bioclimatique).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "éco-construction",
-                  "architecture bioclimatique"
-            ]
-      },
-      {
-            "id": "parole",
-            "title": "Parole",
-            "subtitle": "griots • conteurs • calligraphie • écriture",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Parole » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Parole (griots, conteurs, calligraphie, écriture).",
-            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
-            "actionLabel": "Choisir cette expertise",
-            "doorId": "expertises",
-            "covers": [
-                  "griots",
-                  "conteurs",
-                  "calligraphie",
-                  "écriture"
-            ]
-      },
-      {
-            "id": "image",
-            "title": "Image",
-            "subtitle": "réalisation • photo • documentaire",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Image » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Image (réalisation, photo, documentaire).",
+            "id": "videastes",
+            "title": "Vidéastes",
+            "subtitle": "réalisation • cadrage • documentaire",
+            "question": "Quel regard ou parti pris visuel singulier insufflez-vous dans chacune de vos créations documentaires ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Vidéastes (réalisation, cadrage, documentaire, direction photo).",
             "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
             "posterUrl": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80",
             "actionLabel": "Choisir cette expertise",
             "doorId": "expertises",
             "covers": [
                   "réalisation",
-                  "photo",
-                  "documentaire"
+                  "cadrage",
+                  "documentaire",
+                  "direction photo"
             ]
       },
       {
-            "id": "pedagogie",
-            "title": "Transmission",
-            "subtitle": "pédagogie de la nature • écoles alternatives",
-            "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans le domaine « Transmission » ?",
-            "synopsis": "Pitch vidéo du métier de praticien : Transmission (pédagogie de la nature, écoles alternatives).",
+            "id": "photographes",
+            "title": "Photographes",
+            "subtitle": "portrait • plateau • reportage",
+            "question": "Comment parvenez-vous à capturer l'âme et la vérité d'un visage en un instant décisif ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Photographes (portrait, reportage, lumière, photo de plateau).",
             "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80",
+            "posterUrl": "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=800&q=80",
             "actionLabel": "Choisir cette expertise",
             "doorId": "expertises",
             "covers": [
-                  "pédagogie de la nature",
-                  "écoles alternatives"
+                  "portrait",
+                  "reportage",
+                  "lumière",
+                  "photo de plateau"
+            ]
+      },
+      {
+            "id": "juristes",
+            "title": "Avocats & Juristes",
+            "subtitle": "droit d’auteur • contrats • propriété intellectuelle",
+            "question": "Comment protégez-vous la valeur et la liberté des créateurs face aux évolutions du droit ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Avocats & Juristes (propriété intellectuelle, droit d'auteur, contrats, droit des affaires).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "propriété intellectuelle",
+                  "droit d'auteur",
+                  "contrats",
+                  "droit des affaires"
+            ]
+      },
+      {
+            "id": "comptables",
+            "title": "Comptables",
+            "subtitle": "finance • gestion • fiscalité",
+            "question": "Comment transformez-vous la rigueur des chiffres en un puissant levier de souveraineté pour les projets ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Comptables (finance, fiscalité, gestion de production, audit).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "finance",
+                  "fiscalité",
+                  "gestion de production",
+                  "audit"
+            ]
+      },
+      {
+            "id": "artisans",
+            "title": "Artisans d'Art",
+            "subtitle": "matières nobles • façonnage • savoir-faire manuel",
+            "question": "Quel geste ancestral ou secret de la matière guide vos mains lors de chaque création ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Artisans d'Art (ébénisterie, céramique, textile, cuir, métal).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "ébénisterie",
+                  "céramique",
+                  "textile",
+                  "cuir",
+                  "métal"
+            ]
+      },
+      {
+            "id": "developpeurs",
+            "title": "Développeurs Tech",
+            "subtitle": "code • plateformes • architecture logicielle",
+            "question": "Comment concevez-vous des technologies qui relient véritablement les humains au lieu de les isoler ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Développeurs Tech (applications, plateformes web, architecture, data).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "applications",
+                  "plateformes web",
+                  "architecture",
+                  "data"
+            ]
+      },
+      {
+            "id": "designers",
+            "title": "Designers",
+            "subtitle": "direction artistique • UI/UX • identité visuelle",
+            "question": "À quel moment une forme visuelle devient-elle une évidence émotionnelle pour son public ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Designers (direction artistique, UI/UX, typographie, scénographie).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "direction artistique",
+                  "UI/UX",
+                  "typographie",
+                  "scénographie"
+            ]
+      },
+      {
+            "id": "son-musique",
+            "title": "Ingénieurs du Son",
+            "subtitle": "prise de son • mixage • musique",
+            "question": "Comment sculptez-vous l'espace sonore pour toucher directement le cœur de celui qui écoute ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Ingénieurs du Son (prise de son, mixage, sound design, musique originale).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "prise de son",
+                  "mixage",
+                  "sound design",
+                  "musique originale"
+            ]
+      },
+      {
+            "id": "monteurs",
+            "title": "Monteurs",
+            "subtitle": "rythme • montage • étalonnage",
+            "question": "Comment trouvez-vous le tempo invisible qui donne toute sa résonance à une histoire filmée ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Monteurs (montage vidéo, étalonnage, post-production, motion design).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "montage vidéo",
+                  "étalonnage",
+                  "post-production",
+                  "motion design"
+            ]
+      },
+      {
+            "id": "producteurs",
+            "title": "Producteurs",
+            "subtitle": "financement • direction de projet • impact",
+            "question": "Comment mobilisez-vous les énergies et les ressources pour faire éclore des œuvres audacieuses ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Producteurs (financement, coordination, distribution, coproduction).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "financement",
+                  "coordination",
+                  "distribution",
+                  "coproduction"
+            ]
+      },
+      {
+            "id": "auteurs",
+            "title": "Scénaristes & Plumes",
+            "subtitle": "storytelling • narration • dramaturgie",
+            "question": "Quel mot ou quel silence permet selon vous de faire basculer un récit vers l’universel ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Scénaristes & Plumes (scénario, dramaturgie, écriture documentaire, storytelling).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "scénario",
+                  "dramaturgie",
+                  "écriture documentaire",
+                  "storytelling"
+            ]
+      },
+      {
+            "id": "communicants",
+            "title": "Communicants",
+            "subtitle": "relations presse • influence • médias",
+            "question": "Comment portez-vous une voix authentique pour qu'elle résonne bien au-delà de sa communauté ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Communicants (stratégie média, relations presse, médias sociaux, brand content).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "stratégie média",
+                  "relations presse",
+                  "médias sociaux",
+                  "brand content"
+            ]
+      },
+      {
+            "id": "architectes",
+            "title": "Architectes",
+            "subtitle": "espaces • éco-construction • habitat",
+            "question": "Comment bâtissez-vous des lieux qui respectent la terre et élèvent l’esprit de ceux qui y vivent ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Architectes (éco-construction, architecture bioclimatique, aménagement, matériaux durables).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "éco-construction",
+                  "architecture bioclimatique",
+                  "aménagement",
+                  "matériaux durables"
+            ]
+      },
+      {
+            "id": "chefs-cuisine",
+            "title": "Chefs Cuisiniers",
+            "subtitle": "gastronomie • terroirs • goûts d’exception",
+            "question": "Quelle mémoire de saveur ou de générosité insufflez-vous dans votre assiette ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Chefs Cuisiniers (art culinaire, fermentations, terroirs, hospitalité).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "art culinaire",
+                  "fermentations",
+                  "terroirs",
+                  "hospitalité"
+            ]
+      },
+      {
+            "id": "soignants",
+            "title": "Soignants",
+            "subtitle": "santé • thérapies • soins somatiques",
+            "question": "Quel secret de présence ou d’écoute permet selon vous d’enclencher la guérison profonde ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Soignants (médecine, soins somatiques, ostéopathie, santé intégrative).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "médecine",
+                  "soins somatiques",
+                  "ostéopathie",
+                  "santé intégrative"
+            ]
+      },
+      {
+            "id": "coachs",
+            "title": "Coachs & Mentors",
+            "subtitle": "préparation mentale • voix • accompagnement",
+            "question": "Comment révélez-vous chez un individu le courage d'assumer pleinement sa singularité ?",
+            "synopsis": "Pitch vidéo du métier de praticien : Coachs & Mentors (coaching de dirigeants, préparation mentale, voix, transmission).",
+            "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "posterUrl": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
+            "actionLabel": "Choisir cette expertise",
+            "doorId": "expertises",
+            "covers": [
+                  "coaching de dirigeants",
+                  "préparation mentale",
+                  "voix",
+                  "transmission"
             ]
       }
 ]
@@ -1049,7 +1073,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
             "question": "En quoi l'héritage de Marcus Garvey et son combat pour « L'unité et la fierté des peuples noirs » résonnent-ils avec votre parcours personnel ou votre art ?",
             "synopsis": "Témoignage sur l'impact de Marcus Garvey (Jamaïque). Thématique centrale : L'unité et la fierté des peuples noirs.",
             "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
+            "posterUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
             "actionLabel": "Choisir cette personnalité",
             "doorId": "personnalites",
             "origin": "Jamaïque",
@@ -1197,7 +1221,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
             "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Beauté » ?",
             "synopsis": "Offre concrète dans la catégorie Beauté. Domaines couverts : karité, huiles, savons, soins capillaires.",
             "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1608248597359-33513476d05f?auto=format&fit=crop&w=800&q=80",
+            "posterUrl": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
             "actionLabel": "Choisir cette catégorie",
             "doorId": "produits-services",
             "covers": [
@@ -1399,7 +1423,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
             "question": "Comment votre entreprise du secteur « Beauté » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
             "synopsis": "Sponsorisation et témoignages clients dans le secteur Beauté.",
             "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1608248597359-33513476d05f?auto=format&fit=crop&w=800&q=80",
+            "posterUrl": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
             "actionLabel": "Choisir ce secteur",
             "doorId": "marques"
       },
@@ -1564,7 +1588,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
             "question": "Comment votre entreprise du secteur « Sport » soutient-elle l'authenticité et la vérité du témoignage de ses clients ?",
             "synopsis": "Sponsorisation et témoignages clients dans le secteur Sport.",
             "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80",
+            "posterUrl": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80",
             "actionLabel": "Choisir ce secteur",
             "doorId": "marques"
       }
@@ -1703,7 +1727,7 @@ export const PROPOSE_DOORS: ProposeDoor[] = [
             "question": "Quel impact direct et transformation concrète votre projet dans la cause « Femmes » apporte-t-il sur le terrain ?",
             "synopsis": "Projet citoyen et cause d'intérêt général : Femmes (autonomie, tissage, naissance).",
             "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-            "posterUrl": "https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80",
+            "posterUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
             "actionLabel": "Choisir cette cause",
             "doorId": "projets",
             "covers": [

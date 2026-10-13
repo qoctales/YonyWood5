@@ -33,6 +33,7 @@ import { ViewScreen, Videographer } from '../types';
 import { PROPOSE_DOORS, ProposeDoor, ProposeSubject } from '../data/proposeDoorsData';
 import { DOCUMENTARIES, VIDEOGRAPHERS } from '../data/mockData';
 import { ALL_SERIES_TEAMS } from '../data/seriesTeamData';
+import { EXPERTISE_ICONS } from './MatrixExplorer';
 
 // Illustrations d'accroche 9:16 créées par IA pour les deux choix en face-à-face
 import uploadVideoGuideImg from '../assets/images/upload_video_guide_1791825848813.jpg';
@@ -850,7 +851,12 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               <div className="relative z-10 flex items-center justify-between">
                 {activeSeriesOverlay !== 'sponsors' ? (
                   <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-white shadow-sm">
-                    <CurrentDoorIcon className="w-3.5 h-3.5 text-[#C89B3C]" />
+                    {(() => {
+                      const IconComp = (currentDoor.id === 'expertises' && EXPERTISE_ICONS[currentSubject.id])
+                        ? EXPERTISE_ICONS[currentSubject.id]
+                        : CurrentDoorIcon;
+                      return <IconComp className="w-3.5 h-3.5 text-[#C89B3C]" />;
+                    })()}
                     <span className="truncate max-w-[160px] sm:max-w-none">{currentSubject.title}</span>
                   </div>
                 ) : (

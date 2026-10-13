@@ -32,7 +32,7 @@ export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
     accentColor: '#C89B3C',
     glowColor: 'rgba(200, 155, 60, 0.65)',
     bgGradient: 'from-[#D97706] via-[#92400E] to-[#451A03]',
-    coverImage: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80'
+    coverImage: '/assets/doors/door-series.jpg'
   },
   {
     id: 'sagesses',
@@ -447,7 +447,7 @@ const territoiresList: ExplorerCatalogItem[] = [
     "subtitle": "Berceau africain",
     "question": "Quelle sagesse ou force tellurique de Ghana a profondément forgé votre regard sur le monde ?",
     "flag": "🇬🇭",
-    "photoUrl": "https://images.unsplash.com/photo-1575881875475-31024b476d38?auto=format&fit=crop&w=800&q=80",
+    "photoUrl": "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80",
     "badge": "16 récits de terroir",
     "group": "afrique",
     "doorId": "territoires"
@@ -598,239 +598,182 @@ const territoiresList: ExplorerCatalogItem[] = [
   }
 ];
 
-// 4. EXPERTISES (16 entrées issues de nomenclature.json)
+// 4. EXPERTISES (16 entrées de métiers & savoir-faire concrets de l'écosystème)
 const expertisesList: ExplorerCatalogItem[] = [
   {
-    "id": "bois",
+    "id": "videastes",
     "category": "expertises",
-    "title": "Bois",
-    "subtitle": "ébénisterie • charpente • sculpture",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Bois » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "ébénisterie",
-      "charpente",
-      "sculpture"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "tissage",
-    "category": "expertises",
-    "title": "Tissage",
-    "subtitle": "soie • teintures végétales • textile",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Tissage » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1528458909336-e7a0adfed0a5?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "soie",
-      "teintures végétales",
-      "textile"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "terre",
-    "category": "expertises",
-    "title": "Terre",
-    "subtitle": "poterie • céramique • banco",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Terre » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "poterie",
-      "céramique",
-      "banco"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "metal",
-    "category": "expertises",
-    "title": "Métal",
-    "subtitle": "forge • fonderie • orfèvrerie",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Métal » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "forge",
-      "fonderie",
-      "orfèvrerie"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "cuir",
-    "category": "expertises",
-    "title": "Cuir",
-    "subtitle": "maroquinerie • sellerie",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Cuir » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "maroquinerie",
-      "sellerie"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "agroecologie",
-    "category": "expertises",
-    "title": "Agroécologie",
-    "subtitle": "semences paysannes • maraîchage",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Agroécologie » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "semences paysannes",
-      "maraîchage"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "cuisine",
-    "category": "expertises",
-    "title": "Cuisine",
-    "subtitle": "terroir • fermentations",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Cuisine » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "terroir",
-      "fermentations"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "apiculture",
-    "category": "expertises",
-    "title": "Apiculture",
-    "subtitle": "abeilles • miel",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Apiculture » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "abeilles",
-      "miel"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "peche",
-    "category": "expertises",
-    "title": "Pêche",
-    "subtitle": "pêche artisanale • construction de pirogues",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Pêche » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "pêche artisanale",
-      "construction de pirogues"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "herboristerie",
-    "category": "expertises",
-    "title": "Herboristerie",
-    "subtitle": "plantes médicinales • tisanes",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Herboristerie » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "plantes médicinales",
-      "tisanes"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "soins",
-    "category": "expertises",
-    "title": "Soins",
-    "subtitle": "massage • pratiques somatiques • respiration",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Soins » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "massage",
-      "pratiques somatiques",
-      "respiration"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "musique",
-    "category": "expertises",
-    "title": "Musique",
-    "subtitle": "lutherie • sonothérapie • percussion",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Musique » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "lutherie",
-      "sonothérapie",
-      "percussion"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "construction",
-    "category": "expertises",
-    "title": "Construction",
-    "subtitle": "éco-construction • architecture bioclimatique",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Construction » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "éco-construction",
-      "architecture bioclimatique"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "parole",
-    "category": "expertises",
-    "title": "Parole",
-    "subtitle": "griots • conteurs • calligraphie • écriture",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Parole » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
-    "badge": "16 praticiens",
-    "covers": [
-      "griots",
-      "conteurs",
-      "calligraphie",
-      "écriture"
-    ],
-    "doorId": "expertises"
-  },
-  {
-    "id": "image",
-    "category": "expertises",
-    "title": "Image",
-    "subtitle": "réalisation • photo • documentaire",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Image » ?",
+    "title": "Vidéastes",
+    "subtitle": "réalisation • cadrage • documentaire",
+    "question": "Quel regard ou parti pris visuel singulier insufflez-vous dans chacune de vos créations documentaires ?",
     "photoUrl": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80",
     "badge": "16 praticiens",
-    "covers": [
-      "réalisation",
-      "photo",
-      "documentaire"
-    ],
+    "covers": ["réalisation", "cadrage", "documentaire", "direction photo"],
     "doorId": "expertises"
   },
   {
-    "id": "pedagogie",
+    "id": "photographes",
     "category": "expertises",
-    "title": "Transmission",
-    "subtitle": "pédagogie de la nature • écoles alternatives",
-    "question": "Quel geste d’exception ou secret de métier incarne le cœur de votre expertise dans « Transmission » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80",
+    "title": "Photographes",
+    "subtitle": "portrait • plateau • reportage",
+    "question": "Comment parvenez-vous à capturer l'âme et la vérité d'un visage en un instant décisif ?",
+    "photoUrl": "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=800&q=80",
     "badge": "16 praticiens",
-    "covers": [
-      "pédagogie de la nature",
-      "écoles alternatives"
-    ],
+    "covers": ["portrait", "reportage", "lumière", "photo de plateau"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "juristes",
+    "category": "expertises",
+    "title": "Avocats & Juristes",
+    "subtitle": "droit d’auteur • contrats • propriété intellectuelle",
+    "question": "Comment protégez-vous la valeur et la liberté des créateurs face aux évolutions du droit ?",
+    "photoUrl": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["propriété intellectuelle", "droit d'auteur", "contrats", "droit des affaires"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "comptables",
+    "category": "expertises",
+    "title": "Comptables",
+    "subtitle": "finance • gestion • fiscalité",
+    "question": "Comment transformez-vous la rigueur des chiffres en un puissant levier de souveraineté pour les projets ?",
+    "photoUrl": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["finance", "fiscalité", "gestion de production", "audit"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "artisans",
+    "category": "expertises",
+    "title": "Artisans d'Art",
+    "subtitle": "matières nobles • façonnage • savoir-faire manuel",
+    "question": "Quel geste ancestral ou secret de la matière guide vos mains lors de chaque création ?",
+    "photoUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["ébénisterie", "céramique", "textile", "cuir", "métal"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "developpeurs",
+    "category": "expertises",
+    "title": "Développeurs Tech",
+    "subtitle": "code • plateformes • architecture logicielle",
+    "question": "Comment concevez-vous des technologies qui relient véritablement les humains au lieu de les isoler ?",
+    "photoUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["applications", "plateformes web", "architecture", "data"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "designers",
+    "category": "expertises",
+    "title": "Designers",
+    "subtitle": "direction artistique • UI/UX • identité visuelle",
+    "question": "À quel moment une forme visuelle devient-elle une évidence émotionnelle pour son public ?",
+    "photoUrl": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["direction artistique", "UI/UX", "typographie", "scénographie"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "son-musique",
+    "category": "expertises",
+    "title": "Ingénieurs du Son",
+    "subtitle": "prise de son • mixage • musique",
+    "question": "Comment sculptez-vous l'espace sonore pour toucher directement le cœur de celui qui écoute ?",
+    "photoUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["prise de son", "mixage", "sound design", "musique originale"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "monteurs",
+    "category": "expertises",
+    "title": "Monteurs",
+    "subtitle": "rythme • montage • étalonnage",
+    "question": "Comment trouvez-vous le tempo invisible qui donne toute sa résonance à une histoire filmée ?",
+    "photoUrl": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["montage vidéo", "étalonnage", "post-production", "motion design"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "producteurs",
+    "category": "expertises",
+    "title": "Producteurs",
+    "subtitle": "financement • direction de projet • impact",
+    "question": "Comment mobilisez-vous les énergies et les ressources pour faire éclore des œuvres audacieuses ?",
+    "photoUrl": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["financement", "coordination", "distribution", "coproduction"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "auteurs",
+    "category": "expertises",
+    "title": "Scénaristes & Plumes",
+    "subtitle": "storytelling • narration • dramaturgie",
+    "question": "Quel mot ou quel silence permet selon vous de faire basculer un récit vers l’universel ?",
+    "photoUrl": "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["scénario", "dramaturgie", "écriture documentaire", "storytelling"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "communicants",
+    "category": "expertises",
+    "title": "Communicants",
+    "subtitle": "relations presse • influence • médias",
+    "question": "Comment portez-vous une voix authentique pour qu'elle résonne bien au-delà de sa communauté ?",
+    "photoUrl": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["stratégie média", "relations presse", "médias sociaux", "brand content"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "architectes",
+    "category": "expertises",
+    "title": "Architectes",
+    "subtitle": "espaces • éco-construction • habitat",
+    "question": "Comment bâtissez-vous des lieux qui respectent la terre et élèvent l’esprit de ceux qui y vivent ?",
+    "photoUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["éco-construction", "architecture bioclimatique", "aménagement", "matériaux durables"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "chefs-cuisine",
+    "category": "expertises",
+    "title": "Chefs Cuisiniers",
+    "subtitle": "gastronomie • terroirs • goûts d’exception",
+    "question": "Quelle mémoire de saveur ou de générosité insufflez-vous dans votre assiette ?",
+    "photoUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["art culinaire", "fermentations", "terroirs", "hospitalité"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "soignants",
+    "category": "expertises",
+    "title": "Soignants",
+    "subtitle": "santé • thérapies • soins somatiques",
+    "question": "Quel secret de présence ou d’écoute permet selon vous d’enclencher la guérison profonde ?",
+    "photoUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["médecine", "soins somatiques", "ostéopathie", "santé intégrative"],
+    "doorId": "expertises"
+  },
+  {
+    "id": "coachs",
+    "category": "expertises",
+    "title": "Coachs & Mentors",
+    "subtitle": "préparation mentale • voix • accompagnement",
+    "question": "Comment révélez-vous chez un individu le courage d'assumer pleinement sa singularité ?",
+    "photoUrl": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
+    "badge": "16 praticiens",
+    "covers": ["coaching de dirigeants", "préparation mentale", "voix", "transmission"],
     "doorId": "expertises"
   }
 ];
@@ -1012,7 +955,7 @@ const personnalitesList: ExplorerCatalogItem[] = [
     "title": "Marcus Garvey",
     "subtitle": "Jamaïque • L'unité et la fierté des peuples noirs",
     "question": "En quoi l'héritage de Marcus Garvey et son combat pour « L'unité et la fierté des peuples noirs » ont-ils transformé votre vie ou votre art ?",
-    "photoUrl": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
+    "photoUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
     "badge": "Figure Diaspora",
     "origin": "Jamaïque",
     "group": "diaspora",
@@ -1136,7 +1079,7 @@ const produitsServicesList: ExplorerCatalogItem[] = [
     "title": "Beauté",
     "subtitle": "karité • huiles • savons • soins capillaires",
     "question": "Quelle capsule vidéo de 60 à 90 secondes révèle l’authenticité et la valeur de votre offre « Beauté » ?",
-    "photoUrl": "https://images.unsplash.com/photo-1608248597359-33513476d05f?auto=format&fit=crop&w=800&q=80",
+    "photoUrl": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
     "badge": "Capsule vidéo 60-90s",
     "covers": [
       "karité",
@@ -1311,7 +1254,7 @@ const marquesList: ExplorerCatalogItem[] = [
     "title": "Beauté",
     "subtitle": "Secteur sponsor & partenaires d’impact",
     "question": "Comment votre entreprise du secteur « Beauté » soutient-elle le témoignage authentique de ses clients et artisans ?",
-    "photoUrl": "https://images.unsplash.com/photo-1608248597359-33513476d05f?auto=format&fit=crop&w=800&q=80",
+    "photoUrl": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
     "badge": "16 secteurs de sponsors",
     "doorId": "marques"
   },
@@ -1461,7 +1404,7 @@ const marquesList: ExplorerCatalogItem[] = [
     "title": "Sport",
     "subtitle": "Secteur sponsor & partenaires d’impact",
     "question": "Comment votre entreprise du secteur « Sport » soutient-elle le témoignage authentique de ses clients et artisans ?",
-    "photoUrl": "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80",
+    "photoUrl": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80",
     "badge": "16 secteurs de sponsors",
     "doorId": "marques"
   }
@@ -1578,7 +1521,7 @@ const projetsList: ExplorerCatalogItem[] = [
     "title": "Femmes",
     "subtitle": "autonomie • tissage • naissance",
     "question": "Quel impact direct et transformation concrète votre cause « Femmes » apporte-t-elle sur le terrain ?",
-    "photoUrl": "https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&w=800&q=80",
+    "photoUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
     "badge": "16 causes citoyennes",
     "covers": [
       "autonomie",

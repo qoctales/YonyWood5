@@ -4,6 +4,7 @@ import {
   Globe,
   Compass, 
   Sparkles,
+  Star,
   Award,
   Crown,
   HeartHandshake,
@@ -29,8 +30,21 @@ import {
   Atom,
   Fingerprint,
   Sprout,
-  Star,
-  BookOpen
+  BookOpen,
+  Video,
+  Camera,
+  Scale,
+  Calculator,
+  Hammer,
+  Code,
+  Palette,
+  Mic,
+  Scissors,
+  Briefcase,
+  PenTool,
+  Megaphone,
+  Utensils,
+  HeartPulse
 } from 'lucide-react';
 import { MATRIX_SERIES_DATA, MatrixSeriesConfig } from '../data/matrixData';
 import { AffiliationPerson, ViewScreen, Protagonist } from '../types';
@@ -90,6 +104,25 @@ const CATEGORY_ICONS: Record<ExplorerCategoryType, React.FC<{ className?: string
   brands: Gem,
   projects: Sprout,
   offers: ShoppingBag
+};
+
+export const EXPERTISE_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  videastes: Video,
+  photographes: Camera,
+  juristes: Scale,
+  comptables: Calculator,
+  artisans: Hammer,
+  developpeurs: Code,
+  designers: Palette,
+  'son-musique': Mic,
+  monteurs: Scissors,
+  producteurs: Briefcase,
+  auteurs: PenTool,
+  communicants: Megaphone,
+  architectes: Compass,
+  'chefs-cuisine': Utensils,
+  soignants: HeartPulse,
+  coachs: Flame,
 };
 
 export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({ 
@@ -634,14 +667,14 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                   <button
                     id="breadcrumb-topic-title-btn"
                     onClick={() => {
-                      if (activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle)) {
+                      if ((activeCategory === 'sagesses' || activeCategory === 'questions') && (activeTopicItem?.question || activeTopicItem?.subtitle)) {
                         setIsQuestionModalOpen(prev => !prev);
                       }
                     }}
                     className={`truncate text-white transition-colors ${
-                      activeCategory === 'questions' ? 'cursor-pointer hover:text-[#FFE7A3]' : 'cursor-default'
+                      (activeCategory === 'sagesses' || activeCategory === 'questions') ? 'cursor-pointer hover:text-[#FFE7A3]' : 'cursor-default'
                     }`}
-                    title={activeCategory === 'questions' ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
+                    title={(activeCategory === 'sagesses' || activeCategory === 'questions') ? "Cliquer pour afficher la question associée" : activeTopicItem?.title}
                   >
                     <span className="truncate">{activeTopicItem?.title}</span>
                   </button>
@@ -662,8 +695,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         </div>
       </div>
 
-      {/* POP-OVER AÉRÉ DE LA QUESTION (S'affiche uniquement au clic sur la Question pour la catégorie Mémoires) */}
-      {isQuestionModalOpen && activeCategory === 'questions' && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
+      {/* POP-OVER AÉRÉ DE LA QUESTION (S'affiche uniquement au clic sur la Question pour la catégorie Sagesses) */}
+      {isQuestionModalOpen && (activeCategory === 'sagesses' || activeCategory === 'questions') && (activeTopicItem?.question || activeTopicItem?.subtitle) && (
         <div 
           id="topic-question-popover"
           className="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-40 max-w-[92vw] sm:max-w-xl p-4 sm:p-5 rounded-2xl bg-stone-900/95 backdrop-blur-md border border-[#C89B3C]/70 shadow-2xl text-center pointer-events-auto animate-in fade-in duration-200"
@@ -762,22 +795,15 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 );
               })}
 
-              {/* ClipPaths pour les sujets sur l'anneau intérieur (rectangles arrondis pour affiches de séries, cercles pour autres) */}
+              {/* ClipPaths circulaires pour tous les sujets sur l'anneau intérieur (y compris les 8 séries) */}
               {topicsForCategory.map((topic, idx) => {
                 const angle = -90 + idx * (360 / topicsForCategory.length);
                 const rad = (angle * Math.PI) / 180;
                 const x = Math.cos(rad) * R_INNER;
                 const y = Math.sin(rad) * R_INNER;
-                if (activeCategory === 'series') {
-                  return (
-                    <clipPath key={`clip-poster-${topic.id}`} id={`clip-poster-${topic.id}`}>
-                      <rect x={x - 22} y={y - 32} width="44" height="64" rx="6" />
-                    </clipPath>
-                  );
-                }
                 return (
                   <clipPath key={`clip-inner-circle-${topic.id}`} id={`clip-inner-circle-${topic.id}`}>
-                    <circle cx={x} cy={y} r="20" />
+                    <circle cx={x} cy={y} r="21" />
                   </clipPath>
                 );
               })}
@@ -967,6 +993,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                           })}
                         </div>
                       </foreignObject>
+
+                      {/* Fin pastille de la Porte */}
                     </g>
                   );
                 })}
@@ -1020,87 +1048,57 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                         }}
                         onMouseLeave={() => setHoveredTopic(null)}
                       >
-                        {/* A. FORMAT AFFICHE VERTICALE POUR LES SÉRIES (5 séries de la plateforme) */}
+                        {/* A. FORMAT MÉDAILLON CIRCULAIRE POUR LES SÉRIES (8 séries de la plateforme) */}
                         {activeCategory === 'series' ? (
                           <g>
-                            {/* Halo doré si sélectionné */}
-                            {isSelected && (
-                              <rect 
-                                x={x - 24} 
-                                y={y - 34} 
-                                width="48" 
-                                height="68" 
-                                rx="8" 
-                                fill="none" 
-                                stroke="#C89B3C" 
-                                strokeWidth="2.5" 
-                                filter="drop-shadow(0 0 10px rgba(200,155,60,0.5))"
-                              />
-                            )}
-
-                            {/* Affiche rectangulaire avec image */}
-                            <rect 
-                              x={x - 22} 
-                              y={y - 32} 
-                              width="44" 
-                              height="64" 
-                              rx="6" 
-                              fill="#1C1917" 
-                              stroke={isSelected ? '#C89B3C' : '#78716C'} 
-                              strokeWidth={isSelected ? '2' : '1'} 
-                              filter="drop-shadow(0 3px 8px rgba(0,0,0,0.25))"
+                            {/* Halo doré si sélectionné ou au survol */}
+                            <circle 
+                              cx={x} 
+                              cy={y} 
+                              r="26" 
+                              fill="none" 
+                              stroke="#C89B3C" 
+                              strokeWidth={isSelected ? '2.5' : '1.5'} 
+                              strokeDasharray={isSelected ? 'none' : '3 3'}
+                              className={isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 transition-opacity duration-200'}
                             />
+
+                            {/* Disque d'arrière-plan en bronze sombre */}
+                            <circle 
+                              cx={x} 
+                              cy={y} 
+                              r="21" 
+                              fill="#1C1917" 
+                              stroke={isSelected ? '#FFE7A3' : '#8B6845'} 
+                              strokeWidth={isSelected ? '2.5' : '1.2'} 
+                              filter="drop-shadow(0 3px 8px rgba(0,0,0,0.25))" 
+                            />
+
+                            {/* Affiche circulaire de la série */}
                             <image 
                               href={topic.photoUrl} 
-                              x={x - 22} 
-                              y={y - 32} 
-                              width="44" 
-                              height="64" 
-                              clipPath={`url(#clip-poster-${topic.id})`}
+                              x={x - 21} 
+                              y={y - 21} 
+                              width="42" 
+                              height="42" 
+                              clipPath={`url(#clip-inner-circle-${topic.id})`}
                               preserveAspectRatio="xMidYMid slice" 
-                            />
-                            <rect 
-                              x={x - 22} 
-                              y={y - 32} 
-                              width="44" 
-                              height="64" 
-                              rx="6" 
-                              fill="none" 
-                              stroke={isSelected ? '#C89B3C' : '#FFFFFF'} 
-                              strokeWidth="1.2" 
+                              className="pointer-events-none"
                             />
 
-                            {/* Titre de la série sous l'affiche (uniquement au survol des non-sélectionnés, pas de doublon si déjà sélectionné au centre) */}
-                            <g 
-                              transform={`translate(${x}, ${y + 40})`} 
-                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}`}
-                            >
-                              <rect 
-                                x="-42" 
-                                y="-8" 
-                                width="84" 
-                                height="17" 
-                                rx="8.5" 
-                                fill="#1C1917" 
-                                stroke={isSelected ? '#C89B3C' : '#78716C'}
-                                strokeWidth="1"
-                                filter="drop-shadow(0 2px 8px rgba(0,0,0,0.4))"
-                              />
-                              <text 
-                                x="0" 
-                                y="3.5" 
-                                textAnchor="middle" 
-                                fill="#FDFBF7" 
-                                fontSize="8.5" 
-                                fontWeight="600"
-                                fontFamily="sans-serif"
-                              >
-                                {topic.title.length > 15 ? `${topic.title.slice(0, 14)}…` : topic.title}
-                              </text>
-                            </g>
+                            {/* Anneau de sertissage en or précieux */}
+                            <circle 
+                              cx={x} 
+                              cy={y} 
+                              r="21" 
+                              fill="none" 
+                              stroke={isSelected ? '#FFE7A3' : 'rgba(200, 155, 60, 0.45)'} 
+                              strokeWidth={isSelected ? '2.5' : '1.2'} 
+                              className="pointer-events-none"
+                            />
                           </g>
-                        ) : activeCategory === 'countries' ? (
-                          /* B. FORMAT DRAPEAUX PURS POUR LES PAYS (Affichage du nom au survol/sélection) */
+                        ) : (activeCategory === 'territoires' || activeCategory === 'countries') ? (
+                          /* B. FORMAT DRAPEAUX PURS CIRCULAIRES POUR LES TERRITOIRES */
                           <g>
                             {/* Halo au survol ou sélection */}
                             <circle 
@@ -1147,72 +1145,87 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                               strokeWidth={isSelected ? '2.5' : '1.2'} 
                               className="pointer-events-none"
                             />
-
-                            {/* Nom du pays révélé uniquement au survol si non sélectionné (évite le doublon avec le centre) */}
-                            <g 
-                              transform={`translate(${x}, ${y + 29})`} 
-                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}`}
-                            >
-                              <rect 
-                                x="-36" 
-                                y="-8" 
-                                width="72" 
-                                height="17" 
-                                rx="8.5" 
-                                fill="#1C1917" 
-                                stroke={isSelected ? '#C89B3C' : '#78716C'}
-                                strokeWidth="1"
-                                filter="drop-shadow(0 2px 8px rgba(0,0,0,0.4))"
-                              />
-                              <text 
-                                x="0" 
-                                y="3.5" 
-                                textAnchor="middle" 
-                                fill="#FDFBF7" 
-                                fontSize="9" 
-                                fontWeight="600"
-                                fontFamily="sans-serif"
-                              >
-                                {topic.title}
-                              </text>
-                            </g>
                           </g>
-                        ) : activeCategory === 'questions' ? (
-                          /* C. FORMAT MÉDAILLON POUR LES SAGESSES POPULAIRES */
+                        ) : (activeCategory === 'expertises' || activeCategory === 'thematics') ? (
+                          /* C. FORMAT MÉDAILLON CIRCULAIRE AVEC MINI-ICÔNE DÉDIÉE POUR LES EXPERTISES */
+                          <g>
+                            {/* Halo doré lumineux au survol ou sélection */}
+                            <circle 
+                              cx={x} 
+                              cy={y} 
+                              r="26" 
+                              fill="none" 
+                              stroke="#C89B3C" 
+                              strokeWidth={isSelected ? '2.5' : '1.5'} 
+                              strokeDasharray={isSelected ? 'none' : '3 3'}
+                              className={isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 transition-opacity duration-200'}
+                            />
+
+                            {/* Disque d'arrière-plan en obsidienne sombre */}
+                            <circle 
+                              cx={x} 
+                              cy={y} 
+                              r="21" 
+                              fill={isSelected ? '#1C1917' : '#262322'} 
+                              stroke={isSelected ? '#FFE7A3' : '#C89B3C'} 
+                              strokeWidth={isSelected ? '2.5' : '1.4'} 
+                              filter="drop-shadow(0 3px 10px rgba(0,0,0,0.35))" 
+                            />
+
+                            {/* Filet intérieur discret d'orfèvrerie dorée */}
+                            <circle 
+                              cx={x} 
+                              cy={y} 
+                              r="17" 
+                              fill="none" 
+                              stroke={isSelected ? 'rgba(255, 231, 163, 0.45)' : 'rgba(200, 155, 60, 0.22)'} 
+                              strokeWidth="0.8" 
+                              className="pointer-events-none"
+                            />
+
+                            {/* Mini-icône vectorielle de l'expertise en or précieux */}
+                            <foreignObject x={x - 14} y={y - 14} width="28" height="28" className="pointer-events-none">
+                              <div className={`w-full h-full flex items-center justify-center transition-transform duration-200 ${
+                                isSelected ? 'scale-110 text-[#FFE7A3]' : 'scale-100 text-[#C89B3C] group-hover:text-[#FFE7A3]'
+                              }`}>
+                                {React.createElement(EXPERTISE_ICONS[topic.id] || GraduationCap, {
+                                  className: 'w-4.5 h-4.5 stroke-[2] drop-shadow-xs'
+                                })}
+                              </div>
+                            </foreignObject>
+                          </g>
+                        ) : (activeCategory === 'sagesses' || activeCategory === 'questions') ? (
+                          /* D. FORMAT MÉDAILLON CIRCULAIRE POUR LES SAGESSES POPULAIRES */
                           <g>
                             <circle 
                               cx={x} 
                               cy={y} 
-                              r="25" 
+                              r="26" 
                               fill="none" 
                               stroke="#C89B3C" 
-                              strokeWidth={isSelected ? '2' : '1'} 
+                              strokeWidth={isSelected ? '2.5' : '1.5'} 
                               strokeDasharray={isSelected ? 'none' : '2 3'}
                               className={isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 transition-opacity duration-200'}
                             />
                             <circle 
                               cx={x} 
                               cy={y} 
-                              r="20" 
-                              fill="#1C1917" 
-                              stroke={isSelected ? '#C89B3C' : '#78716C'} 
-                              strokeWidth={isSelected ? '2' : '1'} 
-                              filter="drop-shadow(0 2px 6px rgba(0,0,0,0.3))" 
+                              r="21" 
+                              fill={isSelected ? '#1C1917' : '#262322'} 
+                              stroke={isSelected ? '#FFE7A3' : '#C89B3C'} 
+                              strokeWidth={isSelected ? '2.5' : '1.4'} 
+                              filter="drop-shadow(0 3px 8px rgba(0,0,0,0.35))" 
                             />
-                            <text 
-                              x={x} 
-                              y={y + 3} 
-                              textAnchor="middle" 
-                              fill="#F5D88C" 
-                              fontSize="7.5" 
-                              fontWeight="600"
-                              fontFamily="sans-serif"
-                            >
-                              {topic.title.length > 9 ? `${topic.title.slice(0, 8)}…` : topic.title}
-                            </text>
+                            <foreignObject x={x - 12} y={y - 12} width="24" height="24" className="pointer-events-none">
+                              <div className={`w-full h-full flex items-center justify-center transition-transform duration-200 ${
+                                isSelected ? 'scale-110 text-[#FFE7A3]' : 'scale-100 text-[#C89B3C]'
+                              }`}>
+                                <Atom className="w-4.5 h-4.5 stroke-[2] drop-shadow-xs" />
+                              </div>
+                            </foreignObject>
                           </g>
                         ) : (
-                          /* D. FORMAT BADGE CIRCULAIRE POUR LES AUTRES CATÉGORIES (Marques, etc.) */
+                          /* E. FORMAT BADGE CIRCULAIRE POUR LES AUTRES CATÉGORIES (Personnalités, Marques, Projets, Produits) */
                           <g>
                             <circle 
                               cx={x} 
@@ -1250,34 +1263,6 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                               stroke={isSelected ? '#C89B3C' : '#FFFFFF'} 
                               strokeWidth="1.2" 
                             />
-                            {/* Nom du sujet au survol si non sélectionné (évite le doublon avec le centre) */}
-                            <g 
-                              transform={`translate(${x}, ${y + 28})`} 
-                              className={`transition-opacity duration-200 pointer-events-none ${isSelected ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}`}
-                            >
-                              <rect 
-                                x="-36" 
-                                y="-8" 
-                                width="72" 
-                                height="17" 
-                                rx="8.5" 
-                                fill="#1C1917" 
-                                stroke={isSelected ? '#C89B3C' : '#78716C'}
-                                strokeWidth="1"
-                                filter="drop-shadow(0 2px 8px rgba(0,0,0,0.4))"
-                              />
-                              <text 
-                                x="0" 
-                                y="3.5" 
-                                textAnchor="middle" 
-                                fill="#FDFBF7" 
-                                fontSize="8.5" 
-                                fontWeight="600"
-                                fontFamily="sans-serif"
-                              >
-                                {topic.title.length > 13 ? `${topic.title.slice(0, 12)}…` : topic.title}
-                              </text>
-                            </g>
                           </g>
                         )}
                       </g>
@@ -1439,10 +1424,12 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                           />
                         )}
 
-                        {/* Prénom et Âge sous l'avatar au survol (strictement prénom et âge) */}
+                        {/* Prénom et Âge sous l'avatar au survol ou sélection */}
                         <g 
                           transform={`translate(${node.x}, ${node.y + radius + 12})`} 
-                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+                          className={`transition-opacity duration-200 pointer-events-none ${
+                            isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                          }`}
                         >
                           <rect 
                             x="-36" 

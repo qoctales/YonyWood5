@@ -391,13 +391,14 @@ export const CoproduireRingsIcon: React.FC<IconProps> = ({
 
 /**
  * DuocumentairesTvIcon:
- * Symbole « Duocumentaires » : écran de télévision vintage scindé en deux.
- * Un seul cadre scindé en deux au centre (les deux voix du duocumentaire),
- * avec deux petits témoins/boutons et deux pieds obliques évasés (sans traverse).
+ * Symbole « Duocumentaires » : écran double rétro fidèle au dessin des deux 'o' de « Wood »
+ * dans le logo officiel YonyWood.
+ * Un cadre arrondi scindé en son milieu par un trait vertical, avec les deux points
+ * rapprochés du trait central et les deux pieds évasés vers l'extérieur.
  */
 export const DuocumentairesTvIcon: React.FC<IconProps> = ({ 
   className = 'w-5 h-5',
-  strokeWidth = 1.5 
+  strokeWidth = 1.55 
 }) => {
   return (
     <svg 
@@ -410,19 +411,55 @@ export const DuocumentairesTvIcon: React.FC<IconProps> = ({
       className={className}
       aria-hidden="true"
     >
-      {/* Cadre du téléviseur / meuble vintage arrondi */}
-      <rect x="4" y="5" width="16" height="11" rx="2" />
+      {/* Cadre extérieur du double écran (arrondi harmonieux) */}
+      <rect x="4" y="5.5" width="16" height="10.5" rx="2.3" />
       
       {/* Séparation centrale verticale (l'écran divisé en deux mondes/voix) */}
-      <line x1="12" y1="5" x2="12" y2="16" />
+      <line x1="12" y1="5.5" x2="12" y2="16" />
 
-      {/* Deux petits boutons / témoins caméra au centre de chaque moitié d'écran */}
-      <circle cx="7.5" cy="10.5" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="16.5" cy="10.5" r="0.9" fill="currentColor" stroke="none" />
+      {/* Deux points/yeux fidèles au logo avec respiration nette de part et d'autre de la barre centrale */}
+      <circle cx="9.0" cy="10.75" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="15.0" cy="10.75" r="0.9" fill="currentColor" stroke="none" />
 
-      {/* Piétement vintage : deux pieds inclinés uniquement, sans traverse */}
-      <path d="M 8 16 L 6.5 20.5" />
-      <path d="M 16 16 L 17.5 20.5" />
+      {/* Piétement vintage : deux pieds inclinés évasés vers l'extérieur */}
+      <path d="M 8 16 L 6.2 19.8" />
+      <path d="M 16 16 L 17.8 19.8" />
+    </svg>
+  );
+};
+
+/**
+ * ProfileSoloIcon:
+ * Symbole « Profil / Protagoniste Solo » (Piste 1) :
+ * Écran-tête singulier dans le style exact du logo officiel YonyWood et en miroir
+ * direct du DuocumentairesTvIcon. Boîtier rétro compact, deux yeux expressifs
+ * et les deux pieds évasés vers l'extérieur à la base.
+ */
+export const ProfileSoloIcon: React.FC<IconProps> = ({ 
+  className = 'w-5 h-5',
+  strokeWidth = 1.55 
+}) => {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth={strokeWidth} 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Boîtier / tête rétro compacte du protagoniste solo */}
+      <rect x="6.25" y="5.5" width="11.5" height="10.5" rx="2.4" />
+
+      {/* Regard / yeux du protagoniste singulier */}
+      <circle cx="10.3" cy="10.75" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="13.7" cy="10.75" r="0.9" fill="currentColor" stroke="none" />
+
+      {/* Piétement vintage évasé vers l'extérieur */}
+      <path d="M 9.2 16 L 7.4 19.8" />
+      <path d="M 14.8 16 L 16.6 19.8" />
     </svg>
   );
 };
