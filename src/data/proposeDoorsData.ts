@@ -14,6 +14,10 @@ export interface ProposeSubject {
   doorId?: string;
   iconName?: string;
   covers?: string[];
+  accentColor?: string;
+  glowColor?: string;
+  bgGradient?: string;
+  badge?: string;
 }
 
 export interface ProposeDoor {
@@ -48,7 +52,11 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     posterUrl: '/assets/posters/Esu < > Jesus.png',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/jesus-legba'
+    iconName: '16-series/jesus-legba',
+    accentColor: '#D97706',
+    glowColor: 'rgba(217, 119, 6, 0.65)',
+    bgGradient: 'from-amber-600 via-orange-700 to-stone-900',
+    badge: 'Série spirituelle'
   },
   {
     id: 'finagnon-qosqorico',
@@ -60,7 +68,11 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     posterUrl: '/assets/posters/Finagnon < > Qosqorico.png',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/finagnon-qosqorico'
+    iconName: '16-series/finagnon-qosqorico',
+    accentColor: '#10B981',
+    glowColor: 'rgba(16, 185, 129, 0.65)',
+    bgGradient: 'from-emerald-600 via-teal-700 to-stone-900',
+    badge: 'Série terroirs & eau'
   },
   {
     id: 'blacks-one-beyond-eve',
@@ -72,7 +84,11 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     posterUrl: '/assets/posters/Blacks One < > Beyond Eve.png',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/blacks-one-beyond-eve'
+    iconName: '16-series/blacks-one-beyond-eve',
+    accentColor: '#EC4899',
+    glowColor: 'rgba(236, 72, 153, 0.65)',
+    bgGradient: 'from-pink-600 via-rose-700 to-stone-900',
+    badge: 'Série culture urbaine'
   },
   {
     id: 'dixeat-fiat-luxe',
@@ -84,7 +100,11 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     posterUrl: '/assets/posters/E Vivi < > Fiat Luxe.png',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/dixeat-fiat-luxe'
+    iconName: '16-series/dixeat-fiat-luxe',
+    accentColor: '#F59E0B',
+    glowColor: 'rgba(245, 158, 11, 0.65)',
+    bgGradient: 'from-amber-500 via-yellow-700 to-stone-900',
+    badge: 'Série goût & luxe'
   },
   {
     id: 'investors-builders',
@@ -96,7 +116,11 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     posterUrl: '/assets/posters/Investors < > Builders.png',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/investors-builders'
+    iconName: '16-series/investors-builders',
+    accentColor: '#0284C7',
+    glowColor: 'rgba(2, 132, 199, 0.65)',
+    bgGradient: 'from-sky-600 via-blue-800 to-stone-900',
+    badge: 'Série bâtisseurs'
   },
   {
     id: 'other-eyes-sixth-sense',
@@ -108,7 +132,11 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     posterUrl: '/assets/posters/Other eyes < > Sixth sense.png',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/other-eyes-sixth-sense'
+    iconName: '16-series/other-eyes-sixth-sense',
+    accentColor: '#8B5CF6',
+    glowColor: 'rgba(139, 92, 246, 0.65)',
+    bgGradient: 'from-purple-600 via-indigo-800 to-stone-900',
+    badge: 'Série intuition'
   },
   {
     id: 'coaching-unlimited',
@@ -120,7 +148,11 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     posterUrl: '/assets/posters/Coaching < > Unlimited.png',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/coaching-unlimited'
+    iconName: '16-series/coaching-unlimited',
+    accentColor: '#EA580C',
+    glowColor: 'rgba(234, 88, 12, 0.65)',
+    bgGradient: 'from-orange-600 via-red-700 to-stone-900',
+    badge: 'Série dépassement'
   },
   {
     id: 'safer-healer',
@@ -132,7 +164,11 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     posterUrl: '/assets/posters/Safer < > Healer.png',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/safer-healer'
+    iconName: '16-series/safer-healer',
+    accentColor: '#EF4444',
+    glowColor: 'rgba(239, 68, 68, 0.65)',
+    bgGradient: 'from-red-600 via-rose-700 to-stone-900',
+    badge: 'Série secours & soin'
   }
 ];
 
@@ -182,7 +218,11 @@ export const PROPOSE_DOORS: ProposeDoor[] = DIMENSIONS.map((dim, idx) => {
     posterUrl: sc.photoUrl || dim.coverImage,
     actionLabel: `Choisir ce sujet`,
     doorId: dim.id,
-    iconName: sc.icone
+    iconName: sc.icone,
+    accentColor: sc.accentColor || dim.accentColor,
+    glowColor: sc.glowColor || dim.glowColor,
+    bgGradient: sc.bgGradient || dim.bgGradient,
+    badge: sc.badge
   }));
 
   return {

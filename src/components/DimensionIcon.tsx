@@ -227,6 +227,18 @@ SVG_ICONS_INNER["moments-de-vie/secrets-gardes"] = SVG_ICONS_INNER["15-moments-d
 SVG_ICONS_INNER["15-moments-de-vie/regrets-fiertes"] = SVG_ICONS_INNER["15-moments-de-vie/parentalite"];
 SVG_ICONS_INNER["moments-de-vie/regrets-fiertes"] = SVG_ICONS_INNER["15-moments-de-vie/parentalite"];
 
+// Nouvelles correspondances officielles Yonywood
+SVG_ICONS_INNER["personnalites/figures-du-quotidien"] = SVG_ICONS_INNER["08-figures-du-quotidien/_dimension"];
+SVG_ICONS_INNER["07-personnalites/figures-du-quotidien"] = SVG_ICONS_INNER["08-figures-du-quotidien/_dimension"];
+SVG_ICONS_INNER["territoires/culture"] = SVG_ICONS_INNER["02-territoires/terroirs"];
+SVG_ICONS_INNER["02-territoires/culture"] = SVG_ICONS_INNER["02-territoires/terroirs"];
+SVG_ICONS_INNER["expertises/terroir"] = SVG_ICONS_INNER["03-expertises/agriculture"];
+SVG_ICONS_INNER["03-expertises/terroir"] = SVG_ICONS_INNER["03-expertises/agriculture"];
+SVG_ICONS_INNER["marques/luxe"] = SVG_ICONS_INNER["06-marques/mode-luxe"];
+SVG_ICONS_INNER["06-marques/luxe"] = SVG_ICONS_INNER["06-marques/mode-luxe"];
+SVG_ICONS_INNER["marques/mode-beaute"] = SVG_ICONS_INNER["06-marques/emblematiques"];
+SVG_ICONS_INNER["06-marques/mode-beaute"] = SVG_ICONS_INNER["06-marques/emblematiques"];
+
 interface DimensionIconProps {
   /** Nom de l'icône : 'dimension/slug', 'dimension/_dimension', ou '01-sagesses/epreuves', etc. */
   name: string;

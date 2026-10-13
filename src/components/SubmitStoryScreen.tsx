@@ -558,10 +558,34 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {/* ÉTAPE 1 : CHOISIR PARMI LES 8 PORTES D'ENTRÉE                             */}
       {/* ========================================================================= */}
       {step === 1 && (
-        <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
+        <div className="flex-1 flex flex-col items-center justify-between py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
           
-          {/* Conteneur de l'écran 9:16 avec swipe et flèches (sans menu supérieur) */}
-          <div className="relative w-full h-full flex items-center justify-center">
+          {/* SÉLECTEUR HORIZONTAL DES 8 GRANDES PORTES OFFICIELLES YONYWOOD */}
+          <div className="w-full max-w-xl mx-auto flex items-center justify-start sm:justify-center gap-1.5 overflow-x-auto py-1.5 px-1 no-scrollbar shrink-0 mb-1 z-20">
+            {PROPOSE_DOORS.map((door, dIdx) => {
+              const isCurrent = dIdx === doorIndex;
+              const DoorIcon = door.icon;
+              return (
+                <button
+                  key={door.id}
+                  onClick={() => goToDoor(dIdx)}
+                  id={`tab-door-${door.id}`}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all shrink-0 cursor-pointer ${
+                    isCurrent
+                      ? 'bg-[#A2482B] text-white shadow-md border border-[#8A3B22] scale-105'
+                      : 'bg-white/95 hover:bg-stone-100 text-stone-700 border border-stone-200 hover:border-stone-300'
+                  }`}
+                  title={door.tagline}
+                >
+                  <DoorIcon className={`w-3.5 h-3.5 ${isCurrent ? 'text-white' : 'text-[#A2482B]'}`} />
+                  <span>{door.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Conteneur de l'écran 9:16 avec swipe et flèches */}
+          <div className="relative w-full flex-1 flex items-center justify-center min-h-0">
             
             {/* Flèche Gauche */}
             <button
@@ -784,10 +808,42 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
       {/* ÉTAPE 2 : CHOISIR LE SUJET / SOUS-CATÉGORIE DANS LA PORTE SÉLECTIONNÉE     */}
       {/* ========================================================================= */}
       {step === 2 && (
-        <div className="flex-1 flex items-center justify-center py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
+        <div className="flex-1 flex flex-col items-center justify-between py-1 sm:py-2 min-h-0 overflow-visible px-2 sm:px-6 md:px-10 animate-in fade-in duration-200">
           
-          {/* CONTENEUR DU SWIPE SUJET AVEC FLÈCHES LATÉRALES - alignement identique à l'étape 1 */}
-          <div className="relative w-full h-full flex items-center justify-center">
+          {/* SÉLECTEUR VISUEL COLORÉ DES 8 CATÉGORIES RELIÉES À CETTE PORTE */}
+          <div className="w-full max-w-xl mx-auto flex items-center justify-start sm:justify-center gap-1.5 overflow-x-auto py-1.5 px-1 no-scrollbar shrink-0 mb-1 z-20">
+            {currentDoor.subjects.map((subj, sIdx) => {
+              const isCurrent = sIdx === subjectIndex;
+              const accent = subj.accentColor || '#A2482B';
+              return (
+                <button
+                  key={subj.id}
+                  onClick={() => goToSubject(sIdx)}
+                  id={`tab-category-${subj.id}`}
+                  style={{
+                    borderColor: isCurrent ? accent : 'rgba(231, 229, 228, 0.9)',
+                    backgroundColor: isCurrent ? accent : '#FFFFFF',
+                    color: isCurrent ? '#FFFFFF' : '#1C1917',
+                    boxShadow: isCurrent ? `0 4px 14px ${subj.glowColor || 'rgba(0,0,0,0.2)'}` : 'none'
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all shrink-0 cursor-pointer border ${
+                    isCurrent ? 'scale-105 font-bold' : 'hover:bg-stone-50'
+                  }`}
+                  title={subj.subtitle}
+                >
+                  <DimensionIcon 
+                    name={isSeries ? '16-series/_dimension' : (subj.iconName || `${currentDoor.id}/${subj.id}`)} 
+                    size={13} 
+                    className={isCurrent ? 'text-white' : ''}
+                  />
+                  <span className="truncate max-w-[120px]">{subj.title}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* CONTENEUR DU SWIPE SUJET AVEC FLÈCHES LATÉRALES */}
+          <div className="relative w-full flex-1 flex items-center justify-center min-h-0">
             
             {/* Flèche précédente */}
             <button
@@ -798,18 +854,29 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
               <ChevronLeft className="w-5 h-5" />
             </button>
 
-            {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL AVEC SUPPORT DU SWIPE */}
+            {/* CARTE UNIQUE FORMAT VIDÉO VERTICAL : STYLE COLORÉ DÉDIÉ À LA CATÉGORIE */}
             <div
-              style={{ transform: `translateX(${subSwipeOffset}px)` }}
+              style={{ 
+                transform: `translateX(${subSwipeOffset}px)`
+              }}
               onTouchStart={onSubTouchStart}
               onTouchMove={onSubTouchMove}
               onTouchEnd={onSubTouchEnd}
               onMouseDown={onSubMouseDown}
               onMouseMove={onSubMouseMove}
               onMouseUp={onSubMouseUp}
-              className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#151513] text-white shadow-2xl border border-stone-200/80 flex flex-col justify-between p-2.5 sm:p-4.5 transition-transform duration-150 ease-out select-none cursor-pointer shrink-0"
+              className="aspect-[9/16] w-[min(340px,calc((100dvh-200px)*9/16))] h-[min(604px,calc(100dvh-200px))] max-w-[calc(100vw-28px)] mx-auto rounded-2xl sm:rounded-3xl overflow-hidden bg-[#121110] text-white shadow-2xl flex flex-col justify-between p-2.5 sm:p-4.5 transition-transform duration-150 ease-out select-none cursor-pointer shrink-0 relative"
               id={`current-subject-card-${currentSubject.id}`}
             >
+              {/* Halo d'ambiance coloré propre à la thématique de la catégorie */}
+              <div 
+                className="absolute inset-0 pointer-events-none transition-colors duration-500 rounded-2xl sm:rounded-3xl border-2"
+                style={{ 
+                  borderColor: currentSubject.accentColor || '#C89B3C',
+                  boxShadow: `inset 0 0 40px ${currentSubject.glowColor || 'rgba(200, 155, 60, 0.3)'}, 0 16px 40px ${currentSubject.glowColor || 'rgba(0, 0, 0, 0.4)'}`
+                }} 
+              />
+
               {/* Vidéo ou affiche officielle de fond selon le mode actif */}
               {isSubjectVideoPlaying ? (
                 <video
@@ -847,19 +914,34 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 />
               )}
 
-              {/* Voile cinématographique harmonisé (modèle Coproduction : plus lumineux et clair) */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/25 pointer-events-none" />
+              {/* Voile cinématographique et teinté aux nuances thématiques */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/35 pointer-events-none" />
 
-              {/* HAUT : Cartouche sobre du sujet/média & Son discret */}
-              <div className="relative z-10 flex items-center justify-between">
+              {/* HAUT : Cartouche riche et vibrant de la catégorie */}
+              <div className="relative z-10 flex items-center justify-between gap-1.5">
                 {activeSeriesOverlay !== 'sponsors' ? (
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] sm:text-xs font-bold text-white shadow-sm">
-                    <DimensionIcon 
-                      name={isSeries ? '16-series/_dimension' : (currentSubject.iconName || `${currentDoor.id}/${currentSubject.id}`)} 
-                      size={14} 
-                      className="text-[#C89B3C]" 
-                    />
-                    <span className="truncate max-w-[160px] sm:max-w-none">{currentSubject.title}</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <div 
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-full backdrop-blur-md border border-white/30 text-[11px] sm:text-xs font-bold text-white shadow-md transition-colors"
+                      style={{ backgroundColor: currentSubject.accentColor ? `${currentSubject.accentColor}cc` : 'rgba(0,0,0,0.65)' }}
+                    >
+                      <DimensionIcon 
+                        name={isSeries ? '16-series/_dimension' : (currentSubject.iconName || `${currentDoor.id}/${currentSubject.id}`)} 
+                        size={14} 
+                        className="text-white drop-shadow-xs" 
+                      />
+                      <span className="truncate max-w-[150px] sm:max-w-none">{currentSubject.title}</span>
+                      <span className="text-white/80 text-[10px] font-normal">({subjectIndex + 1}/8)</span>
+                    </div>
+
+                    {currentSubject.badge && (
+                      <div 
+                        className="px-2.5 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider text-white shadow-sm border border-white/30 backdrop-blur-md"
+                        style={{ backgroundColor: currentSubject.accentColor ? `${currentSubject.accentColor}` : '#A2482B' }}
+                      >
+                        {currentSubject.badge}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div />
@@ -871,7 +953,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                       e.stopPropagation();
                       setIsSubjectMuted(!isSubjectMuted);
                     }}
-                    className="p-1.5 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 hover:border-[#A2482B] transition-colors cursor-pointer"
+                    className="p-1.5 rounded-full bg-black/60 hover:bg-[#A2482B] text-white backdrop-blur-md border border-white/15 hover:border-[#A2482B] transition-colors cursor-pointer shrink-0"
                     title={isSubjectMuted ? 'Activer le son' : 'Couper le son'}
                   >
                     {isSubjectMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -1049,34 +1131,83 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                   </button>
                 </div>
               ) : (
-                <div className="relative z-10 flex items-center justify-between gap-1.5 pt-0.5">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowSubjectQuestion(true);
-                    }}
-                    className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/25 hover:border-transparent cursor-pointer shadow-md active:scale-95 shrink-0"
-                    title="Découvrir la question à laquelle répondre"
+                <div className="relative z-10 flex flex-col gap-2 pt-0.5">
+                  {/* Titre et 8 points indicateurs de sous-catégories avec style thématique coloré */}
+                  <div 
+                    className="bg-black/70 backdrop-blur-md rounded-xl p-2.5 border text-left space-y-1.5 transition-colors"
+                    style={{ borderColor: currentSubject.accentColor ? `${currentSubject.accentColor}55` : 'rgba(255,255,255,0.2)' }}
                   >
-                    <BookOpen className="w-3 h-3 text-[#FACC15] shrink-0" />
-                    <span>Question</span>
-                  </button>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span 
+                          className="w-2 h-2 rounded-full shrink-0"
+                          style={{ backgroundColor: currentSubject.accentColor || '#C89B3C' }}
+                        />
+                        <h4 className="text-sm sm:text-base font-bold text-white leading-tight font-editorial drop-shadow-xs truncate">
+                          {currentSubject.title}
+                        </h4>
+                      </div>
+                      {/* 8 indicateurs circulaires pour les 8 sous-catégories */}
+                      <div className="flex items-center gap-1 shrink-0 bg-white/10 px-2 py-0.5 rounded-full border border-white/15">
+                        {currentDoor.subjects.map((s, sIdx) => (
+                          <span 
+                            key={s.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSubjectIndex(sIdx);
+                            }}
+                            style={{
+                              backgroundColor: sIdx === subjectIndex ? (currentSubject.accentColor || '#C89B3C') : undefined
+                            }}
+                            className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                              sIdx === subjectIndex 
+                                ? 'w-3.5 shadow-sm' 
+                                : 'w-1.5 bg-white/40 hover:bg-white/70'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    {currentSubject.subtitle && (
+                      <p className="text-[11px] text-stone-200 line-clamp-2 leading-snug font-normal">
+                        {currentSubject.subtitle}
+                      </p>
+                    )}
+                  </div>
 
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setStep(3);
-                      setChosenFlow(null);
-                    }}
-                    className="h-7.5 sm:h-8.5 px-3.5 sm:px-4 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:border-transparent cursor-pointer active:scale-95 group/btn shrink-0"
-                    title={currentSubject.actionLabel}
-                    id={`choose-subject-btn-${currentSubject.id}`}
-                  >
-                    <span>{currentSubject.actionLabel}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-white/90 group-hover/btn:text-white transition-colors shrink-0" />
-                  </button>
+                  <div className="flex items-center justify-between gap-1.5">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSubjectQuestion(true);
+                      }}
+                      className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white/20 hover:bg-white/30 text-white text-[11px] sm:text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1 border border-white/30 cursor-pointer shadow-md active:scale-95 shrink-0"
+                      title="Découvrir la question à laquelle répondre"
+                    >
+                      <BookOpen className="w-3 h-3 text-[#FACC15] shrink-0" />
+                      <span>Question</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setStep(3);
+                        setChosenFlow(null);
+                      }}
+                      style={{
+                        backgroundColor: currentSubject.accentColor || '#A2482B',
+                        boxShadow: `0 2px 12px ${currentSubject.glowColor || 'rgba(0,0,0,0.3)'}`
+                      }}
+                      className="h-7.5 sm:h-8.5 px-3.5 sm:px-4 rounded-full text-white text-[11px] sm:text-xs font-bold backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md border border-white/25 hover:brightness-110 cursor-pointer active:scale-95 group/btn shrink-0"
+                      title={currentSubject.actionLabel}
+                      id={`choose-subject-btn-${currentSubject.id}`}
+                    >
+                      <span>{currentSubject.actionLabel}</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-white/90 group-hover/btn:text-white transition-colors shrink-0" />
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -1268,9 +1399,19 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                 >
                   <div className="space-y-4 overflow-y-auto max-h-[82%] pr-1">
                     <div className="flex items-center justify-between pb-2 border-b border-white/15">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-[#C89B3C]">
-                        Question de témoignage
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <DimensionIcon 
+                          name={isSeries ? '16-series/_dimension' : (currentSubject.iconName || `${currentDoor.id}/${currentSubject.id}`)} 
+                          size={16} 
+                          className="text-white"
+                        />
+                        <span 
+                          className="text-[11px] font-bold uppercase tracking-widest"
+                          style={{ color: currentSubject.accentColor || '#C89B3C' }}
+                        >
+                          Transmission · {currentSubject.title}
+                        </span>
+                      </div>
                       <button
                         onClick={() => setShowSubjectQuestion(false)}
                         className="p-1.5 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer"
@@ -1281,7 +1422,7 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                     </div>
 
                     <div className="space-y-2 pt-1">
-                      <span className="text-xs text-stone-400 font-medium">
+                      <span className="text-xs text-stone-300 font-medium">
                         Pour votre contribution sur {currentSubject.title} :
                       </span>
                       <p className="font-editorial text-white leading-relaxed pt-1 text-lg font-medium italic">
@@ -1304,7 +1445,10 @@ export const SubmitStoryScreen: React.FC<SubmitStoryScreenProps> = ({
                         setShowSubjectQuestion(false);
                         setStep(3);
                       }}
-                      className="px-4 py-2 rounded-full bg-white/20 hover:bg-[#A2482B] text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:border-transparent"
+                      style={{
+                        backgroundColor: currentSubject.accentColor || '#A2482B'
+                      }}
+                      className="px-4 py-2 rounded-full text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 border border-white/25 hover:brightness-110"
                     >
                       <span>{currentSubject.actionLabel}</span>
                       <ArrowRight className="w-3.5 h-3.5" />

@@ -52,6 +52,7 @@ export interface ExplorerCatalogItem {
   angle?: string;
   family?: string;
   covers?: string[];
+  iconName?: string;
 }
 
 // 1. SÉRIES DOCUMENTAIRES
@@ -63,7 +64,9 @@ const seriesList: ExplorerCatalogItem[] = [
     "subtitle": "Deux traditions. Une même question de foi.",
     "question": "Qu’est-ce qui dans votre foi la plus intime vous relie à ce qui vous dépasse et vous rapproche des autres ?",
     "photoUrl": "/assets/posters/jesus-esu.png",
-    "badge": "16 pionniers cooptés"
+    "badge": "16 pionniers cooptés",
+    "accentColor": "#D97706",
+    "iconName": "16-series/jesus-legba"
   },
   {
     "id": "finagnon-qosqorico",
@@ -72,7 +75,9 @@ const seriesList: ExplorerCatalogItem[] = [
     "subtitle": "Bénin < > Pérou. Deux territoires. Une même réflexion sur ce qui nous relie à un lieu.",
     "question": "Quel est ce lien invisible et indestructible qui vous unit charnellement à la terre de vos ancêtres ?",
     "photoUrl": "/assets/posters/finagnon-qosqorico.png",
-    "badge": "16 pionniers cooptés"
+    "badge": "16 pionniers cooptés",
+    "accentColor": "#10B981",
+    "iconName": "16-series/finagnon-qosqorico"
   },
   {
     "id": "blacks-one-beyond-eve",
@@ -81,7 +86,9 @@ const seriesList: ExplorerCatalogItem[] = [
     "subtitle": "La mémoire originelle, la sororité et la diaspora.",
     "question": "Quelle blessure ou fierté héritée de vos mères portez-vous comme un flambeau dans votre existence ?",
     "photoUrl": "/assets/posters/blacks-one-beyond-eve.png",
-    "badge": "16 pionniers cooptés"
+    "badge": "16 pionniers cooptés",
+    "accentColor": "#EC4899",
+    "iconName": "16-series/blacks-one-beyond-eve"
   },
   {
     "id": "dixeat-fiat-luxe",
@@ -90,7 +97,9 @@ const seriesList: ExplorerCatalogItem[] = [
     "subtitle": "Quand la matière brute devient or, goût et lumière.",
     "question": "À quel instant précis avez-vous compris que transformer la matière brute était un acte de pure alchimie spirituelle ?",
     "photoUrl": "/assets/posters/dixeat-fiat-luxe.png",
-    "badge": "16 pionniers cooptés"
+    "badge": "16 pionniers cooptés",
+    "accentColor": "#F59E0B",
+    "iconName": "16-series/dixeat-fiat-luxe"
   },
   {
     "id": "investors-builders",
@@ -99,7 +108,9 @@ const seriesList: ExplorerCatalogItem[] = [
     "subtitle": "Le capital visionnaire face aux bâtisseurs de terrain.",
     "question": "Comment conciliez-vous la souveraineté économique, la rentabilité et l’impact écologique durable ?",
     "photoUrl": "/assets/posters/investors-builders.png",
-    "badge": "16 pionniers cooptés"
+    "badge": "16 pionniers cooptés",
+    "accentColor": "#0284C7",
+    "iconName": "16-series/investors-builders"
   },
   {
     "id": "other-eyes-sixth-sense",
@@ -108,7 +119,9 @@ const seriesList: ExplorerCatalogItem[] = [
     "subtitle": "La perception intuitive et les mémoires subtiles du vivant.",
     "question": "Comment développez-vous l’écoute intérieure et la sensibilité aux énergies invisibles ?",
     "photoUrl": "/assets/posters/other-eyes-sixth-sense.png",
-    "badge": "16 pionniers cooptés"
+    "badge": "16 pionniers cooptés",
+    "accentColor": "#8B5CF6",
+    "iconName": "16-series/other-eyes-sixth-sense"
   },
   {
     "id": "coaching-unlimited",
@@ -117,7 +130,9 @@ const seriesList: ExplorerCatalogItem[] = [
     "subtitle": "L’exigence du mentor dans son bureau < > l’envol d’un athlète sur les haies.",
     "question": "Racontez-nous un moment où vous avez cru que l’obstacle devant vous était trop haut pour être franchi. Qu’avez-vous trouvé en vous ?",
     "photoUrl": "/assets/posters/coaching-unlimited.png",
-    "badge": "16 pionniers cooptés"
+    "badge": "16 pionniers cooptés",
+    "accentColor": "#EA580C",
+    "iconName": "16-series/coaching-unlimited"
   },
   {
     "id": "safer-healer",
@@ -126,7 +141,9 @@ const seriesList: ExplorerCatalogItem[] = [
     "subtitle": "La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.",
     "question": "Racontez-nous un moment où vous avez tenu la main de quelqu’un en détresse et où vous avez su que votre présence faisait la différence entre la peur et l’espoir.",
     "photoUrl": "/assets/posters/safer-healer.png",
-    "badge": "16 pionniers cooptés"
+    "badge": "16 pionniers cooptés",
+    "accentColor": "#EF4444",
+    "iconName": "16-series/safer-healer"
   }
 ];
 
@@ -1543,7 +1560,7 @@ function buildCatalogForDimension(dimId: string): ExplorerCatalogItem[] {
     subtitle: sc.tagline || dim?.tagline || '',
     question: sc.question,
     photoUrl: sc.photoUrl || dim?.coverImage || '/assets/doors/door-sagesses.jpg',
-    accentColor: dim?.accentColor,
+    accentColor: sc.accentColor || dim?.accentColor,
     badge: sc.badge || `Porte ${dim?.label || ''}`,
     doorId: dimId,
     covers: [sc.slug],

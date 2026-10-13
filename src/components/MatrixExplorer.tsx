@@ -339,7 +339,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
 
   // Clic au centre de l'astrolabe :
   // Au niveau des portes : entre dans la porte survolée (ou la première par défaut)
-  // Au niveau des sujets : renouvelle immédiatement les 16 voix
+  // Au niveau des topics (8 propositions) : entre dans la proposition survolée (ou la première)
+  // Au niveau des stories : renouvelle immédiatement les 16 voix
   const handleCenterHubClick = () => {
     celestialAudio.playOrbSelect();
     if (explorerLevel === 'dimensions') {
@@ -348,12 +349,19 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       } else {
         handleSelectDimension('series');
       }
+    } else if (explorerLevel === 'topics') {
+      if (hoveredTopic) {
+        handleSelectTopic(hoveredTopic.id);
+      } else {
+        const first = topicsForCategory[0];
+        if (first) handleSelectTopic(first.id);
+      }
     } else {
       handleActualiser();
     }
   };
 
-  // Sélection d'une des 8 grandes Portes d'entrée
+  // Sélection d'une des 8 grandes Portes d'entrée -> amène aux 8 propositions de cette porte
   const handleSelectDimension = (catId: ExplorerCategoryType) => {
     celestialAudio.playOrbSelect();
     setActiveCategory(catId);
@@ -368,8 +376,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     setShuffleSeed(0);
     setSelectedPath([]);
     setIsQuestionModalOpen(false);
-    // Entrer directement en mode concentrique double lecture
-    setExplorerLevel('stories');
+    // Niveau 2 : les 8 propositions de cette porte
+    setExplorerLevel('topics');
     setIsRefreshing(true);
     setTimeout(() => {
       setIsRefreshing(false);
@@ -676,13 +684,40 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             </div>
 
             {explorerLevel === 'dimensions' ? (
-              /* Niveau 0 : Portes d'entrée */
+              /* Niveau 0 : Les 8 Portes d'entrée */
               <div className="flex items-center gap-1.5 h-7.5 sm:h-8.5 px-3 rounded-full bg-[#A2482B] text-white shadow-xs border border-[#8A3B22] text-[11px] sm:text-xs font-semibold shrink-0">
                 <Layers className="w-3.5 h-3.5" />
-                <span>Portes</span>
+                <span>8 Portes</span>
+              </div>
+            ) : explorerLevel === 'topics' ? (
+              /* Niveau 1 : Choix parmi les 8 propositions de la Porte */
+              <div className="flex items-center gap-1.5 shrink-0 min-w-0">
+                <button
+                  id="breadcrumb-dimensions-btn"
+                  onClick={() => {
+                    celestialAudio.playOrbSelect();
+                    setExplorerLevel('dimensions');
+                    setIsQuestionModalOpen(false);
+                  }}
+                  className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-stone-50 text-stone-900 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border border-[#A2482B] shadow-xs cursor-pointer transition-all active:scale-95 shrink-0"
+                  title="Revenir aux 8 Portes"
+                >
+                  <Layers className="w-3.5 h-3.5 text-[#A2482B]" />
+                  <span>Portes</span>
+                </button>
+
+                <div className="h-7.5 sm:h-8.5 px-3 rounded-full bg-[#A2482B] text-white shadow-xs border border-[#8A3B22] text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 shrink-0">
+                  <DimensionIcon 
+                    name={activeCategory === 'series' ? '16-series/_dimension' : `${activeCategory}/_dimension`} 
+                    size={14} 
+                    className="text-white" 
+                  />
+                  <span>{activeCategoryConfig.label}</span>
+                  <span className="text-white/70 text-[10.5px]">· 8 choix</span>
+                </div>
               </div>
             ) : (
-              /* Niveau 1+ : Boutons rapprochés au fur et à mesure */
+              /* Niveau 2 : Mode concentrique stories (16 voix + filiations) */
               <div className="flex items-center gap-1.5 shrink-0 min-w-0">
                 {/* Bouton retour aux Portes */}
                 <button
@@ -692,24 +727,33 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                     setExplorerLevel('dimensions');
                     setIsQuestionModalOpen(false);
                   }}
-                  className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-stone-50 text-stone-900 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border border-[#A2482B] shadow-xs cursor-pointer transition-all active:scale-95 shrink-0"
-                  title="Revenir au choix des Portes"
+                  className="h-7.5 sm:h-8.5 px-2 rounded-full bg-white hover:bg-stone-50 text-stone-900 text-[11px] sm:text-xs font-semibold flex items-center gap-1 border border-stone-300 shadow-xs cursor-pointer transition-all active:scale-95 shrink-0"
+                  title="Revenir aux 8 Portes"
                 >
                   <Layers className="w-3.5 h-3.5 text-[#A2482B]" />
-                  <span>Portes</span>
+                  <span className="hidden sm:inline">Portes</span>
                 </button>
 
-                {/* Nom et icône de la Dimension active */}
-                <div className="h-7.5 sm:h-8.5 px-2.5 rounded-full bg-stone-100 border border-stone-200 text-stone-700 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 shrink-0">
+                {/* Bouton retour aux 8 propositions de la Porte */}
+                <button
+                  id="breadcrumb-topics-btn"
+                  onClick={() => {
+                    celestialAudio.playOrbSelect();
+                    setExplorerLevel('topics');
+                    setIsQuestionModalOpen(false);
+                  }}
+                  className="h-7.5 sm:h-8.5 px-2.5 rounded-full bg-stone-100 hover:bg-stone-200 border border-stone-300 text-stone-800 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 shrink-0 cursor-pointer transition-all active:scale-95"
+                  title={`Revenir aux 8 choix de ${activeCategoryConfig.label}`}
+                >
                   <DimensionIcon 
                     name={activeCategory === 'series' ? '16-series/_dimension' : `${activeCategory}/_dimension`} 
                     size={14} 
                     className="text-[#A2482B]" 
                   />
                   <span className="truncate max-w-[85px] sm:max-w-[130px]">{activeCategoryConfig.shortLabel}</span>
-                </div>
+                </button>
 
-                {/* Sujet actif sélectionné & Bouton Actualiser rapprochés */}
+                {/* Sujet actif sélectionné & Bouton Actualiser */}
                 <div className="h-7.5 sm:h-8.5 pl-2 sm:pl-2.5 pr-1 rounded-full bg-[#A2482B] text-white shadow-xs border border-[#8A3B22] flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold shrink-0 max-w-[190px] sm:max-w-[300px]">
                   {activeTopicIcon && (
                     <DimensionIcon 
@@ -879,8 +923,8 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
 
             {/* A. CERCLES ORBITAUX : UNIQUEMENT LE 1ER CERCLE (16 CHOIX), LE 2ÈME (PROTAGONISTES), ET CEUX QUI VIENNENT APRÈS */}
             {(() => {
-              // En niveau dimensions (8 portes) : seul l'anneau des portes (215) est tracé
-              if (explorerLevel === 'dimensions') {
+              // En niveau dimensions (8 portes) ou topics (8 propositions) : seul l'anneau des 8 médaillons (215) est tracé
+              if (explorerLevel === 'dimensions' || explorerLevel === 'topics') {
                 return (
                   <circle 
                     cx="0" 
@@ -1061,9 +1105,157 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
             )}
 
             {/* ========================================================================= */}
+            {/* NIVEAU 1 : LES 8 PROPOSITIONS DE LA PORTE CHOISIE                         */}
+            {/* ========================================================================= */}
+            {explorerLevel === 'topics' && (
+              <g id="wheel-level-topics">
+                {/* Rayons célestes dorés d'astrolabe */}
+                {topicsForCategory.map((topic, idx) => {
+                  const angle = -90 + idx * (360 / topicsForCategory.length);
+                  const rad = (angle * Math.PI) / 180;
+                  const r = 215;
+                  const x = Math.cos(rad) * r;
+                  const y = Math.sin(rad) * r;
+                  const isHovered = hoveredTopic?.id === topic.id;
+
+                  return (
+                    <g key={`ray-topic-group-${topic.id}`}>
+                      <line 
+                        x1="0" 
+                        y1="0" 
+                        x2={x} 
+                        y2={y} 
+                        stroke="#C89B3C" 
+                        strokeWidth={isHovered ? "1.2" : "0.75"} 
+                        strokeDasharray={isHovered ? "2 2" : "1.5 3"} 
+                        opacity={isHovered ? "0.45" : "0.15"} 
+                      />
+                      <circle 
+                        cx={x * 0.52} 
+                        cy={y * 0.52} 
+                        r={isHovered ? "2" : "1.2"} 
+                        fill="#C89B3C" 
+                        opacity={isHovered ? "0.6" : "0.2"} 
+                      />
+                    </g>
+                  );
+                })}
+
+                {/* Les 8 Hublots / Médaillons des propositions de la Porte */}
+                {topicsForCategory.map((topic, idx) => {
+                  const angle = -90 + idx * (360 / topicsForCategory.length);
+                  const rad = (angle * Math.PI) / 180;
+                  const r = 215;
+                  const x = Math.cos(rad) * r;
+                  const y = Math.sin(rad) * r;
+                  const isCurrent = activeTopicId === topic.id;
+                  const isHovered = hoveredTopic?.id === topic.id;
+                  const accent = topic.accentColor || '#A2482B';
+
+                  return (
+                    <g
+                      key={`topic-hublot-${topic.id}`}
+                      id={`topic-hublot-${topic.id}`}
+                      className="group cursor-pointer"
+                      style={{ pointerEvents: 'auto' }}
+                      transform={`rotate(${-rotationAngle}, ${x}, ${y})`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (hasDraggedRef.current) return;
+                        handleSelectTopic(topic.id);
+                      }}
+                      onMouseEnter={() => {
+                        setHoveredTopic(topic);
+                        celestialAudio.playOrbHover(480 + idx * 20);
+                      }}
+                      onMouseLeave={() => setHoveredTopic(null)}
+                    >
+                      {/* Zone tactile généreuse */}
+                      <circle cx={x} cy={y} r="34" fill="transparent" />
+
+                      {/* Halo lumineux coloré au survol */}
+                      <circle 
+                        cx={x} 
+                        cy={y} 
+                        r={isHovered ? "32" : "27"} 
+                        fill={accent} 
+                        opacity={isHovered ? "0.35" : "0.1"} 
+                        className="transition-all duration-300 pointer-events-none" 
+                        filter="drop-shadow(0 0 10px rgba(200, 155, 60, 0.4))"
+                      />
+
+                      {/* Pastille circulaire : couleur d'accent au survol / actif */}
+                      <circle 
+                        cx={x} 
+                        cy={y} 
+                        r={isHovered ? "27" : "24"} 
+                        fill={isHovered || isCurrent ? accent : "#FFFFFF"} 
+                        stroke={isHovered || isCurrent ? "#FFFFFF" : accent} 
+                        strokeWidth={isHovered ? "2.5" : "1.8"} 
+                        filter="drop-shadow(0 3px 12px rgba(0,0,0,0.18))" 
+                        className="transition-all duration-300"
+                      />
+
+                      {/* Filet intérieur discret */}
+                      <circle 
+                        cx={x} 
+                        cy={y} 
+                        r={isHovered ? "22" : "20"} 
+                        fill="none" 
+                        stroke={isHovered || isCurrent ? "rgba(255,255,255,0.4)" : "rgba(200,155,60,0.25)"} 
+                        strokeWidth="0.8" 
+                        className="pointer-events-none transition-all duration-300"
+                      />
+
+                      {/* Icône de la Proposition */}
+                      <foreignObject x={x - 14} y={y - 14} width="28" height="28" className="pointer-events-none">
+                        <div className={`w-full h-full flex items-center justify-center transition-transform duration-300 ${
+                          isHovered ? 'scale-115' : 'scale-100'
+                        } ${isHovered || isCurrent ? 'text-white' : 'text-[#4A3F38] group-hover:text-white'}`}>
+                          <DimensionIcon 
+                            name={(topic as any).iconName || (activeCategory === 'series' ? '16-series/_dimension' : `${activeCategory}/${topic.id}`)} 
+                            size={22} 
+                            strokeWidth={1.8}
+                            className={isHovered || isCurrent ? 'text-white drop-shadow-xs' : 'text-[#4A3F38] group-hover:text-white'} 
+                          />
+                        </div>
+                      </foreignObject>
+
+                      {/* Libellé sous le médaillon */}
+                      <g transform={`translate(${x}, ${y + 34})`} className="pointer-events-none">
+                        <rect 
+                          x="-46" 
+                          y="-8" 
+                          width="92" 
+                          height="18" 
+                          rx="9" 
+                          fill={isHovered ? "#1C1917" : "rgba(255,255,255,0.92)"} 
+                          stroke={isHovered ? accent : "#E7E5E4"} 
+                          strokeWidth="0.8" 
+                          className="transition-colors duration-200"
+                        />
+                        <text 
+                          x="0" 
+                          y="4.5" 
+                          textAnchor="middle" 
+                          fill={isHovered ? "#FFFFFF" : "#1C1917"} 
+                          fontSize="8.5" 
+                          fontWeight={isHovered ? "700" : "600"} 
+                          fontFamily="sans-serif"
+                        >
+                          {topic.title}
+                        </text>
+                      </g>
+                    </g>
+                  );
+                })}
+              </g>
+            )}
+
+            {/* ========================================================================= */}
             {/* NAVIGATION CONCENTRIQUE DOUBLE LECTURE : ANNEAU 1 (SUJETS) + ANNEAU 2 (16 VOIX) */}
             {/* ========================================================================= */}
-            {explorerLevel !== 'dimensions' && (
+            {explorerLevel === 'stories' && (
               <g id="wheel-concentric-double-reading">
                 {/* 1. FAISCEAUX DE LUMIÈRE DORÉE : Relient le sujet sélectionné (Anneau 1) aux 16 voix (Anneau 2) */}
                 {nodesByGeneration[0]?.map((pNode) => (
@@ -1172,14 +1364,14 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                             />
 
                             {/* Pastille ronde :
-                                État actif/sélectionné : terracotta (#A2482B)
-                                État au repos : blanc (#FFFFFF) avec bordure douce (#E7E5E4 / #C89B3C) */}
+                                État actif/sélectionné : couleur d'accent thématique (topic.accentColor)
+                                État au repos : blanc (#FFFFFF) avec bordure douce (#E7E5E4 / topic.accentColor) */}
                             <circle 
                               cx={x} 
                               cy={y} 
                               r="21" 
-                              fill={isSelected ? '#A2482B' : '#FFFFFF'} 
-                              stroke={isSelected ? '#8A3B22' : (hoveredTopic?.id === topic.id ? '#C89B3C' : '#E7E5E4')} 
+                              fill={isSelected ? (topic.accentColor || '#A2482B') : '#FFFFFF'} 
+                              stroke={isSelected ? '#FFFFFF' : (hoveredTopic?.id === topic.id ? (topic.accentColor || '#C89B3C') : '#E7E5E4')} 
                               strokeWidth={isSelected ? '2.4' : '1.5'} 
                               filter="drop-shadow(0 3px 8px rgba(0,0,0,0.14))" 
                               className="transition-colors duration-200"
@@ -1439,7 +1631,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
           activeCoverImage={activeCategory !== 'countries' ? activeTopicItem?.photoUrl : undefined}
           hoveredCategory={hoveredCategory}
           onActualiser={handleActualiser}
-          onStepBack={() => setExplorerLevel('dimensions')}
+          onStepBack={() => setExplorerLevel(prev => prev === 'stories' ? 'topics' : 'dimensions')}
           isRefreshing={isRefreshing}
         />
       </div>

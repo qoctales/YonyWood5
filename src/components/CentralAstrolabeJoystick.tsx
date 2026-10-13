@@ -265,7 +265,11 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
       )}
 
       {/* Cartouche d'indication sous le centre */}
-      {explorerLevel !== 'dimensions' && (hoveredTopicName || topicName) ? (
+      {explorerLevel === 'topics' ? (
+        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[10px] font-bold px-3 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/30 flex items-center gap-1.5 animate-in fade-in duration-150">
+          <span>{hoveredTopicName || (dimensionName ? `${dimensionName} · 8 choix` : '8 propositions')}</span>
+        </div>
+      ) : explorerLevel === 'stories' && (hoveredTopicName || topicName) ? (
         <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/20 animate-in fade-in duration-150">
           {hoveredTopicName || topicName}
         </div>
