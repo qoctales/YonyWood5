@@ -431,14 +431,22 @@ export interface StoryResonanceRating {
 
 export type ExplorerCategory = 
   | 'series' 
-  // Portes officielles Nomenclature v1.0
+  // Les 16 Dimensions Officielles
   | 'sagesses'
   | 'territoires'
   | 'expertises'
-  | 'personnalites'
   | 'produits-services'
-  | 'marques'
   | 'projets'
+  | 'marques'
+  | 'personnalites'
+  | 'figures-du-quotidien'
+  | 'evenements'
+  | 'communautes'
+  | 'institutions'
+  | 'objets'
+  | 'savoir-faire'
+  | 'passions'
+  | 'moments-de-vie'
   // Alias de rétrocompatibilité
   | 'countries' 
   | 'thematics' 

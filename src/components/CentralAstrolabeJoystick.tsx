@@ -1,36 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { 
   RefreshCw, 
-  ChevronLeft,
-  Film,
-  Mountain,
-  Atom,
-  GraduationCap,
-  Star,
-  Gem,
-  Sprout,
-  ShoppingBag
+  ChevronLeft
 } from 'lucide-react';
 import { FilmReelIcon } from './YonywoodBrandIcons';
-
-const CATEGORY_ICONS: Record<string, React.FC<{ className?: string }>> = {
-  series: Film,
-  sagesses: Atom,
-  territoires: Mountain,
-  expertises: GraduationCap,
-  personnalites: Star,
-  'produits-services': ShoppingBag,
-  marques: Gem,
-  projets: Sprout,
-  // Rétrocompatibilité
-  countries: Mountain,
-  questions: Atom,
-  thematics: GraduationCap,
-  personalities: Star,
-  brands: Gem,
-  projects: Sprout,
-  offers: ShoppingBag,
-};
+import { DimensionIcon } from './DimensionIcon';
 
 interface CentralAstrolabeJoystickProps {
   onRotateDelta: (deltaDeg: number) => void;
@@ -42,9 +16,12 @@ interface CentralAstrolabeJoystickProps {
   dimensionName?: string;
   topicName?: string;
   activeCategory?: string;
+  activeTopicIcon?: string;
+  hoveredTopicIcon?: string;
+  hoveredTopicName?: string;
   activeFlagUrl?: string;
   activeCoverImage?: string;
-  hoveredCategory?: { id: string; label: string; coverImage?: string; accentColor?: string } | null;
+  hoveredCategory?: { id: string; label: string; coverImage?: string; accentColor?: string; iconName?: string } | null;
   onActualiser?: () => void;
   onStepBack?: () => void;
   isRefreshing?: boolean;
@@ -60,6 +37,9 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
   dimensionName,
   topicName,
   activeCategory,
+  activeTopicIcon,
+  hoveredTopicIcon,
+  hoveredTopicName,
   activeFlagUrl,
   activeCoverImage,
   hoveredCategory,
@@ -200,33 +180,31 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
       onDoubleClick={onReset}
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-22 h-22 sm:w-26 sm:h-26 rounded-full cursor-grab active:cursor-grabbing touch-none select-none flex items-center justify-center pointer-events-auto group"
       id="central-astrolabe-joystick"
-      title={explorerLevel !== 'dimensions' ? `Cliquer pour actualiser les 16 voix de ${topicName || 'ce sujet'}` : "Explorer ou faire tourner l'astrolabe"}
+      title={explorerLevel !== 'dimensions' ? `Cliquer pour actualiser les 16 voix de ${hoveredTopicName || topicName || 'ce sujet'}` : "Explorer ou faire tourner l'astrolabe"}
     >
       {/* Halo d'aura lumineuse Terre Cuite */}
       <div className={`absolute -inset-3 rounded-full bg-[#A2482B]/20 transition-all duration-300 pointer-events-none ${
         isRefreshing ? 'scale-125 opacity-80' : 'opacity-0 group-hover:opacity-100 animate-pulse'
       }`} />
 
-      {/* CAS 1 : NIVEAU DOUBLE LECTURE CONCENTRIQUE (Affichage du drapeau plein ou image du sujet central) */}
-      {explorerLevel !== 'dimensions' && (activeFlagUrl || activeCoverImage) ? (
+      {/* CAS 1 : NIVEAU DOUBLE LECTURE CONCENTRIQUE (L'icône choisie - ou survolée - trône au centre) */}
+      {explorerLevel !== 'dimensions' ? (
         <div 
-          className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-[#A2482B] shadow-[0_6px_25px_rgba(162,72,43,0.45)] transition-all duration-150 ${
+          className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A2482B] border-2 border-[#8A3B20] shadow-[0_6px_25px_rgba(162,72,43,0.45)] transition-all duration-150 flex items-center justify-center overflow-hidden ${
             isRefreshing ? 'scale-90 rotate-180' : 'group-hover:scale-105'
           }`}
           style={{
             transform: `translate(${knobOffset.x}px, ${knobOffset.y}px)`
           }}
         >
-          {/* Drapeau circulaire plein prenant 100% de la vignette */}
-          <img 
-            src={activeFlagUrl || activeCoverImage} 
-            alt={topicName || 'Sujet'} 
-            className="w-full h-full object-cover object-center rounded-full select-none pointer-events-none"
-            referrerPolicy="no-referrer"
-          />
-
-          {/* Anneau de sertissage Terre Cuite */}
-          <div className="absolute inset-0 rounded-full border border-white/40 pointer-events-none shadow-inner" />
+          <div className="absolute inset-1 rounded-full border border-white/20 pointer-events-none" />
+          <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner pointer-events-none transition-all duration-200">
+            <DimensionIcon 
+              name={hoveredTopicIcon || activeTopicIcon || (activeCategory === 'series' ? '16-series/_dimension' : `${activeCategory}/_dimension`)} 
+              size={32} 
+              className="text-white drop-shadow-md transition-transform duration-200 group-hover:scale-110" 
+            />
+          </div>
 
           {/* Pastille de rafraîchissement au survol */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white pointer-events-none">
@@ -237,7 +215,7 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
           </div>
         </div>
       ) : (
-        /* CAS 2 : NIVEAU DES 8 PORTES (Cœur Terre Cuite avec boussole blanche) */
+        /* CAS 2 : NIVEAU DES PORTES (Cœur Terre Cuite avec icône) */
         <div 
           className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A2482B] border-2 border-[#8A3B20] shadow-[0_6px_25px_rgba(162,72,43,0.45)] transition-transform duration-150 group-hover:scale-105 flex items-center justify-center overflow-hidden"
           style={{
@@ -250,14 +228,24 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
           {hoveredCategory ? (
             /* L'icône de la porte survolée prend la place centrale */
             <div className="relative w-full h-full rounded-full flex items-center justify-center pointer-events-none z-10 animate-in zoom-in-90 duration-200">
-              {(() => {
-                const IconComp = CATEGORY_ICONS[hoveredCategory.id] || FilmReelIcon;
-                return (
-                  <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner">
-                    <IconComp className="w-6 h-6 sm:w-7 sm:h-7 text-white stroke-[2.2] drop-shadow-md transition-transform group-hover:scale-110" />
-                  </div>
-                );
-              })()}
+              <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner">
+                <DimensionIcon 
+                  name={hoveredCategory.iconName || (hoveredCategory.id === 'series' ? '16-series/_dimension' : `${hoveredCategory.id}/_dimension`)} 
+                  size={28} 
+                  className="text-white stroke-[2] drop-shadow-md transition-transform group-hover:scale-110" 
+                />
+              </div>
+            </div>
+          ) : activeTopicIcon ? (
+            /* L'icône choisie reste au centre */
+            <div className="relative w-full h-full rounded-full flex items-center justify-center pointer-events-none z-10">
+              <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner">
+                <DimensionIcon 
+                  name={activeTopicIcon} 
+                  size={28} 
+                  className="text-white drop-shadow-md" 
+                />
+              </div>
             </div>
           ) : (
             /* Au repos : Cœur de l'astrolabe / Bobine blanche sur fond Terre Cuite */
@@ -277,13 +265,17 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
       )}
 
       {/* Cartouche d'indication sous le centre */}
-      {explorerLevel !== 'dimensions' && topicName ? (
-        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/20">
-          {topicName}
+      {explorerLevel !== 'dimensions' && (hoveredTopicName || topicName) ? (
+        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/20 animate-in fade-in duration-150">
+          {hoveredTopicName || topicName}
         </div>
       ) : explorerLevel === 'dimensions' && hoveredCategory ? (
         <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[10.5px] font-bold px-3 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/30 flex items-center animate-in fade-in duration-200 tracking-wide">
           <span>{hoveredCategory.label}</span>
+        </div>
+      ) : explorerLevel === 'dimensions' && topicName ? (
+        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/20 animate-in fade-in duration-150">
+          <span>{topicName}</span>
         </div>
       ) : null}
     </div>

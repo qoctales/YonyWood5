@@ -130,10 +130,10 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
               e.stopPropagation();
               setIsResonanceModalOpen(true);
             }}
-            className={`w-9 h-9 rounded-full backdrop-blur-md border flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+            className={`w-9 h-9 rounded-xl backdrop-blur-md border flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-105 active:scale-95 ${
               resonancePct !== null
                 ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_12px_rgba(162,72,43,0.45)]'
-                : 'bg-black/60 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
             }`}
             title={resonancePct !== null ? `Résonance : ${resonancePct}%` : "Évaluer la résonance"}
           >
@@ -144,7 +144,7 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
             {/* Bouton Muet / Son */}
             <button
               onClick={toggleMute}
-              className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95"
+              className="w-9 h-9 rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95"
               title={isMuted ? 'Activer le son' : 'Couper le son'}
             >
               {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
@@ -156,7 +156,7 @@ export const ProtagonistTeaserModal: React.FC<ProtagonistTeaserModalProps> = ({
                 e.stopPropagation();
                 onClose();
               }}
-              className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95 ml-1"
+              className="w-9 h-9 rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center cursor-pointer transition-all shadow-md hover:scale-105 active:scale-95 ml-1"
               title="Fermer l'aperçu"
             >
               <X className="w-4 h-4 text-white" />

@@ -21,6 +21,14 @@
 
     --color-terracotta: #A2482B;
     --color-terracotta-hover: #8A3B22;
+
+    /* Variables de style des icônes de dimensions */
+    --icon-stroke-width: 1.75;
+    --icon-color-idle: #4A3F38; /* gris-brun foncé au repos */
+    --icon-color-active: #FFFFFF;
+    --icon-bg-active: #A2482B; /* pastille ronde terracotta signature */
+    --icon-size-default: 24px;
+    --icon-size-card: 36px;
   }
 
   body {

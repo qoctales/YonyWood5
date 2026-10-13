@@ -1,5 +1,6 @@
 import { AffiliationPerson, ExplorerCategory } from '../types';
 import { NOMENCLATURE } from './nomenclature';
+import { DIMENSIONS, SOUS_CATEGORIES, getSubcategoriesForDimension } from './dimensionsData';
 
 export type ExplorerCategoryType = ExplorerCategory;
 
@@ -18,114 +19,21 @@ export interface ExplorerCategoryConfig {
 }
 
 // =========================================================================
-// LES 8 GRANDES PORTES D'ENTRÉE DE L'ASTROLABE EXPLORER (Nomenclature v1.0)
+// LES 16 GRANDES PORTES D'ENTRÉE DE L'ASTROLABE EXPLORER
 // =========================================================================
-export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = [
-  {
-    id: 'series',
-    label: 'Séries',
-    shortLabel: 'Séries',
-    tagline: 'Filiation & Arbres de Cooptation',
-    description: 'Explorez les séries documentaires fondatrices et leurs 16 pionniers. Remontez le fil des transmissions de génération en génération où chacun coapte le suivant.',
-    badge: 'Cooptation vivante',
-    iconName: 'Film',
-    accentColor: '#C89B3C',
-    glowColor: 'rgba(200, 155, 60, 0.65)',
-    bgGradient: 'from-[#D97706] via-[#92400E] to-[#451A03]',
-    coverImage: '/assets/doors/door-series.jpg'
-  },
-  {
-    id: 'sagesses',
-    label: 'Sagesses',
-    shortLabel: 'Sagesses',
-    tagline: '16 thématiques de vie universelles',
-    description: '16 thématiques de vie, universelles. Chaque témoin répond à une question existentielle face caméra.',
-    badge: '16 sagesses universelles',
-    iconName: 'Atom',
-    accentColor: '#A855F7',
-    glowColor: 'rgba(168, 85, 247, 0.65)',
-    bgGradient: 'from-[#A855F7] via-[#7E22CE] to-[#3B0764]',
-    coverImage: '/assets/doors/door-sagesses.jpg'
-  },
-  {
-    id: 'territoires',
-    label: 'Territoires',
-    shortLabel: 'Territoires',
-    tagline: '16 pays pivots : berceaux africains, diaspora, résonances',
-    description: 'Explorez 16 pays pivots du monde : témoins, bâtisseurs et créateurs racontent leur mémoire vivante liée à leur terroir.',
-    badge: '16 pays pivots',
-    iconName: 'Mountain',
-    accentColor: '#10B981',
-    glowColor: 'rgba(168, 185, 129, 0.65)',
-    bgGradient: 'from-[#10B981] via-[#047857] to-[#064E3B]',
-    coverImage: '/assets/doors/door-territoires.jpg'
-  },
-  {
-    id: 'expertises',
-    label: 'Expertises',
-    shortLabel: 'Expertises',
-    tagline: '16 savoir-faire d’exception & métiers vivants',
-    description: 'Des praticiens d’exception, artisans d’art, maîtres et créateurs viennent pitcher leur métier et transmettre en vidéo.',
-    badge: '16 savoir-faire',
-    iconName: 'GraduationCap',
-    accentColor: '#0EA5E9',
-    glowColor: 'rgba(14, 165, 233, 0.65)',
-    bgGradient: 'from-[#0EA5E9] via-[#0369A1] to-[#082F49]',
-    coverImage: '/assets/doors/door-competences.jpg'
-  },
-  {
-    id: 'personnalites',
-    label: 'Personnalités',
-    shortLabel: 'Personnalités',
-    tagline: '16 figures noires inspirantes',
-    description: '16 figures noires d’Afrique et de la diaspora. Des témoins racontent ce que cette figure a changé dans leur vie ou leur art.',
-    badge: '16 figures noires',
-    iconName: 'Star',
-    accentColor: '#F59E0B',
-    glowColor: 'rgba(245, 158, 11, 0.65)',
-    bgGradient: 'from-[#F59E0B] via-[#B45309] to-[#78350F]',
-    coverImage: '/assets/doors/door-personnalites.jpg'
-  },
-  {
-    id: 'produits-services',
-    label: 'Produits & Services',
-    shortLabel: 'Produits & Services',
-    tagline: '16 catégories d’offres concrètes en capsules 60-90s',
-    description: '16 catégories pour présenter des offres concrètes en capsules vidéo percutantes de 60 à 90 secondes.',
-    badge: '16 catégories d’offres',
-    iconName: 'ShoppingBag',
-    accentColor: '#6366F1',
-    glowColor: 'rgba(99, 102, 241, 0.65)',
-    bgGradient: 'from-[#6366F1] via-[#4338CA] to-[#1E1B4B]',
-    coverImage: '/assets/doors/door-offres.jpg'
-  },
-  {
-    id: 'marques',
-    label: 'Marques',
-    shortLabel: 'Marques',
-    tagline: '16 secteurs de sponsors & partenaires engagés',
-    description: '16 secteurs de sponsors potentiels, accueillant les témoignages authentiques et sincères de leurs clients et artisans.',
-    badge: '16 secteurs sponsors',
-    iconName: 'Gem',
-    accentColor: '#FB923C',
-    glowColor: 'rgba(251, 146, 60, 0.65)',
-    bgGradient: 'from-[#FB923C] via-[#C2410C] to-[#431407]',
-    coverImage: '/assets/doors/door-marques.jpg'
-  },
-  {
-    id: 'projets',
-    label: 'Projets',
-    shortLabel: 'Projets',
-    tagline: '16 catégories de causes participatives',
-    description: '16 catégories de causes dans l’esprit des plateformes de financement participatif et de mobilisation citoyenne.',
-    badge: '16 causes citoyennes',
-    iconName: 'Sprout',
-    accentColor: '#EC4899',
-    glowColor: 'rgba(236, 72, 153, 0.65)',
-    bgGradient: 'from-[#EC4899] via-[#BE185D] to-[#500724]',
-    coverImage: '/assets/doors/door-projets.jpg'
-  }
-];
+export const EXPLORER_CATEGORIES: ExplorerCategoryConfig[] = DIMENSIONS.map(dim => ({
+  id: dim.id as ExplorerCategoryType,
+  label: dim.label,
+  shortLabel: dim.shortLabel,
+  tagline: dim.tagline,
+  description: dim.description,
+  badge: dim.badge,
+  iconName: dim.icone,
+  accentColor: dim.accentColor,
+  glowColor: dim.glowColor,
+  bgGradient: dim.bgGradient,
+  coverImage: dim.coverImage
+}));
 
 export interface ExplorerCatalogItem {
   id: string;
@@ -1626,24 +1534,49 @@ const projetsList: ExplorerCatalogItem[] = [
   }
 ];
 
+function buildCatalogForDimension(dimId: string): ExplorerCatalogItem[] {
+  const dim = DIMENSIONS.find(d => d.id === dimId);
+  return getSubcategoriesForDimension(dimId).map(sc => ({
+    id: sc.slug,
+    category: dimId as ExplorerCategoryType,
+    title: sc.label,
+    subtitle: sc.tagline || dim?.tagline || '',
+    question: sc.question,
+    photoUrl: sc.photoUrl || dim?.coverImage || '/assets/doors/door-sagesses.jpg',
+    accentColor: dim?.accentColor,
+    badge: sc.badge || `Porte ${dim?.label || ''}`,
+    doorId: dimId,
+    covers: [sc.slug],
+    iconName: sc.icone,
+  } as ExplorerCatalogItem));
+}
+
 export const EXPLORER_CATALOG: Record<string, ExplorerCatalogItem[]> = {
   series: seriesList,
-  sagesses: sagessesList,
-  territoires: territoiresList,
-  expertises: expertisesList,
-  personnalites: personnalitesList,
-  'produits-services': produitsServicesList,
-  marques: marquesList,
-  projets: projetsList,
+  sagesses: buildCatalogForDimension('sagesses'),
+  territoires: buildCatalogForDimension('territoires'),
+  expertises: buildCatalogForDimension('expertises'),
+  'produits-services': buildCatalogForDimension('produits-services'),
+  projets: buildCatalogForDimension('projets'),
+  marques: buildCatalogForDimension('marques'),
+  personnalites: buildCatalogForDimension('personnalites'),
+  'figures-du-quotidien': buildCatalogForDimension('figures-du-quotidien'),
+  evenements: buildCatalogForDimension('evenements'),
+  communautes: buildCatalogForDimension('communautes'),
+  institutions: buildCatalogForDimension('institutions'),
+  objets: buildCatalogForDimension('objets'),
+  'savoir-faire': buildCatalogForDimension('savoir-faire'),
+  passions: buildCatalogForDimension('passions'),
+  'moments-de-vie': buildCatalogForDimension('moments-de-vie'),
 
   // ALIAS DE RÉTROCOMPATIBILITÉ (Permet de ne rien casser dans les composants existants)
-  questions: sagessesList,
-  countries: territoiresList,
-  thematics: expertisesList,
-  personalities: personnalitesList,
-  offers: produitsServicesList,
-  brands: marquesList,
-  projects: projetsList
+  questions: buildCatalogForDimension('sagesses'),
+  countries: buildCatalogForDimension('territoires'),
+  thematics: buildCatalogForDimension('expertises'),
+  personalities: buildCatalogForDimension('personnalites'),
+  offers: buildCatalogForDimension('produits-services'),
+  brands: buildCatalogForDimension('marques'),
+  projects: buildCatalogForDimension('projets')
 };
 
 // =========================================================================
@@ -2152,7 +2085,22 @@ function generateRoleAndPitch(
     };
   }
 
-  // Territoires par défaut
+  if (targetItem?.question) {
+    const question = targetItem.question;
+    const roles = [
+      `Témoin face caméra • ${title}`,
+      `Passeur d'expérience sur ${title}`,
+      `Aîné partageant son cheminement sur ${title}`,
+      `Jeune voix témoignant de ${title}`
+    ];
+    return {
+      role: roles[index % roles.length],
+      story: `Répond face caméra à la question : « ${question} »`,
+      pitch: `« Transmettre autour de ${title.toLowerCase()}, c'est offrir aux autres une clé précieuse d'élévation et de dignité. »`
+    };
+  }
+
+  // Territoires et univers par défaut
   return {
     role: `Gardien du terroir & témoin de ${title}`,
     story: `Partage la mémoire vivante et les savoirs de son terroir (${title}).`,
