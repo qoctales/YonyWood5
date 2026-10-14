@@ -135,15 +135,15 @@ const seriesList: ExplorerCatalogItem[] = [
     "iconName": "16-series/coaching-unlimited"
   },
   {
-    "id": "safer-healer",
+    "id": "focus-phd",
     "category": "series",
-    "title": "Safer < > Healer",
-    "subtitle": "La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.",
-    "question": "Racontez-nous un moment où vous avez tenu la main de quelqu’un en détresse et où vous avez su que votre présence faisait la différence entre la peur et l’espoir.",
-    "photoUrl": "/assets/posters/safer-healer.png",
+    "title": "Focus PhD",
+    "subtitle": "La recherche d'excellence, le génie scientifique et l'impact panafricain.",
+    "question": "En quoi vos découvertes scientifiques ou votre quête du doctorat transforment-elles durablement le monde de demain ?",
+    "photoUrl": "/assets/posters/focus-phd.png",
     "badge": "16 pionniers cooptés",
-    "accentColor": "#EF4444",
-    "iconName": "16-series/safer-healer"
+    "accentColor": "#0284C7",
+    "iconName": "16-series/focus-phd"
   }
 ];
 

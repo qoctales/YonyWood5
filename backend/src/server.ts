@@ -143,8 +143,12 @@ const PORT = parseInt(process.env.PORT || '3001', 10);
 async function main() {
   try {
     // Tester la connexion à la base de données
-    await prisma.$connect();
-    console.log('✅ Connexion PostgreSQL établie');
+    try {
+      await prisma.$connect();
+      console.log('✅ Connexion PostgreSQL établie');
+    } catch (dbErr) {
+      console.warn('⚠️ Connexion PostgreSQL non disponible — mode déconnecté actif');
+    }
 
     httpServer.listen(PORT, () => {
       console.log(`🚀 Yonywood API démarrée sur http://localhost:${PORT}`);

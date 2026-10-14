@@ -6,6 +6,9 @@ const globalForPrisma = globalThis as unknown as {
 
 let prismaInstance: any;
 try {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL not configured');
+  }
   prismaInstance =
     globalForPrisma.prisma ??
     new PrismaClient({

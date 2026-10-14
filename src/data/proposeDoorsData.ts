@@ -55,8 +55,7 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     iconName: '16-series/jesus-legba',
     accentColor: '#D97706',
     glowColor: 'rgba(217, 119, 6, 0.65)',
-    bgGradient: 'from-amber-600 via-orange-700 to-stone-900',
-    badge: 'Série spirituelle'
+    bgGradient: 'from-amber-600 via-orange-700 to-stone-900'
   },
   {
     id: 'finagnon-qosqorico',
@@ -71,8 +70,7 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     iconName: '16-series/finagnon-qosqorico',
     accentColor: '#10B981',
     glowColor: 'rgba(16, 185, 129, 0.65)',
-    bgGradient: 'from-emerald-600 via-teal-700 to-stone-900',
-    badge: 'Série terroirs & eau'
+    bgGradient: 'from-emerald-600 via-teal-700 to-stone-900'
   },
   {
     id: 'blacks-one-beyond-eve',
@@ -87,8 +85,7 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     iconName: '16-series/blacks-one-beyond-eve',
     accentColor: '#EC4899',
     glowColor: 'rgba(236, 72, 153, 0.65)',
-    bgGradient: 'from-pink-600 via-rose-700 to-stone-900',
-    badge: 'Série culture urbaine'
+    bgGradient: 'from-pink-600 via-rose-700 to-stone-900'
   },
   {
     id: 'dixeat-fiat-luxe',
@@ -103,8 +100,7 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     iconName: '16-series/dixeat-fiat-luxe',
     accentColor: '#F59E0B',
     glowColor: 'rgba(245, 158, 11, 0.65)',
-    bgGradient: 'from-amber-500 via-yellow-700 to-stone-900',
-    badge: 'Série goût & luxe'
+    bgGradient: 'from-amber-500 via-yellow-700 to-stone-900'
   },
   {
     id: 'investors-builders',
@@ -119,8 +115,7 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     iconName: '16-series/investors-builders',
     accentColor: '#0284C7',
     glowColor: 'rgba(2, 132, 199, 0.65)',
-    bgGradient: 'from-sky-600 via-blue-800 to-stone-900',
-    badge: 'Série bâtisseurs'
+    bgGradient: 'from-sky-600 via-blue-800 to-stone-900'
   },
   {
     id: 'other-eyes-sixth-sense',
@@ -135,8 +130,7 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     iconName: '16-series/other-eyes-sixth-sense',
     accentColor: '#8B5CF6',
     glowColor: 'rgba(139, 92, 246, 0.65)',
-    bgGradient: 'from-purple-600 via-indigo-800 to-stone-900',
-    badge: 'Série intuition'
+    bgGradient: 'from-purple-600 via-indigo-800 to-stone-900'
   },
   {
     id: 'coaching-unlimited',
@@ -151,8 +145,7 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     iconName: '16-series/coaching-unlimited',
     accentColor: '#EA580C',
     glowColor: 'rgba(234, 88, 12, 0.65)',
-    bgGradient: 'from-orange-600 via-red-700 to-stone-900',
-    badge: 'Série dépassement'
+    bgGradient: 'from-orange-600 via-red-700 to-stone-900'
   },
   {
     id: 'safer-healer',
@@ -167,8 +160,7 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     iconName: '16-series/safer-healer',
     accentColor: '#EF4444',
     glowColor: 'rgba(239, 68, 68, 0.65)',
-    bgGradient: 'from-red-600 via-rose-700 to-stone-900',
-    badge: 'Série secours & soin'
+    bgGradient: 'from-red-600 via-rose-700 to-stone-900'
   }
 ];
 

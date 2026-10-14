@@ -12,7 +12,7 @@ interface CentralAstrolabeJoystickProps {
   rotationAngle: number;
   onReset: () => void;
   onCenterClick?: () => void;
-  explorerLevel?: 'dimensions' | 'topics' | 'stories';
+  explorerLevel?: 'dimensions' | 'stories';
   dimensionName?: string;
   topicName?: string;
   activeCategory?: string;
@@ -21,6 +21,7 @@ interface CentralAstrolabeJoystickProps {
   hoveredTopicName?: string;
   activeFlagUrl?: string;
   activeCoverImage?: string;
+  hoveredCoverImage?: string;
   hoveredCategory?: { id: string; label: string; coverImage?: string; accentColor?: string; iconName?: string } | null;
   onActualiser?: () => void;
   onStepBack?: () => void;
@@ -42,6 +43,7 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
   hoveredTopicName,
   activeFlagUrl,
   activeCoverImage,
+  hoveredCoverImage,
   hoveredCategory,
   onActualiser,
   onStepBack,
@@ -187,33 +189,65 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
         isRefreshing ? 'scale-125 opacity-80' : 'opacity-0 group-hover:opacity-100 animate-pulse'
       }`} />
 
-      {/* CAS 1 : NIVEAU DOUBLE LECTURE CONCENTRIQUE (L'icône choisie - ou survolée - trône au centre) */}
+      {/* CAS 1 : NIVEAU DOUBLE LECTURE CONCENTRIQUE (La série ou sous-catégorie choisie - ou survolée - trône au centre de la roue) */}
       {explorerLevel !== 'dimensions' ? (
-        <div 
-          className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A2482B] border-2 border-[#8A3B20] shadow-[0_6px_25px_rgba(162,72,43,0.45)] transition-all duration-150 flex items-center justify-center overflow-hidden ${
-            isRefreshing ? 'scale-90 rotate-180' : 'group-hover:scale-105'
-          }`}
-          style={{
-            transform: `translate(${knobOffset.x}px, ${knobOffset.y}px)`
-          }}
-        >
-          <div className="absolute inset-1 rounded-full border border-white/20 pointer-events-none" />
-          <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner pointer-events-none transition-all duration-200">
-            <DimensionIcon 
-              name={hoveredTopicIcon || activeTopicIcon || (activeCategory === 'series' ? '16-series/_dimension' : `${activeCategory}/_dimension`)} 
-              size={32} 
-              className="text-white drop-shadow-md transition-transform duration-200 group-hover:scale-110" 
+        activeCategory === 'series' && (hoveredCoverImage || activeCoverImage) ? (
+          /* SÉRIE CHOISIE : AFFICHE OFFICIELLE DE LA SÉRIE AU MILIEU DE LA ROUE AVEC CERCLAGE D'OR D'ASTROLABE */
+          <div 
+            className={`relative w-22 h-22 sm:w-26 sm:h-26 rounded-full border-2 border-[#C89B3C] shadow-[0_6px_30px_rgba(200,155,60,0.55)] transition-all duration-150 flex items-center justify-center overflow-hidden bg-[#1C1917] ${
+              isRefreshing ? 'scale-90 rotate-180' : 'group-hover:scale-105'
+            }`}
+            style={{
+              transform: `translate(${knobOffset.x}px, ${knobOffset.y}px)`
+            }}
+          >
+            {/* Affiche officielle de la série */}
+            <img 
+              src={hoveredCoverImage || activeCoverImage} 
+              alt={hoveredTopicName || topicName || "Série choisie"} 
+              className="absolute inset-0 w-full h-full object-cover pointer-events-none scale-105 transition-all duration-300"
             />
-          </div>
 
-          {/* Pastille de rafraîchissement au survol */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white pointer-events-none">
-            <RefreshCw className={`w-4 h-4 text-white mb-0.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span className="text-[8.5px] font-semibold tracking-wider uppercase text-white">
-              Relancer
-            </span>
+            {/* Cerclage or précieux astrolabe */}
+            <div className="absolute inset-0 rounded-full border-2 border-[#FFE7A3]/90 shadow-inner pointer-events-none" />
+            <div className="absolute inset-1 rounded-full border border-black/40 pointer-events-none" />
+
+            {/* Pastille de rafraîchissement au survol */}
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white pointer-events-none z-20">
+              <RefreshCw className={`w-4 h-4 text-white mb-0.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span className="text-[8.5px] font-semibold tracking-wider uppercase text-white">
+                Relancer
+              </span>
+            </div>
           </div>
-        </div>
+        ) : (
+          /* AUTRES CATÉGORIES : Cœur avec icône officielle */
+          <div 
+            className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A2482B] border-2 border-[#8A3B20] shadow-[0_6px_25px_rgba(162,72,43,0.45)] transition-all duration-150 flex items-center justify-center overflow-hidden ${
+              isRefreshing ? 'scale-90 rotate-180' : 'group-hover:scale-105'
+            }`}
+            style={{
+              transform: `translate(${knobOffset.x}px, ${knobOffset.y}px)`
+            }}
+          >
+            <div className="absolute inset-1 rounded-full border border-white/20 pointer-events-none" />
+            <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner pointer-events-none transition-all duration-200">
+              <DimensionIcon 
+                name={hoveredTopicIcon || activeTopicIcon || `${activeCategory}/_dimension`} 
+                size={32} 
+                className="text-white drop-shadow-md transition-transform duration-200 group-hover:scale-110" 
+              />
+            </div>
+
+            {/* Pastille de rafraîchissement au survol */}
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white pointer-events-none">
+              <RefreshCw className={`w-4 h-4 text-white mb-0.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span className="text-[8.5px] font-semibold tracking-wider uppercase text-white">
+                Relancer
+              </span>
+            </div>
+          </div>
+        )
       ) : (
         /* CAS 2 : NIVEAU DES PORTES (Cœur Terre Cuite avec icône) */
         <div 
@@ -236,17 +270,6 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
                 />
               </div>
             </div>
-          ) : activeTopicIcon ? (
-            /* L'icône choisie reste au centre */
-            <div className="relative w-full h-full rounded-full flex items-center justify-center pointer-events-none z-10">
-              <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/15 border border-white/30 flex items-center justify-center shadow-inner">
-                <DimensionIcon 
-                  name={activeTopicIcon} 
-                  size={28} 
-                  className="text-white drop-shadow-md" 
-                />
-              </div>
-            </div>
           ) : (
             /* Au repos : Cœur de l'astrolabe / Bobine blanche sur fond Terre Cuite */
             <div className="relative w-full h-full rounded-full flex items-center justify-center pointer-events-none">
@@ -264,22 +287,14 @@ export const CentralAstrolabeJoystick: React.FC<CentralAstrolabeJoystickProps> =
         </div>
       )}
 
-      {/* Cartouche d'indication sous le centre */}
-      {explorerLevel === 'topics' ? (
-        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[10px] font-bold px-3 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/30 flex items-center gap-1.5 animate-in fade-in duration-150">
-          <span>{hoveredTopicName || (dimensionName ? `${dimensionName} · 8 choix` : '8 propositions')}</span>
-        </div>
-      ) : explorerLevel === 'stories' && (hoveredTopicName || topicName) ? (
-        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/20 animate-in fade-in duration-150">
+      {/* Cartouche d'indication sous le centre : uniquement le nom de la porte au survol en niveau dimensions */}
+      {explorerLevel === 'stories' && (hoveredTopicName || topicName) ? (
+        <div className="absolute -bottom-6.5 pointer-events-none whitespace-nowrap text-[9.5px] sm:text-[10px] font-bold px-3 py-0.5 rounded-full shadow-lg animate-in fade-in duration-150 tracking-wide bg-[#A2482B]/95 text-[#FDFBF7] border border-white/30 shadow-[#A2482B]/20">
           {hoveredTopicName || topicName}
         </div>
       ) : explorerLevel === 'dimensions' && hoveredCategory ? (
         <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[10.5px] font-bold px-3 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/30 flex items-center animate-in fade-in duration-200 tracking-wide">
           <span>{hoveredCategory.label}</span>
-        </div>
-      ) : explorerLevel === 'dimensions' && topicName ? (
-        <div className="absolute -bottom-6 pointer-events-none whitespace-nowrap bg-[#A2482B]/95 text-[#FDFBF7] text-[9.5px] font-semibold px-2.5 py-0.5 rounded-full border border-white/30 shadow-lg shadow-[#A2482B]/20 animate-in fade-in duration-150">
-          <span>{topicName}</span>
         </div>
       ) : null}
     </div>

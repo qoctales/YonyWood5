@@ -57,7 +57,6 @@ import {
 import { useAuth } from '../services/authContext';
 import { AuthModal } from './AuthModal';
 import { ShareIcon } from './ShareIcon';
-import { ProductionTokenIcon } from './YonywoodBrandIcons';
 import { OrdersAndContributionsModal } from './OrdersAndContributionsModal';
 import { transactionService } from '../utils/transactionService';
 import { ProfileLineageFrise } from './ProfileLineageFrise';
@@ -1233,7 +1232,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
 
   const CATEGORIES: { key: ProfileCategory; label: string; tooltip: string; icon: React.FC<{ className?: string }> }[] = [
     { key: 'recit', label: 'Séries', tooltip: 'Séries', icon: Film },
-    { key: 'production', label: 'Productions', tooltip: 'Productions', icon: ProductionTokenIcon },
+    { key: 'production', label: 'Productions', tooltip: 'Productions', icon: Clapperboard },
     { key: 'offre', label: 'Offre', tooltip: 'Produits et services', icon: ShoppingBag },
     { key: 'appel', label: 'Projets', tooltip: 'Projets', icon: Sprout },
   ];
@@ -1940,7 +1939,7 @@ export const ProfileSettingsScreen: React.FC<ProfileSettingsScreenProps> = ({
             {/* Disparaissent en cours de lecture pour ne pas gêner le visionnage  */}
             {/* ================================================================= */}
             <div 
-              className={`absolute right-5 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3 transition-all duration-300 pointer-events-auto ${
+              className={`absolute right-5 top-[64%] -translate-y-1/2 z-30 flex flex-col items-center gap-3 transition-all duration-300 pointer-events-auto ${
                 isPlaying 
                   ? 'opacity-0 pointer-events-none scale-90 -translate-x-1' 
                   : 'opacity-100 pointer-events-auto scale-100 translate-x-0'
