@@ -158,6 +158,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   const [heritageMode, setHeritageMode] = useState<'circle' | 'swipe'>('circle');
   const [swipeStep, setSwipeStep] = useState<1 | 2 | 3>(1); // 1 = 8 Portes, 2 = Directions, 3 = Protagonistes
   const [swipeDoorIndex, setSwipeDoorIndex] = useState<number>(0);
+  const [swipeSubIndex, setSwipeSubIndex] = useState<number>(0);
   const [swipeSelectedSubcategory, setSwipeSelectedSubcategory] = useState<SousCategorie | null>(null);
   const [swipePersonIndex, setSwipePersonIndex] = useState<number>(0);
   const [isSwipeVideoPlaying, setIsSwipeVideoPlaying] = useState<boolean>(true);
@@ -281,23 +282,39 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     return getSubcategoriesForDimension(currentSwipeDoor.id);
   }, [currentSwipeDoor]);
 
+  const currentSubcategory = swipeSubcategories[swipeSubIndex] || swipeSubcategories[0];
+
   const swipeProtagonists = useMemo<AffiliationPerson[]>(() => {
-    if (!swipeSelectedSubcategory) return [];
-    if (swipeSelectedSubcategory.dimensionId === 'series') {
-      const seriesConfig = MATRIX_SERIES_DATA.find(s => s.seriesId === swipeSelectedSubcategory.slug) || MATRIX_SERIES_DATA[0];
-      return get16ProtagonistsForSeries(seriesConfig, swipeSelectedSubcategory.slug, shuffleSeed);
+    const sub = swipeSelectedSubcategory || currentSubcategory;
+    if (!sub) return [];
+    if (sub.dimensionId === 'series') {
+      const seriesConfig = MATRIX_SERIES_DATA.find(s => s.seriesId === sub.slug) || MATRIX_SERIES_DATA[0];
+      return get16ProtagonistsForSeries(seriesConfig, sub.slug, shuffleSeed);
     }
-    return get16StoriesForTopic(swipeSelectedSubcategory.slug, shuffleSeed);
-  }, [swipeSelectedSubcategory, shuffleSeed]);
+    return get16StoriesForTopic(sub.slug, shuffleSeed);
+  }, [swipeSelectedSubcategory, currentSubcategory, shuffleSeed]);
 
   const currentSwipePerson = swipeProtagonists[swipePersonIndex] || swipeProtagonists[0];
 
   const handleNextSwipeDoor = () => {
     setSwipeDoorIndex(prev => (prev + 1) % DIMENSIONS.length);
+    setSwipeSubIndex(0);
     celestialAudio.playOrbSelect();
   };
   const handlePrevSwipeDoor = () => {
     setSwipeDoorIndex(prev => (prev - 1 + DIMENSIONS.length) % DIMENSIONS.length);
+    setSwipeSubIndex(0);
+    celestialAudio.playOrbSelect();
+  };
+
+  const handleNextSwipeSub = () => {
+    if (swipeSubcategories.length === 0) return;
+    setSwipeSubIndex(prev => (prev + 1) % swipeSubcategories.length);
+    celestialAudio.playOrbSelect();
+  };
+  const handlePrevSwipeSub = () => {
+    if (swipeSubcategories.length === 0) return;
+    setSwipeSubIndex(prev => (prev - 1 + swipeSubcategories.length) % swipeSubcategories.length);
     celestialAudio.playOrbSelect();
   };
 
@@ -750,45 +767,11 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       <div className="absolute top-0 left-0 right-0 z-40 w-full pointer-events-none">
         <div className="w-full max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4">
           <header className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2 pointer-events-auto">
-            {/* Titre Héritages & Sélecteur Cercle / Swipe */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/* Titre Héritages */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
                 Héritages
               </h1>
-
-              {/* Sélecteur de mode bi-mode : Cercle vs Swipe */}
-              <div className="inline-flex items-center p-0.5 bg-stone-100 rounded-full border border-stone-200 shadow-xs">
-                <button
-                  onClick={() => {
-                    setHeritageMode('circle');
-                    celestialAudio.playOrbSelect();
-                  }}
-                  className={`flex items-center gap-1 h-6.5 sm:h-7.5 px-2.5 sm:px-3 rounded-full text-[10.5px] sm:text-xs font-semibold transition-all cursor-pointer ${
-                    heritageMode === 'circle'
-                      ? 'bg-[#A2482B] text-white shadow-xs'
-                      : 'text-stone-600 hover:text-stone-900'
-                  }`}
-                  title="Mode Cercle (Astrolabe)"
-                >
-                  <Compass className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  <span>Cercle</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setHeritageMode('swipe');
-                    celestialAudio.playOrbSelect();
-                  }}
-                  className={`flex items-center gap-1 h-6.5 sm:h-7.5 px-2.5 sm:px-3 rounded-full text-[10.5px] sm:text-xs font-semibold transition-all cursor-pointer ${
-                    heritageMode === 'swipe'
-                      ? 'bg-[#A2482B] text-white shadow-xs'
-                      : 'text-stone-600 hover:text-stone-900'
-                  }`}
-                  title="Mode Swipe (Cartes séquentielles)"
-                >
-                  <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  <span>Swipe</span>
-                </button>
-              </div>
             </div>
 
             {heritageMode === 'swipe' ? (
@@ -920,6 +903,29 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 </div>
               </div>
             )}
+
+            {/* Bascule Vue Cercle / Vue Swipe (Identique au bouton Deck/Duo des duos) */}
+            <button
+              id="btn-toggle-heritage-mode"
+              onClick={() => {
+                setHeritageMode(prev => prev === 'circle' ? 'swipe' : 'circle');
+                celestialAudio.playOrbSelect();
+              }}
+              className="flex items-center gap-1 h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-[#A2482B] border border-stone-200 hover:border-[#A2482B] text-[#1C1917] hover:text-white text-[11px] sm:text-xs font-semibold shadow-xs transition-all cursor-pointer active:scale-95 group/modetoggle shrink-0"
+              title={heritageMode === 'circle' ? 'Passer en vue Swipe (Cartes)' : 'Passer en vue Cercle (Exploration céleste)'}
+            >
+              {heritageMode === 'circle' ? (
+                <>
+                  <Layers className="w-3.5 h-3.5 text-[#A2482B] group-hover/modetoggle:text-white transition-colors" />
+                  <span className="hidden sm:inline">Swipe</span>
+                </>
+              ) : (
+                <>
+                  <Compass className="w-3.5 h-3.5 text-[#A2482B] group-hover/modetoggle:text-white transition-colors" />
+                  <span className="hidden sm:inline">Cercle</span>
+                </>
+              )}
+            </button>
           </header>
         </div>
       </div>

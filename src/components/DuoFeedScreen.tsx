@@ -8,6 +8,8 @@ import {
   ChevronRight, 
   User, 
   BookOpen,
+  Award,
+  Check,
   X,
   Film,
   Layers,
@@ -20,6 +22,9 @@ import { apiService } from '../services/api';
 import { ViewScreen, Duo, Protagonist } from '../types';
 import { ProtagonistTeaserModal } from './ProtagonistTeaserModal';
 import { ReportModal } from './ReportModal';
+import { ProfileSoloIcon } from './YonywoodBrandIcons';
+import { ShareIcon } from './ShareIcon';
+import { ResonanceModal } from './ResonanceModal';
 
 interface DuoFeedScreenProps {
   onNavigate: (screen: ViewScreen) => void;
@@ -52,6 +57,22 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'duo' | 'deck'>('duo');
   const [deckActiveSide, setDeckActiveSide] = useState<'A' | 'B'>('A');
+
+  // Résonance et Partage harmonisés (identiques à la modale protagoniste)
+  const [resonanceTargetPerson, setResonanceTargetPerson] = useState<Protagonist | null>(null);
+  const [personResonances, setPersonResonances] = useState<Record<string, number>>({});
+  const [copiedPersonId, setCopiedPersonId] = useState<string | null>(null);
+
+  const handleSharePerson = (person: Protagonist, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const shareUrl = `${window.location.origin}?protagonist=${person.id}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        setCopiedPersonId(person.id);
+        setTimeout(() => setCopiedPersonId(null), 2000);
+      }).catch(() => {});
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -474,55 +495,100 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       </div>
                     </div>
 
-                    {/* Centre libéré */}
-                    <div className="my-auto" />
+                    {/* ICÔNES D'ACTION SUR LE CÔTÉ DROIT DE LA VIDÉO (AUX 2/3 POUR DÉGAGER LE VISAGE DU PROTAGONISTE) */}
+                    <div 
+                      className="absolute right-1.5 sm:right-3 top-[64%] -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 sm:gap-2.5 pointer-events-auto"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {/* 1. Évaluation résonance */}
+                      <button
+                        id={`duo-btn-resonance-a-${pA.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setResonanceTargetPerson(pA);
+                        }}
+                        className={`w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl backdrop-blur-md border flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                          personResonances[pA.id] !== undefined
+                            ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_12px_rgba(162,72,43,0.5)]'
+                            : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                        }`}
+                        title={personResonances[pA.id] !== undefined ? `Résonance : ${personResonances[pA.id]}%` : "Évaluer la résonance"}
+                      >
+                        <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </button>
 
-                    {/* Bottom Info */}
-                    <div className="relative z-10 p-2.5 sm:p-4.5 flex items-end justify-between gap-1">
-                      <div className="text-left font-sans min-w-0 pr-1">
-                        <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-white tracking-tight leading-tight truncate">
-                          {pA.name.split(' ')[0]}
-                        </h3>
-                        {pA.age && (
-                          <p className="text-[10px] sm:text-xs text-stone-300 mt-0.5">
-                            {pA.age} ans
-                          </p>
+                      {/* 2. Question */}
+                      <button
+                        id={`duo-btn-question-a-${pA.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsQuestionModalOpen(true);
+                        }}
+                        className="w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                        title="Découvrir la question"
+                      >
+                        <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </button>
+
+                      {/* 3. Découvrir son univers complet */}
+                      <button
+                        id={`duo-btn-universe-a-${pA.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onNavigate({
+                            type: 'protagonist_profile',
+                            protagonistId: pA.id,
+                            returnToDuoId: currentDuo.id,
+                            returnToDuoIndex: safeIndex,
+                            returnToDocId: selectedDocId || currentDuo.documentaryId
+                          });
+                        }}
+                        className="w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                        title={`Découvrir le profil de ${pA.name}`}
+                      >
+                        <ProfileSoloIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </button>
+
+                      {/* 4. Bouton Partager */}
+                      <button
+                        id={`duo-btn-share-a-${pA.id}`}
+                        onClick={(e) => handleSharePerson(pA, e)}
+                        className={`w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl backdrop-blur-md border flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                          copiedPersonId === pA.id
+                            ? 'bg-emerald-700/85 border-emerald-600 text-white'
+                            : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                        }`}
+                        title={copiedPersonId === pA.id ? "Lien copié !" : "Partager"}
+                      >
+                        {copiedPersonId === pA.id ? (
+                          <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        ) : (
+                          <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                         )}
-                      </div>
+                      </button>
+                    </div>
 
-                      {/* Vignettes d'action : Question, Profil */}
-                      <div className="flex flex-col items-center gap-1.5 shrink-0">
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsQuestionModalOpen(true);
-                          }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95 shrink-0"
-                          title="Voir la question"
-                          id={`open-question-a-${currentDuo.id}`}
-                        >
-                          <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                        </button>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onNavigate({
-                              type: 'protagonist_profile',
-                              protagonistId: pA.id,
-                              returnToDuoId: currentDuo.id,
-                              returnToDuoIndex: safeIndex,
-                              returnToDocId: selectedDocId || currentDuo.documentaryId
-                            });
-                          }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95 shrink-0"
-                          title={`Consulter le profil de ${pA.name}`}
-                          id={`open-universe-${pA.id}`}
-                        >
-                          <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                        </button>
-                      </div>
+                    {/* BAS : Prénom + Âge en dessous uniquement (exactement comme sur les cartes protagonistes) */}
+                    <div 
+                      className="relative z-20 p-2.5 sm:p-4.5 flex flex-col pointer-events-auto cursor-pointer group/title mt-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNavigate({
+                          type: 'protagonist_profile',
+                          protagonistId: pA.id,
+                          returnToDuoId: currentDuo.id,
+                          returnToDuoIndex: safeIndex,
+                          returnToDocId: selectedDocId || currentDuo.documentaryId
+                        });
+                      }}
+                      title={`Découvrir le profil de ${pA.name}`}
+                    >
+                      <h3 className="font-editorial text-base sm:text-2xl font-bold text-white tracking-tight leading-none drop-shadow-md group-hover/title:text-[#FFE7A3] transition-colors truncate">
+                        {pA.name.split(' ')[0]}
+                      </h3>
+                      <p className="text-[11px] sm:text-xs text-stone-300 mt-1 font-medium drop-shadow flex items-center gap-1.5">
+                        <span>{pA.age ? `${pA.age} ans` : '46 ans'}</span>
+                      </p>
                     </div>
                   </div>
 
@@ -596,55 +662,100 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                       </div>
                     </div>
 
-                    {/* Centre libéré */}
-                    <div className="my-auto" />
+                    {/* ICÔNES D'ACTION SUR LE CÔTÉ DROIT DE LA VIDÉO (AUX 2/3 POUR DÉGAGER LE VISAGE DU PROTAGONISTE) */}
+                    <div 
+                      className="absolute right-1.5 sm:right-3 top-[64%] -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 sm:gap-2.5 pointer-events-auto"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {/* 1. Évaluation résonance */}
+                      <button
+                        id={`duo-btn-resonance-b-${pB.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setResonanceTargetPerson(pB);
+                        }}
+                        className={`w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl backdrop-blur-md border flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                          personResonances[pB.id] !== undefined
+                            ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_12px_rgba(162,72,43,0.5)]'
+                            : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                        }`}
+                        title={personResonances[pB.id] !== undefined ? `Résonance : ${personResonances[pB.id]}%` : "Évaluer la résonance"}
+                      >
+                        <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </button>
 
-                    {/* Bottom Info */}
-                    <div className="relative z-10 p-2.5 sm:p-4.5 flex items-end justify-between gap-1">
-                      <div className="text-left font-sans min-w-0 pr-1">
-                        <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-white tracking-tight leading-tight truncate">
-                          {pB.name.split(' ')[0]}
-                        </h3>
-                        {pB.age && (
-                          <p className="text-[10px] sm:text-xs text-stone-300 mt-0.5">
-                            {pB.age} ans
-                          </p>
+                      {/* 2. Question */}
+                      <button
+                        id={`duo-btn-question-b-${pB.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsQuestionModalOpen(true);
+                        }}
+                        className="w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                        title="Découvrir la question"
+                      >
+                        <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </button>
+
+                      {/* 3. Découvrir son univers complet */}
+                      <button
+                        id={`duo-btn-universe-b-${pB.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onNavigate({
+                            type: 'protagonist_profile',
+                            protagonistId: pB.id,
+                            returnToDuoId: currentDuo.id,
+                            returnToDuoIndex: safeIndex,
+                            returnToDocId: selectedDocId || currentDuo.documentaryId
+                          });
+                        }}
+                        className="w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                        title={`Découvrir le profil de ${pB.name}`}
+                      >
+                        <ProfileSoloIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      </button>
+
+                      {/* 4. Bouton Partager */}
+                      <button
+                        id={`duo-btn-share-b-${pB.id}`}
+                        onClick={(e) => handleSharePerson(pB, e)}
+                        className={`w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-lg sm:rounded-xl backdrop-blur-md border flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                          copiedPersonId === pB.id
+                            ? 'bg-emerald-700/85 border-emerald-600 text-white'
+                            : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                        }`}
+                        title={copiedPersonId === pB.id ? "Lien copié !" : "Partager"}
+                      >
+                        {copiedPersonId === pB.id ? (
+                          <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        ) : (
+                          <ShareIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                         )}
-                      </div>
+                      </button>
+                    </div>
 
-                      {/* Vignettes d'action : Question, Profil */}
-                      <div className="flex flex-col items-center gap-1.5 shrink-0">
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsQuestionModalOpen(true);
-                          }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95 shrink-0"
-                          title="Voir la question"
-                          id={`open-question-b-${currentDuo.id}`}
-                        >
-                          <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                        </button>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onNavigate({
-                              type: 'protagonist_profile',
-                              protagonistId: pB.id,
-                              returnToDuoId: currentDuo.id,
-                              returnToDuoIndex: safeIndex,
-                              returnToDocId: selectedDocId || currentDuo.documentaryId
-                            });
-                          }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95 shrink-0"
-                          title={`Consulter le profil de ${pB.name}`}
-                          id={`open-universe-${pB.id}`}
-                        >
-                          <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                        </button>
-                      </div>
+                    {/* BAS : Prénom + Âge en dessous uniquement (exactement comme sur les cartes protagonistes) */}
+                    <div 
+                      className="relative z-20 p-2.5 sm:p-4.5 flex flex-col pointer-events-auto cursor-pointer group/title mt-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNavigate({
+                          type: 'protagonist_profile',
+                          protagonistId: pB.id,
+                          returnToDuoId: currentDuo.id,
+                          returnToDuoIndex: safeIndex,
+                          returnToDocId: selectedDocId || currentDuo.documentaryId
+                        });
+                      }}
+                      title={`Découvrir le profil de ${pB.name}`}
+                    >
+                      <h3 className="font-editorial text-base sm:text-2xl font-bold text-white tracking-tight leading-none drop-shadow-md group-hover/title:text-[#FFE7A3] transition-colors truncate">
+                        {pB.name.split(' ')[0]}
+                      </h3>
+                      <p className="text-[11px] sm:text-xs text-stone-300 mt-1 font-medium drop-shadow flex items-center gap-1.5">
+                        <span>{pB.age ? `${pB.age} ans` : '46 ans'}</span>
+                      </p>
                     </div>
                   </div>
 
@@ -740,53 +851,101 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         </div>
                       </div>
 
-                      <div className="my-auto" />
+                    {/* ICÔNES D'ACTION SUR LE CÔTÉ DROIT DE LA VIDÉO (DESCENDUES AUX 2/3 POUR DÉGAGER LE VISAGE DU PROTAGONISTE) */}
+                    <div 
+                      className="absolute right-3.5 sm:right-5 top-[64%] -translate-y-1/2 z-30 flex flex-col items-center gap-2.5 sm:gap-3 pointer-events-auto"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {/* 1. Évaluation résonance */}
+                      <button
+                        id={`deck-btn-resonance-a-${pA.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setResonanceTargetPerson(pA);
+                        }}
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl backdrop-blur-md border flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                          personResonances[pA.id] !== undefined
+                            ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_14px_rgba(162,72,43,0.5)]'
+                            : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                        }`}
+                        title={personResonances[pA.id] !== undefined ? `Résonance : ${personResonances[pA.id]}%` : "Évaluer la résonance"}
+                      >
+                        <Award className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      </button>
 
-                      {/* Bottom Info Deck */}
-                      <div className="relative z-10 p-3 sm:p-5 flex items-end justify-between gap-2">
-                        <div className="text-left font-sans min-w-0 pr-1">
-                          <h3 className="text-base sm:text-xl font-bold text-white tracking-tight leading-tight truncate">
-                            {pA.name.split(' ')[0]}
-                          </h3>
-                          {pA.age && (
-                            <p className="text-xs text-stone-300 mt-0.5">
-                              {pA.age} ans
-                            </p>
-                          )}
-                        </div>
+                      {/* 2. Question */}
+                      <button
+                        id={`deck-btn-question-a-${pA.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsQuestionModalOpen(true);
+                        }}
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                        title="Découvrir la question"
+                      >
+                        <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      </button>
 
-                        {/* Boutons d'action sur la vidéo empilés verticalement comme en mode duo */}
-                        <div className="flex flex-col items-center gap-1.5 sm:gap-2 shrink-0">
+                      {/* 3. Découvrir son univers complet */}
+                      <button
+                        id={`deck-btn-universe-a-${pA.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onNavigate({
+                            type: 'protagonist_profile',
+                            protagonistId: pA.id,
+                            returnToDuoId: currentDuo.id,
+                            returnToDuoIndex: safeIndex,
+                            returnToDocId: selectedDocId || currentDuo.documentaryId
+                          });
+                        }}
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                        title={`Découvrir le profil de ${pA.name}`}
+                      >
+                        <ProfileSoloIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      </button>
 
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setIsQuestionModalOpen(true);
-                            }}
-                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
-                            title="Voir la question"
-                          >
-                            <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                          </button>
+                      {/* 4. Bouton Partager */}
+                      <button
+                        id={`deck-btn-share-a-${pA.id}`}
+                        onClick={(e) => handleSharePerson(pA, e)}
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl backdrop-blur-md border flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                          copiedPersonId === pA.id
+                            ? 'bg-emerald-700/85 border-emerald-600 text-white'
+                            : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                        }`}
+                        title={copiedPersonId === pA.id ? "Lien copié !" : "Partager"}
+                      >
+                        {copiedPersonId === pA.id ? (
+                          <Check className="w-4 h-4 text-white" />
+                        ) : (
+                          <ShareIcon className="w-4 h-4 text-white" />
+                        )}
+                      </button>
+                    </div>
 
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onNavigate({
-                                type: 'protagonist_profile',
-                                protagonistId: pA.id,
-                                returnToDuoId: currentDuo.id,
-                                returnToDuoIndex: safeIndex,
-                                returnToDocId: selectedDocId || currentDuo.documentaryId
-                              });
-                            }}
-                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
-                            title={`Consulter le profil de ${pA.name}`}
-                          >
-                            <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                          </button>
-                        </div>
-                      </div>
+                    {/* BAS : Prénom + Âge en dessous uniquement (exactement comme sur les cartes protagonistes) */}
+                    <div 
+                      className="relative z-20 p-4 sm:p-5 flex flex-col pointer-events-auto cursor-pointer group/title mt-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNavigate({
+                          type: 'protagonist_profile',
+                          protagonistId: pA.id,
+                          returnToDuoId: currentDuo.id,
+                          returnToDuoIndex: safeIndex,
+                          returnToDocId: selectedDocId || currentDuo.documentaryId
+                        });
+                      }}
+                      title={`Découvrir le profil de ${pA.name}`}
+                    >
+                      <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none drop-shadow-md group-hover/title:text-[#FFE7A3] transition-colors truncate">
+                        {pA.name.split(' ')[0]}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-300 mt-1 font-medium drop-shadow flex items-center gap-1.5">
+                        <span>{pA.age ? `${pA.age} ans` : '46 ans'}</span>
+                      </p>
+                    </div>
                     </div>
                   ) : (
                     /* CARTE PLEINE TAILLE PROTAGONISTE B */
@@ -872,53 +1031,101 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
                         </div>
                       </div>
 
-                      <div className="my-auto" />
+                    {/* ICÔNES D'ACTION SUR LE CÔTÉ DROIT DE LA VIDÉO (DESCENDUES AUX 2/3 POUR DÉGAGER LE VISAGE DU PROTAGONISTE) */}
+                    <div 
+                      className="absolute right-3.5 sm:right-5 top-[64%] -translate-y-1/2 z-30 flex flex-col items-center gap-2.5 sm:gap-3 pointer-events-auto"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {/* 1. Évaluation résonance */}
+                      <button
+                        id={`deck-btn-resonance-b-${pB.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setResonanceTargetPerson(pB);
+                        }}
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl backdrop-blur-md border flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                          personResonances[pB.id] !== undefined
+                            ? 'bg-[#A2482B] border-[#A2482B] text-white shadow-[0_0_14px_rgba(162,72,43,0.5)]'
+                            : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                        }`}
+                        title={personResonances[pB.id] !== undefined ? `Résonance : ${personResonances[pB.id]}%` : "Évaluer la résonance"}
+                      >
+                        <Award className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      </button>
 
-                      {/* Bottom Info Deck */}
-                      <div className="relative z-10 p-3 sm:p-5 flex items-end justify-between gap-2">
-                        <div className="text-left font-sans min-w-0 pr-1">
-                          <h3 className="text-base sm:text-xl font-bold text-white tracking-tight leading-tight truncate">
-                            {pB.name.split(' ')[0]}
-                          </h3>
-                          {pB.age && (
-                            <p className="text-xs text-stone-300 mt-0.5">
-                              {pB.age} ans
-                            </p>
-                          )}
-                        </div>
+                      {/* 2. Question */}
+                      <button
+                        id={`deck-btn-question-b-${pB.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsQuestionModalOpen(true);
+                        }}
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                        title="Découvrir la question"
+                      >
+                        <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      </button>
 
-                        {/* Boutons d'action sur la vidéo empilés verticalement comme en mode duo */}
-                        <div className="flex flex-col items-center gap-1.5 sm:gap-2 shrink-0">
+                      {/* 3. Découvrir son univers complet */}
+                      <button
+                        id={`deck-btn-universe-b-${pB.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onNavigate({
+                            type: 'protagonist_profile',
+                            protagonistId: pB.id,
+                            returnToDuoId: currentDuo.id,
+                            returnToDuoIndex: safeIndex,
+                            returnToDocId: selectedDocId || currentDuo.documentaryId
+                          });
+                        }}
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-black/45 hover:bg-[#A2482B] backdrop-blur-md border border-white/20 hover:border-[#A2482B] text-white flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                        title={`Découvrir le profil de ${pB.name}`}
+                      >
+                        <ProfileSoloIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                      </button>
 
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setIsQuestionModalOpen(true);
-                            }}
-                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
-                            title="Voir la question"
-                          >
-                            <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                          </button>
+                      {/* 4. Bouton Partager */}
+                      <button
+                        id={`deck-btn-share-b-${pB.id}`}
+                        onClick={(e) => handleSharePerson(pB, e)}
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl backdrop-blur-md border flex items-center justify-center transition-all duration-200 shadow-md cursor-pointer hover:scale-105 active:scale-95 ${
+                          copiedPersonId === pB.id
+                            ? 'bg-emerald-700/85 border-emerald-600 text-white'
+                            : 'bg-black/45 hover:bg-[#A2482B] border-white/20 hover:border-[#A2482B] text-white'
+                        }`}
+                        title={copiedPersonId === pB.id ? "Lien copié !" : "Partager"}
+                      >
+                        {copiedPersonId === pB.id ? (
+                          <Check className="w-4 h-4 text-white" />
+                        ) : (
+                          <ShareIcon className="w-4 h-4 text-white" />
+                        )}
+                      </button>
+                    </div>
 
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onNavigate({
-                                type: 'protagonist_profile',
-                                protagonistId: pB.id,
-                                returnToDuoId: currentDuo.id,
-                                returnToDuoIndex: safeIndex,
-                                returnToDocId: selectedDocId || currentDuo.documentaryId
-                              });
-                            }}
-                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/50 hover:bg-[#A2482B] text-white backdrop-blur-md transition-all flex items-center justify-center shadow-sm cursor-pointer border border-white/20 hover:border-[#A2482B] hover:scale-105 active:scale-95"
-                            title={`Consulter le profil de ${pB.name}`}
-                          >
-                            <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-                          </button>
-                        </div>
-                      </div>
+                    {/* BAS : Prénom + Âge en dessous uniquement (exactement comme sur les cartes protagonistes) */}
+                    <div 
+                      className="relative z-20 p-4 sm:p-5 flex flex-col pointer-events-auto cursor-pointer group/title mt-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNavigate({
+                          type: 'protagonist_profile',
+                          protagonistId: pB.id,
+                          returnToDuoId: currentDuo.id,
+                          returnToDuoIndex: safeIndex,
+                          returnToDocId: selectedDocId || currentDuo.documentaryId
+                        });
+                      }}
+                      title={`Découvrir le profil de ${pB.name}`}
+                    >
+                      <h3 className="font-editorial text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none drop-shadow-md group-hover/title:text-[#FFE7A3] transition-colors truncate">
+                        {pB.name.split(' ')[0]}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-300 mt-1 font-medium drop-shadow flex items-center gap-1.5">
+                        <span>{pB.age ? `${pB.age} ans` : '46 ans'}</span>
+                      </p>
+                    </div>
                     </div>
                   )}
                 </div>
@@ -980,6 +1187,24 @@ export const DuoFeedScreen: React.FC<DuoFeedScreenProps> = ({
           targetType="duo"
           targetId={currentDuo.id}
           targetTitle={`${currentDuo.documentaryTitle} (${currentDuo.protagonistA.name} <> ${currentDuo.protagonistB.name})`}
+        />
+      )}
+
+      {/* Volet coulissant d'évaluation de la résonance sur la vidéo */}
+      {resonanceTargetPerson && (
+        <ResonanceModal
+          isOpen={Boolean(resonanceTargetPerson)}
+          onClose={() => setResonanceTargetPerson(null)}
+          storyId={`duo-story-${resonanceTargetPerson.id}`}
+          topicId={activeDoc?.title || currentDuo.documentaryTitle || 'duo'}
+          personName={resonanceTargetPerson.name.split(' ')[0]}
+          initialPercentage={personResonances[resonanceTargetPerson.id] || null}
+          onRatingSubmitted={(pct) => {
+            setPersonResonances(prev => ({
+              ...prev,
+              [resonanceTargetPerson.id]: pct
+            }));
+          }}
         />
       )}
     </div>

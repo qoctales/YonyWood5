@@ -137,12 +137,12 @@ const seriesList: ExplorerCatalogItem[] = [
   {
     "id": "focus-phd",
     "category": "series",
-    "title": "Focus PhD",
-    "subtitle": "La recherche d'excellence, le génie scientifique et l'impact panafricain.",
-    "question": "En quoi vos découvertes scientifiques ou votre quête du doctorat transforment-elles durablement le monde de demain ?",
-    "photoUrl": "/assets/posters/focus-phd.png",
+    "title": "Focus < >  PhD",
+    "subtitle": "Le regard sensible qui capte l’instant < > la rigueur de la recherche qui sonde l’universel.",
+    "question": "Quel a été ce moment précis où votre travail a fait surgir une vérité qui a transformé votre regard ?",
+    "photoUrl": "/assets/posters/Focus < >  PhD.jpg",
     "badge": "16 pionniers cooptés",
-    "accentColor": "#0284C7",
+    "accentColor": "#B45309",
     "iconName": "16-series/focus-phd"
   }
 ];

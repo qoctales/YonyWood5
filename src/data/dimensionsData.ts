@@ -324,7 +324,7 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     question: 'Quelle épreuve majeure a brisé vos certitudes pour forger votre résilience et votre force intérieure ?',
     tagline: 'La traversée de l’adversité, l’épreuve et la reconstruction intérieure',
     badge: 'Résilience',
-    photoUrl: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=800&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1080&q=85',
     accentColor: '#F59E0B',
     glowColor: 'rgba(245, 158, 11, 0.6)',
     bgGradient: 'from-amber-500 via-orange-600 to-stone-950'
@@ -339,7 +339,7 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     question: 'Comment cultivez-vous l’harmonie, la fidélité et le don de soi face aux tempêtes de l’existence ?',
     tagline: 'L’amour véritable, la tendresse partagée et le compagnonnage',
     badge: 'Amour',
-    photoUrl: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1080&q=85',
     accentColor: '#EC4899',
     glowColor: 'rgba(236, 72, 153, 0.6)',
     bgGradient: 'from-pink-500 via-rose-600 to-stone-950'
@@ -354,7 +354,7 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     question: 'Quel geste d’entraide ou d’engagement collectif a renforcé votre foi en la communauté ?',
     tagline: 'L’union fraternelle, le soutien mutuel et le vivre-ensemble',
     badge: 'Solidarité',
-    photoUrl: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=800&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1080&q=85',
     accentColor: '#F97316',
     glowColor: 'rgba(249, 115, 22, 0.6)',
     bgGradient: 'from-orange-500 via-amber-700 to-stone-950'
@@ -369,7 +369,7 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     question: 'Pour quelle bénédiction ou quel enseignement de vie éprouvez-vous chaque jour une profonde gratitude ?',
     tagline: 'La reconnaissance du cœur, l’émerveillement et la paix de l’esprit',
     badge: 'Gratitude',
-    photoUrl: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=800&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1080&q=85',
     accentColor: '#10B981',
     glowColor: 'rgba(16, 185, 129, 0.6)',
     bgGradient: 'from-emerald-500 via-teal-700 to-stone-950'
@@ -384,7 +384,7 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     question: 'Comment avez-vous gardé le cap et refusé d’abandonner lorsque tout semblait perdu ?',
     tagline: 'L’effort patient, la constance et le refus du renoncement',
     badge: 'Persévérance',
-    photoUrl: 'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=800&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1080&q=85',
     accentColor: '#D97706',
     glowColor: 'rgba(217, 119, 6, 0.6)',
     bgGradient: 'from-amber-600 via-yellow-800 to-stone-950'
@@ -399,7 +399,7 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     question: 'Comment posez-vous un regard compatissant et protecteur sur ceux qui vous entourent ?',
     tagline: 'La douceur du regard, l’écoute sans jugement et l’accueil de l’autre',
     badge: 'Bienveillance',
-    photoUrl: 'https://images.unsplash.com/photo-1609234656388-0ff363383899?auto=format&fit=crop&w=800&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=1080&q=85',
     accentColor: '#8B5CF6',
     glowColor: 'rgba(139, 92, 246, 0.6)',
     bgGradient: 'from-purple-500 via-indigo-700 to-stone-950'
@@ -414,7 +414,7 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     question: 'Comment le pardon et la réconciliation vous ont-ils libéré d’un fardeau du passé ?',
     tagline: 'La paix intérieure, la réconciliation et la libération des rancœurs',
     badge: 'Pardon',
-    photoUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1080&q=85',
     accentColor: '#06B6D4',
     glowColor: 'rgba(6, 182, 212, 0.6)',
     bgGradient: 'from-cyan-500 via-sky-700 to-stone-950'
@@ -429,7 +429,7 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     question: 'En quoi l’humilité face aux mystères de la vie et aux autres a-t-elle guidé vos réussites ?',
     tagline: 'La juste place, la simplicité de cœur et l’écoute des aînés',
     badge: 'Humilité',
-    photoUrl: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=800&q=80',
+    photoUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1080&q=85',
     accentColor: '#EAB308',
     glowColor: 'rgba(234, 179, 8, 0.6)',
     bgGradient: 'from-yellow-500 via-amber-600 to-stone-950'

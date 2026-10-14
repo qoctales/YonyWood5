@@ -509,6 +509,28 @@ export const INITIAL_SERIES_ENVELOPES: SeriesEconomicEnvelope[] = [
     configHistory: []
   },
   {
+    seriesId: 'other-eyes-sixth-sense',
+    seriesTitle: 'Other eyes < > Sixth sense',
+    coverImage: '/assets/posters/Other eyes < > Sixth sense.png',
+    totalRaised: 12200,
+    distributableEnvelope: 7320,
+    distributedAmount: 1800,
+    reserveBalance: 5520,
+    nextPayoutDate: '2026-11-28',
+    economicVersion: 'v1.0',
+    currentConfig: {
+      version: 'v1.0',
+      platformFeePercent: 12,
+      filiationPoolPercent: 2,
+      coproducersPoolPercent: 60,
+      creatorsPoolPercent: 26,
+      effectiveDate: '2026-03-15',
+      updatedBy: 'Romeo Nonvide',
+      changeNotes: 'Configuration initiale pour la série Perception et Invisible.'
+    },
+    configHistory: []
+  },
+  {
     seriesId: 'coaching-unlimited',
     seriesTitle: 'Coaching < > Unlimited',
     coverImage: '/assets/posters/coaching-unlimited.webp',
