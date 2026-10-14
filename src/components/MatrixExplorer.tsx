@@ -66,6 +66,12 @@ import {
 } from '../data/explorerTopicsData';
 import { celestialAudio } from '../utils/celestialAudio';
 import { DimensionIcon } from './DimensionIcon';
+import { 
+  DIMENSIONS, 
+  getSubcategoriesForDimension, 
+  SousCategorie 
+} from '../data/dimensionsData';
+import { SwipeModeHeritage } from './SwipeModeHeritage';
 
 import { getLineageTree, LINEAGE_COLORS } from '../utils/lineageService';
 
@@ -147,6 +153,19 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState<boolean>(false);
   const [isPersonQuestionModalOpen, setIsPersonQuestionModalOpen] = useState<boolean>(false);
   const [showQuestionInVideo, setShowQuestionInVideo] = useState<boolean>(false);
+
+  // 1b. DOUBLE MODE HÉRITAGES : 'circle' (Astrolabe circulaire) | 'swipe' (Parcours tactile par cartes vidéo)
+  const [heritageMode, setHeritageMode] = useState<'circle' | 'swipe'>('circle');
+  const [swipeStep, setSwipeStep] = useState<1 | 2 | 3>(1); // 1 = 8 Portes, 2 = Directions, 3 = Protagonistes
+  const [swipeDoorIndex, setSwipeDoorIndex] = useState<number>(0);
+  const [swipeSelectedSubcategory, setSwipeSelectedSubcategory] = useState<SousCategorie | null>(null);
+  const [swipePersonIndex, setSwipePersonIndex] = useState<number>(0);
+  const [isSwipeVideoPlaying, setIsSwipeVideoPlaying] = useState<boolean>(true);
+  const [isSwipeVideoMuted, setIsSwipeVideoMuted] = useState<boolean>(true);
+  const swipeVideoRef = useRef<HTMLVideoElement | null>(null);
+  const [swipeTouchStartX, setSwipeTouchStartX] = useState<number | null>(null);
+  const [swipeTouchEndX, setSwipeTouchEndX] = useState<number | null>(null);
+  const [swipeQuestionModalData, setSwipeQuestionModalData] = useState<{ title: string; question: string } | null>(null);
 
   // Filtrage par série (si mode séries)
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>('jesus-legba');
@@ -256,11 +275,63 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     return get16StoriesForTopic(activeTopicId, shuffleSeed);
   }, [activeCategory, activeSeries, activeTopicId, shuffleSeed]);
 
+  // --- DONNÉES DU MODE SWIPE HÉRITAGES ---
+  const currentSwipeDoor = DIMENSIONS[swipeDoorIndex] || DIMENSIONS[0];
+  const swipeSubcategories = useMemo<SousCategorie[]>(() => {
+    return getSubcategoriesForDimension(currentSwipeDoor.id);
+  }, [currentSwipeDoor]);
+
+  const swipeProtagonists = useMemo<AffiliationPerson[]>(() => {
+    if (!swipeSelectedSubcategory) return [];
+    if (swipeSelectedSubcategory.dimensionId === 'series') {
+      const seriesConfig = MATRIX_SERIES_DATA.find(s => s.seriesId === swipeSelectedSubcategory.slug) || MATRIX_SERIES_DATA[0];
+      return get16ProtagonistsForSeries(seriesConfig, swipeSelectedSubcategory.slug, shuffleSeed);
+    }
+    return get16StoriesForTopic(swipeSelectedSubcategory.slug, shuffleSeed);
+  }, [swipeSelectedSubcategory, shuffleSeed]);
+
+  const currentSwipePerson = swipeProtagonists[swipePersonIndex] || swipeProtagonists[0];
+
+  const handleNextSwipeDoor = () => {
+    setSwipeDoorIndex(prev => (prev + 1) % DIMENSIONS.length);
+    celestialAudio.playOrbSelect();
+  };
+  const handlePrevSwipeDoor = () => {
+    setSwipeDoorIndex(prev => (prev - 1 + DIMENSIONS.length) % DIMENSIONS.length);
+    celestialAudio.playOrbSelect();
+  };
+
+  const handleNextSwipePerson = () => {
+    if (swipeProtagonists.length === 0) return;
+    setSwipePersonIndex(prev => (prev + 1) % swipeProtagonists.length);
+  };
+  const handlePrevSwipePerson = () => {
+    if (swipeProtagonists.length === 0) return;
+    setSwipePersonIndex(prev => (prev - 1 + swipeProtagonists.length) % swipeProtagonists.length);
+  };
+
+  const onSwipeTouchStartHandler = (e: React.TouchEvent) => {
+    setSwipeTouchEndX(null);
+    setSwipeTouchStartX(e.targetTouches[0].clientX);
+  };
+  const onSwipeTouchMoveHandler = (e: React.TouchEvent) => {
+    setSwipeTouchEndX(e.targetTouches[0].clientX);
+  };
+  const onSwipeTouchEndHandler = (onSwipeLeft: () => void, onSwipeRight: () => void) => {
+    if (swipeTouchStartX === null || swipeTouchEndX === null) return;
+    const distance = swipeTouchStartX - swipeTouchEndX;
+    if (distance > 40) onSwipeLeft();
+    else if (distance < -40) onSwipeRight();
+    setSwipeTouchStartX(null);
+    setSwipeTouchEndX(null);
+  };
+
   // Synchronisation de la résonance
+  const currentPersonForResonance = modalPerson || (heritageMode === 'swipe' ? currentSwipePerson : null);
   useEffect(() => {
-    if (modalPerson) {
+    if (currentPersonForResonance) {
       try {
-        const stored = localStorage.getItem(`yonywood_resonance_story-${modalPerson.id}`);
+        const stored = localStorage.getItem(`yonywood_resonance_story-${currentPersonForResonance.id}`);
         if (stored) {
           const val = parseInt(stored, 10);
           setPersonResonancePct(isNaN(val) ? null : val);
@@ -271,7 +342,7 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         setPersonResonancePct(null);
       }
     }
-  }, [modalPerson]);
+  }, [currentPersonForResonance]);
 
   // Commande vidéo 9:16
   const toggleVideoPlayback = (e?: React.MouseEvent) => {
@@ -660,11 +731,11 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
     <div 
       ref={containerRef}
       id="matrix-explorer-container"
-      className="relative w-full h-full min-h-[100dvh] bg-white text-[#1C1917] overflow-hidden select-none touch-none pt-safe pb-safe"
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
+      className={`relative w-full h-full min-h-[100dvh] bg-white text-[#1C1917] overflow-hidden select-none ${heritageMode === 'circle' ? 'touch-none' : 'touch-pan-y'} pt-safe pb-safe`}
+      onPointerDown={heritageMode === 'circle' ? handlePointerDown : undefined}
+      onPointerMove={heritageMode === 'circle' ? handlePointerMove : undefined}
+      onPointerUp={heritageMode === 'circle' ? handlePointerUp : undefined}
+      onPointerCancel={heritageMode === 'circle' ? handlePointerUp : undefined}
     >
       {/* Texture subtile de fond céleste & géométrie sacrée discrète */}
       <div 
@@ -679,14 +750,105 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
       <div className="absolute top-0 left-0 right-0 z-40 w-full pointer-events-none">
         <div className="w-full max-w-3xl mx-auto px-3 sm:px-6 py-2 sm:py-4">
           <header className="flex items-center justify-between border-b border-[#E7E5E4] pb-2 sm:pb-2.5 shrink-0 gap-2 pointer-events-auto">
-            {/* Titre Héritages exactement au même gabarit et position que Studio et Productions */}
-            <div className="flex items-center gap-2">
+            {/* Titre Héritages & Sélecteur Cercle / Swipe */}
+            <div className="flex items-center gap-2 sm:gap-3">
               <h1 className="font-editorial text-lg sm:text-2xl font-bold text-[#1C1917] tracking-tight">
                 Héritages
               </h1>
+
+              {/* Sélecteur de mode bi-mode : Cercle vs Swipe */}
+              <div className="inline-flex items-center p-0.5 bg-stone-100 rounded-full border border-stone-200 shadow-xs">
+                <button
+                  onClick={() => {
+                    setHeritageMode('circle');
+                    celestialAudio.playOrbSelect();
+                  }}
+                  className={`flex items-center gap-1 h-6.5 sm:h-7.5 px-2.5 sm:px-3 rounded-full text-[10.5px] sm:text-xs font-semibold transition-all cursor-pointer ${
+                    heritageMode === 'circle'
+                      ? 'bg-[#A2482B] text-white shadow-xs'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                  title="Mode Cercle (Astrolabe)"
+                >
+                  <Compass className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <span>Cercle</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setHeritageMode('swipe');
+                    celestialAudio.playOrbSelect();
+                  }}
+                  className={`flex items-center gap-1 h-6.5 sm:h-7.5 px-2.5 sm:px-3 rounded-full text-[10.5px] sm:text-xs font-semibold transition-all cursor-pointer ${
+                    heritageMode === 'swipe'
+                      ? 'bg-[#A2482B] text-white shadow-xs'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                  title="Mode Swipe (Cartes séquentielles)"
+                >
+                  <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <span>Swipe</span>
+                </button>
+              </div>
             </div>
 
-            {explorerLevel === 'dimensions' ? (
+            {heritageMode === 'swipe' ? (
+              <div className="flex items-center gap-1.5 shrink-0 min-w-0">
+                {swipeStep === 1 && (
+                  <div className="flex items-center gap-1.5 h-7.5 sm:h-8.5 px-3 rounded-full bg-[#A2482B] text-white shadow-xs border border-[#8A3B22] text-[11px] sm:text-xs font-semibold shrink-0">
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>8 Portes</span>
+                  </div>
+                )}
+                {swipeStep === 2 && (
+                  <>
+                    <button
+                      id="btn-swipe-back-to-doors"
+                      onClick={() => {
+                        setSwipeStep(1);
+                        celestialAudio.playOrbSelect();
+                      }}
+                      className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-stone-50 text-stone-900 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border border-[#A2482B] shadow-xs cursor-pointer transition-all active:scale-95 shrink-0"
+                      title="Revenir aux 8 Portes"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5 text-[#A2482B]" />
+                      <span>Portes</span>
+                    </button>
+                    <div className="h-7.5 sm:h-8.5 px-2.5 rounded-full bg-stone-100 border border-stone-300 text-stone-800 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 shrink-0">
+                      <DimensionIcon 
+                        name={currentSwipeDoor.icone} 
+                        size={14} 
+                        className="text-[#A2482B]" 
+                      />
+                      <span className="truncate max-w-[120px]">{currentSwipeDoor.shortLabel}</span>
+                    </div>
+                  </>
+                )}
+                {swipeStep === 3 && (
+                  <>
+                    <button
+                      id="btn-swipe-back-to-directions"
+                      onClick={() => {
+                        setSwipeStep(2);
+                        celestialAudio.playOrbSelect();
+                      }}
+                      className="h-7.5 sm:h-8.5 px-2.5 sm:px-3 rounded-full bg-white hover:bg-stone-50 text-stone-900 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 border border-[#A2482B] shadow-xs cursor-pointer transition-all active:scale-95 shrink-0"
+                      title="Revenir aux Directions"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5 text-[#A2482B]" />
+                      <span>Directions</span>
+                    </button>
+                    <div className="h-7.5 sm:h-8.5 pl-2 sm:pl-2.5 pr-2.5 rounded-full bg-[#A2482B] text-white shadow-xs border border-[#8A3B22] flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold shrink-0 max-w-[150px] sm:max-w-[210px]">
+                      <DimensionIcon 
+                        name={swipeSelectedSubcategory?.icone || currentSwipeDoor.icone} 
+                        size={13} 
+                        className="text-white shrink-0 drop-shadow-xs" 
+                      />
+                      <span className="truncate">{swipeSelectedSubcategory?.label}</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : explorerLevel === 'dimensions' ? (
               /* Niveau 0 : Les 8 Portes d'entrée */
               <div className="flex items-center gap-1.5 h-7.5 sm:h-8.5 px-3 rounded-full bg-[#A2482B] text-white shadow-xs border border-[#8A3B22] text-[11px] sm:text-xs font-semibold shrink-0">
                 <Layers className="w-3.5 h-3.5" />
@@ -786,8 +948,10 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
         </div>
       )}
 
-      {/* 2. SLIDER DE ZOOM VERTICAL LATÉRAL (DESKTOP) & CONTRÔLE DISCRET (MOBILE) */}
-      <div className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 z-30 pointer-events-auto">
+      {heritageMode === 'circle' ? (
+        <>
+          {/* 2. SLIDER DE ZOOM VERTICAL LATÉRAL (DESKTOP) & CONTRÔLE DISCRET (MOBILE) */}
+          <div className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 z-30 pointer-events-auto">
         <VerticalZoomSlider 
           zoomLevel={zoomLevel}
           onZoomChange={setZoomLevel}
@@ -1490,6 +1654,55 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
           isRefreshing={isRefreshing}
         />
       </div>
+    </>
+  ) : (
+    <SwipeModeHeritage
+      swipeStep={swipeStep}
+      setSwipeStep={setSwipeStep}
+      swipeDoorIndex={swipeDoorIndex}
+      setSwipeDoorIndex={setSwipeDoorIndex}
+      swipeSelectedSubcategory={swipeSelectedSubcategory}
+      setSwipeSelectedSubcategory={setSwipeSelectedSubcategory}
+      swipePersonIndex={swipePersonIndex}
+      setSwipePersonIndex={setSwipePersonIndex}
+      currentSwipeDoor={currentSwipeDoor}
+      swipeSubcategories={swipeSubcategories}
+      swipeProtagonists={swipeProtagonists}
+      currentSwipePerson={currentSwipePerson}
+      onNavigate={onNavigate}
+      onOpenQuestionModal={(title, question) => {
+        setSwipeQuestionModalData({ title, question });
+      }}
+      onOpenResonanceModal={(person) => {
+        setModalPerson(person as any);
+        setIsResonanceModalOpen(true);
+      }}
+      personResonancePct={personResonancePct}
+      isShareCopied={isShareCopied}
+      onSharePerson={async (person) => {
+        try {
+          const shareUrl = `${window.location.origin}?screen=matrix_view&person=${person.id}`;
+          if (navigator.share) {
+            await navigator.share({
+              title: `YonyWood — ${person.name}`,
+              text: person.teaserPitch || person.invitationStory,
+              url: shareUrl
+            });
+          } else {
+            await navigator.clipboard.writeText(shareUrl);
+            setIsShareCopied(true);
+            setTimeout(() => setIsShareCopied(false), 2000);
+          }
+        } catch {
+          // fallback
+        }
+      }}
+      handleNextSwipeDoor={handleNextSwipeDoor}
+      handlePrevSwipeDoor={handlePrevSwipeDoor}
+      handleNextSwipePerson={handleNextSwipePerson}
+      handlePrevSwipePerson={handlePrevSwipePerson}
+    />
+  )}
 
       {/* 4. MODALE CARTE VIDÉO 9:16 DÉTAILLÉE DU PROTAGONISTE */}
       {modalPerson && (
@@ -1744,6 +1957,38 @@ export const MatrixExplorer: React.FC<MatrixExplorerProps> = ({
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modale Question en Mode Swipe */}
+      {swipeQuestionModalData && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setSwipeQuestionModalData(null)}
+        >
+          <div 
+            className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-stone-200 text-center animate-in zoom-in-95 duration-200 pointer-events-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSwipeQuestionModalData(null)}
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-stone-100 text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-12 h-12 rounded-full bg-[#C89B3C]/15 text-[#C89B3C] flex items-center justify-center mx-auto mb-4 border border-[#C89B3C]/30">
+              <BookOpen className="w-6 h-6" />
+            </div>
+
+            <h3 className="font-editorial text-base sm:text-lg font-bold text-[#1C1917] mb-3">
+              {swipeQuestionModalData.title}
+            </h3>
+
+            <p className="font-serif-editorial text-base sm:text-lg text-stone-800 leading-relaxed italic px-2">
+              « {swipeQuestionModalData.question.replace(/^[«"'\s]+|[»"'\s]+$/g, '')} »
+            </p>
           </div>
         </div>
       )}

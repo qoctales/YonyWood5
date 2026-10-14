@@ -531,9 +531,9 @@ export const INITIAL_SERIES_ENVELOPES: SeriesEconomicEnvelope[] = [
     configHistory: []
   },
   {
-    seriesId: 'safer-healer',
-    seriesTitle: 'Safer < > Healer',
-    coverImage: '/assets/posters/safer-healer.webp',
+    seriesId: 'focus-phd',
+    seriesTitle: 'Focus < >  PhD',
+    coverImage: '/assets/posters/Focus < >  PhD.jpg',
     totalRaised: 13800,
     distributableEnvelope: 8280,
     distributedAmount: 1980,
@@ -548,7 +548,7 @@ export const INITIAL_SERIES_ENVELOPES: SeriesEconomicEnvelope[] = [
       creatorsPoolPercent: 26,
       effectiveDate: '2026-04-01',
       updatedBy: 'Romeo Nonvide',
-      changeNotes: 'Initialisation de la série Santé et Sauvetage.'
+      changeNotes: 'Initialisation de la série Science, Photographie et Recherche.'
     },
     configHistory: []
   }

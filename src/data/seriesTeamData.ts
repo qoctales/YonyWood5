@@ -452,61 +452,94 @@ export const ALL_SERIES_TEAMS: Record<string, SeriesTeamBundle> = {
     ]
   },
 
+  'focus-phd': {
+    author: {
+      name: 'Romeo Nonvide',
+      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+      bio: 'Fondateur & Concepteur documentaire de YonyWood',
+      protagonistId: 'photographer-clara'
+    },
+    screenwriter: {
+      name: 'Dre. Éléonore Kaboré',
+      avatarUrl: '/assets/duos/researcher-phd.jpg',
+      bio: 'Docteure en sciences cognitives et chercheuse associée',
+      protagonistId: 'researcher-eleonore'
+    },
+    director: {
+      name: 'Clara Valmont',
+      avatarUrl: '/assets/duos/photographer-focus.jpg',
+      bio: 'Photographe d’auteur et documentariste de terrain',
+      protagonistId: 'photographer-clara'
+    },
+    producers: [
+      {
+        id: 'prod-eleonore-8',
+        name: 'Dre. Éléonore Kaboré',
+        avatarUrl: '/assets/duos/researcher-phd.jpg',
+        roleTitle: 'Productrice déléguée',
+        pledgeAmount: 32000,
+        joinedAt: '02 Janvier 2026',
+        bio: 'Fondatrice de collectifs de valorisation de la recherche panafricaine.'
+      },
+      {
+        id: 'prod-marc-8',
+        name: 'Marc-Antoine Vaneck',
+        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+        roleTitle: 'Coproducteur associé',
+        pledgeAmount: 15000,
+        joinedAt: '14 Février 2026',
+        bio: 'Mécène d’art contemporain et passionné d’iconographie documentaire.'
+      }
+    ],
+    distributors: [
+      {
+        id: 'dist-focus',
+        name: 'Éditions & Galeries Documentaires Associées',
+        avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80',
+        roleOrChannel: 'Festivals du Film Scientifique & Musées de la Photographie'
+      }
+    ],
+    sponsors: [
+      {
+        id: 'spons-focus',
+        companyName: 'Fondation pour la Recherche Fondamentale & l’Image',
+        partnershipType: 'Partenaire Culture & Savoirs',
+        description: 'Bourses de recherche doctorale et résidences de création photographique.'
+      }
+    ]
+  },
   'safer-healer': {
     author: {
       name: 'Romeo Nonvide',
       avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
       bio: 'Fondateur & Concepteur documentaire de YonyWood',
-      protagonistId: 'dr-amina-healer'
+      protagonistId: 'photographer-clara'
     },
     screenwriter: {
-      name: 'Dr. Amina Diop',
-      avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
-      bio: 'Chirurgienne humanitaire et urgentiste de terrain',
-      protagonistId: 'dr-amina-healer'
+      name: 'Dre. Éléonore Kaboré',
+      avatarUrl: '/assets/duos/researcher-phd.jpg',
+      bio: 'Docteure en sciences cognitives et chercheuse associée',
+      protagonistId: 'researcher-eleonore'
     },
     director: {
-      name: 'Idriss Diallo',
-      avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80',
-      bio: 'Documentariste d\'urgence et secouriste volontaire',
-      protagonistId: 'pompier-idriss'
+      name: 'Clara Valmont',
+      avatarUrl: '/assets/duos/photographer-focus.jpg',
+      bio: 'Photographe d’auteur et documentariste de terrain',
+      protagonistId: 'photographer-clara'
     },
     producers: [
       {
-        id: 'prod-amina-8',
-        name: 'Dr. Amina Diop',
-        avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
+        id: 'prod-eleonore-8',
+        name: 'Dre. Éléonore Kaboré',
+        avatarUrl: '/assets/duos/researcher-phd.jpg',
         roleTitle: 'Productrice déléguée',
-        pledgeAmount: 30000,
+        pledgeAmount: 32000,
         joinedAt: '02 Janvier 2026',
-        bio: 'Fondatrice de réseaux d\'ambulances communautaires.'
-      },
-      {
-        id: 'prod-sonia-8',
-        name: 'Sonia Dossou',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-        roleTitle: 'Coproductrice associée',
-        pledgeAmount: 12000,
-        joinedAt: '14 Février 2026',
-        bio: 'Productrice dédiée aux héros invisibles du quotidien.'
+        bio: 'Fondatrice de collectifs de valorisation de la recherche panafricaine.'
       }
     ],
-    distributors: [
-      {
-        id: 'dist-helene',
-        name: 'Hélène Quenum',
-        avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80',
-        roleOrChannel: 'Réseaux Paramédicaux & Sécurité Civile'
-      }
-    ],
-    sponsors: [
-      {
-        id: 'spons-secours',
-        companyName: 'Secours Sans Frontières Médical',
-        partnershipType: 'Partenaire Soins d\'Urgence',
-        description: 'Don de trousses de premiers secours et formation citoyenne.'
-      }
-    ]
+    distributors: [],
+    sponsors: []
   }
 };
 

@@ -695,45 +695,45 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     territories: ['Paris', 'Nairobi', 'Dakar', 'Montréal']
   },
   {
-    id: 'safer-healer',
-    slug: 'safer-healer',
-    title: 'Safer < > Healer',
-    subtitle: 'La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.',
-    centralQuestion: 'La Vocation',
-    shortSynopsis: 'Quand le courage intrépide d’une pompière face aux flammes rencontre la science compatissante d’une femme médecin à l’hôpital : deux gardiennes de la vie humaine.',
-    description: 'D’un côté, Capitaine Jennifer, pompière d’élite en tenue d’intervention qui plonge dans le brasier pour arracher des vies au néant et sécuriser la communauté (Safer). De l’autre côté, Dr. Aminata Sharma, médecin dévouée au chevet des souffrances, diagnostiquant avec finesse et soignant avec humanité dans les couloirs hospitaliers (Healer). Deux faces d’une même noblesse : celle de ceux qui veillent sur la vie des autres.',
-    coverImage: '/assets/posters/Safer < > Healer.png',
-    posterUrl: '/assets/posters/Safer < > Healer.png',
+    id: 'focus-phd',
+    slug: 'focus-phd',
+    title: 'Focus < >  PhD',
+    subtitle: 'Le regard sensible qui capte l’instant < > la rigueur de la recherche qui sonde l’universel.',
+    centralQuestion: 'L’Instant & la Preuve',
+    shortSynopsis: 'Quand l’instinct visuel d’une photographe documentaire traquant l’émotion humaine rencontre l’exigence intellectuelle d’une chercheuse doctorante dédiée à percer les mystères du savoir : deux manières complémentaires d’éclairer le monde.',
+    description: 'D’un côté, Clara Valmont, photographe d’auteur et reporter indépendante qui saisit l’invisible dans l’épaisseur du réel et immortalise les visages de notre époque (Focus). De l’autre côté, Dre. Éléonore Kaboré, chercheuse et docteure en sciences cognitives, qui consacre ses journées et ses nuits à élaborer des modèles pour percer les lois profondes de notre environnement (PhD). Deux regards engagés, l’un par la focale, l’autre par la thèse, unis par la même passion de révéler ce qui nous échappe.',
+    coverImage: '/assets/posters/Focus < >  PhD.jpg',
+    posterUrl: '/assets/posters/Focus < >  PhD.jpg',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     teaserDuration: '1:32',
     universes: [
       {
-        name: 'Safer',
-        tagline: 'L’engagement au feu, la protection des innocents et le sang-froid',
-        description: 'La sirène qui déchire la nuit, la lance en main, la fraternité du camion et le refus viscéral de laisser périr quiconque.',
-        territory: 'Cotonou, Marseille & Chicago'
+        name: 'Focus',
+        tagline: 'L’œil aux aguets, la lumière naturelle, l’instant décisif et la mémoire sensible',
+        description: 'L’argentique et le capteur, la chambre noire, le silence avant le déclic et la volonté d’honorer la dignité des visages.',
+        territory: 'Montréal, Paris & Dakar'
       },
       {
-        name: 'Healer',
-        tagline: 'L’écoute des cœurs blessés, le diagnostic précis et la guérison',
-        description: 'Le stéthoscope attentif, les nuits blanches aux urgences, le soulagement d’une famille et la compassion qui restaure la dignité.',
-        territory: 'Dakar, Abidjan & Genève'
+        name: 'PhD',
+        tagline: 'La rigueur de la preuve, la patience des archives, l’hypothèse et la découverte',
+        description: 'Le tableau noir griffonné d’équations, les microscopes, la relecture des pairs et la solitude exaltante de celui qui repousse les frontières du savoir.',
+        territory: 'Oxford, Ouagadougou & Lyon'
       }
     ],
     effigies: [
       {
-        id: 'eff-jennifer-rescuer',
-        name: 'Capitaine Idriss Collins',
-        role: 'Pompier d’intervention & Formateur secours',
-        photoUrl: '/assets/duos/firefighter-safer.jpg',
+        id: 'eff-clara-focus',
+        name: 'Clara Valmont',
+        role: 'Photographe documentaire & Auteure visuelle',
+        photoUrl: '/assets/duos/photographer-focus.jpg',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
         status: 'EFFIGIE_PRINCIPALE'
       },
       {
-        id: 'eff-dr-aminata',
-        name: 'Dr. Aminata Sharma',
-        role: 'Médecin urgentiste & Soignante des âmes',
-        photoUrl: '/assets/duos/doctor-healer.jpg',
+        id: 'eff-dr-eleonore',
+        name: 'Dre. Éléonore Kaboré',
+        role: 'Docteure en sciences cognitives & Chercheuse',
+        photoUrl: '/assets/duos/researcher-phd.jpg',
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
         status: 'EFFIGIE_SERIE'
       }
@@ -741,34 +741,34 @@ const INITIAL_DOCUMENTARIES: Documentary[] = [
     questions: [
       {
         number: '01',
-        title: 'Le Premier Secours',
-        prompt: 'Racontez-nous un moment où vous avez tenu la main de quelqu’un en détresse et où vous avez su que votre présence faisait la différence entre la peur et l’espoir.',
-        posterUrl: '/assets/duos/firefighter-safer.jpg',
+        title: 'L’Instant de Révélation',
+        prompt: 'Quel a été ce moment précis où votre regard — à travers l’objectif ou à travers vos données — a soudain fait surgir une vérité bouleversante que personne n’avait encore vue ?',
+        posterUrl: '/assets/duos/photographer-focus.jpg',
         audioDuration: '0:48',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        audioVoiceName: 'Jennifer & Aminata',
+        audioVoiceName: 'Clara & Éléonore',
         translations: [
-          { lang: 'fr', label: 'Français', prompt: 'Racontez-nous un moment où votre présence a fait la différence entre la peur et l’espoir.' },
-          { lang: 'en', label: 'English', prompt: 'Tell us about a time when holding someone’s hand in crisis made the difference between fear and hope.' }
+          { lang: 'fr', label: 'Français', prompt: 'Quel a été ce moment précis où votre travail a fait surgir une vérité que personne n’avait encore vue ?' },
+          { lang: 'en', label: 'English', prompt: 'What was the exact moment when your gaze revealed a profound truth no one had seen before?' }
         ]
       },
       {
         number: '02',
-        title: 'Le Prix du Don',
-        prompt: 'Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus jour et nuit ?',
-        posterUrl: '/assets/duos/doctor-healer.jpg',
+        title: 'Le Doute et l’Obstination',
+        prompt: 'Combien de pellicules brûlées ou d’hypothèses infirmées avant de toucher enfin la grâce d’une découverte qui fait sens ?',
+        posterUrl: '/assets/duos/researcher-phd.jpg',
         audioDuration: '0:42',
         videoAvatarUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-        audioVoiceName: 'Dr. Aminata Sharma',
+        audioVoiceName: 'Dre. Éléonore Kaboré',
         translations: [
-          { lang: 'fr', label: 'Français', prompt: 'Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ?' },
-          { lang: 'en', label: 'English', prompt: 'What personal sacrifice have you made to keep watching over strangers day and night?' }
+          { lang: 'fr', label: 'Français', prompt: 'Combien de doutes traversés avant de toucher enfin la grâce d’une découverte qui fait sens ?' },
+          { lang: 'en', label: 'English', prompt: 'How many doubts did you overcome before finding a discovery that truly made sense?' }
         ]
       }
     ],
     episodeCount: 5,
     protagonistsCount: 6,
-    territories: ['Cotonou', 'Marseille', 'Dakar', 'Genève']
+    territories: ['Paris', 'Dakar', 'Ouagadougou', 'Lyon']
   }
 ];
 
@@ -2367,38 +2367,38 @@ export const PROTAGONISTS: Protagonist[] = [
     ]
   },
   {
-    id: 'firefighter-jennifer',
-    slug: 'firefighter-jennifer',
-    name: 'Capitaine Idriss Collins',
-    firstName: 'Idriss',
-    age: 41,
-    role: 'Commandant sapeur-pompier & Formateur secours',
-    country: 'Bénin & France',
-    territory: 'Cotonou & Marseille',
-    flag: '🇧🇯',
-    photo: '/assets/duos/firefighter-safer.jpg',
-    photoUrl: '/assets/duos/firefighter-safer.jpg',
+    id: 'photographer-clara',
+    slug: 'photographer-clara',
+    name: 'Clara Valmont',
+    firstName: 'Clara',
+    age: 38,
+    role: 'Photographe documentaire & Reporter visuelle',
+    country: 'France & Sénégal',
+    territory: 'Paris & Dakar',
+    flag: '🇫🇷',
+    photo: '/assets/duos/photographer-focus.jpg',
+    photoUrl: '/assets/duos/photographer-focus.jpg',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-    quote: '« Dans la fumée épaisse, on n’avance pas avec la peur de mourir mais avec l’urgence furieuse que quelqu’un respire encore. »',
-    bio: 'Dix-huit ans de service au feu, sauveteur émérite et protecteur intrépide des vies de la communauté.',
-    universeTag: 'Safer',
-    centralQuestion: 'Que ressent-on quand on franchit le rideau de flammes vers un inconnu ?',
+    quote: '« Le cadre n’enferme pas le monde : il l’oblige à se révéler. Quand tu presses le déclencheur, tu ne voles pas une image, tu reçois une confidence. »',
+    bio: 'Quinze ans de reportages au long cours à travers le Sahel et les mégapoles contemporaines, explorant les résonances intimes entre mémoire et territoire.',
+    universeTag: 'Focus',
+    centralQuestion: 'Comment capturer l’âme d’un instant sans trahir la pudeur de celui qui vous regarde ?',
     storiesCount: 6,
     transmissionsCount: 4,
     projectsCount: 2,
     details: {
-      bioExtended: 'Idriss commande l’une des casernes les plus actives, alliant sang-froid tactique et attention fraternelle à ses équipes.',
-      universeDescription: 'Le dévouement immédiat face au danger et la protection sans condition des citoyens.',
+      bioExtended: 'Clara parcourt les territoires en immersion lente avec ses boîtiers manuels et son laboratoire de tirage nomade, donnant la parole aux anonymes.',
+      universeDescription: 'L’art de l’observation patiente, du cadre juste et de la lumière naturelle.',
       transmissions: [],
       duos: [
         {
-          id: 'duo-jennifer-aminata-ref',
-          partnerName: 'Dr. Aminata Sharma',
-          partnerRole: 'Médecin urgentiste',
-          partnerPhoto: '/assets/duos/doctor-healer.jpg',
-          duoId: 'duo-safer-healer-01',
-          question: '« Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ? »'
+          id: 'duo-clara-eleonore-ref',
+          partnerName: 'Dre. Éléonore Kaboré',
+          partnerRole: 'Chercheuse en sciences cognitives',
+          partnerPhoto: '/assets/duos/researcher-phd.jpg',
+          duoId: 'duo-focus-phd-01',
+          question: '« Quel a été ce moment précis où votre travail a fait surgir une vérité qui a transformé votre regard ? »'
         }
       ],
       creations: [],
@@ -2408,51 +2408,51 @@ export const PROTAGONISTS: Protagonist[] = [
     },
     stories: [
       {
-        id: 'story-firefighter-jennifer-01',
-        title: 'Le cri dans le sous-sol inondé',
+        id: 'story-photographer-clara-01',
+        title: 'L’ombre portée du pêcheur de Saint-Louis',
         questionNumber: '01',
-        questionTitle: 'Le Premier Secours',
+        questionTitle: 'L’Instant de Révélation',
         duration: '09:10',
         videoDurationSeconds: 550,
-        summary: 'Jennifer revient sur un sauvetage nocturne où le filin thermique s’est rompu mais où l’instinct a guidé l’évacuation d’une famille.',
-        videoCoverUrl: '/assets/duos/firefighter-safer.jpg',
-        credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Jennifer Collins' }]
+        summary: 'Clara raconte l’attente de trois jours sur le fleuve Sénégal pour saisir le geste ancestral d’un lanceur d’épervier à l’aube.',
+        videoCoverUrl: '/assets/duos/photographer-focus.jpg',
+        credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Clara Valmont' }]
       }
     ]
   },
   {
-    id: 'doctor-aminata',
-    slug: 'doctor-aminata',
-    name: 'Dr. Aminata Sharma',
-    firstName: 'Aminata',
-    age: 44,
-    role: 'Médecin urgentiste & Spécialiste de santé communautaire',
-    country: 'Sénégal',
-    territory: 'Dakar & Genève',
-    flag: '🇸🇳',
-    photo: '/assets/duos/doctor-healer.jpg',
-    photoUrl: '/assets/duos/doctor-healer.jpg',
+    id: 'researcher-eleonore',
+    slug: 'researcher-eleonore',
+    name: 'Dre. Éléonore Kaboré',
+    firstName: 'Éléonore',
+    age: 42,
+    role: 'Docteure en sciences cognitives & Chercheuse',
+    country: 'Burkina Faso & France',
+    territory: 'Ouagadougou & Lyon',
+    flag: '🇧🇫',
+    photo: '/assets/duos/researcher-phd.jpg',
+    photoUrl: '/assets/duos/researcher-phd.jpg',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     teaserVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-    quote: '« La médecine commence là où l’ordonnance s’arrête : dans le regard qui rassure et la main qui soutient sans juger. »',
-    bio: 'Formée entre Dakar et Genève, le Dr. Sharma dirige un pôle d’urgence pédiatrique tout en œuvrant à des cliniques mobiles en milieu rural.',
-    universeTag: 'Healer',
-    centralQuestion: 'Comment garder son humanité intacte après mille nuits de combat contre la douleur ?',
+    quote: '« Une thèse n’est pas un diplôme qu’on accroche : c’est une promesse faite au réel de ne jamais se contenter des apparences ni des réponses faciles. »',
+    bio: 'Formée entre Ouagadougou et Lyon, elle allie enquêtes de terrain et modélisation complexe pour comprendre la transmission des savoirs et la résilience collective.',
+    universeTag: 'PhD',
+    centralQuestion: 'Combien de nuits d’incertitude faut-il traverser avant qu’une intuition ne devienne une certitude démontrable ?',
     storiesCount: 5,
     transmissionsCount: 3,
     projectsCount: 4,
     details: {
-      bioExtended: 'Dans le vacarme des urgences, sa présence calme apaise instantanément patients et soignants.',
-      universeDescription: 'L’art exigeant du soin, du soulagement et de la compassion médicale.',
+      bioExtended: 'Dans le silence de son bureau universitaire entourée de livres rares et de données statistiques, elle traque les vérités mathématiques et humaines.',
+      universeDescription: 'La recherche fondamentale, l’élaboration des théories et la rigueur méthodique.',
       transmissions: [],
       duos: [
         {
-          id: 'duo-aminata-jennifer-ref',
-          partnerName: 'Capitaine Jennifer Collins',
-          partnerRole: 'Officière sapeur-pompier',
-          partnerPhoto: '/assets/duos/firefighter-safer.jpg',
-          duoId: 'duo-safer-healer-01',
-          question: '« Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ? »'
+          id: 'duo-eleonore-clara-ref',
+          partnerName: 'Clara Valmont',
+          partnerRole: 'Photographe documentaire',
+          partnerPhoto: '/assets/duos/photographer-focus.jpg',
+          duoId: 'duo-focus-phd-01',
+          question: '« Quel a été ce moment précis où votre travail a fait surgir une vérité qui a transformé votre regard ? »'
         }
       ],
       creations: [],
@@ -2462,15 +2462,15 @@ export const PROTAGONISTS: Protagonist[] = [
     },
     stories: [
       {
-        id: 'story-doctor-aminata-01',
-        title: 'La première respiration de l’aube',
+        id: 'story-researcher-eleonore-01',
+        title: 'L’équation qui répare les silences',
         questionNumber: '01',
-        questionTitle: 'Le Premier Secours',
+        questionTitle: 'L’Instant de Révélation',
         duration: '08:15',
         videoDurationSeconds: 495,
-        summary: 'Aminata décrit une garde de Noël où le cœur d’un nouveau-né s’était arrêté et la résurrection vécue ensemble par l’équipe.',
-        videoCoverUrl: '/assets/duos/doctor-healer.jpg',
-        credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dr. Aminata Sharma' }]
+        summary: 'Éléonore partage la nuit où, après des années de calculs, sa thèse a prouvé une corrélation inattendue entre les contes oraux et l’apprentissage cognitif.',
+        videoCoverUrl: '/assets/duos/researcher-phd.jpg',
+        credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dre. Éléonore Kaboré' }]
       }
     ]
   }
@@ -2688,106 +2688,106 @@ export const DUOS: Duo[] = [
     editorialReflection: 'Entre la sagesse stratégique d’un mentor dans son bureau et la fulgurance physique d’une hurdleuse en plein saut : la victoire s’invente toujours dans l’alliance de l’esprit et du souffle.'
   },
   {
-    id: 'duo-safer-healer-01',
-    slug: 'duo-safer-healer-01',
-    documentaryId: 'safer-healer',
-    documentaryTitle: 'Safer < > Healer',
+    id: 'duo-focus-phd-01',
+    slug: 'duo-focus-phd-01',
+    documentaryId: 'focus-phd',
+    documentaryTitle: 'Focus < >  PhD',
     episodeNumber: 'ÉPISODE 01',
     protagonistA: {
-      id: 'firefighter-jennifer',
-      name: 'Idriss Collins',
-      firstName: 'Idriss',
-      age: 41,
-      role: 'Commandant sapeur-pompier',
-      country: 'Bénin & France',
-      territory: 'Cotonou & Marseille',
-      flag: '🇧🇯',
-      photo: '/assets/duos/firefighter-safer.jpg',
-      photoUrl: '/assets/duos/firefighter-safer.jpg',
+      id: 'photographer-clara',
+      name: 'Clara Valmont',
+      firstName: 'Clara',
+      age: 38,
+      role: 'Photographe documentaire',
+      country: 'France & Sénégal',
+      territory: 'Paris & Dakar',
+      flag: '🇫🇷',
+      photo: '/assets/duos/photographer-focus.jpg',
+      photoUrl: '/assets/duos/photographer-focus.jpg',
       videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-      quote: '« Dans la fumée épaisse, on n’avance pas avec la peur de mourir mais avec l’urgence furieuse que quelqu’un respire encore. »',
-      bio: 'Dix-huit ans au feu, protecteur intrépide des vies de la cité.',
-      universeTag: 'Safer',
-      centralQuestion: 'Que ressent-on quand on franchit le rideau de flammes vers un inconnu ?',
+      quote: '« Le cadre n’enferme pas le monde : il l’oblige à se révéler. Quand tu presses le déclencheur, tu ne voles pas une image, tu reçois une confidence. »',
+      bio: 'Quinze ans de reportages visuels, observant la poésie des gestes humbles.',
+      universeTag: 'Focus',
+      centralQuestion: 'Comment capturer l’âme d’un instant sans trahir la pudeur de celui qui vous regarde ?',
       storiesCount: 6,
       transmissionsCount: 4,
       projectsCount: 2,
       stories: [
         {
-          id: 'story-firefighter-jennifer-01',
-          title: 'Le cri dans le sous-sol inondé',
+          id: 'story-photographer-clara-01',
+          title: 'L’ombre portée du pêcheur de Saint-Louis',
           questionNumber: '01',
-          questionTitle: 'Le Premier Secours',
+          questionTitle: 'L’Instant de Révélation',
           duration: '09:10',
           videoDurationSeconds: 550,
-          summary: 'Idriss revient sur un sauvetage nocturne au péril de sa vie.',
-          videoCoverUrl: '/assets/duos/firefighter-safer.jpg',
-          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Idriss Collins' }]
+          summary: 'Clara raconte l’attente de l’instant décisif sur le fleuve à l’aube.',
+          videoCoverUrl: '/assets/duos/photographer-focus.jpg',
+          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Clara Valmont' }]
         }
       ]
     } as any,
     protagonistB: {
-      id: 'doctor-aminata',
-      name: 'Dr. Aminata Sharma',
-      firstName: 'Aminata',
-      age: 44,
-      role: 'Médecin urgentiste & Soignante',
-      country: 'Sénégal',
-      territory: 'Dakar & Genève',
-      flag: '🇸🇳',
-      photo: '/assets/duos/doctor-healer.jpg',
-      photoUrl: '/assets/duos/doctor-healer.jpg',
+      id: 'researcher-eleonore',
+      name: 'Dre. Éléonore Kaboré',
+      firstName: 'Éléonore',
+      age: 42,
+      role: 'Docteure en sciences cognitives & Chercheuse',
+      country: 'Burkina Faso & France',
+      territory: 'Ouagadougou & Lyon',
+      flag: '🇧🇫',
+      photo: '/assets/duos/researcher-phd.jpg',
+      photoUrl: '/assets/duos/researcher-phd.jpg',
       videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-      quote: '« La médecine commence là où l’ordonnance s’arrête : dans le regard qui rassure et la main qui soutient sans juger. »',
-      bio: 'Médecin hospitalière au dévouement sans faille pour ses patients.',
-      universeTag: 'Healer',
-      centralQuestion: 'Comment garder son humanité intacte après mille nuits de combat contre la douleur ?',
+      quote: '« Une thèse n’est pas un diplôme qu’on accroche : c’est une promesse faite au réel de ne jamais se contenter des apparences. »',
+      bio: 'Chercheuse passionnée reliant données de terrain et mémoire vivante.',
+      universeTag: 'PhD',
+      centralQuestion: 'Combien de nuits d’incertitude faut-il traverser avant qu’une intuition ne devienne une certitude démontrable ?',
       storiesCount: 5,
       transmissionsCount: 3,
       projectsCount: 4,
       stories: [
         {
-          id: 'story-doctor-aminata-01',
-          title: 'La première respiration de l’aube',
+          id: 'story-researcher-eleonore-01',
+          title: 'L’équation qui répare les silences',
           questionNumber: '01',
-          questionTitle: 'Le Premier Secours',
+          questionTitle: 'L’Instant de Révélation',
           duration: '08:15',
           videoDurationSeconds: 495,
-          summary: 'Aminata décrit une garde de nuit où la vie a triomphé.',
-          videoCoverUrl: '/assets/duos/doctor-healer.jpg',
-          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dr. Aminata Sharma' }]
+          summary: 'Éléonore partage la joie de voir sa thèse valider le savoir oral.',
+          videoCoverUrl: '/assets/duos/researcher-phd.jpg',
+          credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dre. Éléonore Kaboré' }]
         }
       ]
     } as any,
     questionNumber: '01',
-    questionTitle: 'Le Premier Secours',
-    centralQuestion: '« Racontez-nous un moment où vous avez tenu la main de quelqu’un en détresse et où vous avez su que votre présence faisait la différence entre la peur et l’espoir. »',
-    quoteA: '« Quand tu extirpes un enfant d’un brasier et que son regard croise le tien à travers ta visière, tu comprends pourquoi tu as choisi d’enfiler cet uniforme. »',
-    quoteB: '« Poser le stéthoscope et écouter les battements qui reviennent, c’est le moment le plus sacré du monde. Nous sommes là pour réparer ce que la vie a heurté. »',
-    coverImage: '/assets/posters/Safer < > Healer.png',
+    questionTitle: 'L’Instant de Révélation',
+    centralQuestion: '« Racontez-nous ce moment où votre travail — par l’œil du viseur ou par la rigueur de l’analyse — a fait jaillir une vérité qui a transformé votre regard. »',
+    quoteA: '« À travers l’œilleton, le monde s’arrête de courir. Tu attends le battement d’aile, la larme, le sourire : ce millième de seconde où la vie s’avoue toute entière. »',
+    quoteB: '« Des mois devant les chiffres et les carnets, et soudain, la courbe s’aligne. Ce n’est plus une formule, c’est le pouls du vivant qui parle enfin. »',
+    coverImage: '/assets/posters/Focus < >  PhD.jpg',
     storyA: {
-      id: 'story-firefighter-jennifer-01',
-      title: 'Le cri dans le sous-sol inondé',
+      id: 'story-photographer-clara-01',
+      title: 'L’ombre portée du pêcheur de Saint-Louis',
       questionNumber: '01',
-      questionTitle: 'Le Premier Secours',
+      questionTitle: 'L’Instant de Révélation',
       duration: '09:10',
       videoDurationSeconds: 550,
-      summary: 'Jennifer revient sur un sauvetage nocturne au péril de sa vie.',
-      videoCoverUrl: '/assets/duos/firefighter-safer.jpg',
-      credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Jennifer Collins' }]
+      summary: 'Clara raconte l’attente de l’instant décisif sur le fleuve à l’aube.',
+      videoCoverUrl: '/assets/duos/photographer-focus.jpg',
+      credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Clara Valmont' }]
     },
     storyB: {
-      id: 'story-doctor-aminata-01',
-      title: 'La première respiration de l’aube',
+      id: 'story-researcher-eleonore-01',
+      title: 'L’équation qui répare les silences',
       questionNumber: '01',
-      questionTitle: 'Le Premier Secours',
+      questionTitle: 'L’Instant de Révélation',
       duration: '08:15',
       videoDurationSeconds: 495,
-      summary: 'Aminata décrit une garde de nuit où la vie a triomphé.',
-      videoCoverUrl: '/assets/duos/doctor-healer.jpg',
-      credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dr. Aminata Sharma' }]
+      summary: 'Éléonore partage la joie de voir sa thèse valider le savoir oral.',
+      videoCoverUrl: '/assets/duos/researcher-phd.jpg',
+      credits: [{ role: 'story_owner', label: 'Propriétaire', name: 'Dre. Éléonore Kaboré' }]
     },
-    editorialReflection: 'D’un côté, la témérité de l’officière pompière qui s’interpose entre le citoyen et les flammes ; de l’autre, la tendresse experte du médecin qui recoud les plaies et guérit les cœurs. Deux gardiennes de notre vulnérabilité commune.'
+    editorialReflection: 'D’un côté, l’acuité sensorielle de la photographe qui fige l’émotion éphémère dans la lumière ; de l’autre, la patience méthodique de la chercheuse qui décortique les structures invisibles du savoir. Deux vigies complémentaires de la vérité humaine.'
   }
 ];
 

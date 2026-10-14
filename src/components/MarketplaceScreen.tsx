@@ -98,9 +98,9 @@ const PRODUCTIONS: ProductionPoster[] = [
     sharePrice: 65
   },
   {
-    id: 'safer-healer',
-    title: 'Safer < > Healer',
-    posterImage: '/assets/posters/Safer < > Healer.png',
+    id: 'focus-phd',
+    title: 'Focus < >  PhD',
+    posterImage: '/assets/posters/Focus < >  PhD.jpg',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharePrice: 58
   }
@@ -186,11 +186,11 @@ const INITIAL_PEER_OFFERS: PeerOffer[] = [
   },
   {
     id: 'peer-8',
-    sellerId: 'jennifer-rescuer-seller',
-    sellerName: 'Jennifer',
-    sellerPhoto: '/assets/duos/firefighter-safer.jpg',
-    seriesTitle: 'Safer < > Healer',
-    posterImage: '/assets/posters/Safer < > Healer.png',
+    sellerId: 'clara-focus-seller',
+    sellerName: 'Clara',
+    sellerPhoto: '/assets/duos/photographer-focus.jpg',
+    seriesTitle: 'Focus < >  PhD',
+    posterImage: '/assets/posters/Focus < >  PhD.jpg',
     videoPreviewUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     sharesCount: 5,
     unitPrice: 58

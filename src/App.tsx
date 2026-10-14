@@ -46,8 +46,11 @@ export default function App() {
     try {
       const saved = localStorage.getItem('yonywood_selected_series');
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        let parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          parsed = parsed.map((id: string) => id === 'safer-healer' ? 'focus-phd' : id);
+          return parsed;
+        }
       }
     } catch {
       // fallback

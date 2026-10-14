@@ -148,19 +148,19 @@ const SERIES_SUBJECTS: ProposeSubject[] = [
     bgGradient: 'from-orange-600 via-red-700 to-stone-900'
   },
   {
-    id: 'safer-healer',
-    title: 'Safer < > Healer',
-    subtitle: 'La bravoure des sauveteurs de la cité < > le dévouement et l’art du soin des médecins.',
-    synopsis: 'Entre le courage intrépide d’une pompière face aux flammes et le dévouement méthodique d’une femme médecin en hôpital : veiller sur la vie d’autrui.',
-    question: 'Quel sacrifice personnel avez-vous consenti pour continuer à veiller sur des inconnus ?',
+    id: 'focus-phd',
+    title: 'Focus < >  PhD',
+    subtitle: 'Le regard sensible qui capte l’instant < > la rigueur de la recherche qui sonde l’universel.',
+    synopsis: 'Entre l’œil aiguisé d’une photographe traquant la vérité humaine et la quête méthodique d’une chercheuse doctorante : deux manières complémentaires d’éclairer le monde.',
+    question: 'Quel a été ce moment précis où votre travail a fait surgir une vérité qui a transformé votre regard ?',
     videoUrl: STOCK_VIDEOS[3],
-    posterUrl: '/assets/posters/Safer < > Healer.png',
+    posterUrl: '/assets/posters/Focus < >  PhD.jpg',
     actionLabel: 'Choisir cette série',
     doorId: 'series',
-    iconName: '16-series/safer-healer',
-    accentColor: '#EF4444',
-    glowColor: 'rgba(239, 68, 68, 0.65)',
-    bgGradient: 'from-red-600 via-rose-700 to-stone-900'
+    iconName: '16-series/focus-phd',
+    accentColor: '#B45309',
+    glowColor: 'rgba(180, 83, 9, 0.65)',
+    bgGradient: 'from-amber-600 via-orange-700 to-stone-900'
   }
 ];
 

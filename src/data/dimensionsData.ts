@@ -291,16 +291,16 @@ export const SOUS_CATEGORIES: SousCategorie[] = [
     dimensionId: 'series',
     slug: 'focus-phd',
     ordre: 8,
-    label: 'Focus PhD',
+    label: 'Focus < >  PhD',
     icone: '16-series/focus-phd',
-    question: 'En quoi vos découvertes scientifiques et votre quête doctorale éclairent-elles l’avenir de l’Afrique et du monde ?',
-    tagline: 'Chercheurs, innovateurs et pionniers du savoir d’excellence',
-    description: 'Une immersion cinématographique au cœur des laboratoires, universités et terrains d’innovation. Quatre figures du savoir repoussent les frontières de la science.',
-    badge: 'Série science & recherche',
-    photoUrl: '/assets/posters/focus-phd.png',
-    accentColor: '#0284C7',
-    glowColor: 'rgba(2, 132, 199, 0.6)',
-    bgGradient: 'from-sky-600 via-blue-700 to-stone-900'
+    question: 'Quel a été ce moment précis où votre travail a fait surgir une vérité qui a transformé votre regard ?',
+    tagline: 'L’œil de la photographe et la rigueur de la chercheuse',
+    description: 'Une traversée intime entre l’instinct sensible d’une photographe traquant la lumière humaine et la quête méthodique d’une chercheuse doctorante repoussant les frontières du savoir.',
+    badge: 'Série regard & savoir',
+    photoUrl: '/assets/posters/Focus < >  PhD.jpg',
+    accentColor: '#B45309',
+    glowColor: 'rgba(180, 83, 9, 0.6)',
+    bgGradient: 'from-amber-600 via-orange-700 to-stone-900'
   },
 
   // -----------------------------------------------------------------------
